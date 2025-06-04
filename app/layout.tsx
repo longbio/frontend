@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.variable}>
-        <section className="container mx-auto">{children}</section>
+        <section className="container mx-auto max-w-[480px] px-4">{children}</section>
       </body>
     </html>
   )
