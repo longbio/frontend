@@ -1,31 +1,27 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import './globals.css'
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const inter = Inter({
+  variable: '--font-inter',
+  subsets: ['latin'],
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
-  title: "Long Bio",
-};
+  title: 'Long Bio',
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+      <body className={inter.variable}>
+        <section className="container mx-auto">{children}</section>
       </body>
     </html>
-  );
+  )
 }
