@@ -13,9 +13,9 @@ export default function Welcome() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-start gap-4 px-6">
+    <div className="min-h-screen bg-white flex flex-col items-center justify-start">
       <Image src={logo} alt="logo" width={62} height={51} className="mt-16" />
-      <Lottie animationData={welcomeAnimation} loop className="w-72 h-72" />
+      <Lottie animationData={welcomeAnimation} loop className="w-96 h-96 px-5" />
       <h1 className="text-2xl font-bold">Welcome</h1>
       <p className="text-sm font-normal text-center">
         A brief, AI-powered summary of your personal and professional background, crafted from the
