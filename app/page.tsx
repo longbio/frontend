@@ -2,8 +2,8 @@
 import Image from 'next/image'
 import Lottie from 'lottie-react'
 import { useRouter } from 'next/navigation'
-import logo from '../public/assets/images/logo.png'
-import welcomeAnimation from '../public/assets/jsons/welcome.json'
+import logo from '@/public/assets/images/logo.png'
+import welcomeAnimation from '@/public/assets/jsons/welcome.json'
 
 export default function Welcome() {
   const router = useRouter()
@@ -22,12 +22,12 @@ export default function Welcome() {
         details you provide.
       </p>
       <button
-        onClick={() => handleNavigate('/signup')}
+        onClick={() => handleNavigate('/auth/signup')}
         className="w-full text-sm font-bold text-white bg-black py-2.5 mt-16 rounded-3xl"
       >
         Sign Up
       </button>
-      <button onClick={() => handleNavigate('/signin')} className="text-sm font-normal mt-2">
+      <button onClick={() => handleNavigate('/auth/signin')} className="text-sm font-normal mt-2">
         Or Sign In
       </button>
     </div>
