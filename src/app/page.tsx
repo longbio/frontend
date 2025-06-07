@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import Logo from '@/src/components/Logo'
-import WelcomeAnimation from '@/src/components/WelcomeAnimation'
+import Logo from '@/components/Logo'
+import WelcomeAnimation from '@/app/components/WelcomeAnimation'
 
 export default function Welcome() {
   return (

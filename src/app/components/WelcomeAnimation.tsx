@@ -1,7 +1,7 @@
 'use client'
 import clsx from 'clsx'
 import Lottie from 'lottie-react'
-import welcomeAnimation from '@/public/assets/lottie/welcome-animation.json'
+import welcomeAnimation from '../../../public/assets/lottie/welcome-animation.json'
 
 interface WelcomeAnimationProps {
   className?: string
