@@ -19,6 +19,7 @@ export default function SignIn() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    watch,
   } = useForm<FormData>({
     mode: 'onChange',
     defaultValues: {
@@ -27,11 +28,23 @@ export default function SignIn() {
     },
   })
 
-  const onSubmit = async (data: FormData) => {
-    const searchParams = new URLSearchParams()
-    searchParams.set('email', data.email)
+  const onSubmit = async () => {
+    // Here you would typically validate credentials with your backend
+    // For now, we'll just redirect to success
     router.push('/auth/signin/success')
   }
+
+  const handleVerificationClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    const email = watch('email')
+    if (!email) return
+
+    const searchParams = new URLSearchParams()
+    searchParams.set('email', email)
+    router.push(`/auth/signin/verify?${searchParams.toString()}`)
+  }
+
+  const email = watch('email')
 
   return (
     <div className="flex flex-col min-h-screen items-center justify-start">
@@ -87,12 +100,17 @@ export default function SignIn() {
                 required: true,
               })}
             />
-            <Link
-              href="/auth/signin/verify"
-              className="text-[10px] font-normal text-purple-blaze mt-2 block"
+            <button
+              type="button"
+              onClick={handleVerificationClick}
+              className={clsx(
+                'text-purple-blaze text-[10px] font-normal mt-2 block',
+                email ? 'hover:underline' : 'cursor-not-allowed'
+              )}
+              disabled={!email}
             >
               Login with verification code
-            </Link>
+            </button>
           </div>
 
           <Button
