@@ -1,19 +1,29 @@
 'use client'
+import clsx from 'clsx'
 import Link from 'next/link'
-import { useState } from 'react'
 import Logo from '@/components/Logo'
+import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
+type FormData = {
+  name: string
+  email: string
+}
+
 export default function SignUp() {
   const router = useRouter()
-  const [email, setEmail] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>()
+
+  const onSubmit = (data: FormData) => {
     const searchParams = new URLSearchParams()
-    searchParams.set('email', email)
+    searchParams.set('email', data.email)
     router.push(`/auth/signup/verify?${searchParams.toString()}`)
   }
 
@@ -31,22 +41,46 @@ export default function SignUp() {
           </h3>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-40">
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-40">
           <div className="space-y-6">
-            <label htmlFor="text" className="text-xl font-bold">
-              Name
-            </label>
-            <Input type="text" placeholder="Exp: Farzaneh" className="w-full mt-6" />
-            <label htmlFor="email" className="text-xl font-bold">
-              Email
-            </label>
-            <Input
-              type="email"
-              placeholder="Exp: Fari@gmail.com"
-              className="w-full mt-6"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+            <div>
+              <label htmlFor="name" className="text-xl font-bold">
+                Name
+              </label>
+              <Input
+                type="text"
+                placeholder="Exp: Farzaneh"
+                className={clsx(
+                  'w-full mt-6',
+                  errors.name && 'border-red-500 focus-visible:ring-0'
+                )}
+                {...register('name', {
+                  required: 'Name is required',
+                })}
+              />
+              {errors.name && (
+                <p className="text-red-500 text-xs font-light mt-1">{errors.name.message}</p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="email" className="text-xl font-bold">
+                Email
+              </label>
+              <Input
+                type="email"
+                placeholder="Exp: Fari@gmail.com"
+                className={clsx(
+                  'w-full mt-6',
+                  errors.email && 'border-red-500 focus-visible:ring-0'
+                )}
+                {...register('email', {
+                  required: 'Email is required',
+                })}
+              />
+              {errors.email && (
+                <p className="text-red-500 text-xs font-light mt-1">{errors.email.message}</p>
+              )}
+            </div>
           </div>
 
           <Button
