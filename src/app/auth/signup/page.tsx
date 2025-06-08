@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { useState } from 'react'
+import Logo from '@/components/Logo'
 import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -18,10 +19,11 @@ export default function SignUp() {
 
   return (
     <div className="flex flex-col min-h-screen items-center justify-start">
-      <div className="w-full max-w-md space-y-8 mt-20">
+      <div className="w-full max-w-md space-y-8 mt-16">
         <div className="text-left text-purple-blaze">
-          <h2 className="text-sm font-bold text-black">Let&apos;s Start with ...</h2>
-          <h3 className="mt-2 text-[10px] font-normal">
+          <Logo />
+          <h2 className="text-sm font-bold text-black mt-12">Let&apos;s Start with ...</h2>
+          <h3 className="mt-1.5 text-[10px] font-normal">
             already have an account?
             <Link href="/auth/login" className="hover:underline">
               Login
