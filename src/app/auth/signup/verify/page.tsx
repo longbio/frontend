@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { AlarmClock, RotateCcw, CheckCircle2 } from 'lucide-react'
 
-export default function SignUp() {
+export default function VerifySignUp() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const email = searchParams.get('email') || ''
