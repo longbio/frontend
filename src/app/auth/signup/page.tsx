@@ -1,8 +1,15 @@
+'use client'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
 export default function SignUp() {
+  const router = useRouter()
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    router.push('/auth/signup/verify')
+  }
   return (
     <div className="flex flex-col min-h-screen items-center justify-start">
       <div className="w-full max-w-md space-y-8 mt-20">
@@ -16,7 +23,7 @@ export default function SignUp() {
           </h3>
         </div>
 
-        <form className="mt-40">
+        <form onSubmit={handleSubmit} className="mt-40">
           <div className="space-y-6">
             <label htmlFor="text" className="text-xl font-bold">
               Name
