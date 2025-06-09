@@ -34,7 +34,7 @@ export default function SignIn() {
   })
 
   const onSubmit = async () => {
-    // Here you would typically validate credentials with your backend
+    // typically validate credentials with backend
     // For now, we'll just redirect to success
     router.push('/auth/signin/success')
   }
@@ -44,9 +44,9 @@ export default function SignIn() {
     const email = watch('email')
     if (!email) return
 
-    const searchParams = new URLSearchParams()
-    searchParams.set('email', email)
-    router.push(`/auth/signin/verify?${searchParams.toString()}`)
+    const url = new URL('/auth/signin/verify', window.location.origin)
+    url.searchParams.set('email', email)
+    router.push(url.toString())
   }
 
   const email = watch('email')

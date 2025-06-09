@@ -27,9 +27,9 @@ export default function SignUp() {
   })
 
   const onSubmit = (data: FormData) => {
-    const searchParams = new URLSearchParams()
-    searchParams.set('email', data.email)
-    router.push(`/auth/signup/verify?${searchParams.toString()}`)
+    const url = new URL('/auth/signup/verify', window.location.origin)
+    url.searchParams.set('email', data.email)
+    router.push(url.toString())
   }
 
   return (
