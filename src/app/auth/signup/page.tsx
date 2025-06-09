@@ -1,16 +1,19 @@
 'use client'
-import clsx from 'clsx'
+import { z } from 'zod'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { FormInput } from '@/app/auth/components/FormInput'
 
-type FormData = {
-  name: string
-  email: string
-}
+const signUpSchema = z.object({
+  name: z.string().min(1),
+  email: z.string().email(),
+})
+
+type FormData = z.infer<typeof signUpSchema>
 
 export default function SignUp() {
   const router = useRouter()
@@ -19,7 +22,9 @@ export default function SignUp() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>()
+  } = useForm<FormData>({
+    resolver: zodResolver(signUpSchema),
+  })
 
   const onSubmit = (data: FormData) => {
     const searchParams = new URLSearchParams()
@@ -43,44 +48,22 @@ export default function SignUp() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="mt-40">
           <div className="space-y-6">
-            <div>
-              <label htmlFor="name" className="text-xl font-bold">
-                Name
-              </label>
-              <Input
-                type="text"
-                placeholder="Exp: Farzaneh"
-                className={clsx(
-                  'w-full mt-6',
-                  errors.name && 'border-red-500 focus-visible:ring-0'
-                )}
-                {...register('name', {
-                  required: 'Name is required',
-                })}
-              />
-              {errors.name && (
-                <p className="text-red-500 text-xs font-light mt-1">{errors.name.message}</p>
-              )}
-            </div>
-            <div>
-              <label htmlFor="email" className="text-xl font-bold">
-                Email
-              </label>
-              <Input
-                type="email"
-                placeholder="Exp: Fari@gmail.com"
-                className={clsx(
-                  'w-full mt-6',
-                  errors.email && 'border-red-500 focus-visible:ring-0'
-                )}
-                {...register('email', {
-                  required: 'Email is required',
-                })}
-              />
-              {errors.email && (
-                <p className="text-red-500 text-xs font-light mt-1">{errors.email.message}</p>
-              )}
-            </div>
+            <FormInput
+              id="name"
+              type="text"
+              label="Name"
+              placeholder="Exp: Farzaneh"
+              error={!!errors.name}
+              {...register('name')}
+            />
+            <FormInput
+              id="email"
+              type="email"
+              label="Email"
+              placeholder="Exp: Fari@gmail.com"
+              error={!!errors.email}
+              {...register('email')}
+            />
           </div>
 
           <Button

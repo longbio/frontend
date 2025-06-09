@@ -1,16 +1,20 @@
 'use client'
 import clsx from 'clsx'
+import { z } from 'zod'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { FormInput } from '@/app/auth/components/FormInput'
 
-type FormData = {
-  email: string
-  password: string
-}
+const signInSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+})
+
+type FormData = z.infer<typeof signInSchema>
 
 export default function SignIn() {
   const router = useRouter()
@@ -21,6 +25,7 @@ export default function SignIn() {
     formState: { errors, isSubmitting },
     watch,
   } = useForm<FormData>({
+    resolver: zodResolver(signInSchema),
     mode: 'onChange',
     defaultValues: {
       email: '',
@@ -61,44 +66,22 @@ export default function SignIn() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <FormInput
+            id="email"
+            type="email"
+            label="Email"
+            placeholder="Exp: Fari@gmail.com"
+            error={!!errors.email}
+            {...register('email')}
+          />
           <div>
-            <label htmlFor="email" className="text-xl font-bold">
-              Email
-            </label>
-            <Input
-              type="email"
-              placeholder="Exp: Fari@gmail.com"
-              className={clsx(
-                'w-full mt-6',
-                errors.email && 'border-red-500 focus-visible:ring-red-500/50'
-              )}
-              {...register('email', {
-                required: true,
-              })}
-            />
-            {errors.email && (
-              <div className="flex gap-2 mt-1">
-                <p className="text-red-500 text-xs font-light">Email or password is not exist</p>
-                <Link href="/auth/signup" className="text-purple-blaze text-xs font-light">
-                  Sign Up
-                </Link>
-              </div>
-            )}
-          </div>
-          <div>
-            <label htmlFor="password" className="text-xl font-bold">
-              Password
-            </label>
-            <Input
+            <FormInput
+              id="password"
               type="password"
+              label="Password"
               placeholder="Exp: 1234567889@@"
-              className={clsx(
-                'w-full mt-6',
-                errors.password && 'border-red-500 focus-visible:ring-red-500/50'
-              )}
-              {...register('password', {
-                required: true,
-              })}
+              error={!!errors.password}
+              {...register('password')}
             />
             <button
               type="button"
