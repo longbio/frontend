@@ -6,11 +6,11 @@ import Logo from '@/components/Logo'
 import { useForm } from 'react-hook-form'
 import { useState, useEffect } from 'react'
 import { CheckCircle2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { AlarmClock, RotateCcw } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FormInput } from '@/app/auth/components/FormInput'
-import { useRouter } from 'next/navigation'
 
 const verifySchema = z.object({
   verificationCode: z.string().min(1).length(6),
@@ -20,7 +20,8 @@ type VerifyFormData = z.infer<typeof verifySchema>
 
 export default function VerifySignIn() {
   const router = useRouter()
-  const email = new URL(window.location.href).searchParams.get('email') || ''
+  const searchParams = new URLSearchParams(window.location.search)
+  const email = searchParams.get('email') || ''
   const [timeLeft, setTimeLeft] = useState(94)
   const [isTimeUp, setIsTimeUp] = useState(false)
 
