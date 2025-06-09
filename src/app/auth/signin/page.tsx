@@ -10,8 +10,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { FormInput } from '@/app/auth/components/FormInput'
 
 const signInSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
+  email: z.string().min(1),
+  password: z.string().min(1),
 })
 
 type FormData = z.infer<typeof signInSchema>
@@ -66,14 +66,24 @@ export default function SignIn() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <FormInput
-            id="email"
-            type="email"
-            label="Email"
-            placeholder="Exp: Fari@gmail.com"
-            error={!!errors.email}
-            {...register('email')}
-          />
+          <div>
+            <FormInput
+              id="email"
+              type="email"
+              label="Email"
+              placeholder="Exp: Fari@gmail.com"
+              error={!!errors.email}
+              {...register('email')}
+            />
+            {errors.email && (
+              <div className="absolute text-red-500 text-xs font-light mt-1">
+                email or password is not exist
+                <Link href="/auth/signup" className="text-purple-blaze px-1 hover:underline">
+                  Sign Up
+                </Link>
+              </div>
+            )}
+          </div>
           <div>
             <FormInput
               id="password"
