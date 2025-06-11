@@ -61,7 +61,7 @@ export default function VerifySignUp() {
 
   const onSubmit = () => {
     if (isVerified) {
-      router.push('/info/name')
+      router.push('/info/birthday')
     }
   }
 
