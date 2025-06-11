@@ -1,6 +1,7 @@
 'use client'
 import { z } from 'zod'
 import { Info } from 'lucide-react'
+import Logo from '@/components/Logo'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -30,7 +31,8 @@ export default function Birthday() {
   return (
     <div className="min-h-screen flex flex-col">
       <Progress value={6.25} />
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-16 space-y-6">
+      <Logo className="mt-2" />
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-2 space-y-6">
         <h1 className="text-2xl font-bold">
           Welcome to <br /> Long-Bio, {name}!
         </h1>
