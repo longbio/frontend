@@ -34,7 +34,7 @@ export default function SignUp() {
 
   return (
     <div className="flex flex-col min-h-screen items-center justify-start">
-      <div className="w-full max-w-md space-y-8 mt-16">
+      <div className="w-full max-w-md space-y-8 mt-2">
         <div className="text-left text-purple-blaze">
           <Logo />
           <h2 className="text-sm font-bold text-black mt-12">Let&apos;s Start with ...</h2>
