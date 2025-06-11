@@ -1,6 +1,13 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
+@theme {
+  --color-purple-blaze: #9129e0;
+  --color-light-gray: #cccccc;
+  --color-silver-mist: #d9d9d9;
+}
+
+/* #for shdcn confige */
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
