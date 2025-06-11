@@ -31,6 +31,9 @@ const gilroy = localFont({
 
 export const metadata: Metadata = {
   title: 'Long Bio',
+  icons: {
+    icon: '/assets/images/logo.png',
+  },
 }
 
 export default function RootLayout({
