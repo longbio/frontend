@@ -1,0 +1,118 @@
+'use client'
+import { z } from 'zod'
+import { Info } from 'lucide-react'
+import Logo from '@/components/Logo'
+import { useForm } from 'react-hook-form'
+import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { Progress } from '@/components/ui/progress'
+import { Checkbox } from '@/components/ui/checkbox'
+import { zodResolver } from '@hookform/resolvers/zod'
+
+const genderSchema = z.object({
+  gender: z.string({
+    required_error: 'Please select your gender',
+  }),
+})
+type GenderFormData = z.infer<typeof genderSchema>
+
+export default function Gender() {
+  const router = useRouter()
+  const searchParams = new URLSearchParams(window.location.search)
+  const name = searchParams.get('name') || ''
+  const { handleSubmit, setValue, watch } = useForm<GenderFormData>({
+    resolver: zodResolver(genderSchema),
+    mode: 'onChange',
+  })
+  const selectedGender = watch('gender')
+
+  const onSubmit = () => {
+    router.push(`/info/marital?name=${name}`)
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Progress value={12.5} />
+      <Logo className="mt-2" />
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-2 space-y-6">
+        <h1 className="text-2xl font-bold">
+          Welcome to <br /> Long-Bio, {name}!
+        </h1>
+        <span className="text-sm font-normal">pick the gender that best describe you. </span>
+        <div className="space-y-8 mt-36">
+          <h2 className="text-xl font-bold">Which gender best describe you?</h2>
+          <div className="space-y-2.5">
+            <label
+              htmlFor="male"
+              className="flex justify-between items-center bg-cloud-mist px-6 py-2.5 rounded-full"
+            >
+              <h2 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Man
+              </h2>
+              <Checkbox
+                id="male"
+                checked={selectedGender === 'male'}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setValue('gender', 'male')
+                  }
+                }}
+              />
+            </label>
+            <label
+              htmlFor="female"
+              className="flex justify-between items-center bg-cloud-mist px-6 py-2.5 rounded-full"
+            >
+              <h2 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Woman
+              </h2>
+              <Checkbox
+                id="female"
+                checked={selectedGender === 'female'}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setValue('gender', 'female')
+                  }
+                }}
+              />
+            </label>
+            <label
+              htmlFor="Nonbinary"
+              className="flex justify-between items-center bg-cloud-mist px-6 py-2.5 rounded-full"
+            >
+              <h2 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Nonbinary
+              </h2>
+              <Checkbox
+                id="Nonbinary"
+                checked={selectedGender === 'Nonbinary'}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setValue('gender', 'Nonbinary')
+                  }
+                }}
+              />
+            </label>
+            <div className="flex items-center gap-1 text-xs mt-4">
+              <Info className="size-4" />
+              <span>You can always update this later</span>
+            </div>
+          </div>
+        </div>
+        <Button
+          type="submit"
+          className="w-full bg-purple-blaze text-sm font-bold mt-40 rounded-4xl"
+        >
+          Next
+        </Button>
+      </form>
+      <button
+        type="button"
+        className="w-full text-sm font-normal mt-2 rounded-4xl"
+        onClick={() => router.push(`/info/marital?name=${name}`)}
+      >
+        skip
+      </button>
+    </div>
+  )
+}
