@@ -31,6 +31,9 @@ const gilroy = localFont({
 
 export const metadata: Metadata = {
   title: 'Long Bio',
+  icons: {
+    icon: '/assets/images/logo.png',
+  },
 }
 
 export default function RootLayout({
@@ -42,7 +45,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={gilroy.variable}>
         <ViewTransitions>
-          <section className="container max-w-[480px] mx-auto px-8">{children}</section>
+          <section className="container max-w-[480px] mx-auto px-8 py-14">{children}</section>
         </ViewTransitions>
       </body>
     </html>
