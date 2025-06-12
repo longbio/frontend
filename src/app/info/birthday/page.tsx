@@ -25,7 +25,7 @@ export default function Birthday() {
     mode: 'onChange',
   })
   const onSubmit = () => {
-    router.push('/info/gender')
+    router.push(`/info/gender?name=${name}`)
   }
 
   return (
