@@ -21,6 +21,7 @@ type VerifyFormData = z.infer<typeof verifySchema>
 export default function VerifySignUp() {
   const router = useRouter()
   const searchParams = new URLSearchParams(window.location.search)
+  const name = searchParams.get('name') || ''
   const email = searchParams.get('email') || ''
   const [timeLeft, setTimeLeft] = useState(94)
   const [isTimeUp, setIsTimeUp] = useState(false)
@@ -61,7 +62,7 @@ export default function VerifySignUp() {
 
   const onSubmit = () => {
     if (isVerified) {
-      router.push('/info/name')
+      router.push(`/info/birthday?name=${name}`)
     }
   }
 
