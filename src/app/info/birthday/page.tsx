@@ -1,12 +1,13 @@
 'use client'
 import { z } from 'zod'
+import { Suspense } from 'react'
 import { Info } from 'lucide-react'
 import Logo from '@/components/Logo'
 import { useForm } from 'react-hook-form'
-import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { DatePicker } from '@/app/info/birthday/components/DatePicker'
 
 const birthdaySchema = z.object({
@@ -16,9 +17,9 @@ const birthdaySchema = z.object({
 })
 type BirthdayFormData = z.infer<typeof birthdaySchema>
 
-export default function Birthday() {
+function BirthdayContent() {
   const router = useRouter()
-  const searchParams = new URLSearchParams(window.location.search)
+  const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
   const { handleSubmit, setValue } = useForm<BirthdayFormData>({
     resolver: zodResolver(birthdaySchema),
@@ -62,5 +63,12 @@ export default function Birthday() {
         skip
       </button>
     </div>
+  )
+}
+export default function Birthday() {
+  return (
+    <Suspense>
+      <BirthdayContent />
+    </Suspense>
   )
 }

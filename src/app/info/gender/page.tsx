@@ -3,11 +3,12 @@ import { z } from 'zod'
 import { Info } from 'lucide-react'
 import Logo from '@/components/Logo'
 import { useForm } from 'react-hook-form'
-import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Checkbox } from '@/components/ui/checkbox'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
 const genderSchema = z.object({
   gender: z.string({
@@ -16,9 +17,9 @@ const genderSchema = z.object({
 })
 type GenderFormData = z.infer<typeof genderSchema>
 
-export default function Gender() {
+function GenderContent() {
   const router = useRouter()
-  const searchParams = new URLSearchParams(window.location.search)
+  const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
   const { handleSubmit, setValue, watch } = useForm<GenderFormData>({
     resolver: zodResolver(genderSchema),
@@ -114,5 +115,12 @@ export default function Gender() {
         skip
       </button>
     </div>
+  )
+}
+export default function Gender() {
+  return (
+    <Suspense>
+      <GenderContent />
+    </Suspense>
   )
 }
