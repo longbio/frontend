@@ -5,12 +5,12 @@ import Link from 'next/link'
 import Logo from '@/components/Logo'
 import { useForm } from 'react-hook-form'
 import { CheckCircle2 } from 'lucide-react'
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { AlarmClock, RotateCcw } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useState, useEffect, Suspense } from 'react'
 import { FormInput } from '@/app/auth/components/FormInput'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const verifySchema = z.object({
   verificationCode: z.string().min(1).length(6),
@@ -18,9 +18,9 @@ const verifySchema = z.object({
 
 type VerifyFormData = z.infer<typeof verifySchema>
 
-export default function VerifySignUp() {
+function VerifySignUpContent() {
   const router = useRouter()
-  const searchParams = new URLSearchParams(window.location.search)
+  const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
   const email = searchParams.get('email') || ''
   const [timeLeft, setTimeLeft] = useState(94)
@@ -150,5 +150,12 @@ export default function VerifySignUp() {
         </form>
       </div>
     </div>
+  )
+}
+export default function VerifySignUp() {
+  return (
+    <Suspense>
+      <VerifySignUpContent />
+    </Suspense>
   )
 }
