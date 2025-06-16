@@ -43,9 +43,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${gilroy.variable} h-[100svh]`}>
+      <body className={`${gilroy.variable} min-h-[100svh] h-[100svh] overflow-hidden`}>
         <ViewTransitions>
-          <section className="container max-w-[480px] h-full mx-auto px-8 py-14">
+          <section className="container max-w-[480px] h-full mx-auto px-8 py-14 overflow-y-auto">
             {children}
           </section>
         </ViewTransitions>
