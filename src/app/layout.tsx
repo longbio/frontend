@@ -43,9 +43,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={gilroy.variable}>
+      <body className={`${gilroy.variable} h-[100svh]`}>
         <ViewTransitions>
-          <section className="container max-w-[480px] mx-auto px-8 py-14">{children}</section>
+          <section className="container max-w-[480px] h-full mx-auto px-8 py-14 overflow-y-auto">
+            {children}
+          </section>
         </ViewTransitions>
       </body>
     </html>
