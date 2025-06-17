@@ -34,11 +34,11 @@ export default function SignUp() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-start">
-      <div className="w-full max-w-md space-y-8 mt-2">
+    <div className="flex flex-col items-center justify-start w-full">
+      <div className="w-full max-w-md space-y-16">
         <div className="text-left text-purple-blaze">
           <Logo />
-          <h2 className="text-sm font-bold text-black mt-12">Let&apos;s Start with ...</h2>
+          <h2 className="text-sm font-bold text-black mt-8">Let&apos;s Start with ...</h2>
           <h3 className="mt-1.5 text-[10px] font-normal">
             already have an account?
             <Link href="/auth/login" className="hover:underline">
@@ -47,7 +47,7 @@ export default function SignUp() {
           </h3>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-40">
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-32">
           <div className="space-y-6">
             <FormInput
               id="name"
@@ -68,7 +68,7 @@ export default function SignUp() {
           </div>
 
           <Button
-            className="w-full bg-purple-blaze text-sm font-bold mt-56 rounded-4xl"
+            className="w-full bg-purple-blaze text-sm font-bold mt-32 rounded-4xl"
             type="submit"
           >
             Get Verification code
