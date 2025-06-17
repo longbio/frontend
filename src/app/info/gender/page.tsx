@@ -32,7 +32,7 @@ function GenderContent() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex flex-col">
       <Progress value={12.5} />
       <Logo className="mt-2" />
       <form onSubmit={handleSubmit(onSubmit)} className="mt-2 space-y-6">

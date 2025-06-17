@@ -4,7 +4,7 @@ import WelcomeAnimation from '@/app/components/WelcomeAnimation'
 
 export default function Welcome() {
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-start">
+    <div className="flex flex-col items-center justify-start bg-white">
       <Logo className="mt-2" />
       <WelcomeAnimation />
       <h1 className="text-2xl font-bold">Welcome</h1>
