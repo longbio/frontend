@@ -52,11 +52,11 @@ export default function SignIn() {
   const email = watch('email')
 
   return (
-    <div className="flex flex-col items-center justify-start">
-      <div className="w-full max-w-md space-y-20 mt-2">
+    <div className="flex flex-col items-center justify-start w-full">
+      <div className="w-full max-w-md space-y-16 mt-2">
         <div className="text-left text-purple-blaze">
           <Logo />
-          <h2 className="text-sm font-bold text-black mt-12">Let&apos;s Start with ...</h2>
+          <h2 className="text-sm font-bold text-black mt-8">Let&apos;s Start with ...</h2>
           <h3 className="mt-1.5 text-[10px] font-normal">
             don&apos;t have an account?
             <Link href="/auth/signup" className="hover:underline mx-1">
@@ -65,7 +65,7 @@ export default function SignIn() {
           </h3>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-32">
           <div>
             <FormInput
               id="email"
@@ -107,7 +107,7 @@ export default function SignIn() {
           </div>
 
           <Button
-            className="w-full bg-purple-blaze text-sm font-bold mt-56 rounded-4xl"
+            className="w-full bg-purple-blaze text-sm font-bold mt-20 rounded-4xl"
             type="submit"
             disabled={isSubmitting}
           >

@@ -30,27 +30,27 @@ function BirthdayContent() {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full">
       <Progress value={6.25} />
       <Logo className="mt-2" />
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-2 space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-2 space-y-4">
         <h1 className="text-2xl font-bold">
           Welcome to <br /> Long-Bio, {name}!
         </h1>
         <span className="text-sm font-normal">
           We love that you’re here. pick youre birthday date.
         </span>
-        <div className="space-y-8 mt-36">
+        <div className="space-y-6 mt-36">
           <h2 className="text-xl font-bold">Your birthday</h2>
           <DatePicker onDateSelect={(date) => setValue('birthday', date)} />
-          <div className="flex items-center gap-2 mt-28 text-xs">
+          <div className="flex items-center gap-2 mt-5 text-xs">
             <Info className="size-4" />
             <span>You can always update this later</span>
           </div>
         </div>
         <Button
           type="submit"
-          className="w-full bg-purple-blaze text-sm font-bold mt-36 rounded-4xl"
+          className="w-full bg-purple-blaze text-sm font-bold mt-20 rounded-4xl"
         >
           Next
         </Button>

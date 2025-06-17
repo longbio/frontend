@@ -32,15 +32,15 @@ function GenderContent() {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full">
       <Progress value={12.5} />
       <Logo className="mt-2" />
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-2 space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-2 space-y-4">
         <h1 className="text-2xl font-bold">
           Welcome to <br /> Long-Bio, {name}!
         </h1>
         <span className="text-sm font-normal">pick the gender that best describe you. </span>
-        <div className="space-y-8 mt-36">
+        <div className="space-y-6 mt-16">
           <h2 className="text-xl font-bold">Which gender best describe you?</h2>
           <div className="space-y-2.5">
             <label
@@ -102,7 +102,7 @@ function GenderContent() {
         </div>
         <Button
           type="submit"
-          className="w-full bg-purple-blaze text-sm font-bold mt-40 rounded-4xl"
+          className="w-full bg-purple-blaze text-sm font-bold mt-20 rounded-4xl"
         >
           Next
         </Button>
