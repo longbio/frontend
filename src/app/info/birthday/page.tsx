@@ -30,7 +30,7 @@ function BirthdayContent() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex flex-col">
       <Progress value={6.25} />
       <Logo className="mt-2" />
       <form onSubmit={handleSubmit(onSubmit)} className="mt-2 space-y-6">
