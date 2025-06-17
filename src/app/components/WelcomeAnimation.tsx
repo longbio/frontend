@@ -9,6 +9,6 @@ interface WelcomeAnimationProps {
 
 export default function WelcomeAnimation({ className = '' }: WelcomeAnimationProps) {
   return (
-    <Lottie animationData={welcomeAnimation} loop className={clsx('size-96 px-5', className)} />
+    <Lottie animationData={welcomeAnimation} loop className={clsx('size-80 px-5', className)} />
   )
 }
