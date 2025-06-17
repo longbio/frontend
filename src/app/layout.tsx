@@ -45,7 +45,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${gilroy.variable} h-[100dvh]`}>
         <ViewTransitions>
-          <section className="container max-w-[480px] h-full mx-auto px-8 py-14">
+          <section className="container flex flex-col items-center justify-center max-w-[480px] h-full mx-auto p-8">
             {children}
           </section>
         </ViewTransitions>
