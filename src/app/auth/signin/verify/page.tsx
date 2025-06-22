@@ -2,7 +2,7 @@
 import clsx from 'clsx'
 import { z } from 'zod'
 import Link from 'next/link'
-import Logo from '@/components/Logo'
+import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import { CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -67,20 +67,20 @@ function VerifySignInContent() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-start w-full">
-      <div className="w-full max-w-md space-y-6 mt-2">
+    <div className="flex flex-col min-h-screen w-full p-8">
+      <div className="w-full flex flex-col flex-grow">
         <div className="text-left text-purple-blaze">
-          <Logo />
+          <Header />
           <h2 className="text-sm font-bold text-black mt-8">Let&apos;s Start with ...</h2>
-          <h3 className="mt-1.5 text-[10px] font-normal">
+          <h3 className="mt-1.5 text-[10px] text-black font-normal">
             don&apos;t have an account?
-            <Link href="/auth/login" className="hover:underline px-1">
+            <Link href="/auth/login" className="hover:underline text-purple-blaze mx-0.5">
               Sign Up
             </Link>
           </h3>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-7">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-grow mt-12">
           <div className="space-y-6">
             <FormInput
               id="email"
@@ -153,7 +153,7 @@ function VerifySignInContent() {
           </div>
 
           <Button
-            className={clsx('w-full bg-purple-blaze text-sm font-bold mt-20 rounded-4xl', {
+            className={clsx('w-full h-full bg-purple-blaze text-sm font-bold mt-auto rounded-4xl', {
               'disabled:bg-silver-mist disabled:cursor-not-allowed': true,
             })}
             type="submit"
