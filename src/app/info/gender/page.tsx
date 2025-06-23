@@ -40,7 +40,7 @@ function GenderContent() {
           Welcome to <br /> Long-Bio, {name}!
         </h1>
         <span className="text-sm font-normal">pick the gender that best describe you. </span>
-        <div className="space-y-6 mt-24">
+        <div className="space-y-6 mt-18">
           <h2 className="text-xl font-bold">Which gender best describe you?</h2>
           <div className="space-y-2.5">
             <label
