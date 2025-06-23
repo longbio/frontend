@@ -1,9 +1,19 @@
 import { http } from '@/http'
-import type { User, Post } from './types'
+import type { SignupParams, VerifySignupCodeParams } from './types'
 
-export const getUser = (id: string) => http.get<User>(`/users/${id}`)
+export async function sendSignupEmail(params: SignupParams) {
+  const response = await http.post<void>('/v1/auth/verification-code/send', {
+    body: JSON.stringify(params),
+  })
+  return response
+}
 
-export const getPosts = () => http.get<Post[]>('/posts')
-
-export const createPost = (data: Omit<Post, 'id'>) =>
-  http.post<Post>('/posts', { body: JSON.stringify(data) })
+export async function verifySignupCode(params: VerifySignupCodeParams) {
+  const response = await http.post<{ success?: boolean; message?: string }>(
+    '/v1/auth/verification-code/verify',
+    {
+      body: JSON.stringify(params),
+    }
+  )
+  return response
+}
