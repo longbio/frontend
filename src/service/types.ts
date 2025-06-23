@@ -11,3 +11,12 @@ export interface Post {
   content: string
   authorId: string
 }
+
+export interface SignupParams {
+  email: string
+}
+
+export interface VerifySignupCodeParams {
+  email: string
+  code: string
+}

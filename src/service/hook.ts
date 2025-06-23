@@ -1,27 +1,32 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getUser, getPosts, createPost } from './function'
-import { QUERY_KEYS } from './constant'
+import { useRouter } from 'next/navigation'
+import { useMutation } from '@tanstack/react-query'
+import { sendSignupEmail, verifySignupCode } from './function'
+import type { UseMutationOptions } from '@tanstack/react-query'
+import type { SignupParams, VerifySignupCodeParams } from './types'
 
-export function useUser(id: string) {
-  return useQuery({
-    queryKey: [QUERY_KEYS.USER, id],
-    queryFn: () => getUser(id),
-  })
-}
-
-export function usePosts() {
-  return useQuery({
-    queryKey: [QUERY_KEYS.POSTS],
-    queryFn: getPosts,
-  })
-}
-
-export function useCreatePost() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: createPost,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.POSTS] })
+export function useSendOTPEmail(
+  options?: Omit<UseMutationOptions<void, Error, SignupParams>, 'onSuccess'>
+) {
+  const router = useRouter()
+  return useMutation<void, Error, SignupParams>({
+    mutationFn: (params: SignupParams) => sendSignupEmail(params),
+    onSuccess: (_data: void, variables: { email: string }) => {
+      const searchParams = new URLSearchParams({ email: variables.email })
+      router.push(`/auth/signup/verify?${searchParams.toString()}`)
     },
+    ...options,
+  })
+}
+
+export function useVerifySignupCode(
+  options?: UseMutationOptions<
+    { success?: boolean; message?: string },
+    Error,
+    VerifySignupCodeParams
+  >
+) {
+  return useMutation<{ success?: boolean; message?: string }, Error, VerifySignupCodeParams>({
+    mutationFn: (params: VerifySignupCodeParams) => verifySignupCode(params),
+    ...options,
   })
 }
