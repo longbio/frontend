@@ -40,7 +40,7 @@ function BirthdayContent() {
         <span className="text-sm font-normal">
           We love that you’re here. pick youre birthday date.
         </span>
-        <div className="space-y-6 mt-40">
+        <div className="space-y-6 mt-30">
           <h2 className="text-xl font-bold">Your birthday</h2>
           <DatePicker onDateSelect={(date) => setValue('birthday', date)} />
           <div className="flex items-center gap-1 mt-5 text-xs">

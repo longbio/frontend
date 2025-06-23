@@ -42,7 +42,7 @@ function MaritalContent() {
         <span className="text-sm font-normal">
           pick the marital status that best describes you.
         </span>
-        <div className="space-y-6 mt-24">
+        <div className="space-y-6 mt-18">
           <h2 className="text-xl font-bold">Which is your marital status?</h2>
           <div className="space-y-2.5">
             <label
