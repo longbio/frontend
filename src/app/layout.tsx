@@ -44,10 +44,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${gilroy.variable} h-[100dvh]`}>
+      <body className={`${gilroy.variable} max-h-[100dvh]`}>
         <Providers>
           <ViewTransitions>
-            <section className="container max-w-[480px] min-h-full mx-auto">{children}</section>
+            <section className="container max-w-[480px] mx-auto">{children}</section>
           </ViewTransitions>
         </Providers>
       </body>
