@@ -84,7 +84,7 @@ export default function SignIn() {
               </div>
             )}
           </div>
-          <div>
+          <div className="mt-6">
             <FormInput
               id="password"
               type="password"
