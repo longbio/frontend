@@ -1,68 +1,53 @@
 'use client'
 import clsx from 'clsx'
-import { z } from 'zod'
 import Link from 'next/link'
 import Header from '@/components/Header'
-import { useForm } from 'react-hook-form'
-import { CheckCircle2 } from 'lucide-react'
+import { useState, Suspense } from 'react'
 import { Button } from '@/components/ui/button'
-import { AlarmClock, RotateCcw } from 'lucide-react'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useState, useEffect, Suspense } from 'react'
+import { useVerifySignupCode } from '@/service/hook'
 import { FormInput } from '@/app/auth/components/FormInput'
-import { useRouter, useSearchParams } from 'next/navigation'
-
-const verifySchema = z.object({
-  verificationCode: z.string().min(1).length(6),
-})
-
-type VerifyFormData = z.infer<typeof verifySchema>
+import { useSearchParams, useRouter } from 'next/navigation'
+import { VerificationCodeInput } from '@/app/auth/components/VerificationCodeInput'
 
 function VerifySignUpContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const [error, setError] = useState('')
   const name = searchParams.get('name') || ''
   const email = searchParams.get('email') || ''
-  const [timeLeft, setTimeLeft] = useState(94)
-  const [isTimeUp, setIsTimeUp] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
+  const [verificationCode, setVerificationCode] = useState('')
 
-  const {
-    register,
-    handleSubmit,
-    formState: { isValid },
-    watch,
-  } = useForm<VerifyFormData>({
-    resolver: zodResolver(verifySchema),
-    mode: 'onChange',
+  const { mutateAsync, isPending } = useVerifySignupCode({
+    onSuccess: (data) => {
+      if (data && data.success) {
+        setIsSuccess(true)
+        setTimeout(() => {
+          router.push(`/info/birthday?name=${name}`)
+        }, 500)
+      } else {
+        setError('Invalid verification code. Please try again.')
+      }
+    },
+    onError: () => {
+      setError('Verification failed. Please check your code and try again.')
+    },
   })
 
-  const verificationCode = watch('verificationCode')
-  const isVerified = verificationCode === '123456'
-  const resetTimer = () => {
-    setTimeLeft(94)
-    setIsTimeUp(false)
-  }
-
-  useEffect(() => {
-    if (timeLeft > 0) {
-      const timer = setInterval(() => {
-        setTimeLeft((prev) => prev - 1)
-      }, 1000)
-      return () => clearInterval(timer)
-    } else {
-      setIsTimeUp(true)
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!verificationCode.trim()) {
+      setError('Please enter verification code')
+      return
     }
-  }, [timeLeft])
-
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60)
-    const remainingSeconds = seconds % 60
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
-  }
-
-  const onSubmit = () => {
-    if (isVerified) {
-      router.push(`/info/birthday?name=${name}`)
+    setError('')
+    try {
+      await mutateAsync({
+        email,
+        code: verificationCode,
+      })
+    } catch {
+      // Error is handled by the hook's onError callback
     }
   }
 
@@ -80,7 +65,7 @@ function VerifySignUpContent() {
           </h3>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-grow mt-20">
+        <form onSubmit={onSubmit} className="flex flex-col flex-grow mt-20">
           <div className="space-y-6">
             <FormInput
               id="email"
@@ -91,51 +76,14 @@ function VerifySignUpContent() {
               labelClassName="text-light-gray"
               className="text-light-gray disabled:border-light-gray"
             />
-            <div className="relative">
-              <FormInput
-                id="verificationCode"
-                type="text"
-                label="Verification Code"
-                placeholder="Please check your inbox"
-                {...register('verificationCode')}
-                className={clsx({
-                  'border-red-500 focus-visible:ring-red-500/50': isTimeUp && !isVerified,
-                  'border-green-500 focus-visible:ring-green-500/50': isVerified,
-                })}
-              />
-              {!isVerified ? (
-                <button
-                  type="button"
-                  className={clsx('absolute right-8 top-6/9 text-sm flex items-center gap-1', {
-                    'text-red-500': isTimeUp,
-                    'text-light-gray': !isTimeUp,
-                  })}
-                  onClick={resetTimer}
-                  disabled={!isTimeUp}
-                >
-                  {isTimeUp ? (
-                    <>
-                      <h1 className="text-sm font-light">Recent</h1>
-                      <RotateCcw className="size-4" />
-                    </>
-                  ) : (
-                    <>
-                      {formatTime(timeLeft)}
-                      <AlarmClock className="size-4" />
-                    </>
-                  )}
-                </button>
-              ) : (
-                <div className="absolute right-8 top-6/9 text-green-500">
-                  <CheckCircle2 className="size-5" />
-                </div>
-              )}
-              {isTimeUp && !isVerified && (
-                <h2 className="absolute text-red-500 text-xs mt-1">
-                  Please enter Verification code we sent to your email address
-                </h2>
-              )}
-            </div>
+
+            <VerificationCodeInput
+              email={email}
+              value={verificationCode}
+              onChange={setVerificationCode}
+              isSuccess={isSuccess}
+              error={error}
+            />
           </div>
 
           <Button
@@ -143,15 +91,16 @@ function VerifySignUpContent() {
               'disabled:bg-silver-mist disabled:cursor-not-allowed': true,
             })}
             type="submit"
-            disabled={!isValid}
+            disabled={isPending || !verificationCode.trim()}
           >
-            Verify
+            {isPending ? 'Verifying...' : 'Verify'}
           </Button>
         </form>
       </div>
     </div>
   )
 }
+
 export default function VerifySignUp() {
   return (
     <Suspense>

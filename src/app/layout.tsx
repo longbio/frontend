@@ -1,6 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
+import Providers from '../../providers'
 import { ViewTransitions } from 'next-view-transitions'
 
 const gilroy = localFont({
@@ -44,9 +45,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${gilroy.variable} h-[100dvh]`}>
-        <ViewTransitions>
-          <section className="container max-w-[480px] h-full mx-auto">{children}</section>
-        </ViewTransitions>
+        <Providers>
+          <ViewTransitions>
+            <section className="container max-w-[480px] h-full mx-auto">{children}</section>
+          </ViewTransitions>
+        </Providers>
       </body>
     </html>
   )
