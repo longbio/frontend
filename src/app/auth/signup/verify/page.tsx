@@ -1,6 +1,7 @@
 'use client'
+import clsx from 'clsx'
 import Link from 'next/link'
-import Logo from '@/components/Logo'
+import Header from '@/components/Header'
 import { useState, Suspense } from 'react'
 import { Button } from '@/components/ui/button'
 import { useVerifySignupCode } from '@/service/hook'
@@ -51,20 +52,20 @@ function VerifySignUpContent() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-start w-full">
-      <div className="w-full max-w-md space-y-16">
+    <div className="flex flex-col min-h-screen w-full p-8">
+      <div className="w-full flex flex-col flex-grow">
         <div className="text-left text-purple-blaze">
-          <Logo />
+          <Header />
           <h2 className="text-sm font-bold text-black mt-8">Let&apos;s Start with ...</h2>
-          <h3 className="mt-1.5 text-[10px] font-normal">
+          <h3 className="mt-1.5 text-black text-[10px] font-normal">
             already have an account?
-            <Link href="/auth/login" className="hover:underline">
+            <Link href="/auth/signin" className="text-purple-blaze hover:underline mx-0.5">
               Login
             </Link>
           </h3>
         </div>
 
-        <form onSubmit={onSubmit} className="mt-32">
+        <form onSubmit={onSubmit} className="flex flex-col flex-grow mt-20">
           <div className="space-y-6">
             <FormInput
               id="email"
@@ -86,7 +87,9 @@ function VerifySignUpContent() {
           </div>
 
           <Button
-            className="w-full bg-purple-blaze text-sm font-bold mt-32 rounded-4xl disabled:bg-silver-mist disabled:cursor-not-allowed"
+            className={clsx('w-full h-full bg-purple-blaze text-sm font-bold mt-auto rounded-4xl', {
+              'disabled:bg-silver-mist disabled:cursor-not-allowed': true,
+            })}
             type="submit"
             disabled={isPending || !verificationCode.trim()}
           >

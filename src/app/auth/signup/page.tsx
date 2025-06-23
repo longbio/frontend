@@ -2,7 +2,7 @@
 
 import { z } from 'zod'
 import Link from 'next/link'
-import Logo from '@/components/Logo'
+import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { useSendOTPEmail } from '@/service/hook'
@@ -29,20 +29,20 @@ export default function SignUp() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-start w-full">
-      <div className="w-full max-w-md space-y-16">
-        <div className="text-left text-purple-blaze">
-          <Logo />
+    <div className="flex flex-col min-h-screen w-full p-8">
+      <div className="w-full flex flex-col flex-grow">
+        <div>
+          <Header />
           <h2 className="text-sm font-bold text-black mt-8">Let&apos;s Start with ...</h2>
-          <h3 className="mt-1.5 text-[10px] font-normal">
+          <h3 className="mt-1.5 text-black text-[10px] font-normal">
             already have an account?
-            <Link href="/auth/login" className="hover:underline">
+            <Link href="/auth/signin" className="text-purple-blaze hover:underline mx-0.5">
               Login
             </Link>
           </h3>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-32">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-grow mt-20">
           <div className="space-y-6">
             <FormInput
               id="name"
@@ -61,10 +61,9 @@ export default function SignUp() {
               {...register('email')}
             />
           </div>
-
           <Button
-            className="w-full bg-purple-blaze text-sm font-bold mt-32 rounded-4xl"
             type="submit"
+            className="w-full h-full bg-purple-blaze text-sm font-bold mt-auto rounded-4xl"
           >
             Get Verification code
           </Button>
