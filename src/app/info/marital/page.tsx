@@ -32,7 +32,7 @@ function MaritalContent() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen w-full p-8">
+    <div className="flex flex-col h-full w-full p-8">
       <Progress value={18.75} />
       <Header className="mt-4" />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-grow mt-2 space-y-4">
@@ -104,7 +104,7 @@ function MaritalContent() {
         </div>
         <Button
           type="submit"
-          className="w-full h-full bg-purple-blaze text-sm font-bold mt-auto rounded-4xl"
+          className="w-full h-fit bg-purple-blaze text-sm font-bold mt-auto rounded-4xl"
         >
           Next
         </Button>

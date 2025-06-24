@@ -29,7 +29,7 @@ export default function SignUp() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen w-full p-8">
+    <div className="flex flex-col h-full w-full p-8">
       <div className="w-full flex flex-col flex-grow">
         <div>
           <Header />
@@ -63,7 +63,7 @@ export default function SignUp() {
           </div>
           <Button
             type="submit"
-            className="w-full h-full bg-purple-blaze text-sm font-bold mt-auto rounded-4xl"
+            className="w-full h-fit bg-purple-blaze text-sm font-bold mt-auto rounded-4xl"
           >
             Get Verification code
           </Button>

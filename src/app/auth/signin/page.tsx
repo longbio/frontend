@@ -52,7 +52,7 @@ export default function SignIn() {
   const email = watch('email')
 
   return (
-    <div className="flex flex-col min-h-screen w-full p-8">
+    <div className="flex flex-col h-full w-full p-8">
       <div className="w-full flex flex-col flex-grow">
         <div className="text-left text-purple-blaze">
           <Header />
@@ -107,7 +107,7 @@ export default function SignIn() {
           </div>
 
           <Button
-            className="w-full h-full bg-purple-blaze text-sm font-bold mt-auto rounded-4xl"
+            className="w-full h-fit bg-purple-blaze text-sm font-bold mt-auto rounded-4xl"
             type="submit"
             disabled={isSubmitting}
           >

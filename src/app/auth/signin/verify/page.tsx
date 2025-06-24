@@ -67,7 +67,7 @@ function VerifySignInContent() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen w-full p-8">
+    <div className="flex flex-col h-full w-full p-8">
       <div className="w-full flex flex-col flex-grow">
         <div className="text-left text-purple-blaze">
           <Header />
@@ -153,7 +153,7 @@ function VerifySignInContent() {
           </div>
 
           <Button
-            className={clsx('w-full h-full bg-purple-blaze text-sm font-bold mt-auto rounded-4xl', {
+            className={clsx('w-full h-fit bg-purple-blaze text-sm font-bold mt-auto rounded-4xl', {
               'disabled:bg-silver-mist disabled:cursor-not-allowed': true,
             })}
             type="submit"
