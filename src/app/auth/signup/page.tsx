@@ -29,7 +29,7 @@ export default function SignUp() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen w-full p-8">
+    <div className="flex flex-col h-full w-full p-8">
       <div className="w-full flex flex-col flex-grow">
         <div>
           <Header />

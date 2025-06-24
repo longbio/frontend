@@ -3,7 +3,7 @@ import Logo from '@/components/Logo'
 
 export default function Success() {
   return (
-    <div className="flex flex-col min-h-screen w-full p-8">
+    <div className="flex flex-col h-full w-full p-8">
       <Link href="/">
         <Logo className="text-left" />
       </Link>
