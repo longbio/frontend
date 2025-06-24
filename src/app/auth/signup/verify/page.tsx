@@ -65,7 +65,7 @@ function VerifySignUpContent() {
           </h3>
         </div>
 
-        <form onSubmit={onSubmit} className="flex flex-col flex-grow mt-16">
+        <form onSubmit={onSubmit} className="flex flex-col flex-grow mt-20">
           <div className="space-y-6">
             <FormInput
               id="email"

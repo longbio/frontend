@@ -71,10 +71,10 @@ function VerifySignInContent() {
       <div className="w-full flex flex-col flex-grow">
         <div className="text-left text-purple-blaze">
           <Header />
-          <h2 className="text-sm font-bold text-black mt-8">Let&apos;s Start with ...</h2>
+          <h2 className="text-sm font-bold text-black mt-5">Let&apos;s Start with ...</h2>
           <h3 className="mt-1.5 text-[10px] text-black font-normal">
             don&apos;t have an account?
-            <Link href="/auth/login" className="hover:underline text-purple-blaze mx-0.5">
+            <Link href="/auth/signup" className="hover:underline text-purple-blaze mx-0.5">
               Sign Up
             </Link>
           </h3>
