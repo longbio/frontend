@@ -42,12 +42,12 @@ export default function SignUp() {
           </h3>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-grow mt-16">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-grow mt-20">
           <div className="space-y-6">
             <FormInput
               id="name"
               type="text"
-              label="Name"
+              label="Full Name"
               placeholder="Exp: Farzaneh"
               error={!!errors.name}
               {...register('name')}
