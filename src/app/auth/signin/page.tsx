@@ -107,7 +107,7 @@ export default function SignIn() {
           </div>
 
           <Button
-            className="w-full h-full bg-purple-blaze text-sm font-bold mt-auto rounded-4xl"
+            className="w-full h-fit bg-purple-blaze text-sm font-bold mt-auto rounded-4xl"
             type="submit"
             disabled={isSubmitting}
           >

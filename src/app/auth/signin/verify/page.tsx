@@ -153,7 +153,7 @@ function VerifySignInContent() {
           </div>
 
           <Button
-            className={clsx('w-full h-full bg-purple-blaze text-sm font-bold mt-auto rounded-4xl', {
+            className={clsx('w-full h-fit bg-purple-blaze text-sm font-bold mt-auto rounded-4xl', {
               'disabled:bg-silver-mist disabled:cursor-not-allowed': true,
             })}
             type="submit"

@@ -104,7 +104,7 @@ function MaritalContent() {
         </div>
         <Button
           type="submit"
-          className="w-full h-full bg-purple-blaze text-sm font-bold mt-auto rounded-4xl"
+          className="w-full h-fit bg-purple-blaze text-sm font-bold mt-auto rounded-4xl"
         >
           Next
         </Button>
