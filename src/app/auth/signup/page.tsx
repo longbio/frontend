@@ -16,7 +16,7 @@ const signUpSchema = z.object({
 type FormData = z.infer<typeof signUpSchema>
 
 export default function SignUp() {
-  const { mutateAsync } = useSendOTPEmail()
+  const { mutateAsync } = useSendOTPEmail('signup')
   const {
     register,
     handleSubmit,
