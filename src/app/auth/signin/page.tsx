@@ -6,11 +6,12 @@ import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import { useSendOTPEmail } from '@/service/hook'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FormInput } from '@/app/auth/components/FormInput'
 
 const signInSchema = z.object({
-  email: z.string().min(1),
+  email: z.string().email(),
   password: z.string().min(1),
 })
 
@@ -18,6 +19,7 @@ type FormData = z.infer<typeof signInSchema>
 
 export default function SignIn() {
   const router = useRouter()
+  const { mutateAsync } = useSendOTPEmail('signin')
 
   const {
     register,
@@ -34,8 +36,7 @@ export default function SignIn() {
   })
 
   const onSubmit = async () => {
-    // typically validate credentials with backend
-    // For now, we'll just redirect to success
+    // For password-based login
     router.push('/auth/signin/success')
   }
 
@@ -44,9 +45,7 @@ export default function SignIn() {
     const email = watch('email')
     if (!email) return
 
-    const url = new URL('/auth/signin/verify', window.location.origin)
-    url.searchParams.set('email', email)
-    router.push(url.toString())
+    mutateAsync({ email })
   }
 
   const email = watch('email')
