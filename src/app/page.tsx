@@ -4,7 +4,7 @@ import WelcomeAnimation from '@/app/components/WelcomeAnimation'
 
 export default function Welcome() {
   return (
-    <div className="flex flex-col items-center justify-between bg-white p-8 h-screen w-full relative">
+    <div className="flex flex-col items-center justify-between bg-white p-8 h-[100dvh] w-full">
       <div className="flex flex-col items-center">
         <Header />
         <WelcomeAnimation className="mt-5" />
