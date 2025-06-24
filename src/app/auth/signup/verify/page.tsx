@@ -52,7 +52,7 @@ function VerifySignUpContent() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen w-full p-8">
+    <div className="flex flex-col h-full w-full p-8">
       <div className="w-full flex flex-col flex-grow">
         <div className="text-left text-purple-blaze">
           <Header />
