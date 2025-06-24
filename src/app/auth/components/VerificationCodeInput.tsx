@@ -46,6 +46,9 @@ export function VerificationCodeInput({
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
   }
 
+  // Show timeout error when timer expires and no code is entered
+  const showTimeoutError = isTimeUp && !value && !isSuccess
+
   return (
     <div className="relative">
       <FormInput
@@ -56,7 +59,7 @@ export function VerificationCodeInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className={clsx({
-          'border-red-500 focus-visible:ring-red-500/50': error,
+          'border-red-500 focus-visible:ring-red-500/50': error || showTimeoutError,
           'border-green-500 focus-visible:ring-green-500/50': isSuccess,
         })}
       />
@@ -85,6 +88,11 @@ export function VerificationCodeInput({
         </button>
       )}
       {error && <h2 className="absolute text-red-500 text-xs mt-1">{error}</h2>}
+      {showTimeoutError && (
+        <h2 className="absolute text-red-500 text-xs mt-1">
+          Please enter Verification code we sent to your email address
+        </h2>
+      )}
     </div>
   )
 }
