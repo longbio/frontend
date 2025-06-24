@@ -6,25 +6,20 @@ import { useState, Suspense } from 'react'
 import { Button } from '@/components/ui/button'
 import { useVerifySignupCode } from '@/service/hook'
 import { FormInput } from '@/app/auth/components/FormInput'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { VerificationCodeInput } from '@/app/auth/components/VerificationCodeInput'
 
 function VerifySignUpContent() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const [error, setError] = useState('')
-  const name = searchParams.get('name') || ''
   const email = searchParams.get('email') || ''
   const [isSuccess, setIsSuccess] = useState(false)
   const [verificationCode, setVerificationCode] = useState('')
 
-  const { mutateAsync, isPending } = useVerifySignupCode({
+  const { mutateAsync, isPending } = useVerifySignupCode('signup', {
     onSuccess: (data) => {
       if (data && data.success) {
         setIsSuccess(true)
-        setTimeout(() => {
-          router.push(`/info/birthday?name=${name}`)
-        }, 500)
       } else {
         setError('Invalid verification code. Please try again.')
       }
