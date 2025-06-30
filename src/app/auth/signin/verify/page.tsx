@@ -4,46 +4,20 @@ import Link from 'next/link'
 import Header from '@/components/Header'
 import { useState, Suspense } from 'react'
 import { Button } from '@/components/ui/button'
-import { useVerifySignupCode } from '@/service/hook'
-import { FormInput } from '@/app/auth/components/FormInput'
 import { useSearchParams } from 'next/navigation'
+import { useVerifySignupCode } from '@/service/auth/hook'
+import { FormInput } from '@/app/auth/components/FormInput'
 import { VerificationCodeInput } from '@/app/auth/components/VerificationCodeInput'
 
 function VerifySignInContent() {
   const searchParams = useSearchParams()
-  const [error, setError] = useState('')
   const email = searchParams.get('email') || ''
-  const [isSuccess, setIsSuccess] = useState(false)
   const [verificationCode, setVerificationCode] = useState('')
+  const { handleVerify, error, isPending, isSuccess } = useVerifySignupCode('signin')
 
-  const { mutateAsync, isPending } = useVerifySignupCode('signin', {
-    onSuccess: (data) => {
-      if (data && data.success) {
-        setIsSuccess(true)
-      } else {
-        setError('Invalid verification code. Please try again.')
-      }
-    },
-    onError: () => {
-      setError('Verification failed. Please check your code and try again.')
-    },
-  })
-
-  const onSubmit = async (e: React.FormEvent) => {
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!verificationCode.trim()) {
-      setError('Please enter verification code')
-      return
-    }
-    setError('')
-    try {
-      await mutateAsync({
-        email,
-        code: verificationCode,
-      })
-    } catch {
-      // Error is handled by the hook's onError callback
-    }
+    handleVerify(email, verificationCode)
   }
 
   return (
@@ -92,7 +66,7 @@ function VerifySignInContent() {
               value={verificationCode}
               onChange={setVerificationCode}
               isSuccess={isSuccess}
-              error={error}
+              error={error || ''}
             />
           </div>
 

@@ -2,7 +2,7 @@
 import clsx from 'clsx'
 import { FormInput } from './FormInput'
 import { useState, useEffect } from 'react'
-import { sendSignupEmail } from '@/service/function'
+import { sendSignupEmail } from '@/service/auth/function'
 import { CheckCircle2, AlarmClock, RotateCcw } from 'lucide-react'
 
 interface VerificationCodeInputProps {
@@ -87,7 +87,6 @@ export function VerificationCodeInput({
           )}
         </button>
       )}
-      {error && <h2 className="absolute text-red-500 text-xs mt-1">{error}</h2>}
       {showTimeoutError && (
         <h2 className="absolute text-red-500 text-xs mt-1">
           Please enter Verification code we sent to your email address
