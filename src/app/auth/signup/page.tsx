@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
-import { useSendOTPEmail } from '@/service/hook'
+import { useSendOTPEmail } from '@/service/auth/hook'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FormInput } from '@/app/auth/components/FormInput'
 

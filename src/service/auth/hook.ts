@@ -1,5 +1,6 @@
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useMutation } from '@tanstack/react-query'
+import { useState } from 'react'
 import { sendSignupEmail, verifySignupCode } from './function'
 import type { UseMutationOptions } from '@tanstack/react-query'
 import type { SignupParams, VerifySignupCodeParams } from './types'
@@ -22,29 +23,43 @@ export function useSendOTPEmail(
   })
 }
 
-export function useVerifySignupCode(
-  mode: AuthMode = 'signup',
-  options?: UseMutationOptions<
+export function useVerifySignupCode(mode: AuthMode = 'signup') {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const [error, setError] = useState<string | null>(null)
+  const [isSuccess, setIsSuccess] = useState(false)
+  const { mutateAsync, isPending } = useMutation<
     { success?: boolean; message?: string },
     Error,
     VerifySignupCodeParams
-  >
-) {
-  const router = useRouter()
-  return useMutation<{ success?: boolean; message?: string }, Error, VerifySignupCodeParams>({
+  >({
     mutationFn: (params: VerifySignupCodeParams) => verifySignupCode(params),
     onSuccess: (data) => {
       if (data && data.success) {
+        setIsSuccess(true)
+        setError(null)
         if (mode === 'signup') {
-          // For signup, redirect to birthday page
-          const name = new URLSearchParams(window.location.search).get('name') || ''
+          const name = searchParams.get('name') || ''
           router.push(`/info/birthday?name=${name}`)
         } else {
-          // For signin, redirect to success page
           router.push('/auth/signin/success')
         }
+      } else {
+        setError(data?.message || 'Invalid verification code. Please try again.')
       }
     },
-    ...options,
+    onError: (err) => {
+      setError(err.message || 'Verification failed. Please check your code and try again.')
+    },
   })
+  const handleVerify = async (email: string, code: string) => {
+    setError(null)
+    setIsSuccess(false)
+    if (!code.trim()) {
+      setError('Please enter verification code')
+      return
+    }
+    await mutateAsync({ email, code })
+  }
+  return { handleVerify, error, isPending, isSuccess }
 }
