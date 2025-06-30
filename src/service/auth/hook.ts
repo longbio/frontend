@@ -1,4 +1,4 @@
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useMutation } from '@tanstack/react-query'
 import { sendSignupEmail, verifySignupCode } from './function'
 import type { UseMutationOptions } from '@tanstack/react-query'
@@ -31,13 +31,14 @@ export function useVerifySignupCode(
   >
 ) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   return useMutation<{ success?: boolean; message?: string }, Error, VerifySignupCodeParams>({
     mutationFn: (params: VerifySignupCodeParams) => verifySignupCode(params),
     onSuccess: (data) => {
       if (data && data.success) {
         if (mode === 'signup') {
           // For signup, redirect to birthday page
-          const name = new URLSearchParams(window.location.search).get('name') || ''
+          const name = searchParams.get('name') || ''
           router.push(`/info/birthday?name=${name}`)
         } else {
           // For signin, redirect to success page
