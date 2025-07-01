@@ -91,7 +91,7 @@ function MaritalContent() {
       <button
         type="button"
         className="w-full text-sm font-normal mt-2 rounded-4xl"
-        onClick={() => router.push(`/info/educational?name=${name}`)}
+        onClick={() => router.push(`/info/education?name=${name}`)}
       >
         skip
       </button>
