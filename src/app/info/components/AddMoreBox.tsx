@@ -33,7 +33,9 @@ export default function AddMoreBox({
           aria-label="Add custom option"
         >
           <Plus className="size-4" />
-          <span className="text-nowrap">Add University</span>
+          <span className="text-nowrap">
+            {options.length === 0 ? 'Add University' : 'Add More'}
+          </span>
         </button>
         {showInput && (
           <input
