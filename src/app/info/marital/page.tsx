@@ -6,9 +6,9 @@ import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
-import { Checkbox } from '@/components/ui/checkbox'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
+import SelectableOption from '@/app/info/components/SelectableOption'
 
 const maritalSchema = z.object({
   marital: z.string({
@@ -28,7 +28,7 @@ function MaritalContent() {
   const selectedMarital = watch('marital')
 
   const onSubmit = () => {
-    router.push(`/info/educational?name=${name}`)
+    router.push(`/info/education?name=${name}`)
   }
 
   return (
@@ -45,57 +45,36 @@ function MaritalContent() {
         <div className="space-y-6 mt-18">
           <h2 className="text-xl font-bold">Which is your marital status?</h2>
           <div className="space-y-2.5">
-            <label
-              htmlFor="married"
-              className="flex justify-between items-center bg-cloud-mist px-6 py-2.5 rounded-full"
-            >
-              <h2 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Married
-              </h2>
-              <Checkbox
-                id="married"
-                checked={selectedMarital === 'married'}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    setValue('marital', 'married')
-                  }
-                }}
-              />
-            </label>
-            <label
-              htmlFor="single"
-              className="flex justify-between items-center bg-cloud-mist px-6 py-2.5 rounded-full"
-            >
-              <h2 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Single
-              </h2>
-              <Checkbox
-                id="single"
-                checked={selectedMarital === 'single'}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    setValue('marital', 'single')
-                  }
-                }}
-              />
-            </label>
-            <label
-              htmlFor="divorced"
-              className="flex justify-between items-center bg-cloud-mist px-6 py-2.5 rounded-full"
-            >
-              <h2 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Divorced
-              </h2>
-              <Checkbox
-                id="divorced"
-                checked={selectedMarital === 'divorced'}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    setValue('marital', 'divorced')
-                  }
-                }}
-              />
-            </label>
+            <SelectableOption
+              id="married"
+              label="Married"
+              checked={selectedMarital === 'married'}
+              onCheckedChange={(checked) => {
+                if (checked) {
+                  setValue('marital', 'married')
+                }
+              }}
+            />
+            <SelectableOption
+              id="single"
+              label="Single"
+              checked={selectedMarital === 'single'}
+              onCheckedChange={(checked) => {
+                if (checked) {
+                  setValue('marital', 'single')
+                }
+              }}
+            />
+            <SelectableOption
+              id="divorced"
+              label="Divorced"
+              checked={selectedMarital === 'divorced'}
+              onCheckedChange={(checked) => {
+                if (checked) {
+                  setValue('marital', 'divorced')
+                }
+              }}
+            />
             <div className="flex items-center gap-1 text-xs mt-4">
               <Info className="size-4" />
               <span>You can always update this later</span>
