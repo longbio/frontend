@@ -30,7 +30,7 @@ function EducationContent() {
   const [customOptions, setCustomOptions] = useState<string[]>([])
 
   const onSubmit = () => {
-    router.push(`/info/profile?name=${name}`)
+    router.push(`/info/set-profile?name=${name}`)
   }
 
   return (
