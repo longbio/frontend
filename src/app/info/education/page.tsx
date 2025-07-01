@@ -1,6 +1,6 @@
 'use client'
 import { z } from 'zod'
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { Info } from 'lucide-react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
@@ -9,26 +9,28 @@ import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
 import SelectableOption from '@/app/info/components/SelectableOption'
+import AddMoreBox from '@/app/info/components/AddMoreBox'
 
-const maritalSchema = z.object({
-  marital: z.string({
-    required_error: 'Please select your marital',
+const educationSchema = z.object({
+  education: z.string({
+    required_error: 'Please select your education status',
   }),
 })
-type MaritalFormData = z.infer<typeof maritalSchema>
+type EducationFormData = z.infer<typeof educationSchema>
 
-function MaritalContent() {
+function EducationContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
-  const { handleSubmit, setValue, watch } = useForm<MaritalFormData>({
-    resolver: zodResolver(maritalSchema),
+  const { handleSubmit, setValue, watch } = useForm<EducationFormData>({
+    resolver: zodResolver(educationSchema),
     mode: 'onChange',
   })
-  const selectedMarital = watch('marital')
+  const selectedEducation = watch('education')
+  const [customOptions, setCustomOptions] = useState<string[]>([])
 
   const onSubmit = () => {
-    router.push(`/info/education?name=${name}`)
+    router.push(`/info/profile?name=${name}`)
   }
 
   return (
@@ -39,39 +41,38 @@ function MaritalContent() {
         <h1 className="text-2xl font-bold">
           Welcome to <br /> Long-Bio, {name}!
         </h1>
-        <span className="text-sm font-normal">
-          pick the marital status that best describes you.
-        </span>
+        <span className="text-sm font-normal">Pick your education status.</span>
         <div className="space-y-6 mt-18">
-          <h2 className="text-xl font-bold">Which is your marital status?</h2>
+          <h2 className="text-xl font-bold">Which is your educational status?</h2>
           <div className="space-y-2.5">
             <SelectableOption
-              id="married"
-              label="Married"
-              checked={selectedMarital === 'married'}
+              id="student"
+              label="Student"
+              checked={selectedEducation === 'student'}
               onCheckedChange={(checked) => {
                 if (checked) {
-                  setValue('marital', 'married')
+                  setValue('education', 'student')
                 }
               }}
             />
             <SelectableOption
-              id="single"
-              label="Single"
-              checked={selectedMarital === 'single'}
+              id="graduated"
+              label="Graduated"
+              checked={selectedEducation === 'graduated'}
               onCheckedChange={(checked) => {
                 if (checked) {
-                  setValue('marital', 'single')
+                  setValue('education', 'graduated')
                 }
               }}
             />
+            <AddMoreBox options={customOptions} setOptions={setCustomOptions} />
             <SelectableOption
-              id="divorced"
-              label="Divorced"
-              checked={selectedMarital === 'divorced'}
+              id="not-interested"
+              label="Not interested in education"
+              checked={selectedEducation === 'not-interested'}
               onCheckedChange={(checked) => {
                 if (checked) {
-                  setValue('marital', 'divorced')
+                  setValue('education', 'not-interested')
                 }
               }}
             />
@@ -98,10 +99,10 @@ function MaritalContent() {
     </div>
   )
 }
-export default function Marital() {
+export default function Education() {
   return (
     <Suspense>
-      <MaritalContent />
+      <EducationContent />
     </Suspense>
   )
 }
