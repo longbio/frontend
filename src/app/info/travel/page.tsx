@@ -1,10 +1,13 @@
 'use client'
+import { z } from 'zod'
+import { Suspense } from 'react'
 import { Info } from 'lucide-react'
 import Header from '@/components/Header'
-import { Suspense, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Toggle } from '@/components/ui/toggle'
 import { Progress } from '@/components/ui/progress'
+import { useForm, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 const travelStyles = [
@@ -19,60 +22,90 @@ const travelStyles = [
   'Volunteer Travel',
 ]
 
+const travelSchema = z
+  .object({
+    styles: z.array(z.string()).optional(),
+    country: z.string().optional(),
+  })
+  .refine(
+    (data) => (data.styles && data.styles.length > 0) || (data.country && data.country !== ''),
+    {
+      message: 'حداقل یکی از گزینه‌های سفر یا کشور را انتخاب کنید.',
+      path: ['form'],
+    }
+  )
+
 function TravelContent() {
-  const [selectedStyles, setSelectedStyles] = useState<string[]>([])
-  const [selectedCountry, setSelectedCountry] = useState('')
   const router = useRouter()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
 
-  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedCountry(e.target.value)
-  }
+  const {
+    control,
+    handleSubmit,
+    formState: {},
+  } = useForm({
+    resolver: zodResolver(travelSchema),
+    defaultValues: { styles: [], country: '' },
+    mode: 'onChange',
+  })
 
-  const handleNext = (e: React.FormEvent) => {
-    e.preventDefault()
-    // اینجا می‌توانید روت بعدی را ست کنید
+  const onSubmit = () => {
+    router.push(`/info/physical?name=${name}`)
   }
 
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={42.9} />
       <Header className="mt-4" />
-      <form onSubmit={handleNext} className="flex flex-col flex-grow mt-2 space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-grow mt-2 space-y-4">
         <h1 className="text-2xl font-bold">
           Welcome to <br /> Long-Bio, {name}!
         </h1>
         <span className="text-sm font-normal">Pick your travel style.</span>
         <div className="space-y-6 mt-6">
           <h2 className="text-xl font-bold">What&apos;s your travel style?</h2>
-          <div className="flex flex-wrap gap-2">
-            {travelStyles.map((style) => (
-              <Toggle
-                key={style}
-                pressed={selectedStyles.includes(style)}
-                onPressedChange={(pressed) => {
-                  setSelectedStyles((prev) =>
-                    pressed ? [...prev, style] : prev.filter((s) => s !== style)
-                  )
-                }}
-                variant="outline"
-                className="data-[state=on]:border-purple-blaze data-[state=on]:text-purple-blaze border-black px-4 text-sm font-normal transition rounded-full"
-              >
-                {style}
-              </Toggle>
-            ))}
-          </div>
+          <Controller
+            name="styles"
+            control={control}
+            render={({ field }) => (
+              <div className="flex flex-wrap gap-2">
+                {travelStyles.map((style) => (
+                  <Toggle
+                    key={style}
+                    pressed={field.value?.includes(style)}
+                    onPressedChange={(pressed) => {
+                      if (pressed) {
+                        field.onChange([...(field.value || []), style])
+                      } else {
+                        field.onChange((field.value || []).filter((s: string) => s !== style))
+                      }
+                    }}
+                    variant="outline"
+                    className="data-[state=on]:border-purple-blaze data-[state=on]:text-purple-blaze border-black px-4 text-sm font-normal transition rounded-full"
+                  >
+                    {style}
+                  </Toggle>
+                ))}
+              </div>
+            )}
+          />
         </div>
         <div className="space-y-2 mt-4">
           <h2 className="text-xl font-bold">Which countries are on your bucket list?</h2>
-          <select
-            className="w-full border rounded-full px-4 py-2 text-sm mt-3"
-            value={selectedCountry}
-            onChange={handleCountryChange}
-          >
-            <option value="">Choose between countries</option>
-          </select>
+          <Controller
+            name="country"
+            control={control}
+            render={({ field }) => (
+              <select
+                className="w-full border rounded-full px-4 py-2 text-sm mt-3"
+                value={field.value}
+                onChange={field.onChange}
+              >
+                <option value="">Choose between countries</option>
+              </select>
+            )}
+          />
         </div>
         <div className="flex items-center gap-1 text-xs">
           <Info className="size-4" />
@@ -88,7 +121,7 @@ function TravelContent() {
       <button
         type="button"
         className="w-full text-sm font-normal mt-2 rounded-4xl"
-        onClick={() => router.push(`/info/physical-info?name=${name}`)}
+        onClick={() => router.push(`/info/physical?name=${name}`)}
       >
         skip
       </button>
