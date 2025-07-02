@@ -28,7 +28,7 @@ function PhysicalContent() {
     mode: 'onChange',
   })
   const onSubmit = () => {
-    router.push(`/info/pet?name=${name}`)
+    router.push(`/info/country?name=${name}`)
   }
 
   return (
@@ -47,17 +47,17 @@ function PhysicalContent() {
           <LabeledInput
             label="Height (cm)"
             placeholder="Exp: 173"
-            type="text"
+            inputMode="numeric"
+            type="number"
             error={!!errors.height}
-            onlyNumber={true}
             {...register('height')}
           />
           <LabeledInput
             label="weight (kg)"
             placeholder="Exp: 56 Kg"
-            type="text"
+            inputMode="numeric"
+            type="number"
             error={!!errors.weight}
-            onlyNumber={true}
             {...register('weight')}
           />
         </div>
@@ -71,7 +71,7 @@ function PhysicalContent() {
       <button
         type="button"
         className="w-full text-sm font-normal mt-2 rounded-4xl"
-        onClick={() => router.push(`/info/pet?name=${name}`)}
+        onClick={() => router.push(`/info/country?name=${name}`)}
       >
         skip
       </button>
