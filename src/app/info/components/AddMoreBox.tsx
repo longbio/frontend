@@ -25,7 +25,7 @@ export default function AddMoreBox({
 
   return (
     <>
-      <div className="flex items-center h-9 mt-7 gap-2">
+      <div className="flex flex-wrap items-center h-9 mt-7 gap-2 max-w-full">
         <button
           type="button"
           className="flex items-center justify-center text-purple-blaze text-sm hover:text-purple-blaze/70 transition gap-x-1"
@@ -40,7 +40,7 @@ export default function AddMoreBox({
         {showInput && (
           <input
             type="text"
-            className="border rounded-full px-3 py-1 ml-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-blaze"
+            className="min-w-0 flex-1 border rounded-full px-3 py-1 ml-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-blaze"
             placeholder={placeholder}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
