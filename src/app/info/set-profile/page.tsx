@@ -78,7 +78,7 @@ function SetProfileContent() {
         <span className="text-sm font-normal">
           We love that you&apos;re here. pick your profile photo.
         </span>
-        <div className="flex flex-col items-center mt-20">
+        <div className="flex flex-col items-center mt-12">
           <div className="relative flex flex-col">
             <div
               className="w-44 h-44 rounded-full bg-cloud-mist flex items-center justify-center overflow-hidden cursor-pointer"
@@ -128,7 +128,7 @@ function SetProfileContent() {
             />
           </div>
           <span className="text-base text-black font-light mt-4">{name}</span>
-          <div className="flex w-full items-center gap-1 text-xs mt-24">
+          <div className="flex w-full items-center gap-1 text-xs mt-10">
             <Info className="size-4" />
             <span>You can always update this later</span>
           </div>
