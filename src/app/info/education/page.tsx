@@ -42,7 +42,7 @@ function EducationContent() {
           Welcome to <br /> Long-Bio, {name}!
         </h1>
         <span className="text-sm font-normal">Pick your education status.</span>
-        <div className="space-y-6 mt-18">
+        <div className="space-y-6 mt-10">
           <h2 className="text-xl font-bold">Which is your educational status?</h2>
           <div className="space-y-2.5">
             <SelectableOption
