@@ -58,12 +58,12 @@ function TravelContent() {
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={42.9} />
       <Header className="mt-4" />
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-grow mt-2 space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-grow mt-2 space-x-4">
         <h1 className="text-2xl font-bold">
           Welcome to <br /> Long-Bio, {name}!
         </h1>
-        <span className="text-sm font-normal">Pick your travel style.</span>
-        <div className="space-y-6 mt-6">
+        <span className="text-sm font-normal mt-5">Pick your travel style.</span>
+        <div className="space-y-4 mt-4">
           <h2 className="text-xl font-bold">What&apos;s your travel style?</h2>
           <Controller
             name="styles"
@@ -91,7 +91,7 @@ function TravelContent() {
             )}
           />
         </div>
-        <div className="space-y-2 mt-4">
+        <div className="mt-8">
           <h2 className="text-xl font-bold">Which countries are on your bucket list?</h2>
           <Controller
             name="country"
@@ -107,7 +107,7 @@ function TravelContent() {
             )}
           />
         </div>
-        <div className="flex items-center gap-1 text-xs">
+        <div className="flex items-center gap-1 text-xs mt-2">
           <Info className="size-4" />
           <span>You can always update this later</span>
         </div>
