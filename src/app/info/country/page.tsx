@@ -9,13 +9,19 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import LabeledInput from '../components/LabeledInput'
 import { useRouter, useSearchParams } from 'next/navigation'
 
-const physicalSchema = z.object({
-  height: z.string().min(1, 'وارد کردن قد الزامی است').regex(/^\d+$/, 'قد باید فقط عدد باشد'),
-  weight: z.string().min(1, 'وارد کردن وزن الزامی است').regex(/^\d+$/, 'وزن باید فقط عدد باشد'),
+const countrySchema = z.object({
+  birthPlace: z
+    .string()
+    .min(1, 'وارد کردن محل تولد الزامی است')
+    .regex(/^[a-zA-Zآ-ی\s]+$/, 'فقط حروف مجاز است'),
+  livePlace: z
+    .string()
+    .min(1, 'وارد کردن محل زندگی الزامی است')
+    .regex(/^[a-zA-Zآ-ی\s]+$/, 'فقط حروف مجاز است'),
 })
-type PhysicalFormData = z.infer<typeof physicalSchema>
+type CountryFormData = z.infer<typeof countrySchema>
 
-function PhysicalContent() {
+function CountryContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
@@ -23,17 +29,17 @@ function PhysicalContent() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<PhysicalFormData>({
-    resolver: zodResolver(physicalSchema),
+  } = useForm<CountryFormData>({
+    resolver: zodResolver(countrySchema),
     mode: 'onChange',
   })
   const onSubmit = () => {
-    router.push(`/info/country?name=${name}`)
+    router.push(`/info/pet?name=${name}`)
   }
 
   return (
     <div className="flex flex-col h-full w-full p-8">
-      <Progress value={50.04} />
+      <Progress value={57.18} />
       <Header className="mt-4" />
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -42,23 +48,21 @@ function PhysicalContent() {
         <h1 className="text-2xl font-bold text-left w-full">
           Welcome to <br /> Long-Bio, {name}!
         </h1>
-        <span className="text-sm font-normal text-left w-full">Enter your height and weight</span>
+        <span className="text-sm font-normal text-left w-full">Choose your country.</span>
         <div className="flex flex-col space-y-6 w-full mt-16">
           <LabeledInput
-            label="Height (cm)"
-            placeholder="Exp: 173"
-            inputMode="numeric"
-            type="number"
-            error={!!errors.height}
-            {...register('height')}
+            label="The place where you were born"
+            placeholder="Exp: Isfahan"
+            type="text"
+            error={!!errors.birthPlace}
+            {...register('birthPlace')}
           />
           <LabeledInput
-            label="weight (kg)"
-            placeholder="Exp: 56 Kg"
-            inputMode="numeric"
-            type="number"
-            error={!!errors.weight}
-            {...register('weight')}
+            label="The place where you live"
+            placeholder="Exp: Tehran"
+            type="text"
+            error={!!errors.livePlace}
+            {...register('livePlace')}
           />
         </div>
         <Button
@@ -71,17 +75,17 @@ function PhysicalContent() {
       <button
         type="button"
         className="w-full text-sm font-normal mt-2 rounded-4xl"
-        onClick={() => router.push(`/info/country?name=${name}`)}
+        onClick={() => router.push(`/info/pet?name=${name}`)}
       >
         skip
       </button>
     </div>
   )
 }
-export default function Physical() {
+export default function Country() {
   return (
     <Suspense>
-      <PhysicalContent />
+      <CountryContent />
     </Suspense>
   )
 }
