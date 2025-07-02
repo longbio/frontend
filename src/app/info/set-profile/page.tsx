@@ -69,7 +69,7 @@ function SetProfileContent() {
 
   return (
     <div className="flex flex-col h-full w-full p-8">
-      <Progress value={6.25} />
+      <Progress value={35.7} />
       <Header className="mt-4" />
       <form className="flex flex-col flex-grow mt-2 space-y-4" onSubmit={handleSubmit(onSubmit)}>
         <h1 className="text-2xl font-bold">
@@ -78,7 +78,7 @@ function SetProfileContent() {
         <span className="text-sm font-normal">
           We love that you&apos;re here. pick your profile photo.
         </span>
-        <div className="flex flex-col items-center mt-20">
+        <div className="flex flex-col items-center mt-12">
           <div className="relative flex flex-col">
             <div
               className="w-44 h-44 rounded-full bg-cloud-mist flex items-center justify-center overflow-hidden cursor-pointer"
@@ -128,7 +128,7 @@ function SetProfileContent() {
             />
           </div>
           <span className="text-base text-black font-light mt-4">{name}</span>
-          <div className="flex w-full items-center gap-1 text-xs mt-24">
+          <div className="flex w-full items-center gap-1 text-xs mt-10">
             <Info className="size-4" />
             <span>You can always update this later</span>
           </div>
@@ -143,7 +143,7 @@ function SetProfileContent() {
       <button
         type="button"
         className="w-full text-sm font-normal mt-2 rounded-4xl"
-        onClick={() => router.push(`/info/gender?name=${name}`)}
+        onClick={() => router.push(`/info/travel?name=${name}`)}
       >
         skip
       </button>

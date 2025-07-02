@@ -33,7 +33,7 @@ function MaritalContent() {
 
   return (
     <div className="flex flex-col h-full w-full p-8">
-      <Progress value={18.75} />
+      <Progress value={21.42} />
       <Header className="mt-4" />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-grow mt-2 space-y-4">
         <h1 className="text-2xl font-bold">
@@ -91,7 +91,7 @@ function MaritalContent() {
       <button
         type="button"
         className="w-full text-sm font-normal mt-2 rounded-4xl"
-        onClick={() => router.push(`/info/educational?name=${name}`)}
+        onClick={() => router.push(`/info/education?name=${name}`)}
       >
         skip
       </button>

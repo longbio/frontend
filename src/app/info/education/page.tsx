@@ -35,14 +35,14 @@ function EducationContent() {
 
   return (
     <div className="flex flex-col h-full w-full p-8">
-      <Progress value={18.75} />
+      <Progress value={28.56} />
       <Header className="mt-4" />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-grow mt-2 space-y-4">
         <h1 className="text-2xl font-bold">
           Welcome to <br /> Long-Bio, {name}!
         </h1>
         <span className="text-sm font-normal">Pick your education status.</span>
-        <div className="space-y-6 mt-18">
+        <div className="space-y-6 mt-10">
           <h2 className="text-xl font-bold">Which is your educational status?</h2>
           <div className="space-y-2.5">
             <SelectableOption
@@ -92,7 +92,7 @@ function EducationContent() {
       <button
         type="button"
         className="w-full text-sm font-normal mt-2 rounded-4xl"
-        onClick={() => router.push(`/info/educational?name=${name}`)}
+        onClick={() => router.push(`/info/set-profile?name=${name}`)}
       >
         skip
       </button>
