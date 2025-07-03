@@ -12,12 +12,12 @@ import { useRouter, useSearchParams } from 'next/navigation'
 const countrySchema = z.object({
   birthPlace: z
     .string()
-    .min(1, 'وارد کردن محل تولد الزامی است')
-    .regex(/^[a-zA-Zآ-ی\s]+$/, 'فقط حروف مجاز است'),
+    .min(1, 'Entering place of birth is required.')
+    .regex(/^[a-zA-Zآ-ی\s]+$/),
   livePlace: z
     .string()
-    .min(1, 'وارد کردن محل زندگی الزامی است')
-    .regex(/^[a-zA-Zآ-ی\s]+$/, 'فقط حروف مجاز است'),
+    .min(1, 'Entering your place of residence is required.')
+    .regex(/^[a-zA-Zآ-ی\s]+$/),
 })
 type CountryFormData = z.infer<typeof countrySchema>
 

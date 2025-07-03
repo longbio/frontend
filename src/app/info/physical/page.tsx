@@ -10,8 +10,8 @@ import LabeledInput from '../components/LabeledInput'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 const physicalSchema = z.object({
-  height: z.string().min(1, 'وارد کردن قد الزامی است').regex(/^\d+$/, 'قد باید فقط عدد باشد'),
-  weight: z.string().min(1, 'وارد کردن وزن الزامی است').regex(/^\d+$/, 'وزن باید فقط عدد باشد'),
+  height: z.string().min(1, 'Height is required.').regex(/^\d+$/, 'قد باید فقط عدد باشد'),
+  weight: z.string().min(1, 'Weight is required.').regex(/^\d+$/, 'وزن باید فقط عدد باشد'),
 })
 type PhysicalFormData = z.infer<typeof physicalSchema>
 

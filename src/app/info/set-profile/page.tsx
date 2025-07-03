@@ -19,7 +19,7 @@ function SetProfileContent() {
 
   const SetProfileSchema = z.object({
     profile: z.instanceof(File).refine((file) => file && file.type.startsWith('image/'), {
-      message: 'لطفا یک عکس معتبر انتخاب کنید',
+      message: 'Please select a valid photo.',
     }),
   })
   type SetProfileFormType = z.infer<typeof SetProfileSchema>
