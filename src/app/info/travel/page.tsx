@@ -69,7 +69,7 @@ function TravelContent() {
             name="styles"
             control={control}
             render={({ field }) => (
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap justify-stretch gap-1.5 md:gap-2">
                 {travelStyles.map((style) => (
                   <Toggle
                     key={style}
@@ -82,7 +82,7 @@ function TravelContent() {
                       }
                     }}
                     variant="outline"
-                    className="data-[state=on]:border-purple-blaze data-[state=on]:text-purple-blaze border-black px-4 text-sm font-normal transition rounded-full"
+                    className="data-[state=on]:border-purple-blaze data-[state=on]:text-purple-blaze border-black px-2 xl:px-4 text-xs xl:text-sm font-normal transition rounded-full"
                   >
                     {style}
                   </Toggle>
