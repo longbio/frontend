@@ -39,7 +39,7 @@ function SportContent() {
 
   return (
     <div className="flex flex-col h-full w-full p-8">
-      <Progress value={75.5} />
+      <Progress value={71.46} />
       <Header className="mt-4" />
       <form
         onSubmit={handleSubmit(onSubmit)}

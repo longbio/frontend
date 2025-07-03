@@ -67,7 +67,7 @@ function SkillContent() {
 
   return (
     <div className="flex flex-col h-full w-full p-8">
-      <Progress value={82.5} />
+      <Progress value={78.6} />
       <Header className="mt-4" />
       <form
         onSubmit={handleSubmit(onSubmit)}
