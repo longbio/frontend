@@ -118,7 +118,7 @@ function SetProfileContent() {
                   const file = e.target.files?.[0]
                   setValue('profile', file, { shouldValidate: true })
                   if (file) {
-                    handleSubmit(onSubmit)()
+                    handleSubmit(onSubmit)
                   }
                 },
               })}
