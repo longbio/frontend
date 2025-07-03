@@ -1,15 +1,15 @@
 'use client'
 import { z } from 'zod'
-import { Suspense, useState } from 'react'
 import { Info } from 'lucide-react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
+import { Suspense, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
+import AddMoreBox from '@/app/info/education/components/AddMoreBox'
 import SelectableOption from '@/app/info/components/SelectableOption'
-import AddMoreBox from '@/app/info/components/AddMoreBox'
 
 const educationSchema = z.object({
   education: z.string({
