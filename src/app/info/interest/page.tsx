@@ -63,7 +63,7 @@ function InterestContent() {
   }
 
   const onSubmit = () => {
-    router.push(`/info/more-about?name=${name}`)
+    router.push(`/info/more-detail?name=${name}`)
   }
 
   return (
@@ -111,7 +111,7 @@ function InterestContent() {
       <button
         type="button"
         className="w-full text-sm font-normal mt-2 rounded-4xl"
-        onClick={() => router.push(`/info/more-about?name=${name}`)}
+        onClick={() => router.push(`/info/more-detail?name=${name}`)}
       >
         skip
       </button>
