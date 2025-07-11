@@ -52,7 +52,7 @@ export default function SignIn() {
 
   return (
     <div className="flex flex-col h-full w-full p-8">
-      <div className="w-full flex flex-col flex-grow">
+      <div className="w-full flex flex-col h-full gap-y-20">
         <div className="text-left text-purple-blaze">
           <Header />
           <h2 className="text-sm font-bold text-black mt-5">Let&apos;s Start with ...</h2>
@@ -64,8 +64,8 @@ export default function SignIn() {
           </h3>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-grow mt-20">
-          <div>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full">
+          <div className="space-y-6">
             <FormInput
               id="email"
               type="email"
@@ -82,31 +82,30 @@ export default function SignIn() {
                 </Link>
               </div>
             )}
+            <div>
+              <FormInput
+                id="password"
+                type="password"
+                label="Password"
+                placeholder="Exp: 1234567889@@"
+                error={!!errors.password}
+                {...register('password')}
+              />
+              <button
+                type="button"
+                onClick={handleVerificationClick}
+                className={clsx(
+                  'text-purple-blaze text-[10px] font-normal mt-2 block',
+                  email ? 'hover:underline' : 'cursor-not-allowed'
+                )}
+                disabled={!email}
+              >
+                Login with verification code
+              </button>
+            </div>
           </div>
-          <div className="mt-6">
-            <FormInput
-              id="password"
-              type="password"
-              label="Password"
-              placeholder="Exp: 1234567889@@"
-              error={!!errors.password}
-              {...register('password')}
-            />
-            <button
-              type="button"
-              onClick={handleVerificationClick}
-              className={clsx(
-                'text-purple-blaze text-[10px] font-normal mt-2 block',
-                email ? 'hover:underline' : 'cursor-not-allowed'
-              )}
-              disabled={!email}
-            >
-              Login with verification code
-            </button>
-          </div>
-
           <Button
-            className="w-full h-fit bg-purple-blaze text-sm font-bold mt-auto rounded-4xl"
+            className="sticky bottom-0 w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl"
             type="submit"
             disabled={isSubmitting}
           >

@@ -22,7 +22,7 @@ function VerifySignUpContent() {
 
   return (
     <div className="flex flex-col h-full w-full p-8">
-      <div className="w-full flex flex-col flex-grow">
+      <div className="w-full flex flex-col justify-between h-full gap-y-20">
         <div className="text-left text-purple-blaze">
           <Header />
           <h2 className="text-sm font-bold text-black mt-5">Let&apos;s Start with ...</h2>
@@ -34,7 +34,7 @@ function VerifySignUpContent() {
           </h3>
         </div>
 
-        <form onSubmit={onSubmit} className="flex flex-col flex-grow mt-20">
+        <form onSubmit={onSubmit} className="flex flex-col justify-between h-full">
           <div className="space-y-6">
             <FormInput
               id="email"
@@ -56,9 +56,12 @@ function VerifySignUpContent() {
           </div>
 
           <Button
-            className={clsx('w-full h-fit bg-purple-blaze text-sm font-bold mt-auto rounded-4xl', {
-              'disabled:bg-silver-mist disabled:cursor-not-allowed': true,
-            })}
+            className={clsx(
+              'sticky -bottom-0 w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl',
+              {
+                'disabled:bg-silver-mist disabled:cursor-not-allowed': true,
+              }
+            )}
             type="submit"
             disabled={isPending || !verificationCode.trim()}
           >
