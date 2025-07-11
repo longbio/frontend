@@ -67,50 +67,55 @@ function SkillContent() {
 
   return (
     <div className="flex flex-col h-full w-full p-8">
-      <Progress value={78.6} />
+      <Progress value={78.6} className="shrink-0" />
       <Header className="mt-4" />
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col flex-grow justify-start items-center mt-2 space-y-4"
-      >
-        <h1 className="text-2xl font-bold text-left w-full">
-          Welcome to <br /> Long-Bio, {name}!
-        </h1>
-        <span className="text-sm font-normal text-left w-full">
-          Let&apos;s talk about your skills.
-        </span>
-        <span className="text-xl font-bold mt-8 w-full">Choose the skills you are good at:</span>
-        <div className="flex flex-wrap gap-2 justify-stretch w-full">
-          {[...defaultSkills, ...customSkills].map((skill) => (
-            <Toggle
-              key={skill}
-              pressed={selected.includes(skill)}
-              onPressedChange={() => handleSelect(skill)}
-              className="data-[state=on]:border-purple-blaze data-[state=on]:text-purple-blaze border border-black hover:text-black px-2 xl:px-4 text-xs xl:text-sm font-normal transition rounded-full"
-            >
-              {skill}
-            </Toggle>
-          ))}
-          <AddButton
-            options={customSkills}
-            setOptions={setCustomSkills}
-            placeholder="Add your own..."
-          />
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
+        <div>
+          <div className="flex flex-col gap-y-4">
+            <h1 className="text-2xl font-bold text-left w-full">
+              Welcome to <br /> Long-Bio, {name}!
+            </h1>
+            <span className="text-sm font-normal text-left w-full">
+              Let&apos;s talk about your skills.
+            </span>
+          </div>
+          <div className="flex flex-col gap-y-4">
+            <h2 className="text-xl font-bold mt-8 w-full">Choose the skills you are good at:</h2>
+            <div className="flex flex-wrap gap-2 justify-start md:justify-stretch w-full">
+              {[...defaultSkills, ...customSkills].map((skill) => (
+                <Toggle
+                  key={skill}
+                  pressed={selected.includes(skill)}
+                  onPressedChange={() => handleSelect(skill)}
+                  className="data-[state=on]:border-purple-blaze data-[state=on]:text-purple-blaze border border-black hover:text-black px-2 xl:px-4 text-xs xl:text-sm font-normal transition rounded-full"
+                >
+                  {skill}
+                </Toggle>
+              ))}
+              <AddButton
+                options={customSkills}
+                setOptions={setCustomSkills}
+                placeholder="Add your own..."
+              />
+            </div>
+          </div>
         </div>
-        <Button
-          type="submit"
-          className="w-full h-fit bg-purple-blaze text-sm font-bold mt-auto rounded-4xl"
-        >
-          Next
-        </Button>
+        <div className="sticky bottom-0">
+          <Button
+            type="submit"
+            className="w-full h-fit bg-purple-blaze text-sm font-bold mt-auto rounded-4xl"
+          >
+            Next
+          </Button>
+          <button
+            type="button"
+            className="w-full text-sm font-normal p-3.5 mt-2 rounded-4xl"
+            onClick={() => router.push(`/info/interest?name=${name}`)}
+          >
+            skip
+          </button>
+        </div>
       </form>
-      <button
-        type="button"
-        className="w-full text-sm font-normal mt-2 rounded-4xl"
-        onClick={() => router.push(`/info/interest?name=${name}`)}
-      >
-        skip
-      </button>
     </div>
   )
 }

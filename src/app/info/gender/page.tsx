@@ -35,64 +35,70 @@ function GenderContent() {
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={14.28} />
       <Header className="mt-4" />
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-grow mt-2 space-y-4">
-        <h1 className="text-2xl font-bold">
-          Welcome to <br /> Long-Bio, {name}!
-        </h1>
-        <span className="text-sm font-normal">pick the gender that best describe you. </span>
-        <div className="space-y-6 mt-18">
-          <h2 className="text-xl font-bold">Which gender best describe you?</h2>
-          <div className="space-y-2.5">
-            <SelectableOption
-              id="male"
-              label="Man"
-              checked={selectedGender === 'male'}
-              onCheckedChange={(checked) => {
-                if (checked) {
-                  setValue('gender', 'male')
-                }
-              }}
-            />
-            <SelectableOption
-              id="female"
-              label="Woman"
-              checked={selectedGender === 'female'}
-              onCheckedChange={(checked) => {
-                if (checked) {
-                  setValue('gender', 'female')
-                }
-              }}
-            />
-            <SelectableOption
-              id="Nonbinary"
-              label="Nonbinary"
-              checked={selectedGender === 'Nonbinary'}
-              onCheckedChange={(checked) => {
-                if (checked) {
-                  setValue('gender', 'Nonbinary')
-                }
-              }}
-            />
-            <div className="flex items-center gap-1 text-xs mt-4">
-              <Info className="size-4" />
-              <span>You can always update this later</span>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
+        <div>
+          <div className="flex flex-col gap-y-4">
+            <h1 className="text-2xl font-bold">
+              Welcome to <br /> Long-Bio, {name}!
+            </h1>
+            <span className="text-sm font-normal">pick the gender that best describe you. </span>
+          </div>
+          <div className="space-y-6 mt-20">
+            <h2 className="text-xl font-bold">Which gender best describe you?</h2>
+            <div className="SelectableOption space-y-2.5">
+              <SelectableOption
+                id="male"
+                label="Man"
+                checked={selectedGender === 'male'}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setValue('gender', 'male')
+                  }
+                }}
+              />
+              <SelectableOption
+                id="female"
+                label="Woman"
+                checked={selectedGender === 'female'}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setValue('gender', 'female')
+                  }
+                }}
+              />
+              <SelectableOption
+                id="Nonbinary"
+                label="Nonbinary"
+                checked={selectedGender === 'Nonbinary'}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setValue('gender', 'Nonbinary')
+                  }
+                }}
+              />
+              <div className="flex items-center gap-1 text-xs mt-4">
+                <Info className="size-4" />
+                <span>You can always update this later</span>
+              </div>
             </div>
           </div>
         </div>
-        <Button
-          type="submit"
-          className="w-full h-fit bg-purple-blaze text-sm font-bold mt-auto rounded-4xl"
-        >
-          Next
-        </Button>
+        <div className="sticky bottom-0">
+          <Button
+            type="submit"
+            className="w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl"
+          >
+            Next
+          </Button>
+          <button
+            type="button"
+            className="w-full text-sm font-normal p-3.5 mt-2 rounded-4xl"
+            onClick={() => router.push(`/info/marital?name=${name}`)}
+          >
+            skip
+          </button>
+        </div>
       </form>
-      <button
-        type="button"
-        className="w-full text-sm font-normal mt-2 rounded-4xl"
-        onClick={() => router.push(`/info/marital?name=${name}`)}
-      >
-        skip
-      </button>
     </div>
   )
 }

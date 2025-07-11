@@ -21,7 +21,7 @@ export default function Welcome() {
         >
           Sign Up
         </Link>
-        <Link href="/auth/signin" className="text-sm font-normal mt-4">
+        <Link href="/auth/signin" className="text-sm font-normal p-3.5">
           Or Sign In
         </Link>
       </div>

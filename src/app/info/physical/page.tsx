@@ -35,46 +35,51 @@ function PhysicalContent() {
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={50.04} />
       <Header className="mt-4" />
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col flex-grow justify-start items-center mt-2 space-y-4"
-      >
-        <h1 className="text-2xl font-bold text-left w-full">
-          Welcome to <br /> Long-Bio, {name}!
-        </h1>
-        <span className="text-sm font-normal text-left w-full">Enter your height and weight</span>
-        <div className="flex flex-col space-y-6 w-full mt-16">
-          <LabeledInput
-            label="Height (cm)"
-            placeholder="Exp: 173"
-            inputMode="numeric"
-            type="number"
-            error={!!errors.height}
-            {...register('height')}
-          />
-          <LabeledInput
-            label="weight (kg)"
-            placeholder="Exp: 56 Kg"
-            inputMode="numeric"
-            type="number"
-            error={!!errors.weight}
-            {...register('weight')}
-          />
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
+        <div>
+          <div className="flex flex-col gap-y-4">
+            <h1 className="text-2xl font-bold text-left w-full">
+              Welcome to <br /> Long-Bio, {name}!
+            </h1>
+            <span className="text-sm font-normal text-left w-full">
+              Enter your height and weight
+            </span>
+          </div>
+          <div className="flex flex-col space-y-6 w-full mt-16">
+            <LabeledInput
+              label="Height (cm)"
+              placeholder="Exp: 173"
+              inputMode="numeric"
+              type="number"
+              error={!!errors.height}
+              {...register('height')}
+            />
+            <LabeledInput
+              label="weight (kg)"
+              placeholder="Exp: 56 Kg"
+              inputMode="numeric"
+              type="number"
+              error={!!errors.weight}
+              {...register('weight')}
+            />
+          </div>
         </div>
-        <Button
-          type="submit"
-          className="w-full h-fit bg-purple-blaze text-sm font-bold mt-auto rounded-4xl"
-        >
-          Next
-        </Button>
+        <div className="sticky bottom-0">
+          <Button
+            type="submit"
+            className="w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl"
+          >
+            Next
+          </Button>
+          <button
+            type="button"
+            className="w-full text-sm font-normal p-3.5 mt-2 rounded-4xl"
+            onClick={() => router.push(`/info/country?name=${name}`)}
+          >
+            skip
+          </button>
+        </div>
       </form>
-      <button
-        type="button"
-        className="w-full text-sm font-normal mt-2 rounded-4xl"
-        onClick={() => router.push(`/info/country?name=${name}`)}
-      >
-        skip
-      </button>
     </div>
   )
 }
