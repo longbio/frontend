@@ -87,7 +87,7 @@ function PetContent() {
             </div>
           )}
         </div>
-        <div className="sticky bottom-0">
+        <div className="sticky bottom-0 mt-9">
           <Button
             type="submit"
             className="w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl"
