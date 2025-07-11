@@ -33,35 +33,41 @@ function BirthdayContent() {
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={7.14} />
       <Header className="mt-4" />
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-grow mt-2 space-y-4">
-        <h1 className="text-2xl font-bold">
-          Welcome to <br /> Long-Bio, {name}!
-        </h1>
-        <span className="text-sm font-normal">
-          We love that you’re here. pick youre birthday date.
-        </span>
-        <div className="space-y-6 mt-30">
-          <h2 className="text-xl font-bold">Your birthday</h2>
-          <DatePicker onDateSelect={(date) => setValue('birthday', date)} />
-          <div className="flex items-center gap-1 mt-5 text-xs">
-            <Info className="size-4" />
-            <span>You can always update this later</span>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
+        <div>
+          <div className="flex flex-col gap-y-4">
+            <h1 className="text-2xl font-bold">
+              Welcome to <br /> Long-Bio, {name}!
+            </h1>
+            <span className="text-sm font-normal">
+              We love that you’re here. pick youre birthday date.
+            </span>
+          </div>
+          <div className="space-y-6 mt-30">
+            <h2 className="text-xl font-bold">Your birthday</h2>
+            <DatePicker onDateSelect={(date) => setValue('birthday', date)} />
+            <div className="flex items-center gap-1 mt-5 text-xs">
+              <Info className="size-4" />
+              <span>You can always update this later</span>
+            </div>
           </div>
         </div>
-        <Button
-          type="submit"
-          className="w-full h-fit bg-purple-blaze text-sm font-bold mt-auto rounded-4xl"
-        >
-          Next
-        </Button>
+        <div className="sticky bottom-0">
+          <Button
+            type="submit"
+            className="w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl"
+          >
+            Next
+          </Button>
+          <button
+            type="button"
+            className="w-full text-sm font-normal p-3.5 mt-2 rounded-4xl"
+            onClick={() => router.push(`/info/gender?name=${name}`)}
+          >
+            skip
+          </button>
+        </div>
       </form>
-      <button
-        type="button"
-        className="w-full text-sm font-normal mt-2 rounded-4xl"
-        onClick={() => router.push(`/info/gender?name=${name}`)}
-      >
-        skip
-      </button>
     </div>
   )
 }

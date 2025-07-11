@@ -39,64 +39,67 @@ function SportContent() {
 
   return (
     <div className="flex flex-col h-full w-full p-8">
-      <Progress value={71.46} />
+      <Progress value={71.46} className="shrink-0" />
       <Header className="mt-4" />
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col flex-grow justify-start items-center mt-2 space-y-4"
-      >
-        <h1 className="text-2xl font-bold text-left w-full">
-          Welcome to <br /> Long-Bio, {name}!
-        </h1>
-        <span className="text-sm font-normal text-left w-full">Are you into sport?</span>
-        <div className="flex flex-col space-y-6 w-full mt-10">
-          <span className="text-xl font-bold">do you exercise</span>
-          <SelectableOption
-            id="exerciseYes"
-            label="Yes I love it!"
-            checked={exercise === 'yes'}
-            onCheckedChange={() => setValue('exercise', 'yes', { shouldValidate: true })}
-            className="mb-2"
-          />
-          <SelectableOption
-            id="exerciseNo"
-            label="No I don't."
-            checked={exercise === 'no'}
-            onCheckedChange={() => setValue('exercise', 'no', { shouldValidate: true })}
-            className="mb-2"
-          />
-          <SelectableOption
-            id="exerciseSometimes"
-            label="Sometimes"
-            checked={exercise === 'sometimes'}
-            onCheckedChange={() => setValue('exercise', 'sometimes', { shouldValidate: true })}
-          />
-        </div>
-        {exercise === 'yes' && (
-          <div className="flex flex-col space-y-6 w-full mt-6 transition-all duration-500 ease-in-out opacity-100 translate-y-0">
-            <LabeledInput
-              label="what sport do you do?"
-              placeholder="Exp: Tennis"
-              type="text"
-              error={!!errors.sportName}
-              {...register('sportName')}
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
+        <div>
+          <div className="flex flex-col gap-y-4">
+            <h1 className="text-2xl font-bold text-left w-full">
+              Welcome to <br /> Long-Bio, {name}!
+            </h1>
+            <span className="text-sm font-normal text-left w-full">Are you into sport?</span>
+          </div>
+          <div className="flex flex-col space-y-6 w-full mt-10">
+            <span className="text-xl font-bold">do you exercise</span>
+            <SelectableOption
+              id="exerciseYes"
+              label="Yes I love it!"
+              checked={exercise === 'yes'}
+              onCheckedChange={() => setValue('exercise', 'yes', { shouldValidate: true })}
+              className="mb-2"
+            />
+            <SelectableOption
+              id="exerciseNo"
+              label="No I don't."
+              checked={exercise === 'no'}
+              onCheckedChange={() => setValue('exercise', 'no', { shouldValidate: true })}
+              className="mb-2"
+            />
+            <SelectableOption
+              id="exerciseSometimes"
+              label="Sometimes"
+              checked={exercise === 'sometimes'}
+              onCheckedChange={() => setValue('exercise', 'sometimes', { shouldValidate: true })}
             />
           </div>
-        )}
-        <Button
-          type="submit"
-          className="w-full h-fit bg-purple-blaze text-sm font-bold mt-auto rounded-4xl"
-        >
-          Next
-        </Button>
+          {exercise === 'yes' && (
+            <div className="flex flex-col space-y-6 w-full mt-6 transition-all duration-500 ease-in-out opacity-100 translate-y-0">
+              <LabeledInput
+                label="what sport do you do?"
+                placeholder="Exp: Tennis"
+                type="text"
+                error={!!errors.sportName}
+                {...register('sportName')}
+              />
+            </div>
+          )}
+        </div>
+        <div className="sticky bottom-0">
+          <Button
+            type="submit"
+            className="w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl"
+          >
+            Next
+          </Button>
+          <button
+            type="button"
+            className="w-full text-sm font-normal p-3.5 mt-2 rounded-4xl"
+            onClick={() => router.push(`/info/skill?name=${name}`)}
+          >
+            skip
+          </button>
+        </div>
       </form>
-      <button
-        type="button"
-        className="w-full text-sm font-normal mt-2 rounded-4xl"
-        onClick={() => router.push(`/info/skill?name=${name}`)}
-      >
-        skip
-      </button>
     </div>
   )
 }

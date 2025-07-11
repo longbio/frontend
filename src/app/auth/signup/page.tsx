@@ -30,7 +30,7 @@ export default function SignUp() {
 
   return (
     <div className="flex flex-col h-full w-full p-8">
-      <div className="w-full flex flex-col flex-grow">
+      <div className="w-full flex flex-col h-full gap-y-20">
         <div>
           <Header />
           <h2 className="text-sm font-bold text-black mt-5">Let&apos;s Start with ...</h2>
@@ -41,8 +41,7 @@ export default function SignUp() {
             </Link>
           </h3>
         </div>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-grow mt-20">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full">
           <div className="space-y-6">
             <FormInput
               id="name"
@@ -63,7 +62,7 @@ export default function SignUp() {
           </div>
           <Button
             type="submit"
-            className="w-full h-fit bg-purple-blaze text-sm font-bold mt-auto rounded-4xl"
+            className="sticky bottom-0 w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl"
           >
             Get Verification code
           </Button>

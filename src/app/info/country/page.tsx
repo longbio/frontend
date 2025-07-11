@@ -41,44 +41,47 @@ function CountryContent() {
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={57.18} />
       <Header className="mt-4" />
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col flex-grow justify-start items-center mt-2 space-y-4"
-      >
-        <h1 className="text-2xl font-bold text-left w-full">
-          Welcome to <br /> Long-Bio, {name}!
-        </h1>
-        <span className="text-sm font-normal text-left w-full">Choose your country.</span>
-        <div className="flex flex-col space-y-6 w-full mt-16">
-          <LabeledInput
-            label="The place where you were born"
-            placeholder="Exp: Isfahan"
-            type="text"
-            error={!!errors.birthPlace}
-            {...register('birthPlace')}
-          />
-          <LabeledInput
-            label="The place where you live"
-            placeholder="Exp: Tehran"
-            type="text"
-            error={!!errors.livePlace}
-            {...register('livePlace')}
-          />
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
+        <div>
+          <div className="flex flex-col gap-y-4">
+            <h1 className="text-2xl font-bold text-left w-full">
+              Welcome to <br /> Long-Bio, {name}!
+            </h1>
+            <span className="text-sm font-normal text-left w-full">Choose your country.</span>
+          </div>
+          <div className="flex flex-col space-y-6 w-full mt-16">
+            <LabeledInput
+              label="The place where you were born"
+              placeholder="Exp: Isfahan"
+              type="text"
+              error={!!errors.birthPlace}
+              {...register('birthPlace')}
+            />
+            <LabeledInput
+              label="The place where you live"
+              placeholder="Exp: Tehran"
+              type="text"
+              error={!!errors.livePlace}
+              {...register('livePlace')}
+            />
+          </div>
         </div>
-        <Button
-          type="submit"
-          className="w-full h-fit bg-purple-blaze text-sm font-bold mt-auto rounded-4xl"
-        >
-          Next
-        </Button>
+        <div className="sticky bottom-0">
+          <Button
+            type="submit"
+            className="w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl"
+          >
+            Next
+          </Button>
+          <button
+            type="button"
+            className="w-full text-sm font-normal p-3.5 mt-2 rounded-4xl"
+            onClick={() => router.push(`/info/pet?name=${name}`)}
+          >
+            skip
+          </button>
+        </div>
       </form>
-      <button
-        type="button"
-        className="w-full text-sm font-normal mt-2 rounded-4xl"
-        onClick={() => router.push(`/info/pet?name=${name}`)}
-      >
-        skip
-      </button>
     </div>
   )
 }
