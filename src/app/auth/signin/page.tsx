@@ -66,22 +66,24 @@ export default function SignIn() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full">
           <div className="space-y-6">
-            <FormInput
-              id="email"
-              type="email"
-              label="Email"
-              placeholder="Exp: Fari@gmail.com"
-              error={!!errors.email}
-              {...register('email')}
-            />
-            {errors.email && (
-              <div className="absolute text-red-500 text-xs font-light mt-1">
-                email or password is not exist
-                <Link href="/auth/signup" className="text-purple-blaze px-1 hover:underline">
-                  Sign Up
-                </Link>
-              </div>
-            )}
+            <div>
+              <FormInput
+                id="email"
+                type="email"
+                label="Email"
+                placeholder="Exp: Fari@gmail.com"
+                error={!!errors.email}
+                {...register('email')}
+              />
+              {errors.email && (
+                <div className="absolute text-red-500 text-xs font-light mt-1">
+                  email or password is not exist
+                  <Link href="/auth/signup" className="text-purple-blaze px-1 hover:underline">
+                    Sign Up
+                  </Link>
+                </div>
+              )}
+            </div>
             <div>
               <FormInput
                 id="password"
