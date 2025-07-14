@@ -9,6 +9,13 @@ import { Progress } from '@/components/ui/progress'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select'
 
 const travelStyles = [
   'Luxury Travel',
@@ -100,13 +107,17 @@ function TravelContent() {
               name="country"
               control={control}
               render={({ field }) => (
-                <select
-                  className="w-full border rounded-full px-4 py-2 text-sm mt-3"
-                  value={field.value}
-                  onChange={field.onChange}
-                >
-                  <option value="">Choose between countries</option>
-                </select>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger className="w-full border rounded-full px-4 py-2 text-sm mt-3">
+                    <SelectValue placeholder="Choose between countries" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="iran">Iran</SelectItem>
+                    <SelectItem value="turkey">Turkey</SelectItem>
+                    <SelectItem value="france">France</SelectItem>
+                    <SelectItem value="japan">Japan</SelectItem>
+                  </SelectContent>
+                </Select>
               )}
             />
             <div className="flex items-center gap-1 text-xs mt-2">
