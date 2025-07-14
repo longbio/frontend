@@ -3,11 +3,21 @@ import { useRef, useState } from 'react'
 
 interface ImageUploaderProps {
   className?: string
+  image?: string | null
+  setImage?: (img: string | null) => void
+  isProfile?: boolean
 }
 
-export default function ImageUploader({ className }: ImageUploaderProps) {
+export default function ImageUploader({
+  className,
+  image: imageProp,
+  setImage: setImageProp,
+  isProfile = false,
+}: ImageUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null)
-  const [image, setImage] = useState<string | null>(null)
+  const [internalImage, setInternalImage] = useState<string | null>(null)
+  const image = imageProp !== undefined ? imageProp : internalImage
+  const setImage = setImageProp !== undefined ? setImageProp : setInternalImage
 
   const handleDivClick = () => {
     inputRef.current?.click()
@@ -24,8 +34,15 @@ export default function ImageUploader({ className }: ImageUploaderProps) {
     }
   }
 
+  const displayImage =
+    image || (isProfile ? '/assets/images/logo.png' : '/assets/images/cover-image.png')
+
   return (
-    <div className={`w-full ${className || ''}`} onClick={handleDivClick}>
+    <div
+      className={`relative w-full ${className || ''} ${isProfile ? 'group' : ''}`}
+      style={{ cursor: 'pointer' }}
+      onClick={handleDivClick}
+    >
       <input
         ref={inputRef}
         type="file"
@@ -33,7 +50,22 @@ export default function ImageUploader({ className }: ImageUploaderProps) {
         className="hidden"
         onChange={handleFileChange}
       />
-      {image && <Image src={image} alt="Uploaded" fill className="object-cover rounded-b-[50px]" />}
+      <Image
+        src={displayImage}
+        alt="Uploaded"
+        fill
+        className={`object-cover ${isProfile ? 'rounded-full' : 'rounded-b-[50px]'}`}
+      />
+      {isProfile && (
+        <button
+          type="button"
+          className="absolute right-2 bottom-2 bg-white rounded-full p-1 shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center z-10"
+          onClick={(e) => {
+            e.stopPropagation()
+            handleDivClick()
+          }}
+        ></button>
+      )}
     </div>
   )
 }
