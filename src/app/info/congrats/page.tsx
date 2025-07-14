@@ -24,7 +24,7 @@ export default function CongratsPage() {
       </div>
       <Button
         className="sticky bottom-0 w-full h-fit bg-purple-blaze rounded-full"
-        onClick={() => router.push('/')}
+        onClick={() => router.push('/bio')}
       >
         Start free!
       </Button>
