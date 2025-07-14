@@ -6,6 +6,7 @@
   --color-light-gray: #cccccc;
   --color-silver-mist: #d9d9d9;
   --color-cloud-mist: #f8f8f8;
+  --color-silva-mist: #f3f3f3cc;
 }
 
 /* #for shdcn confige */
@@ -136,4 +137,8 @@ input[type='number']::-webkit-outer-spin-button {
 input[type='number'] {
   -moz-appearance: textfield;
   appearance: textfield;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
