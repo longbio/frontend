@@ -1,8 +1,8 @@
 'use client'
-import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import Congrats from './components/congrats'
 import Header from '@/components/Header'
+import { useRouter } from 'next/navigation'
+import Congrats from './components/congrats'
+import { Button } from '@/components/ui/button'
 
 export default function CongratsPage() {
   const router = useRouter()
