@@ -1,14 +1,14 @@
 'use client'
+import { z } from 'zod'
 import Image from 'next/image'
 import Header from '@/components/Header'
+import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
-import { Suspense, useRef, useState, useEffect } from 'react'
 import { Progress } from '@/components/ui/progress'
 import { Info, Plus, Trash, User } from 'lucide-react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense, useRef, useState, useEffect } from 'react'
 
 function SetProfileContent() {
   const router = useRouter()

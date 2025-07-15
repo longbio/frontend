@@ -1,6 +1,6 @@
+import clsx from 'clsx'
 import React from 'react'
 import { Input } from '@/components/ui/input'
-import clsx from 'clsx'
 
 interface LabeledInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string

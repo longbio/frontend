@@ -1,14 +1,14 @@
 'use client'
-import Header from '@/components/Header'
+import { z } from 'zod'
 import { Suspense } from 'react'
+import Header from '@/components/Header'
+import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import LabeledInput from '../components/LabeledInput'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
 import SelectableOption from '../components/SelectableOption'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
 
 const sportSchema = z.object({
   exercise: z.enum(['yes', 'no', 'sometimes'], { required_error: 'انتخاب الزامی است' }),
