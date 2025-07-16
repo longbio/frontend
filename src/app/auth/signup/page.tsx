@@ -1,5 +1,6 @@
 'use client'
 
+import clsx from 'clsx'
 import { z } from 'zod'
 import Link from 'next/link'
 import Header from '@/components/Header'
@@ -8,7 +9,6 @@ import { Button } from '@/components/ui/button'
 import { useSendOTPEmail } from '@/service/auth/hook'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FormInput } from '@/app/auth/components/FormInput'
-import clsx from 'clsx'
 
 const signUpSchema = z.object({
   name: z.string().min(1),
@@ -17,7 +17,7 @@ const signUpSchema = z.object({
 type FormData = z.infer<typeof signUpSchema>
 
 export default function SignUp() {
-  const { mutateAsync } = useSendOTPEmail('signup')
+  const { mutateAsync } = useSendOTPEmail()
   const {
     watch,
     register,
