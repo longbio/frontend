@@ -1,14 +1,14 @@
 'use client'
 import { z } from 'zod'
-import { Suspense } from 'react'
 import { Info } from 'lucide-react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
+import { Suspense, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { DatePicker } from '@/app/info/birthday/components/DatePicker'
+import DatePicker, { PickerOptions } from '@/app/info/components/DataPicker'
 
 const birthdaySchema = z.object({
   birthday: z.date({
@@ -17,17 +17,35 @@ const birthdaySchema = z.object({
 })
 type BirthdayFormData = z.infer<typeof birthdaySchema>
 
+const range = (start: number, end: number) =>
+  Array.from({ length: end - start + 1 }, (_, i) => (start + i).toString())
+const years = range(1980, new Date().getFullYear())
+const months = range(1, 12)
+const days = range(1, 31)
+const pickers: PickerOptions = {
+  day: days,
+  month: months,
+  year: years,
+}
+
 function BirthdayContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
-  const { handleSubmit, setValue } = useForm<BirthdayFormData>({
+  const { handleSubmit } = useForm<BirthdayFormData>({
     resolver: zodResolver(birthdaySchema),
     mode: 'onChange',
   })
   const onSubmit = () => {
     router.push(`/info/gender?name=${name}`)
   }
+
+  const [selected, setSelected] = useState<Record<string, string>>({
+    year: 'Exp: 1997',
+    month: 'Exp: 12',
+    day: 'Exp: 30',
+  })
+  const handleSetSelected = (val: Record<string, string>) => setSelected(val)
 
   return (
     <div className="flex flex-col h-full w-full p-8">
@@ -45,7 +63,17 @@ function BirthdayContent() {
           </div>
           <div className="space-y-6 mt-30">
             <h2 className="text-xl font-bold">Your birthday</h2>
-            <DatePicker onDateSelect={(date) => setValue('birthday', date)} />
+            <DatePicker
+              pickers={pickers}
+              selected={selected}
+              setSelected={handleSetSelected}
+              triggerClassNames={{
+                year: 'min-w-[142px] md:min-w-[180px] h-fit border-none shadow-none bg-cloud-mist rounded-full',
+                month:
+                  'min-w-[85px] md:min-w-[105px] h-fit border-none shadow-none bg-cloud-mist rounded-full',
+                day: 'min-w-[85px] md:min-w-[105px] h-fit border-none shadow-none bg-cloud-mist rounded-full',
+              }}
+            />
             <div className="flex items-center gap-1 mt-5 text-xs">
               <Info className="size-4" />
               <span>You can always update this later</span>
