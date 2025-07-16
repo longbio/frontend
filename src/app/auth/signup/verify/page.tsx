@@ -14,7 +14,7 @@ function VerifySignUpContent() {
   const searchParams = useSearchParams()
   const email = searchParams.get('email') || ''
   const [verificationCode, setVerificationCode] = useState('')
-  const { handleVerify, error, isPending, isSuccess } = useVerifySignupCode('signup')
+  const { handleVerify, error, isPending, isSuccess } = useVerifySignupCode()
   const router = useRouter()
 
   const onSubmit = (e: React.FormEvent) => {
