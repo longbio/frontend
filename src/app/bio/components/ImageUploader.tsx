@@ -35,7 +35,7 @@ export default function ImageUploader({
   }
 
   const displayImage =
-    image || (isProfile ? '/assets/images/logo.png' : '/assets/images/cover-image.png')
+    image || (isProfile ? '/assets/images/logo.svg' : '/assets/images/cover-image.png')
 
   return (
     <div

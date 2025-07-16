@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import logo from '../../public/assets/images/logo.png'
+import logo from '../../public/assets/images/logo.svg'
 
 interface LogoProps {
   className?: string
