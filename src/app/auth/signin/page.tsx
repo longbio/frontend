@@ -1,12 +1,10 @@
 'use client'
-import clsx from 'clsx'
 import { z } from 'zod'
 import Link from 'next/link'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { useSendOTPEmail } from '@/service/auth/hook'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FormInput } from '@/app/auth/components/FormInput'
 
@@ -19,13 +17,11 @@ type FormData = z.infer<typeof signInSchema>
 
 export default function SignIn() {
   const router = useRouter()
-  const { mutateAsync } = useSendOTPEmail('signin')
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    watch,
   } = useForm<FormData>({
     resolver: zodResolver(signInSchema),
     mode: 'onChange',
@@ -36,19 +32,8 @@ export default function SignIn() {
   })
 
   const onSubmit = async () => {
-    // For password-based login
     router.push('/auth/signin/success')
   }
-
-  const handleVerificationClick = (e: React.MouseEvent) => {
-    e.preventDefault()
-    const email = watch('email')
-    if (!email) return
-
-    mutateAsync({ email })
-  }
-
-  const email = watch('email')
 
   return (
     <div className="flex flex-col h-full w-full p-8">
@@ -93,17 +78,6 @@ export default function SignIn() {
                 error={!!errors.password}
                 {...register('password')}
               />
-              <button
-                type="button"
-                onClick={handleVerificationClick}
-                className={clsx(
-                  'text-purple-blaze text-[10px] font-normal mt-2 block',
-                  email ? 'hover:underline' : 'cursor-not-allowed'
-                )}
-                disabled={!email}
-              >
-                Login with verification code
-              </button>
             </div>
           </div>
           <Button
