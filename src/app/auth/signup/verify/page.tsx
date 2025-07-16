@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import Link from 'next/link'
 import Header from '@/components/Header'
 import { useState, Suspense } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { useSearchParams } from 'next/navigation'
 import { useVerifySignupCode } from '@/service/auth/hook'
@@ -14,6 +15,7 @@ function VerifySignUpContent() {
   const email = searchParams.get('email') || ''
   const [verificationCode, setVerificationCode] = useState('')
   const { handleVerify, error, isPending, isSuccess } = useVerifySignupCode('signup')
+  const router = useRouter()
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -55,18 +57,24 @@ function VerifySignUpContent() {
             />
           </div>
 
-          <Button
-            className={clsx(
-              'sticky -bottom-0 w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl',
-              {
+          <div className="sticky bottom-0 text-center mt-2">
+            <Button
+              className={clsx('w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl', {
                 'disabled:bg-silver-mist disabled:cursor-not-allowed': true,
-              }
-            )}
-            type="submit"
-            disabled={isPending || !verificationCode.trim()}
-          >
-            {isPending ? 'Verifying...' : 'Verify'}
-          </Button>
+              })}
+              type="submit"
+              disabled={isPending || !verificationCode.trim()}
+            >
+              {isPending ? 'Verifying...' : 'Verify'}
+            </Button>
+            <button
+              type="button"
+              onClick={() => router.push('/')}
+              className="w-full text-sm text-black hover:text-purple-blaze py-3.5"
+            >
+              Back
+            </button>
+          </div>
         </form>
       </div>
     </div>
