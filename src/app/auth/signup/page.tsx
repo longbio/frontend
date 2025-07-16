@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { useSendOTPEmail } from '@/service/auth/hook'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FormInput } from '@/app/auth/components/FormInput'
+import clsx from 'clsx'
 
 const signUpSchema = z.object({
   name: z.string().min(1),
@@ -18,12 +19,14 @@ type FormData = z.infer<typeof signUpSchema>
 export default function SignUp() {
   const { mutateAsync } = useSendOTPEmail('signup')
   const {
+    watch,
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(signUpSchema),
   })
+  const name = watch('name')
   const onSubmit = async (data: FormData) => {
     await mutateAsync({ email: data.email })
   }
@@ -33,7 +36,11 @@ export default function SignUp() {
       <div className="w-full flex flex-col h-full gap-y-20">
         <div>
           <Header />
-          <h2 className="text-sm font-bold text-black mt-5">Let&apos;s Start with ...</h2>
+          <div className="flex items-center text-sm font-bold text-black mt-5">
+            hi
+            <h1 className={clsx(name && 'ml-1.5', 'text-gray-500')}>{name}</h1>
+            <h4 className="px-0.5">!</h4>
+          </div>
           <h3 className="mt-1.5 text-black text-[10px] font-normal">
             already have an account?
             <Link href="/auth/signin" className="text-purple-blaze hover:underline mx-0.5">
