@@ -18,9 +18,9 @@ interface DatePickerProps {
   selected: Record<string, string>
   setSelected: (val: Record<string, string>) => void
   labels?: Record<string, string>
-  confirmText?: (picker: string, value: string) => React.ReactNode
   className?: string
   triggerClassNames?: Record<string, string>
+  confirmText?: (picker: string, value: string) => React.ReactNode
 }
 
 export default function DatePicker({
