@@ -179,7 +179,9 @@ export default function DatePicker({
                 </SheetTrigger>
                 <SheetContent side="bottom" className="w-full h-[36vh] pt-10">
                   <div className="flex flex-col h-full justify-between">
-                    {PickerContent(picker)}
+                    <div className="flex-1 flex flex-col justify-center">
+                      {PickerContent(picker)}
+                    </div>
                     <div className="mx-4 my-4">
                       <Button
                         onClick={() => setActivePicker(null)}
