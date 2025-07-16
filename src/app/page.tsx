@@ -7,7 +7,7 @@ export default function Welcome() {
     <div className="flex flex-col items-center justify-between bg-white p-8 h-full w-full">
       <div className="flex flex-col items-center">
         <Header />
-        <WelcomeAnimation className="mt-5" />
+        <WelcomeAnimation className="mt-14" />
         <h1 className="text-2xl font-bold mt-5">Welcome</h1>
         <p className="text-sm font-normal text-center mt-4">
           A brief, summary of your personal and professional background, crafted from the details
