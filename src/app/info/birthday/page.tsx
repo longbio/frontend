@@ -23,9 +23,26 @@ const years = range(1980, new Date().getFullYear())
 const months = range(1, 12)
 const days = range(1, 31)
 const pickers: PickerOptions = {
-  day: days,
-  month: months,
   year: years,
+  month: months,
+  day: days,
+}
+
+function calculateAge(year: string, month: string, day: string): number | null {
+  if (!year || !month || !day) return null
+  const clean = (val: string) => val.replace(/^Exp:\s*/, '')
+  const y = Number(clean(year))
+  const m = Number(clean(month))
+  const d = Number(clean(day))
+  if (isNaN(y) || isNaN(m) || isNaN(d)) return null
+  const birthDate = new Date(y, m - 1, d)
+  const today = new Date()
+  let age = today.getFullYear() - birthDate.getFullYear()
+  const mDiff = today.getMonth() - birthDate.getMonth()
+  if (mDiff < 0 || (mDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--
+  }
+  return age
 }
 
 function BirthdayContent() {
@@ -41,11 +58,13 @@ function BirthdayContent() {
   }
 
   const [selected, setSelected] = useState<Record<string, string>>({
-    year: 'Exp: 1997',
-    month: 'Exp: 12',
     day: 'Exp: 30',
+    month: 'Exp: 12',
+    year: 'Exp: 1997',
   })
   const handleSetSelected = (val: Record<string, string>) => setSelected(val)
+
+  const age = calculateAge(selected.year, selected.month, selected.day)
 
   return (
     <div className="flex flex-col h-full w-full p-8">
@@ -74,7 +93,16 @@ function BirthdayContent() {
                 day: 'min-w-[85px] md:min-w-[105px] h-fit border-none shadow-none bg-cloud-mist rounded-full',
               }}
             />
-            <div className="flex items-center gap-1 mt-5 text-xs">
+            {age !== null &&
+              !selected.year.startsWith('Exp:') &&
+              !selected.month.startsWith('Exp:') &&
+              !selected.day.startsWith('Exp:') && (
+                <div className="flex items-center justify-center mt-4 text-sm font-medium text-gray-700">
+                  <h3>Your age is</h3>
+                  <h2 className="mx-1 text-gray-400">{age}</h2>
+                </div>
+              )}
+            <div className="flex items-center gap-1 mt-12 text-xs">
               <Info className="size-4" />
               <span>You can always update this later</span>
             </div>
