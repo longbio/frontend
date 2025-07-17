@@ -49,20 +49,30 @@ function BirthdayContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
-  const { handleSubmit } = useForm<BirthdayFormData>({
-    resolver: zodResolver(birthdaySchema),
-    mode: 'onChange',
-  })
-  const onSubmit = () => {
-    router.push(`/info/gender?name=${name}`)
-  }
-
   const [selected, setSelected] = useState<Record<string, string>>({
     day: 'Exp: 30',
     month: 'Exp: 12',
     year: 'Exp: 1997',
   })
   const handleSetSelected = (val: Record<string, string>) => setSelected(val)
+
+  const isValid =
+    selected.year &&
+    selected.month &&
+    selected.day &&
+    !selected.year.startsWith('Exp:') &&
+    !selected.month.startsWith('Exp:') &&
+    !selected.day.startsWith('Exp:')
+
+  const { handleSubmit } = useForm<BirthdayFormData>({
+    resolver: zodResolver(birthdaySchema),
+    mode: 'onChange',
+  })
+  const onSubmit = () => {
+    if (isValid) {
+      router.push(`/info/gender?name=${name}`)
+    }
+  }
 
   const age = calculateAge(selected.year, selected.month, selected.day)
 
