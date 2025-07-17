@@ -9,6 +9,9 @@ import { Info, Plus, Trash, User } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useRef, useState, useEffect } from 'react'
+import getCroppedImg, { dataURLtoFile } from '@/app/info/set-profile/components/cropImage'
+import type { Area } from 'react-easy-crop'
+import CropperDialog from './components/CropperDialog'
 
 function SetProfileContent() {
   const router = useRouter()
@@ -67,10 +70,39 @@ function SetProfileContent() {
     }
   }, [file])
 
+  const [crop, setCrop] = useState({ x: 0, y: 0 })
+  const [zoom, setZoom] = useState(1)
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
+  const [showCropper, setShowCropper] = useState(false)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+
+  const onCropComplete = (_: Area, croppedAreaPixels: Area) => {
+    setCroppedAreaPixels(croppedAreaPixels)
+  }
+  const handleCropSave = async () => {
+    if (selectedImage && croppedAreaPixels) {
+      const croppedImg = await getCroppedImg(selectedImage, croppedAreaPixels)
+      setPreview(croppedImg)
+      setShowCropper(false)
+      setValue('profile', dataURLtoFile(croppedImg, 'profile.jpg'), { shouldValidate: true })
+    }
+  }
+
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={35.7} />
       <Header className="mt-4" />
+      <CropperDialog
+        open={showCropper}
+        onOpenChange={setShowCropper}
+        image={selectedImage}
+        onCropComplete={onCropComplete}
+        onConfirm={handleCropSave}
+        crop={crop}
+        setCrop={setCrop}
+        zoom={zoom}
+        setZoom={setZoom}
+      />
       <form className="flex flex-col justify-between h-full mt-2" onSubmit={handleSubmit(onSubmit)}>
         <div>
           <div className="flex flex-col gap-y-4">
@@ -119,9 +151,13 @@ function SetProfileContent() {
                 {...register('profile', {
                   onChange: (e) => {
                     const file = e.target.files?.[0]
-                    setValue('profile', file, { shouldValidate: true })
                     if (file) {
-                      handleSubmit(onSubmit)
+                      const reader = new FileReader()
+                      reader.onload = (event) => {
+                        setSelectedImage(event.target?.result as string)
+                        setShowCropper(true)
+                      }
+                      reader.readAsDataURL(file)
                     }
                   },
                 })}
