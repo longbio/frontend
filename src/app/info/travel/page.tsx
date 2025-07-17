@@ -37,7 +37,7 @@ const travelSchema = z
   .refine(
     (data) => (data.styles && data.styles.length > 0) || (data.country && data.country !== ''),
     {
-      message: 'حداقل یکی از گزینه‌های سفر یا کشور را انتخاب کنید.',
+      message: 'choose one',
       path: ['form'],
     }
   )
