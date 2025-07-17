@@ -27,7 +27,6 @@ export default function DatePicker({
   pickers,
   selected,
   setSelected,
-  confirmText = (picker, value) => `select : ${value}`,
   className = '',
   triggerClassNames = {},
 }: DatePickerProps) {
@@ -177,17 +176,17 @@ export default function DatePicker({
                     </span>{' '}
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="bottom" className="w-full h-[36vh] pt-10">
+                <SheetContent side="bottom" className="w-full h-[43vh]">
                   <div className="flex flex-col h-full justify-between">
-                    <div className="flex-1 flex flex-col justify-center">
+                    <div className="flex-1 flex flex-col justify-center pt-5">
                       {PickerContent(picker)}
                     </div>
-                    <div className="mx-4 my-4">
+                    <div className="m-4">
                       <Button
                         onClick={() => setActivePicker(null)}
                         className="w-full py-3.5 h-fit rounded-2xl"
                       >
-                        {confirmText(picker, selected[picker])}
+                        select
                       </Button>
                     </div>
                   </div>
