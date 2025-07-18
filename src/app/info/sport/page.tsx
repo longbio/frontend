@@ -75,7 +75,6 @@ function SportContent() {
           {exercise === 'yes' && (
             <div className="flex flex-col space-y-6 w-full mt-6 transition-all duration-500 ease-in-out opacity-100 translate-y-0">
               <LabeledInput
-                label="what sport do you do?"
                 placeholder="Exp: Tennis"
                 type="text"
                 error={!!errors.sportName}

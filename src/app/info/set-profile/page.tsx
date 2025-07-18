@@ -3,15 +3,15 @@ import { z } from 'zod'
 import Image from 'next/image'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
+import type { Area } from 'react-easy-crop'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Info, Plus, Trash, User } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import CropperDialog from '../components/CropperDialog'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useRef, useState, useEffect } from 'react'
-import getCroppedImg, { dataURLtoFile } from '@/app/info/set-profile/components/cropImage'
-import type { Area } from 'react-easy-crop'
-import CropperDialog from './components/CropperDialog'
+import getCroppedImg, { dataURLtoFile } from '@/app/info/components/cropImage'
 
 function SetProfileContent() {
   const router = useRouter()
