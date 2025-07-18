@@ -1,14 +1,19 @@
 'use client'
 import { z } from 'zod'
+import React from 'react'
+import Image from 'next/image'
 import { Suspense } from 'react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
+import type { Area } from 'react-easy-crop'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import LabeledInput from '../components/LabeledInput'
 import { zodResolver } from '@hookform/resolvers/zod'
+import CropperDialog from '../components/CropperDialog'
 import { useRouter, useSearchParams } from 'next/navigation'
 import SelectableOption from '../components/SelectableOption'
+import { PawPrint } from 'lucide-react'
 
 const petSchema = z.object({
   hasPet: z.boolean({ required_error: 'Selection is required.' }),
@@ -34,6 +39,62 @@ function PetContent() {
   })
   const hasPet = watch('hasPet')
 
+  // State for image cropping
+  const [image, setImage] = React.useState<string | null>(null)
+  const [croppedImage, setCroppedImage] = React.useState<string | null>(null)
+  const [crop, setCrop] = React.useState({ x: 0, y: 0 })
+  const [zoom, setZoom] = React.useState(1)
+  const [openCropper, setOpenCropper] = React.useState(false)
+  const [croppedAreaPixels, setCroppedAreaPixels] = React.useState<Area | null>(null)
+
+  // Handle file input change
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = () => {
+        setImage(reader.result as string)
+        setOpenCropper(true)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  // Handle crop complete
+  const onCropComplete = React.useCallback((_: Area, croppedPixels: Area) => {
+    setCroppedAreaPixels(croppedPixels)
+  }, [])
+
+  // Utility to get cropped image
+  async function getCroppedImg(imageSrc: string, crop: Area) {
+    const createImage = (url: string) => {
+      return new Promise<HTMLImageElement>((resolve, reject) => {
+        const img = new window.Image()
+        img.addEventListener('load', () => resolve(img))
+        img.addEventListener('error', (error) => reject(error))
+        img.setAttribute('crossOrigin', 'anonymous')
+        img.src = url
+      })
+    }
+    const image = await createImage(imageSrc)
+    const canvas = document.createElement('canvas')
+    canvas.width = crop.width
+    canvas.height = crop.height
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return null
+    ctx.drawImage(image, crop.x, crop.y, crop.width, crop.height, 0, 0, crop.width, crop.height)
+    return canvas.toDataURL('image/jpeg')
+  }
+
+  // Handle confirm crop
+  const handleConfirmCrop = React.useCallback(async () => {
+    if (image && croppedAreaPixels) {
+      const cropped = await getCroppedImg(image, croppedAreaPixels)
+      setCroppedImage(cropped)
+      setOpenCropper(false)
+    }
+  }, [image, croppedAreaPixels])
+
   const onSubmit = () => {
     router.push(`/info/sport?name=${name}`)
   }
@@ -52,7 +113,7 @@ function PetContent() {
               Let&apos;s talk about your pets.
             </span>
           </div>
-          <div className="flex flex-col space-y-6 w-full mt-10">
+          <div className="flex flex-col space-y-6 w-full mt-20">
             <span className="text-xl font-bold">Do you have pet?</span>
             <SelectableOption
               id="hasPetYes"
@@ -69,16 +130,56 @@ function PetContent() {
             />
           </div>
           {hasPet && (
-            <div className="flex flex-col space-y-6 w-full mt-6">
+            <div className="flex flex-col space-y-6 w-full my-24">
+              <label className="text-xl font-bold" htmlFor="petName">
+                Create Your Pet’s Identity — Name & Avatar
+              </label>
+              <div className="flex items-center justify-between flex-row-reverse gap-x-2.5">
+                <label
+                  htmlFor="pet-photo-upload"
+                  className="size-14 shrink-0 rounded-full flex items-center justify-center bg-gray-100 border overflow-hidden cursor-pointer"
+                >
+                  {croppedImage ? (
+                    <Image
+                      src={croppedImage}
+                      alt="Cropped Pet"
+                      width={48}
+                      height={48}
+                      className="rounded-full object-cover"
+                    />
+                  ) : (
+                    <PawPrint size={15} className="text-purple-400" />
+                  )}
+                  <CropperDialog
+                    open={openCropper}
+                    onOpenChange={setOpenCropper}
+                    image={image}
+                    onCropComplete={onCropComplete}
+                    onConfirm={handleConfirmCrop}
+                    crop={crop}
+                    setCrop={setCrop}
+                    zoom={zoom}
+                    setZoom={setZoom}
+                  />
+                </label>
+                <input
+                  id="pet-photo-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                <LabeledInput
+                  id="petName"
+                  placeholder="Exp: Woody"
+                  type="text"
+                  error={!!errors.petName}
+                  {...register('petName')}
+                  className="flex items-center w-full"
+                />
+              </div>
+              <h3 className="text-xl font-bold">What is the breed of your pet?</h3>
               <LabeledInput
-                label="What is the name of your pet?"
-                placeholder="Exp: Woody"
-                type="text"
-                error={!!errors.petName}
-                {...register('petName')}
-              />
-              <LabeledInput
-                label="What is the breed of your pet?"
                 placeholder="Exp: German Shepherd"
                 type="text"
                 error={!!errors.petBreed}
