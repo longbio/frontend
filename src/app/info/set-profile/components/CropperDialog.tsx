@@ -53,7 +53,8 @@ const CropperDialog: React.FC<CropperDialogProps> = ({
               onCropComplete={onCropComplete}
               showGrid={true}
               cropShape="round"
-              cropSize={{ width: 240, height: 240 }}
+              objectFit="cover"
+              style={{ mediaStyle: { width: '100%', height: '100%' } }}
             />
           </div>
         )}
@@ -75,14 +76,17 @@ const CropperDialog: React.FC<CropperDialogProps> = ({
         </div>
         <div className="flex gap-2 mt-4">
           <button
-            className="flex-1 bg-purple-blaze text-white rounded-lg py-2"
+            className="flex-1 bg-purple-blaze hover:bg-purple-blaze/90 transition text-white rounded-lg py-2"
             onClick={onConfirm}
             type="button"
           >
             Confirm
           </button>
           <DialogClose asChild>
-            <button className="flex-1 bg-gray-200 rounded-lg py-2" type="button">
+            <button
+              className="flex-1 bg-gray-200 hover:bg-gray-200/70 transition rounded-lg py-2"
+              type="button"
+            >
               Cancel
             </button>
           </DialogClose>
