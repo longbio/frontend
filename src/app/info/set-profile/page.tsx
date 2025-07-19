@@ -1,13 +1,15 @@
 'use client'
 import { z } from 'zod'
+import React from 'react'
 import Image from 'next/image'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import type { Area } from 'react-easy-crop'
 import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
-import { Info, Plus, Trash, User } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { setCookie, getCookie } from '@/utils/cookie'
+import { Info, Plus, Trash, User } from 'lucide-react'
 import CropperDialog from '../components/CropperDialog'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useRef, useState, useEffect } from 'react'
@@ -57,18 +59,21 @@ function SetProfileContent() {
   }
 
   // For preview
-  const [preview, setPreview] = useState<string | null>(null)
-  useEffect(() => {
-    if (file && file instanceof File) {
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        setPreview(event.target?.result as string)
+  const [preview, setPreview] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      const cookie = getCookie('info_set_profile')
+      if (cookie) {
+        try {
+          const parsed = JSON.parse(decodeURIComponent(cookie))
+          return parsed.preview || null
+        } catch {}
       }
-      reader.readAsDataURL(file)
-    } else {
-      setPreview(null)
     }
-  }, [file])
+    return null
+  })
+  useEffect(() => {
+    setCookie('info_set_profile', JSON.stringify({ preview }))
+  }, [preview])
 
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)

@@ -6,7 +6,7 @@ import { useState, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { useSearchParams } from 'next/navigation'
-import { useVerifySignupCode } from '@/service/auth/hook'
+// import { useVerifySignupCode } from '@/service/auth/hook'
 import { FormInput } from '@/app/auth/components/FormInput'
 import { VerificationCodeInput } from '@/app/auth/components/VerificationCodeInput'
 
@@ -14,12 +14,15 @@ function VerifySignUpContent() {
   const searchParams = useSearchParams()
   const email = searchParams.get('email') || ''
   const [verificationCode, setVerificationCode] = useState('')
-  const { handleVerify, error, isPending, isSuccess } = useVerifySignupCode()
+  // const { handleVerify, error, isPending, isSuccess } = useVerifySignupCode()
   const router = useRouter()
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    handleVerify(email, verificationCode)
+    // handleVerify(email, verificationCode)
+
+    // NOTE: remove for api in future
+    router.push('/info/birthday')
   }
 
   return (
@@ -52,8 +55,8 @@ function VerifySignUpContent() {
               email={email}
               value={verificationCode}
               onChange={setVerificationCode}
-              isSuccess={isSuccess}
-              error={error || ''}
+              // isSuccess={isSuccess}
+              // error={error || ''}
             />
           </div>
 
@@ -63,9 +66,11 @@ function VerifySignUpContent() {
                 'disabled:bg-silver-mist disabled:cursor-not-allowed': true,
               })}
               type="submit"
-              disabled={isPending || !verificationCode.trim()}
+              // disabled={isPending || !verificationCode.trim()}
+              disabled={!verificationCode.trim()}
             >
-              {isPending ? 'Verifying...' : 'Verify'}
+              {/* {isPending ? 'Verifying...' : 'Verify'} */}
+              Verify
             </Button>
             <button
               type="button"

@@ -1,5 +1,6 @@
 'use client'
 import { z } from 'zod'
+import React from 'react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import { Suspense, useState } from 'react'
@@ -8,6 +9,7 @@ import AddButton from '../components/AddButton'
 import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { setCookie, getCookie } from '@/utils/cookie'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 const defaultInterests = [
@@ -35,7 +37,20 @@ function InterestContent() {
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
   const [customInterests, setCustomInterests] = useState<string[]>([])
-  const [selected, setSelected] = useState<string[]>([])
+  const [selected, setSelected] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      const cookie = getCookie('info_interest')
+      if (cookie) {
+        try {
+          return JSON.parse(decodeURIComponent(cookie)).selected || []
+        } catch {}
+      }
+    }
+    return []
+  })
+  React.useEffect(() => {
+    setCookie('info_interest', JSON.stringify({ selected }))
+  }, [selected])
 
   const {
     handleSubmit,

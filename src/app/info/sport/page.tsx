@@ -1,5 +1,6 @@
 'use client'
 import { z } from 'zod'
+import React from 'react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import { Suspense, useState } from 'react'
@@ -7,6 +8,7 @@ import StickyNav from '../components/StickyNav'
 import { Toggle } from '@/components/ui/toggle'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { setCookie, getCookie } from '@/utils/cookie'
 import { useRouter, useSearchParams } from 'next/navigation'
 import SportAddButton from '../sport/components/SportAddButton'
 
@@ -35,7 +37,20 @@ function SportContent() {
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
   const [customSports, setCustomSports] = useState<string[]>([])
-  const [selected, setSelected] = useState<string[]>([])
+  const [selected, setSelected] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      const cookie = getCookie('info_sport')
+      if (cookie) {
+        try {
+          return JSON.parse(decodeURIComponent(cookie)).selected || []
+        } catch {}
+      }
+    }
+    return []
+  })
+  React.useEffect(() => {
+    setCookie('info_sport', JSON.stringify({ selected }))
+  }, [selected])
 
   const {
     handleSubmit,

@@ -1,11 +1,13 @@
 'use client'
 import { z } from 'zod'
+import React from 'react'
 import Link from 'next/link'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { setCookie, getCookie } from '@/utils/cookie'
 import { FormInput } from '@/app/auth/components/FormInput'
 
 const signInSchema = z.object({
@@ -22,14 +24,27 @@ export default function SignIn() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    watch,
   } = useForm<FormData>({
     resolver: zodResolver(signInSchema),
     mode: 'onChange',
-    defaultValues: {
-      email: '',
-      password: '',
-    },
+    defaultValues: (() => {
+      if (typeof window !== 'undefined') {
+        const cookie = getCookie('auth_signin')
+        if (cookie) {
+          try {
+            return JSON.parse(decodeURIComponent(cookie))
+          } catch {}
+        }
+      }
+      return { email: '', password: '' }
+    })(),
   })
+  const email = watch('email')
+  const password = watch('password')
+  React.useEffect(() => {
+    setCookie('auth_signin', JSON.stringify({ email, password }))
+  }, [email, password])
 
   const onSubmit = async () => {
     router.push('/auth/signin/success')

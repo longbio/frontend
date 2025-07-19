@@ -1,12 +1,15 @@
 'use client'
 import { z } from 'zod'
+import React from 'react'
 import { Suspense } from 'react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { setCookie, getCookie } from '@/utils/cookie'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useCountriesAndCities } from '@/service/countries'
 import {
   Select,
   SelectTrigger,
@@ -14,7 +17,6 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select'
-import { useCountriesAndCities } from '@/service/countries'
 
 const countrySchema = z.object({
   birthPlace: z
@@ -34,7 +36,6 @@ function CountryContent() {
   const name = searchParams.get('name') || ''
   const { data, loading, error } = useCountriesAndCities()
   const {
-    // register,
     handleSubmit,
     formState: { errors },
     setValue,
@@ -42,7 +43,23 @@ function CountryContent() {
   } = useForm<CountryFormData>({
     resolver: zodResolver(countrySchema),
     mode: 'onChange',
+    defaultValues: (() => {
+      if (typeof window !== 'undefined') {
+        const cookie = getCookie('info_country')
+        if (cookie) {
+          try {
+            return JSON.parse(decodeURIComponent(cookie))
+          } catch {}
+        }
+      }
+      return {}
+    })(),
   })
+  const birthPlace = watch('birthPlace')
+  const livePlace = watch('livePlace')
+  React.useEffect(() => {
+    setCookie('info_country', JSON.stringify({ birthPlace, livePlace }))
+  }, [birthPlace, livePlace])
   const onSubmit = () => {
     router.push(`/info/pet?name=${name}`)
   }

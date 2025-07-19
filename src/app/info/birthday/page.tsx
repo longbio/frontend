@@ -7,6 +7,7 @@ import { Suspense, useState } from 'react'
 import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { setCookie, getCookie } from '@/utils/cookie'
 import { useRouter, useSearchParams } from 'next/navigation'
 import DatePicker, { PickerOptions } from '@/app/info/components/DataPicker'
 
@@ -49,12 +50,25 @@ function BirthdayContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
-  const [selected, setSelected] = useState<Record<string, string>>({
-    day: 'Exp: 30',
-    month: 'Exp: 12',
-    year: 'Exp: 1997',
+  const [selected, setSelected] = useState<Record<string, string>>(() => {
+    if (typeof window !== 'undefined') {
+      const cookie = getCookie('info_birthday')
+      if (cookie) {
+        try {
+          return JSON.parse(decodeURIComponent(cookie))
+        } catch {}
+      }
+    }
+    return {
+      day: 'Exp: 30',
+      month: 'Exp: 12',
+      year: 'Exp: 1997',
+    }
   })
-  const handleSetSelected = (val: Record<string, string>) => setSelected(val)
+  const handleSetSelected = (val: Record<string, string>) => {
+    setSelected(val)
+    setCookie('info_birthday', JSON.stringify(val))
+  }
 
   const isValid =
     selected.year &&
