@@ -29,6 +29,7 @@ export default function DatePicker({
   setSelected,
   className = '',
   triggerClassNames = {},
+  labels = {},
 }: DatePickerProps) {
   const [activePicker, setActivePicker] = useState<PickerType | null>(null)
   const [isMobile, setIsMobile] = useState(false)
@@ -144,7 +145,7 @@ export default function DatePicker({
             )
           })}
         </div>
-        <Button type="submit" className="w-full mt-4">
+        <Button type="button" className="w-full mt-4" onClick={handleSubmit(onSubmit)}>
           select
         </Button>
       </form>
@@ -152,7 +153,7 @@ export default function DatePicker({
   }
 
   return (
-    <div className={clsx('w-full flex items-center justify-between gap-2 mt-10', className)}>
+    <div className={clsx('w-full flex items-center justify-between gap-2', className)}>
       {Object.keys(pickers).map((picker) => {
         const triggerClass = triggerClassNames[picker] || ''
 
@@ -167,12 +168,14 @@ export default function DatePicker({
                   <Button variant="outline" className={triggerClass}>
                     <span
                       className={
-                        selected[picker]?.startsWith('Exp:')
-                          ? 'text-[10px] font-medium text-light-gray'
-                          : 'text-xs font-bold'
+                        selected[picker]
+                          ? selected[picker]?.startsWith('Exp:')
+                            ? 'text-[10px] font-medium text-light-gray'
+                            : 'text-xs font-bold'
+                          : 'text-xs font-bold text-gray-400'
                       }
                     >
-                      {selected[picker]}
+                      {selected[picker] || (labels && labels[picker])}
                     </span>{' '}
                   </Button>
                 </SheetTrigger>
@@ -201,12 +204,14 @@ export default function DatePicker({
                   <Button variant="outline" className={triggerClass} type="button">
                     <span
                       className={
-                        selected[picker]?.startsWith('Exp:')
-                          ? 'text-[10px] font-medium text-light-gray'
-                          : 'text-xs font-medium'
+                        selected[picker]
+                          ? selected[picker]?.startsWith('Exp:')
+                            ? 'text-[10px] font-medium text-light-gray'
+                            : 'text-xs font-medium'
+                          : 'text-xs font-medium text-gray-400'
                       }
                     >
-                      {selected[picker]}
+                      {selected[picker] || (labels && labels[picker])}
                     </span>
                   </Button>
                 </DialogTrigger>
