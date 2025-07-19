@@ -4,10 +4,12 @@ import { Info } from 'lucide-react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import { Suspense, useState } from 'react'
-import { Button } from '@/components/ui/button'
+import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { AddUniversityBox } from './components/AddMoreBox'
 import { useRouter, useSearchParams } from 'next/navigation'
+import GraduationYearBox from './components/GraduationYearBox'
 import AddMoreBox from '@/app/info/education/components/AddMoreBox'
 import SelectableOption from '@/app/info/components/SelectableOption'
 
@@ -27,7 +29,9 @@ function EducationContent() {
     mode: 'onChange',
   })
   const selectedEducation = watch('education')
-  const [customOptions, setCustomOptions] = useState<string[]>([])
+  const [universities, setUniversities] = useState<string[]>([])
+  const [topics, setTopics] = useState<string[]>([])
+  const [graduationYear, setGraduationYear] = useState<string | null>(null)
 
   const onSubmit = () => {
     router.push(`/info/set-profile?name=${name}`)
@@ -45,8 +49,8 @@ function EducationContent() {
             </h1>
             <span className="text-sm font-normal">Pick your education status.</span>
           </div>
-          <div className="space-y-5 mt-9">
-            <h2 className="text-xl font-bold">Which is your educational status?</h2>
+          <div className="space-y-5 mt-10">
+            <h2 className="text-xl font-bold">What is your educational status?</h2>
             <div className="space-y-2.5">
               <SelectableOption
                 id="student"
@@ -58,6 +62,25 @@ function EducationContent() {
                   }
                 }}
               />
+              {selectedEducation === 'student' && (
+                <div className="ml-8 mt-2">
+                  <AddUniversityBox
+                    universities={universities}
+                    setUniversities={setUniversities}
+                    placeholder="Add university..."
+                  />
+                  <AddMoreBox
+                    options={topics}
+                    setOptions={setTopics}
+                    placeholder="Add topic..."
+                    buttonLabel="Add Topic"
+                  />
+                  <GraduationYearBox
+                    graduationYear={graduationYear}
+                    setGraduationYear={setGraduationYear}
+                  />
+                </div>
+              )}
               <SelectableOption
                 id="graduated"
                 label="Graduated"
@@ -68,7 +91,25 @@ function EducationContent() {
                   }
                 }}
               />
-              <AddMoreBox options={customOptions} setOptions={setCustomOptions} />
+              {selectedEducation === 'graduated' && (
+                <div className="ml-8 mt-2">
+                  <AddUniversityBox
+                    universities={universities}
+                    setUniversities={setUniversities}
+                    placeholder="Add university..."
+                  />
+                  <AddMoreBox
+                    options={topics}
+                    setOptions={setTopics}
+                    placeholder="Add topic..."
+                    buttonLabel="Add Topic"
+                  />
+                  <GraduationYearBox
+                    graduationYear={graduationYear}
+                    setGraduationYear={setGraduationYear}
+                  />
+                </div>
+              )}
               <SelectableOption
                 id="not-interested"
                 label="Not interested in education"
@@ -86,21 +127,11 @@ function EducationContent() {
             </div>
           </div>
         </div>
-        <div className="sticky bottom-0">
-          <Button
-            type="submit"
-            className="w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl"
-          >
-            Next
-          </Button>
-          <button
-            type="button"
-            className="w-full text-sm font-normal p-3.5 mt-2 rounded-4xl"
-            onClick={() => router.push(`/info/set-profile?name=${name}`)}
-          >
-            skip
-          </button>
-        </div>
+        <StickyNav
+          onNext={handleSubmit(onSubmit)}
+          onSkip={() => router.push(`/info/set-profile?name=${name}`)}
+          className="mt-8"
+        />
       </form>
     </div>
   )

@@ -4,8 +4,8 @@ import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import { Suspense, useState } from 'react'
 import AddButton from '../components/AddButton'
-import { Button } from '@/components/ui/button'
 import { Toggle } from '@/components/ui/toggle'
+import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -103,21 +103,11 @@ function SkillContent() {
             </div>
           </div>
         </div>
-        <div className="sticky bottom-0">
-          <Button
-            type="submit"
-            className="w-full h-fit bg-purple-blaze text-sm font-bold mt-auto rounded-4xl"
-          >
-            Next
-          </Button>
-          <button
-            type="button"
-            className="w-full text-sm font-normal p-3.5 mt-2 rounded-4xl"
-            onClick={() => router.push(`/info/interest?name=${name}`)}
-          >
-            skip
-          </button>
-        </div>
+        <StickyNav
+          onNext={handleSubmit(onSubmit)}
+          onSkip={() => router.push(`/info/interest?name=${name}`)}
+          className="mt-8"
+        />
       </form>
     </div>
   )

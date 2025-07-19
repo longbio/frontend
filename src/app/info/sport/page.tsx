@@ -1,9 +1,9 @@
 'use client'
 import { z } from 'zod'
-import { Suspense, useState } from 'react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
+import { Suspense, useState } from 'react'
+import StickyNav from '../components/StickyNav'
 import { Toggle } from '@/components/ui/toggle'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -81,7 +81,7 @@ function SportContent() {
             </h1>
             <span className="text-sm font-normal text-left w-full">Are you into sport?</span>
           </div>
-          <div className="flex flex-col gap-y-4 my-16">
+          <div className="flex flex-col gap-y-4 mt-10">
             <h2 className="text-xl font-bold mt-8 w-full">
               Choose the sports you are interested in
             </h2>
@@ -105,21 +105,11 @@ function SportContent() {
             </div>
           </div>
         </div>
-        <div className="sticky bottom-0 mt-9">
-          <Button
-            type="submit"
-            className="w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl"
-          >
-            Next
-          </Button>
-          <button
-            type="button"
-            className="w-full text-sm font-normal p-3.5 mt-2 rounded-4xl"
-            onClick={() => router.push(`/info/skill?name=${name}`)}
-          >
-            skip
-          </button>
-        </div>
+        <StickyNav
+          onNext={handleSubmit(onSubmit)}
+          onSkip={() => router.push(`/info/skill?name=${name}`)}
+          className="mt-10"
+        />
       </form>
     </div>
   )

@@ -4,7 +4,7 @@ import { Suspense } from 'react'
 import { Info } from 'lucide-react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
+import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -45,7 +45,7 @@ function MaritalContent() {
               pick the marital status that best describes you.
             </span>
           </div>
-          <div className="space-y-6 mt-20">
+          <div className="space-y-6 mt-16">
             <h2 className="text-xl font-bold">Which is your marital status?</h2>
             <div className="space-y-2.5">
               <SelectableOption
@@ -85,21 +85,10 @@ function MaritalContent() {
             </div>
           </div>
         </div>
-        <div className="sticky bottom-0">
-          <Button
-            type="submit"
-            className="w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl"
-          >
-            Next
-          </Button>
-          <button
-            type="button"
-            className="w-full text-sm font-normal p-3.5 mt-2 rounded-4xl"
-            onClick={() => router.push(`/info/education?name=${name}`)}
-          >
-            skip
-          </button>
-        </div>
+        <StickyNav
+          onNext={handleSubmit(onSubmit)}
+          onSkip={() => router.push(`/info/education?name=${name}`)}
+        />
       </form>
     </div>
   )

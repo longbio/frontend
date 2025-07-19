@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import type { Area } from 'react-easy-crop'
-import { Button } from '@/components/ui/button'
+import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
 import { Info, Plus, Trash, User } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -173,21 +173,10 @@ function SetProfileContent() {
             </div>
           </div>
         </div>
-        <div className="sticky bottom-0">
-          <Button
-            type="submit"
-            className="w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl"
-          >
-            Next
-          </Button>
-          <button
-            type="button"
-            className="w-full text-sm font-normal p-3.5 mt-2 rounded-4xl"
-            onClick={() => router.push(`/info/travel?name=${name}`)}
-          >
-            skip
-          </button>
-        </div>
+        <StickyNav
+          onNext={handleSubmit(onSubmit)}
+          onSkip={() => router.push(`/info/travel?name=${name}`)}
+        />
       </form>
     </div>
   )

@@ -4,7 +4,7 @@ import { Info } from 'lucide-react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import { Suspense, useState } from 'react'
-import { Button } from '@/components/ui/button'
+import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -62,7 +62,7 @@ function PhysicalContent() {
               Enter your height and weight
             </span>
           </div>
-          <div className="flex flex-col w-full mt-30">
+          <div className="flex flex-col w-full gap-y-6 mt-20">
             <h2 className="text-xl font-bold">Your Physical Info</h2>
             <DatePicker
               pickers={pickers}
@@ -75,27 +75,13 @@ function PhysicalContent() {
                   'min-w-[150px] md:min-w-[203px] h-fit border-none shadow-none bg-cloud-mist rounded-full',
               }}
             />
-            <div className="flex items-center gap-1 mt-12 text-xs">
+            <div className="flex items-center gap-1 mt-6 text-xs">
               <Info className="size-4" />
               <span>You can always update this later</span>
             </div>
           </div>
         </div>
-        <div className="sticky bottom-0">
-          <Button
-            type="submit"
-            className="w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl"
-          >
-            Next
-          </Button>
-          <button
-            type="button"
-            className="w-full text-sm font-normal p-3.5 mt-2 rounded-4xl"
-            onClick={() => router.push(`/info/country?name=${name}`)}
-          >
-            skip
-          </button>
-        </div>
+        <StickyNav onNext={onSubmit} onSkip={() => router.push(`/info/country?name=${name}`)} />
       </form>
     </div>
   )

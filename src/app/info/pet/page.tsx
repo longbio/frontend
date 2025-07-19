@@ -3,17 +3,17 @@ import { z } from 'zod'
 import React from 'react'
 import Image from 'next/image'
 import { Suspense } from 'react'
+import { PawPrint } from 'lucide-react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import type { Area } from 'react-easy-crop'
-import { Button } from '@/components/ui/button'
+import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
 import LabeledInput from '../components/LabeledInput'
 import { zodResolver } from '@hookform/resolvers/zod'
 import CropperDialog from '../components/CropperDialog'
 import { useRouter, useSearchParams } from 'next/navigation'
 import SelectableOption from '../components/SelectableOption'
-import { PawPrint } from 'lucide-react'
 
 const petSchema = z.object({
   hasPet: z.boolean({ required_error: 'Selection is required.' }),
@@ -188,21 +188,10 @@ function PetContent() {
             </div>
           )}
         </div>
-        <div className="sticky bottom-0 mt-9">
-          <Button
-            type="submit"
-            className="w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl"
-          >
-            Next
-          </Button>
-          <button
-            type="button"
-            className="w-full text-sm font-normal p-3.5 mt-2 rounded-4xl"
-            onClick={() => router.push(`/info/sport?name=${name}`)}
-          >
-            skip
-          </button>
-        </div>
+        <StickyNav
+          onNext={handleSubmit(onSubmit)}
+          onSkip={() => router.push(`/info/sport?name=${name}`)}
+        />
       </form>
     </div>
   )
