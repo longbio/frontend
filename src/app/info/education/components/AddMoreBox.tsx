@@ -185,48 +185,48 @@ export function AddUniversityBox({
           </span>
         </button>
         {showInput && (
-          <div className="relative" ref={inputBoxRef}>
-            <input
-              type="text"
-              className={`w-[101px] md:w-fit border rounded-full px-3 py-1 md:ml-2
-                 text-[11px] md:text-sm focus:outline-none focus:ring-2 focus:ring-purple-blaze${
-                   isLoading ? ' opacity-50' : ''
-                 }`}
-              placeholder={isLoading ? 'Loading...' : placeholder}
-              value={inputValue}
-              onChange={handleInputChange}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault()
-                  handleAdd(inputValue)
-                }
-              }}
-              autoFocus
-              disabled={isLoading}
-            />
-            {!isLoading && filteredSuggestions.length > 0 && (
-              <ul className="absolute z-10 left-0 right-0 bg-white border rounded shadow mt-1 max-h-40 overflow-y-auto">
-                {(filteredSuggestions as string[]).map((s: string, idx: number) => (
-                  <li
-                    key={s + '-' + idx}
-                    className="px-3 py-1 hover:bg-purple-100 cursor-pointer text-sm"
-                    onClick={() => handleAdd(s)}
-                  >
-                    {s}
-                  </li>
-                ))}
-              </ul>
-            )}
+          <div className="flex items-center gap-2 flex-1">
+            <div className="relative w-full">
+              <input
+                type="text"
+                className={`w-full border rounded-full px-3 py-1 text-[11px] md:text-sm focus:outline-none focus:ring-2 focus:ring-purple-blaze${
+                  isLoading ? ' opacity-50' : ''
+                }`}
+                placeholder={isLoading ? 'Loading...' : placeholder}
+                value={inputValue}
+                onChange={handleInputChange}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    handleAdd(inputValue)
+                  }
+                }}
+                autoFocus
+                disabled={isLoading}
+              />
+
+              {!isLoading && filteredSuggestions.length > 0 && (
+                <ul className="absolute top-full left-0 right-0 bg-white border rounded shadow mt-1 max-h-40 overflow-y-auto z-10">
+                  {filteredSuggestions.map((s: string, idx: number) => (
+                    <li
+                      key={s + '-' + idx}
+                      className="px-3 py-1 hover:bg-purple-100 cursor-pointer text-sm"
+                      onClick={() => handleAdd(s)}
+                    >
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <button
+              type="button"
+              className="px-3 py-1 rounded-full bg-purple-blaze text-white text-[10px] md:text-xs font-bold"
+              onClick={() => handleAdd(inputValue)}
+            >
+              Add
+            </button>
           </div>
-        )}
-        {showInput && (
-          <button
-            type="button"
-            className="px-3 py-1 rounded-full bg-purple-blaze text-white text-[10px] md:text-xs font-bold"
-            onClick={() => handleAdd(inputValue)}
-          >
-            Add
-          </button>
         )}
       </div>
       <div className="flex flex-wrap gap-2 mb-1.5">

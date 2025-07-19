@@ -1,17 +1,19 @@
 'use client'
 import { z } from 'zod'
+import React from 'react'
 import { Suspense } from 'react'
 import { Info } from 'lucide-react'
 import Header from '@/components/Header'
 import { useState, useMemo } from 'react'
 import { Input } from '@/components/ui/input'
 import { Toggle } from '@/components/ui/toggle'
+import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { setCookie, getCookie } from '@/utils/cookie'
 import { useCountriesAndCities } from '@/service/countries'
 import { useRouter, useSearchParams } from 'next/navigation'
-import StickyNav from '../components/StickyNav'
 
 const travelStyles = [
   'Luxury Travel',
@@ -51,9 +53,24 @@ function TravelContent() {
     formState: {},
   } = useForm({
     resolver: zodResolver(travelSchema),
-    defaultValues: { styles: [], country: [] },
+    defaultValues: (() => {
+      if (typeof window !== 'undefined') {
+        const cookie = getCookie('info_travel')
+        if (cookie) {
+          try {
+            return JSON.parse(decodeURIComponent(cookie))
+          } catch {}
+        }
+      }
+      return { styles: [], country: [] }
+    })(),
     mode: 'onChange',
   })
+  const styles = watch('styles')
+  const country = watch('country')
+  React.useEffect(() => {
+    setCookie('info_travel', JSON.stringify({ styles, country }))
+  }, [styles, country])
 
   // Country selection state
   const { data, loading } = useCountriesAndCities()

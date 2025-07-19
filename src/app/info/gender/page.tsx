@@ -1,5 +1,6 @@
 'use client'
 import { z } from 'zod'
+import React from 'react'
 import { Suspense } from 'react'
 import { Info } from 'lucide-react'
 import Header from '@/components/Header'
@@ -7,6 +8,7 @@ import { useForm } from 'react-hook-form'
 import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { setCookie, getCookie } from '@/utils/cookie'
 import { useRouter, useSearchParams } from 'next/navigation'
 import SelectableOption from '@/app/info/components/SelectableOption'
 
@@ -24,8 +26,22 @@ function GenderContent() {
   const { handleSubmit, setValue, watch } = useForm<GenderFormData>({
     resolver: zodResolver(genderSchema),
     mode: 'onChange',
+    defaultValues: (() => {
+      if (typeof window !== 'undefined') {
+        const cookie = getCookie('info_gender')
+        if (cookie) {
+          try {
+            return JSON.parse(decodeURIComponent(cookie))
+          } catch {}
+        }
+      }
+      return {}
+    })(),
   })
   const selectedGender = watch('gender')
+  React.useEffect(() => {
+    if (selectedGender) setCookie('info_gender', JSON.stringify({ gender: selectedGender }))
+  }, [selectedGender])
 
   const onSubmit = () => {
     router.push(`/info/marital?name=${name}`)

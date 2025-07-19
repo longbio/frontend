@@ -1,5 +1,6 @@
 'use client'
 import { z } from 'zod'
+import React from 'react'
 import { Suspense } from 'react'
 import { Info } from 'lucide-react'
 import Header from '@/components/Header'
@@ -9,6 +10,7 @@ import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
 import SelectableOption from '@/app/info/components/SelectableOption'
+import { setCookie, getCookie } from '@/utils/cookie'
 
 const maritalSchema = z.object({
   marital: z.string({
@@ -24,8 +26,22 @@ function MaritalContent() {
   const { handleSubmit, setValue, watch } = useForm<MaritalFormData>({
     resolver: zodResolver(maritalSchema),
     mode: 'onChange',
+    defaultValues: (() => {
+      if (typeof window !== 'undefined') {
+        const cookie = getCookie('info_marital')
+        if (cookie) {
+          try {
+            return JSON.parse(decodeURIComponent(cookie))
+          } catch {}
+        }
+      }
+      return {}
+    })(),
   })
   const selectedMarital = watch('marital')
+  React.useEffect(() => {
+    if (selectedMarital) setCookie('info_marital', JSON.stringify({ marital: selectedMarital }))
+  }, [selectedMarital])
 
   const onSubmit = () => {
     router.push(`/info/education?name=${name}`)

@@ -8,11 +8,12 @@ import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { setCookie, getCookie, removeCookie } from '@/utils/cookie'
 import DatePicker, { PickerOptions } from '@/app/info/components/DataPicker'
 
 const physicalSchema = z.object({
-  height: z.string().min(1, 'Height is required.').regex(/^\d+$/, 'قد باید فقط عدد باشد'),
-  weight: z.string().min(1, 'Weight is required.').regex(/^\d+$/, 'وزن باید فقط عدد باشد'),
+  height: z.string().min(1, 'Height is required.').regex(/^\d+$/, 'just number'),
+  weight: z.string().min(1, 'Weight is required.').regex(/^\d+$/, 'just number'),
 })
 type PhysicalFormData = z.infer<typeof physicalSchema>
 
@@ -31,11 +32,24 @@ function PhysicalContent() {
     height: heightOptions,
     weight: weightOptions,
   }
-  const [selected, setSelected] = useState<Record<string, string>>({
-    height: 'Exp: 173 cm',
-    weight: 'Exp: 56 kg',
+  const [selected, setSelected] = useState<Record<string, string>>(() => {
+    if (typeof window !== 'undefined') {
+      const cookie = getCookie('info_physical')
+      if (cookie) {
+        try {
+          return JSON.parse(decodeURIComponent(cookie))
+        } catch {}
+      }
+    }
+    return {
+      height: 'Exp: 173 cm',
+      weight: 'Exp: 56 kg',
+    }
   })
-  const handleSetSelected = (val: Record<string, string>) => setSelected(val)
+  const handleSetSelected = (val: Record<string, string>) => {
+    setSelected(val)
+    setCookie('info_physical', JSON.stringify(val))
+  }
   const isValid =
     selected.height &&
     selected.weight &&
@@ -44,6 +58,7 @@ function PhysicalContent() {
   const onSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault()
     if (isValid) {
+      removeCookie('info_physical')
       router.push(`/info/country?name=${name}`)
     }
   }

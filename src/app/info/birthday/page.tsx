@@ -3,11 +3,13 @@ import { z } from 'zod'
 import { Info } from 'lucide-react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
-import { Suspense, useState } from 'react'
 import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
+import CalculateAge from './components/CalculateAge'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { setCookie, getCookie } from '@/utils/cookie'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense, useState, useEffect, useMemo } from 'react'
 import DatePicker, { PickerOptions } from '@/app/info/components/DataPicker'
 
 const birthdaySchema = z.object({
@@ -19,62 +21,88 @@ type BirthdayFormData = z.infer<typeof birthdaySchema>
 
 const range = (start: number, end: number) =>
   Array.from({ length: end - start + 1 }, (_, i) => (start + i).toString())
-const years = range(1980, new Date().getFullYear())
-const months = range(1, 12)
-const days = range(1, 31)
-const pickers: PickerOptions = {
-  year: years,
-  month: months,
-  day: days,
-}
-
-function calculateAge(year: string, month: string, day: string): number | null {
-  if (!year || !month || !day) return null
-  const clean = (val: string) => val.replace(/^Exp:\s*/, '')
-  const y = Number(clean(year))
-  const m = Number(clean(month))
-  const d = Number(clean(day))
-  if (isNaN(y) || isNaN(m) || isNaN(d)) return null
-  const birthDate = new Date(y, m - 1, d)
-  const today = new Date()
-  let age = today.getFullYear() - birthDate.getFullYear()
-  const mDiff = today.getMonth() - birthDate.getMonth()
-  if (mDiff < 0 || (mDiff === 0 && today.getDate() < birthDate.getDate())) {
-    age--
-  }
-  return age
-}
 
 function BirthdayContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const name = searchParams.get('name') || ''
+  let name = searchParams.get('name') || ''
+  if (!name && typeof window !== 'undefined') {
+    const cookie = getCookie('info_name')
+    if (cookie) {
+      try {
+        name = JSON.parse(decodeURIComponent(cookie))
+      } catch {}
+    }
+  }
+  const years = useMemo(() => range(1980, new Date().getFullYear()), [])
+  const months = useMemo(() => range(1, 12), [])
+  const days = useMemo(() => range(1, 31), [])
+  const pickers: PickerOptions = useMemo(
+    () => ({
+      year: years,
+      month: months,
+      day: days,
+    }),
+    [years, months, days]
+  )
+
   const [selected, setSelected] = useState<Record<string, string>>({
     day: 'Exp: 30',
     month: 'Exp: 12',
     year: 'Exp: 1997',
   })
-  const handleSetSelected = (val: Record<string, string>) => setSelected(val)
 
-  const isValid =
-    selected.year &&
-    selected.month &&
-    selected.day &&
-    !selected.year.startsWith('Exp:') &&
-    !selected.month.startsWith('Exp:') &&
-    !selected.day.startsWith('Exp:')
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const cookie = getCookie('info_birthday')
+      if (cookie) {
+        try {
+          setSelected(JSON.parse(decodeURIComponent(cookie)))
+        } catch {}
+      }
+    }
+  }, [])
 
-  const { handleSubmit } = useForm<BirthdayFormData>({
+  const handleSetSelected = (val: Record<string, string>) => {
+    setSelected(val)
+    setCookie('info_birthday', JSON.stringify(val))
+  }
+
+  const {
+    handleSubmit,
+    setValue,
+    register,
+    formState: {},
+    trigger,
+  } = useForm<BirthdayFormData>({
     resolver: zodResolver(birthdaySchema),
     mode: 'onChange',
   })
+
+  // Check if all date fields are properly selected (not default "Exp:" values)
+  const isAllFieldsSelected = useMemo(() => {
+    const day = selected.day
+    const month = selected.month
+    const year = selected.year
+
+    return !day.startsWith('Exp:') && !month.startsWith('Exp:') && !year.startsWith('Exp:')
+  }, [selected])
+
+  useEffect(() => {
+    const y = Number(selected.year.replace(/^Exp:\s*/, ''))
+    const m = Number(selected.month.replace(/^Exp:\s*/, ''))
+    const d = Number(selected.day.replace(/^Exp:\s*/, ''))
+    if (!isNaN(y) && !isNaN(m) && !isNaN(d)) {
+      setValue('birthday', new Date(y, m - 1, d))
+      trigger('birthday') // Trigger validation after setting value
+    }
+  }, [selected, setValue, trigger])
+
   const onSubmit = () => {
-    if (isValid) {
+    if (isAllFieldsSelected) {
       router.push(`/info/gender?name=${name}`)
     }
   }
-
-  const age = calculateAge(selected.year, selected.month, selected.day)
 
   return (
     <div className="flex flex-col h-full w-full p-8">
@@ -87,7 +115,7 @@ function BirthdayContent() {
               Welcome to <br /> Long-Bio, {name}!
             </h1>
             <span className="text-sm font-normal">
-              We love that you’re here. pick youre birthday date.
+              We love that you&apos;re here. pick youre birthday date.
             </span>
           </div>
           <div className="space-y-6 mt-16">
@@ -103,15 +131,8 @@ function BirthdayContent() {
                 day: 'min-w-[85px] md:min-w-[105px] h-fit border-none shadow-none bg-cloud-mist rounded-full',
               }}
             />
-            {age !== null &&
-              !selected.year.startsWith('Exp:') &&
-              !selected.month.startsWith('Exp:') &&
-              !selected.day.startsWith('Exp:') && (
-                <div className="flex items-center justify-center mt-4 text-sm font-medium text-gray-700">
-                  <h3>Your age is</h3>
-                  <h2 className="mx-1 text-gray-400">{age}</h2>
-                </div>
-              )}
+            <input type="hidden" {...register('birthday')} />
+            <CalculateAge year={selected.year} month={selected.month} day={selected.day} />
             <div className="flex items-center gap-1 mt-12 text-xs">
               <Info className="size-4" />
               <span>You can always update this later</span>

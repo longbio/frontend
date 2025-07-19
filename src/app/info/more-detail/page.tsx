@@ -1,11 +1,13 @@
 'use client'
 import { z } from 'zod'
+import React from 'react'
 import { Suspense } from 'react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { setCookie, getCookie } from '@/utils/cookie'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 const moreDetailSchema = z.object({
@@ -21,10 +23,26 @@ function MoreDetailContent() {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm<MoreDetailFormType>({
     resolver: zodResolver(moreDetailSchema),
     mode: 'onChange',
+    defaultValues: (() => {
+      if (typeof window !== 'undefined') {
+        const cookie = getCookie('info_more_detail')
+        if (cookie) {
+          try {
+            return JSON.parse(decodeURIComponent(cookie))
+          } catch {}
+        }
+      }
+      return {}
+    })(),
   })
+  const detail = watch('detail')
+  React.useEffect(() => {
+    setCookie('info_more_detail', JSON.stringify({ detail }))
+  }, [detail])
 
   const onSubmit = () => {
     router.push(`/info/congrats?name=${name}`)

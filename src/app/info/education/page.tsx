@@ -1,5 +1,6 @@
 'use client'
 import { z } from 'zod'
+import React from 'react'
 import { Info } from 'lucide-react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
@@ -7,6 +8,7 @@ import { Suspense, useState } from 'react'
 import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { setCookie, getCookie } from '@/utils/cookie'
 import { AddUniversityBox } from './components/AddMoreBox'
 import { useRouter, useSearchParams } from 'next/navigation'
 import GraduationYearBox from './components/GraduationYearBox'
@@ -27,8 +29,23 @@ function EducationContent() {
   const { handleSubmit, setValue, watch } = useForm<EducationFormData>({
     resolver: zodResolver(educationSchema),
     mode: 'onChange',
+    defaultValues: (() => {
+      if (typeof window !== 'undefined') {
+        const cookie = getCookie('info_education')
+        if (cookie) {
+          try {
+            return JSON.parse(decodeURIComponent(cookie))
+          } catch {}
+        }
+      }
+      return {}
+    })(),
   })
   const selectedEducation = watch('education')
+  React.useEffect(() => {
+    if (selectedEducation)
+      setCookie('info_education', JSON.stringify({ education: selectedEducation }))
+  }, [selectedEducation])
   const [universities, setUniversities] = useState<string[]>([])
   const [topics, setTopics] = useState<string[]>([])
   const [graduationYear, setGraduationYear] = useState<string | null>(null)

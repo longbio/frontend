@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form'
 import type { Area } from 'react-easy-crop'
 import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
+import { setCookie, getCookie } from '@/utils/cookie'
 import LabeledInput from '../components/LabeledInput'
 import { zodResolver } from '@hookform/resolvers/zod'
 import CropperDialog from '../components/CropperDialog'
@@ -35,9 +36,24 @@ function PetContent() {
   } = useForm<PetFormType>({
     resolver: zodResolver(petSchema),
     mode: 'onChange',
-    defaultValues: { hasPet: undefined },
+    defaultValues: (() => {
+      if (typeof window !== 'undefined') {
+        const cookie = getCookie('info_pet')
+        if (cookie) {
+          try {
+            return JSON.parse(decodeURIComponent(cookie))
+          } catch {}
+        }
+      }
+      return { hasPet: undefined }
+    })(),
   })
   const hasPet = watch('hasPet')
+  const petName = watch('petName')
+  const petBreed = watch('petBreed')
+  React.useEffect(() => {
+    setCookie('info_pet', JSON.stringify({ hasPet, petName, petBreed }))
+  }, [hasPet, petName, petBreed])
 
   // State for image cropping
   const [image, setImage] = React.useState<string | null>(null)
