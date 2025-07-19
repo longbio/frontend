@@ -3,10 +3,9 @@ import { z } from 'zod'
 import { Suspense } from 'react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
+import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
-// import LabeledInput from '../components/LabeledInput'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {
   Select,
@@ -119,21 +118,10 @@ function CountryContent() {
             </div>
           </div>
         </div>
-        <div className="sticky bottom-0">
-          <Button
-            type="submit"
-            className="w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl"
-          >
-            Next
-          </Button>
-          <button
-            type="button"
-            className="w-full text-sm font-normal p-3.5 mt-2 rounded-4xl"
-            onClick={() => router.push(`/info/pet?name=${name}`)}
-          >
-            skip
-          </button>
-        </div>
+        <StickyNav
+          onNext={handleSubmit(onSubmit)}
+          onSkip={() => router.push(`/info/pet?name=${name}`)}
+        />
       </form>
     </div>
   )
