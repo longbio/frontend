@@ -1,18 +1,32 @@
 'use client'
 import { z } from 'zod'
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
+import { Toggle } from '@/components/ui/toggle'
 import { Progress } from '@/components/ui/progress'
-import LabeledInput from '../components/LabeledInput'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
-import SelectableOption from '../components/SelectableOption'
+import SportAddButton from '../sport/components/SportAddButton'
+
+const defaultSports = [
+  'Football',
+  'Basketball',
+  'Tennis',
+  'Swimming',
+  'Running',
+  'Gym',
+  'Yoga',
+  'Cycling',
+  'Volleyball',
+  'Badminton',
+  'Table Tennis',
+  'Golf',
+]
 
 const sportSchema = z.object({
-  exercise: z.enum(['yes', 'no', 'sometimes'], { required_error: 'انتخاب الزامی است' }),
-  sportName: z.string().optional(),
+  sports: z.array(z.string()).min(1, '').max(5, ''),
 })
 type SportFormType = z.infer<typeof sportSchema>
 
@@ -20,18 +34,36 @@ function SportContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
+  const [customSports, setCustomSports] = useState<string[]>([])
+  const [selected, setSelected] = useState<string[]>([])
+
   const {
-    register,
-    setValue,
-    watch,
     handleSubmit,
-    formState: { errors },
+    setValue,
+    formState: {},
   } = useForm<SportFormType>({
     resolver: zodResolver(sportSchema),
     mode: 'onChange',
-    defaultValues: { exercise: undefined },
+    defaultValues: { sports: [] },
   })
-  const exercise = watch('exercise')
+
+  // Sync selected with form
+  const handleSelect = (sport: string) => {
+    let updated: string[]
+    if (selected.includes(sport)) {
+      updated = selected.filter((s) => s !== sport)
+      if (customSports.includes(sport)) {
+        setCustomSports(customSports.filter((s) => s !== sport))
+      }
+    } else {
+      if (selected.length >= 5) {
+        return
+      }
+      updated = [...selected, sport]
+    }
+    setSelected(updated)
+    setValue('sports', updated, { shouldValidate: true })
+  }
 
   const onSubmit = () => {
     router.push(`/info/skill?name=${name}`)
@@ -49,39 +81,29 @@ function SportContent() {
             </h1>
             <span className="text-sm font-normal text-left w-full">Are you into sport?</span>
           </div>
-          <div className="flex flex-col space-y-6 w-full mt-10">
-            <span className="text-xl font-bold">do you exercise</span>
-            <SelectableOption
-              id="exerciseYes"
-              label="Yes I love it!"
-              checked={exercise === 'yes'}
-              onCheckedChange={() => setValue('exercise', 'yes', { shouldValidate: true })}
-              className="mb-2"
-            />
-            <SelectableOption
-              id="exerciseNo"
-              label="No I don't."
-              checked={exercise === 'no'}
-              onCheckedChange={() => setValue('exercise', 'no', { shouldValidate: true })}
-              className="mb-2"
-            />
-            <SelectableOption
-              id="exerciseSometimes"
-              label="Sometimes"
-              checked={exercise === 'sometimes'}
-              onCheckedChange={() => setValue('exercise', 'sometimes', { shouldValidate: true })}
-            />
-          </div>
-          {exercise === 'yes' && (
-            <div className="flex flex-col space-y-6 w-full mt-6 transition-all duration-500 ease-in-out opacity-100 translate-y-0">
-              <LabeledInput
-                placeholder="Exp: Tennis"
-                type="text"
-                error={!!errors.sportName}
-                {...register('sportName')}
+          <div className="flex flex-col gap-y-4 my-16">
+            <h2 className="text-xl font-bold mt-8 w-full">
+              Choose the sports you are interested in
+            </h2>
+            <div className="flex flex-wrap gap-2 justify-start md:justify-stretch w-full">
+              {[...defaultSports, ...customSports].map((sport) => (
+                <Toggle
+                  key={sport}
+                  pressed={selected.includes(sport)}
+                  onPressedChange={() => handleSelect(sport)}
+                  disabled={selected.length >= 5 && !selected.includes(sport)}
+                  className="data-[state=on]:border-purple-blaze data-[state=on]:text-purple-blaze border border-black hover:text-black px-2 xl:px-4 text-xs xl:text-sm font-normal transition rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {sport}
+                </Toggle>
+              ))}
+              <SportAddButton
+                options={customSports}
+                setOptions={setCustomSports}
+                placeholder="Add your own sport..."
               />
             </div>
-          )}
+          </div>
         </div>
         <div className="sticky bottom-0 mt-9">
           <Button
