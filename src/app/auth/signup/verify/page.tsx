@@ -13,6 +13,7 @@ import { VerificationCodeInput } from '@/app/auth/components/VerificationCodeInp
 function VerifySignUpContent() {
   const searchParams = useSearchParams()
   const email = searchParams.get('email') || ''
+  const name = searchParams.get('name') || ''
   const [verificationCode, setVerificationCode] = useState('')
   // const { handleVerify, error, isPending, isSuccess } = useVerifySignupCode()
   const router = useRouter()
@@ -22,7 +23,7 @@ function VerifySignUpContent() {
     // handleVerify(email, verificationCode)
 
     // NOTE: remove for api in future
-    router.push('/info/birthday')
+    router.push(`/info/birthday?name=${name}`)
   }
 
   return (

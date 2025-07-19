@@ -55,7 +55,9 @@ export default function SignUp() {
     // await mutateAsync({ email: data.email })
 
     // NOTE: remove for api in future
-    router.push('/auth/signup/verify?email=' + encodeURIComponent(email))
+    router.push(
+      '/auth/signup/verify?email=' + encodeURIComponent(email) + '&name=' + encodeURIComponent(name)
+    )
   }
 
   return (
