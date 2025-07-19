@@ -44,7 +44,7 @@ function MoreDetailContent() {
               Let&apos;s take the Last step.
             </span>
           </div>
-          <div className="flex flex-col gap-y-4">
+          <div className="flex flex-col gap-y-4 mt-10">
             <h2 className="text-xl font-bold mt-8 w-full">
               Do you want to add something to this list?
             </h2>

@@ -25,7 +25,7 @@ const defaultSkills = [
 ]
 
 const skillSchema = z.object({
-  skills: z.array(z.string()).min(1, 'حداقل یک مهارت باید انتخاب شود'),
+  skills: z.array(z.string()).min(1, 'please choose one skill'),
 })
 type SkillFormType = z.infer<typeof skillSchema>
 
@@ -46,7 +46,6 @@ function SkillContent() {
     defaultValues: { skills: [] },
   })
 
-  // Sync selected with form
   const handleSelect = (skill: string) => {
     let updated: string[]
     if (selected.includes(skill)) {
@@ -55,6 +54,9 @@ function SkillContent() {
         setCustomSkills(customSkills.filter((s) => s !== skill))
       }
     } else {
+      if (selected.length >= 5) {
+        return
+      }
       updated = [...selected, skill]
     }
     setSelected(updated)
@@ -79,7 +81,7 @@ function SkillContent() {
               Let&apos;s talk about your skills.
             </span>
           </div>
-          <div className="flex flex-col gap-y-4">
+          <div className="flex flex-col gap-y-4 mt-10">
             <h2 className="text-xl font-bold mt-8 w-full">Choose the skills you are good at:</h2>
             <div className="flex flex-wrap gap-2 justify-start md:justify-stretch w-full">
               {[...defaultSkills, ...customSkills].map((skill) => (
@@ -87,7 +89,8 @@ function SkillContent() {
                   key={skill}
                   pressed={selected.includes(skill)}
                   onPressedChange={() => handleSelect(skill)}
-                  className="data-[state=on]:border-purple-blaze data-[state=on]:text-purple-blaze border border-black hover:text-black px-2 xl:px-4 text-xs xl:text-sm font-normal transition rounded-full"
+                  disabled={selected.length >= 5 && !selected.includes(skill)}
+                  className="data-[state=on]:border-purple-blaze data-[state=on]:text-purple-blaze border border-black hover:text-black px-2 xl:px-4 text-xs xl:text-sm font-normal transition rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {skill}
                 </Toggle>

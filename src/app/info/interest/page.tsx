@@ -26,7 +26,7 @@ const defaultInterests = [
 ]
 
 const interestSchema = z.object({
-  interests: z.array(z.string()).min(1, 'حداقل یک علاقه باید انتخاب شود'),
+  interests: z.array(z.string()).min(1, 'please choose one'),
 })
 type InterestFormType = z.infer<typeof interestSchema>
 
@@ -56,6 +56,9 @@ function InterestContent() {
         setCustomInterests(customInterests.filter((s) => s !== interest))
       }
     } else {
+      if (selected.length >= 5) {
+        return
+      }
       updated = [...selected, interest]
     }
     setSelected(updated)
@@ -80,7 +83,7 @@ function InterestContent() {
               Let&apos;s talk about your interests.
             </span>
           </div>
-          <div className="flex flex-col gap-y-4">
+          <div className="flex flex-col gap-y-4 mt-10">
             <h2 className="text-xl font-bold mt-8 w-full">
               Choose the options you are interested in
             </h2>
@@ -90,7 +93,8 @@ function InterestContent() {
                   key={interest}
                   pressed={selected.includes(interest)}
                   onPressedChange={() => handleSelect(interest)}
-                  className="data-[state=on]:border-purple-blaze data-[state=on]:text-purple-blaze border border-black hover:text-black px-2 xl:px-4 text-xs xl:text-sm font-normal transition rounded-full"
+                  disabled={selected.length >= 5 && !selected.includes(interest)}
+                  className="data-[state=on]:border-purple-blaze data-[state=on]:text-purple-blaze border border-black hover:text-black px-2 xl:px-4 text-xs xl:text-sm font-normal transition rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {interest}
                 </Toggle>
