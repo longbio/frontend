@@ -8,7 +8,7 @@ import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { setCookie, getCookie, removeCookie } from '@/utils/cookie'
+import { setCookie, getCookie } from '@/utils/cookie'
 import DatePicker, { PickerOptions } from '@/app/info/components/DataPicker'
 
 const physicalSchema = z.object({
@@ -58,7 +58,8 @@ function PhysicalContent() {
   const onSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault()
     if (isValid) {
-      removeCookie('info_physical')
+      // Keep the selected values in cookie instead of removing them
+      // removeCookie('info_physical') // Remove this line
       router.push(`/info/country?name=${name}`)
     }
   }
