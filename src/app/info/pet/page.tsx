@@ -51,9 +51,6 @@ function PetContent() {
   const hasPet = watch('hasPet')
   const petName = watch('petName')
   const petBreed = watch('petBreed')
-  React.useEffect(() => {
-    setCookie('info_pet', JSON.stringify({ hasPet, petName, petBreed }))
-  }, [hasPet, petName, petBreed])
 
   // State for image cropping
   const [image, setImage] = React.useState<string | null>(null)
@@ -62,6 +59,10 @@ function PetContent() {
   const [zoom, setZoom] = React.useState(1)
   const [openCropper, setOpenCropper] = React.useState(false)
   const [croppedAreaPixels, setCroppedAreaPixels] = React.useState<Area | null>(null)
+
+  React.useEffect(() => {
+    setCookie('info_pet', JSON.stringify({ hasPet, petName, petBreed, petImage: croppedImage }))
+  }, [hasPet, petName, petBreed, croppedImage])
 
   // Handle file input change
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
