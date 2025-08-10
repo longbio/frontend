@@ -1,30 +1,25 @@
 'use client'
 
 import clsx from 'clsx'
-// import { z } from 'zod'
+import { z } from 'zod'
 import React from 'react'
 import Link from 'next/link'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
-// import { useSendOTPEmail } from '@/service/auth/hook'
+import { useSendOTPEmail } from '@/service/auth/hook'
 import { setCookie, getCookie } from '@/utils/cookie'
-// import { zodResolver } from '@hookform/resolvers/zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { FormInput } from '@/app/auth/components/FormInput'
-// NOTE: remove for api in future
-import { useRouter } from 'next/navigation'
 
-// const signUpSchema = z.object({
-//   name: z.string().min(1),
-//   email: z.string().email(),
-// })
-// type FormData = z.infer<typeof signUpSchema>
+const signUpSchema = z.object({
+  name: z.string().min(1),
+  email: z.string().email(),
+})
+type FormData = z.infer<typeof signUpSchema>
 
 export default function SignUp() {
-  // const { mutateAsync } = useSendOTPEmail()
-
-  // NOTE: remove for api in future
-  const router = useRouter()
+  const { mutateAsync } = useSendOTPEmail()
 
   const {
     watch,
@@ -33,7 +28,7 @@ export default function SignUp() {
     formState: { errors },
     // eslint-disable-next-line
   } = useForm<any>({
-    // resolver: zodResolver(signUpSchema),
+    resolver: zodResolver(signUpSchema),
     defaultValues: (() => {
       if (typeof window !== 'undefined') {
         const cookie = getCookie('auth_signup')
@@ -46,18 +41,18 @@ export default function SignUp() {
       return { name: '', email: '' }
     })(),
   })
+
   const name = watch('name')
   const email = watch('email')
+
   React.useEffect(() => {
     setCookie('auth_signup', JSON.stringify({ name, email }))
   }, [name, email])
-  const onSubmit = async () => {
-    // await mutateAsync({ email: data.email })
 
-    // NOTE: remove for api in future
-    router.push(
-      '/auth/signup/verify?email=' + encodeURIComponent(email) + '&name=' + encodeURIComponent(name)
-    )
+  const onSubmit = async (data: FormData) => {
+    await mutateAsync({
+      email: data.email,
+    })
   }
 
   return (
