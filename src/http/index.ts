@@ -40,7 +40,10 @@ async function request<T>(url: string, options: RequestOptions = {}): Promise<T>
     'Content-Type': 'application/json',
   }
 
-  const defaultOptions: RequestInit = { headers }
+  const defaultOptions: RequestInit = {
+    headers,
+    credentials: 'include',
+  }
   const mergedOptions = merge({}, defaultOptions, options)
 
   let data: T = {} as T

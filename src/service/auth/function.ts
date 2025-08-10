@@ -8,12 +8,18 @@ export async function sendSignupEmail(params: SignupParams) {
   return response
 }
 
-export async function verifySignupCode(params: VerifySignupCodeParams) {
-  const response = await http.post<{ success?: boolean; message?: string }>(
-    '/v1/auth/verification-code/verify',
-    {
-      body: JSON.stringify(params),
-    }
-  )
+export async function verifySignupCode(params: VerifySignupCodeParams): Promise<{
+  status: number
+  message: string
+  data?: { isNewUser?: boolean }
+}> {
+  const response = await http.post<{
+    status: number
+    message: string
+    data?: { isNewUser?: boolean }
+  }>('/v1/auth/verification-code/verify', {
+    body: JSON.stringify(params),
+    credentials: 'include',
+  })
   return response
 }
