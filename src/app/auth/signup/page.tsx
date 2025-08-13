@@ -53,8 +53,9 @@ export default function SignUp() {
     await mutateAsync({
       email: data.email,
     })
+    console.log(process.env.NEXT_PUBLIC_API_BASE_URL)
   }
-
+  console.log(process.env.NEXT_PUBLIC_API_BASE_URL)
   return (
     <div className="flex flex-col h-full w-full p-8">
       <div className="w-full flex flex-col h-full gap-y-20">
