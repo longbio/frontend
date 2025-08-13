@@ -36,8 +36,9 @@ async function request<T>(url: string, options: RequestOptions = {}): Promise<T>
     fullUrl.search = objectToQueryString(options.params)
   }
 
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+  const headers: Record<string, string> = {}
+  if (!(options.body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json'
   }
 
   const defaultOptions: RequestInit = {
@@ -99,5 +100,8 @@ export const http = {
 
   delete: <T>(url: string, options: RequestOptions = {}) => {
     return request<T>(url, { ...options, method: 'DELETE' })
+  },
+  patch: <T>(url: string, options: RequestOptions = {}) => {
+    return request<T>(url, { ...options, method: 'PATCH' })
   },
 }
