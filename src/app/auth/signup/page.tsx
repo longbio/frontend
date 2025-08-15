@@ -61,9 +61,9 @@ export default function SignUp() {
       <div className="w-full flex flex-col h-full gap-y-20">
         <div>
           <Header />
-          <div className="flex items-center text-sm font-bold text-black mt-5">
-            hi
-            <h1 className={clsx(name && 'ml-1.5', 'text-gray-500')}>{name}</h1>
+          <div className="flex items-center text-lg font-bold text-black mt-5">
+            Hi
+            <h1 className={clsx(name && 'text-lg ml-1.5', 'text-gray-500')}>{name}</h1>
             <h4 className="px-0.5">!</h4>
           </div>
           <h3 className="mt-1.5 text-black text-[10px] font-normal">
@@ -79,7 +79,7 @@ export default function SignUp() {
               id="name"
               type="text"
               label="Full Name"
-              placeholder="Exp: Farzaneh"
+              placeholder="Exp: Jessica"
               error={!!errors.name}
               {...register('name')}
             />
@@ -87,7 +87,7 @@ export default function SignUp() {
               id="email"
               type="email"
               label="Email"
-              placeholder="Exp: Fari@gmail.com"
+              placeholder="Exp: Jessica@gmail.com"
               error={!!errors.email}
               {...register('email')}
             />

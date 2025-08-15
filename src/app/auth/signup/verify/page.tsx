@@ -54,7 +54,7 @@ function VerifySignUpContent() {
       <div className="w-full flex flex-col justify-between h-full gap-y-20">
         <div className="text-left text-purple-blaze">
           <Header />
-          <h2 className="text-sm font-bold text-black mt-5">Let&apos;s Start with ...</h2>
+          <h2 className="text-base font-bold text-black mt-5">Let&apos;s Start!</h2>
           <h3 className="mt-1.5 text-black text-[10px] font-normal">
             Already have an account?
             <Link href="/auth/signin" className="text-purple-blaze hover:underline mx-0.5">

@@ -112,7 +112,7 @@ function BirthdayContent() {
         <div>
           <div className="flex flex-col gap-y-4">
             <h1 className="text-2xl font-bold">
-              Welcome to <br /> Long-Bio, {name}!
+              Welcome to <br /> LongBio, {name}!
             </h1>
             <span className="text-sm font-normal">
               We love that you&apos;re here. pick youre birthday date.
@@ -135,7 +135,7 @@ function BirthdayContent() {
             <CalculateAge year={selected.year} month={selected.month} day={selected.day} />
             <div className="flex items-center gap-1 mt-12 text-xs">
               <Info className="size-4" />
-              <span>You can always update this later</span>
+              <span>You can skip any step you want and complete it later.</span>
             </div>
           </div>
         </div>

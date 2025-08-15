@@ -10,8 +10,8 @@ export default function Welcome() {
         <WelcomeAnimation className="mt-14" />
         <h1 className="text-2xl font-bold mt-5">Welcome</h1>
         <p className="text-sm font-normal text-center mt-4">
-          A brief, summary of your personal and professional background, crafted from the details
-          you provide.
+          Create your Longbio profile in minutes. Share it so your friends and community can get to
+          know you better.
         </p>
       </div>
       <div className="flex flex-col items-center justify-center w-full">
