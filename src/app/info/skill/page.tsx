@@ -90,7 +90,7 @@ function SkillContent() {
         <div>
           <div className="flex flex-col gap-y-4">
             <h1 className="text-2xl font-bold text-left w-full">
-              Welcome to <br /> Long-Bio, {name}!
+              Welcome to <br /> LongBio, {name}!
             </h1>
             <span className="text-sm font-normal text-left w-full">
               Let&apos;s talk about your skills.

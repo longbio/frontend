@@ -1,22 +1,30 @@
 'use client'
 import Header from '@/components/Header'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Congrats from './components/congrats'
 import { Button } from '@/components/ui/button'
 
 export default function CongratsPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const name = searchParams.get('name') || ''
 
   return (
     <div className="flex flex-col items-center justify-between h-full p-8 bg-white">
       <div className="flex flex-col items-center">
         <Header />
         <div className="flex flex-col items-center w-full mt-12">
-          <span className="text-sm font-bold text-center">
-            Let&apos;s have a quick look how it works
-          </span>
+          <div className="text-lg font-bold text-center">
+            <div className="flex justify-center gap-x-2">
+              <h1>“🎉 Congrats </h1>
+              <h2 className="text-xl text-gray-500">{name}!</h2>
+            </div>
+            <h3 className="text-base">
+              Your profile is ready. You can now share it on social media and with your friends.”
+            </h3>
+          </div>
           <Congrats />
-          <h1 className="text-xl font-bold text-center mt-2">Congrats!</h1>
+          <h1 className="text-xl font-bold text-center mt-2">Congrats !</h1>
           <span className="text-xs font-light text-center text-black mt-4">
             Blah Blah Blah Blah Blah Blah Blah Blah
           </span>
@@ -26,7 +34,7 @@ export default function CongratsPage() {
         className="sticky bottom-0 w-full h-fit bg-purple-blaze rounded-full"
         onClick={() => router.push('/bio')}
       >
-        Start free!
+        View My Profile!
       </Button>
     </div>
   )

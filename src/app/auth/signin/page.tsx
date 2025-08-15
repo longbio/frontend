@@ -55,7 +55,7 @@ export default function SignIn() {
       <div className="w-full flex flex-col h-full gap-y-20">
         <div className="text-left text-purple-blaze">
           <Header />
-          <h2 className="text-sm font-bold text-black mt-5">Let&apos;s Start with ...</h2>
+          <h2 className="text-base font-bold text-black mt-5">Let&apos;s Start!</h2>
           <h3 className="mt-1.5 text-black text-[10px] font-normal">
             don&apos;t have an account?
             <Link href="/auth/signup" className="text-purple-blaze hover:underline mx-0.5">
@@ -71,7 +71,7 @@ export default function SignIn() {
                 id="email"
                 type="email"
                 label="Email"
-                placeholder="Exp: Fari@gmail.com"
+                placeholder="Exp: Jessica@gmail.com"
                 error={!!errors.email}
                 {...register('email')}
               />
