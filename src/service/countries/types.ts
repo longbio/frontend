@@ -1,12 +1,16 @@
-export interface Country {
-  iso2: string
-  iso3: string
+export interface CountryItem {
+  name: string
+  code: string
+  emoji: string
+  unicode: string
+  image: string
+}
+
+export type FlagCountriesApiResponse = CountryItem[]
+
+export interface CountryAndCityItem {
   country: string
   cities: string[]
 }
 
-export interface CountriesApiResponse {
-  error: boolean
-  msg: string
-  data: Country[]
-}
+export type CountryAndCityApiResponse = CountryAndCityItem[]
