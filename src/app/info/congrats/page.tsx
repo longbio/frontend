@@ -1,10 +1,12 @@
 'use client'
+
 import Header from '@/components/Header'
-import { useRouter, useSearchParams } from 'next/navigation'
 import Congrats from './components/congrats'
 import { Button } from '@/components/ui/button'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
-export default function CongratsPage() {
+function CongratsContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
@@ -37,5 +39,13 @@ export default function CongratsPage() {
         View My Profile!
       </Button>
     </div>
+  )
+}
+
+export default function CongratsPage() {
+  return (
+    <Suspense>
+      <CongratsContent />
+    </Suspense>
   )
 }

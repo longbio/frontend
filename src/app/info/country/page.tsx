@@ -1,7 +1,6 @@
 'use client'
 import { z } from 'zod'
-import React from 'react'
-import { Suspense } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import StickyNav from '../components/StickyNav'
@@ -18,6 +17,7 @@ import {
   SelectItem,
 } from '@/components/ui/select'
 
+// Schema
 const countrySchema = z.object({
   birthPlace: z
     .string()
@@ -34,12 +34,14 @@ function CountryContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
-  const { data, loading, error } = useCountriesAndCities()
+
+  const { data: countriesData, loading, error } = useCountriesAndCities()
+
   const {
     handleSubmit,
-    formState: { errors },
-    setValue,
     watch,
+    setValue,
+    formState: { errors },
   } = useForm<CountryFormData>({
     resolver: zodResolver(countrySchema),
     mode: 'onChange',
@@ -55,17 +57,18 @@ function CountryContent() {
       return {}
     })(),
   })
+
   const birthPlace = watch('birthPlace')
   const livePlace = watch('livePlace')
-  React.useEffect(() => {
+
+  useEffect(() => {
     setCookie('info_country', JSON.stringify({ birthPlace, livePlace }))
   }, [birthPlace, livePlace])
-  const onSubmit = () => {
-    router.push(`/info/pet?name=${name}`)
-  }
 
-  const selectedCountry = watch('birthPlace')
-  const selectedCountryObj = data?.data.find((c) => c.country === selectedCountry)
+  const onSubmit = () => router.push(`/info/pet?name=${name}`)
+
+  // پیدا کردن کشور انتخاب شده برای دسترسی به شهرها
+  const selectedCountryObj = countriesData.find((c) => c.country === birthPlace)
 
   return (
     <div className="flex flex-col h-full w-full p-8">
@@ -79,11 +82,13 @@ function CountryContent() {
             </h1>
             <span className="text-sm font-normal text-left w-full">Choose your country.</span>
           </div>
+
           <div className="flex flex-col space-y-6 w-full mt-20">
+            {/* Country Select */}
             <div>
               <label className="text-xl font-bold block mb-2">Country of Birth</label>
               <Select
-                value={selectedCountry || ''}
+                value={birthPlace || ''}
                 onValueChange={(value) => setValue('birthPlace', value, { shouldValidate: true })}
                 disabled={loading || !!error}
               >
@@ -97,9 +102,9 @@ function CountryContent() {
                   <SelectValue placeholder="Select your country..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {data?.data.map((country) => (
-                    <SelectItem key={country.country} value={country.country}>
-                      {country.country}
+                  {countriesData.map((c) => (
+                    <SelectItem key={c.country} value={c.country}>
+                      {c.country}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -108,10 +113,12 @@ function CountryContent() {
                 <span className="text-red-500 text-xs mt-1 block">{errors.birthPlace.message}</span>
               )}
             </div>
+
+            {/* City Select */}
             <div>
               <label className="text-xl font-bold block mb-2">City of Birth</label>
               <Select
-                value={watch('livePlace') || ''}
+                value={livePlace || ''}
                 onValueChange={(value) => setValue('livePlace', value, { shouldValidate: true })}
                 disabled={!selectedCountryObj || loading || !!error}
               >
@@ -132,9 +139,13 @@ function CountryContent() {
                   ))}
                 </SelectContent>
               </Select>
+              {errors.livePlace && (
+                <span className="text-red-500 text-xs mt-1 block">{errors.livePlace.message}</span>
+              )}
             </div>
           </div>
         </div>
+
         <StickyNav
           onNext={handleSubmit(onSubmit)}
           onSkip={() => router.push(`/info/pet?name=${name}`)}
@@ -143,6 +154,7 @@ function CountryContent() {
     </div>
   )
 }
+
 export default function Country() {
   return (
     <Suspense>
