@@ -7,6 +7,7 @@ import { Suspense, useState } from 'react'
 import { Toggle } from '@/components/ui/toggle'
 import AddButton from '../components/AddButton'
 import StickyNav from '../components/StickyNav'
+import { useUpdateUser } from '@/service/user/hook'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { setCookie, getCookie } from '@/utils/cookie'
@@ -34,6 +35,7 @@ type InterestFormType = z.infer<typeof interestSchema>
 
 function InterestContent() {
   const router = useRouter()
+  const mutation = useUpdateUser()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
   const [customInterests, setCustomInterests] = useState<string[]>([])
@@ -81,6 +83,14 @@ function InterestContent() {
   }
 
   const onSubmit = () => {
+    try {
+      mutation.mutate({
+        interests: selected.join(', '),
+      })
+    } catch (err) {
+      console.error('Failed to update interests info', err)
+    }
+
     router.push(`/info/more-detail?name=${name}`)
   }
 
