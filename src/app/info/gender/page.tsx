@@ -47,7 +47,11 @@ function GenderContent() {
 
   const onSubmit = async () => {
     if (selectedGender) {
-      await mutation.mutateAsync({ gender: selectedGender })
+      try {
+        await mutation.mutateAsync({ gender: selectedGender })
+      } catch (err) {
+        console.error('Failed to update gender', err)
+      }
     }
     router.push(`/info/marital?name=${name}`)
   }
