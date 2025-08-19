@@ -6,6 +6,7 @@ import { Info } from 'lucide-react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import StickyNav from '../components/StickyNav'
+import { useUpdateUser } from '@/service/user/hook'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { setCookie, getCookie } from '@/utils/cookie'
@@ -39,11 +40,15 @@ function GenderContent() {
     })(),
   })
   const selectedGender = watch('gender')
+  const mutation = useUpdateUser()
   React.useEffect(() => {
     if (selectedGender) setCookie('info_gender', JSON.stringify({ gender: selectedGender }))
   }, [selectedGender])
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
+    if (selectedGender) {
+      await mutation.mutateAsync({ gender: selectedGender })
+    }
     router.push(`/info/marital?name=${name}`)
   }
 
