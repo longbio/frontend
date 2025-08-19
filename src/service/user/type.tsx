@@ -6,8 +6,8 @@ export interface EducationItem {
 }
 
 export interface TravelItem {
-  style: string
-  country: string
+  styles?: string[]
+  countries?: string[]
 }
 
 export interface PetInfo {
