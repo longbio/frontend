@@ -5,6 +5,7 @@ import { Suspense } from 'react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import StickyNav from '../components/StickyNav'
+import { useUpdateUser } from '@/service/user/hook'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { setCookie, getCookie } from '@/utils/cookie'
@@ -17,6 +18,7 @@ type MoreDetailFormType = z.infer<typeof moreDetailSchema>
 
 function MoreDetailContent() {
   const router = useRouter()
+  const mutation = useUpdateUser()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
   const {
@@ -45,6 +47,14 @@ function MoreDetailContent() {
   }, [detail])
 
   const onSubmit = () => {
+    try {
+      mutation.mutate({
+        details: detail || '',
+      })
+    } catch (err) {
+      console.error('Failed to update more details', err)
+    }
+
     router.push(`/info/congrats?name=${name}`)
   }
 
