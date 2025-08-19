@@ -7,8 +7,10 @@ import { useForm } from 'react-hook-form'
 import { Suspense, useState } from 'react'
 import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
+import { useUpdateUser } from '@/service/user/hook'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { setCookie, getCookie } from '@/utils/cookie'
+import type { EducationItem } from '@/service/user/type'
 import { AddUniversityBox } from './components/AddMoreBox'
 import { useRouter, useSearchParams } from 'next/navigation'
 import GraduationYearBox from './components/GraduationYearBox'
@@ -49,8 +51,31 @@ function EducationContent() {
   const [universities, setUniversities] = useState<string[]>([])
   const [topics, setTopics] = useState<string[]>([])
   const [graduationYear, setGraduationYear] = useState<string | null>(null)
+  const mutation = useUpdateUser()
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
+    if (!selectedEducation) return router.push(`/info/set-profile?name=${name}`)
+
+    const educationItems: EducationItem[] = [
+      {
+        status:
+          selectedEducation === 'not-interested'
+            ? 'not interested'
+            : selectedEducation === 'student'
+            ? 'student'
+            : 'graduated',
+        university: universities.join(', ') || undefined,
+        topic: topics.join(', ') || undefined,
+        graduationYear: graduationYear ? Number(graduationYear) : undefined,
+      },
+    ]
+
+    try {
+      await mutation.mutateAsync({ education: educationItems })
+    } catch (err) {
+      console.error('Failed to update education', err)
+    }
+
     router.push(`/info/set-profile?name=${name}`)
   }
 
