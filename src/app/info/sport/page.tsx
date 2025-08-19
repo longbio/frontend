@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form'
 import { Suspense, useState } from 'react'
 import StickyNav from '../components/StickyNav'
 import { Toggle } from '@/components/ui/toggle'
+import { useUpdateUser } from '@/service/user/hook'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { setCookie, getCookie } from '@/utils/cookie'
@@ -34,6 +35,7 @@ type SportFormType = z.infer<typeof sportSchema>
 
 function SportContent() {
   const router = useRouter()
+  const mutation = useUpdateUser()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
   const [customSports, setCustomSports] = useState<string[]>([])
@@ -81,6 +83,14 @@ function SportContent() {
   }
 
   const onSubmit = () => {
+    try {
+      mutation.mutate({
+        sport: selected.join(', '),
+      })
+    } catch (err) {
+      console.error('Failed to update sport info', err)
+    }
+
     router.push(`/info/skill?name=${name}`)
   }
 
