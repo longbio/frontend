@@ -7,6 +7,7 @@ import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
 import CalculateAge from './components/CalculateAge'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useUpdateUser } from '@/service/user/hook'
 import { setCookie, getCookie } from '@/utils/cookie'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useState, useEffect, useMemo } from 'react'
@@ -25,6 +26,7 @@ const range = (start: number, end: number) =>
 function BirthdayContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { mutateAsync: updateUser } = useUpdateUser()
   let name = searchParams.get('name') || ''
   if (!name && typeof window !== 'undefined') {
     const cookie = getCookie('info_name')
@@ -94,16 +96,21 @@ function BirthdayContent() {
     const d = Number(selected.day.replace(/^Exp:\s*/, ''))
     if (!isNaN(y) && !isNaN(m) && !isNaN(d)) {
       setValue('birthday', new Date(y, m - 1, d))
-      trigger('birthday') // Trigger validation after setting value
+      trigger('birthday')
     }
   }, [selected, setValue, trigger])
 
-  const onSubmit = () => {
+  const onSubmit = async (data: BirthdayFormData) => {
     if (isAllFieldsSelected) {
+      const birthday = data.birthday.toISOString().split('T')[0]
+      await updateUser({
+        fullName: name,
+        birthday,
+      })
+
       router.push(`/info/gender?name=${name}`)
     }
   }
-
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={7.14} />
