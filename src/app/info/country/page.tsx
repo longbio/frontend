@@ -1,9 +1,10 @@
 'use client'
 import { z } from 'zod'
-import React, { Suspense, useEffect } from 'react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import StickyNav from '../components/StickyNav'
+import React, { Suspense, useEffect } from 'react'
+import { useUpdateUser } from '@/service/user/hook'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { setCookie, getCookie } from '@/utils/cookie'
@@ -32,6 +33,7 @@ type CountryFormData = z.infer<typeof countrySchema>
 
 function CountryContent() {
   const router = useRouter()
+  const mutation = useUpdateUser()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
 
@@ -65,9 +67,18 @@ function CountryContent() {
     setCookie('info_country', JSON.stringify({ birthPlace, livePlace }))
   }, [birthPlace, livePlace])
 
-  const onSubmit = () => router.push(`/info/pet?name=${name}`)
+  const onSubmit = () => {
+    try {
+      mutation.mutate({
+        country: birthPlace,
+        city: livePlace,
+      })
+    } catch (err) {
+      console.error('Failed to update country info', err)
+    }
 
-  // پیدا کردن کشور انتخاب شده برای دسترسی به شهرها
+    router.push(`/info/pet?name=${name}`)
+  }
   const selectedCountryObj = countriesData.find((c) => c.country === birthPlace)
 
   return (
