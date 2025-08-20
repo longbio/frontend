@@ -6,11 +6,12 @@ import { Info } from 'lucide-react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import StickyNav from '../components/StickyNav'
+import { useUpdateUser } from '@/service/user/hook'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { setCookie, getCookie } from '@/utils/cookie'
 import { useRouter, useSearchParams } from 'next/navigation'
 import SelectableOption from '@/app/info/components/SelectableOption'
-import { setCookie, getCookie } from '@/utils/cookie'
 
 const maritalSchema = z.object({
   marital: z.string({
@@ -39,11 +40,19 @@ function MaritalContent() {
     })(),
   })
   const selectedMarital = watch('marital')
+  const mutation = useUpdateUser()
   React.useEffect(() => {
     if (selectedMarital) setCookie('info_marital', JSON.stringify({ marital: selectedMarital }))
   }, [selectedMarital])
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
+    if (selectedMarital) {
+      try {
+        await mutation.mutateAsync({ marital: selectedMarital })
+      } catch (err) {
+        console.error('Failed to update marital', err)
+      }
+    }
     router.push(`/info/education?name=${name}`)
   }
 

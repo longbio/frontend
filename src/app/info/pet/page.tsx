@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form'
 import type { Area } from 'react-easy-crop'
 import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
+import { useUpdateUser } from '@/service/user/hook'
 import { setCookie, getCookie } from '@/utils/cookie'
 import LabeledInput from '../components/LabeledInput'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -25,6 +26,7 @@ type PetFormType = z.infer<typeof petSchema>
 
 function PetContent() {
   const router = useRouter()
+  const mutation = useUpdateUser()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
   const {
@@ -113,6 +115,18 @@ function PetContent() {
   }, [image, croppedAreaPixels])
 
   const onSubmit = () => {
+    try {
+      mutation.mutate({
+        pet: {
+          hasPet: hasPet || false,
+          type: petName || '',
+          breed: petBreed || '',
+        },
+      })
+    } catch (err) {
+      console.error('Failed to update pet info', err)
+    }
+
     router.push(`/info/sport?name=${name}`)
   }
 

@@ -3,9 +3,9 @@
 import clsx from 'clsx'
 import { z } from 'zod'
 import Link from 'next/link'
-import { Suspense, useEffect } from 'react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
+import { Suspense, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useVerifySignupCode } from '@/service/auth/hook'
@@ -19,12 +19,11 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>
 
-function VerifySignUpContent() {
+function VerifySignInContent() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const email = searchParams.get('email') || ''
-  const name = searchParams.get('name') || ''
-  const { handleVerify, error, isPending, isSuccess, isNewUser } = useVerifySignupCode()
-  const router = useRouter()
+  const { handleVerify, error, isPending, isSuccess, isNewUser } = useVerifySignupCode('signin')
 
   const {
     handleSubmit,
@@ -39,22 +38,23 @@ function VerifySignUpContent() {
   const onSubmit = (data: FormData) => {
     handleVerify(email, data.verificationCode)
   }
+
   useEffect(() => {
-    if (isSuccess && isNewUser === true) {
-      router.push(`/info/birthday?name=${encodeURIComponent(name)}`)
+    if (isSuccess && isNewUser === false) {
+      router.push('/bio')
     }
-  }, [isSuccess, isNewUser, router, name])
+  }, [isSuccess, isNewUser, router])
 
   return (
     <div className="flex flex-col h-full w-full p-8">
       <div className="w-full flex flex-col justify-between h-full gap-y-20">
-        <div className="text-left text-purple-blaze">
+        <div>
           <Header />
-          <h2 className="text-base font-bold text-black mt-5">Let’s Start!</h2>
+          <h2 className="text-base font-bold text-black mt-5">Welcome Back!</h2>
           <h3 className="mt-1.5 text-black text-[10px] font-normal">
-            Already have an account?
-            <Link href="/auth/signin" className="text-purple-blaze hover:underline mx-0.5">
-              Login
+            don’t have an account?
+            <Link href="/auth/signup" className="text-purple-blaze hover:underline mx-0.5">
+              Sign Up
             </Link>
           </h3>
         </div>
@@ -70,16 +70,20 @@ function VerifySignUpContent() {
               labelClassName="text-light-gray"
               className="text-light-gray disabled:border-light-gray"
             />
-            <div>
+            <div className="relative">
               <VerificationCodeInput
                 email={email}
                 value={watch('verificationCode')}
                 onChange={(val) => setValue('verificationCode', val)}
-                isSuccess={isSuccess && !!isNewUser}
-                error={errors.verificationCode?.message || error || ''}
+                isSuccess={isSuccess && isNewUser === false}
+                error={error || errors.verificationCode?.message || ''}
               />
               {error && (
-                <p className="text-red-600 text-xs mt-1" role="alert" aria-live="assertive">
+                <p
+                  className="absolute text-red-600 text-xs mt-1"
+                  role="alert"
+                  aria-live="assertive"
+                >
                   {error}
                 </p>
               )}
@@ -88,21 +92,15 @@ function VerifySignUpContent() {
 
           <div className="sticky bottom-0 text-center mt-2">
             <Button
-              className={clsx('w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl', {
-                'disabled:bg-silver-mist disabled:cursor-not-allowed': true,
-              })}
+              className={clsx(
+                'w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl',
+                'disabled:bg-silver-mist disabled:cursor-not-allowed'
+              )}
               type="submit"
               disabled={isPending || !watch('verificationCode').trim()}
             >
               {isPending ? 'Verifying...' : 'Verify'}
             </Button>
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="w-full text-sm text-black hover:text-purple-blaze py-3.5"
-            >
-              Back
-            </button>
           </div>
         </form>
       </div>
@@ -110,10 +108,10 @@ function VerifySignUpContent() {
   )
 }
 
-export default function VerifySignUp() {
+export default function VerifySignIn() {
   return (
     <Suspense>
-      <VerifySignUpContent />
+      <VerifySignInContent />
     </Suspense>
   )
 }

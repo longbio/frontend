@@ -6,9 +6,10 @@ import { useForm } from 'react-hook-form'
 import { Suspense, useState } from 'react'
 import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
+import { useUpdateUser } from '@/service/user/hook'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter, useSearchParams } from 'next/navigation'
 import { setCookie, getCookie } from '@/utils/cookie'
+import { useRouter, useSearchParams } from 'next/navigation'
 import DatePicker, { PickerOptions } from '@/app/info/components/DataPicker'
 
 const physicalSchema = z.object({
@@ -19,6 +20,7 @@ type PhysicalFormData = z.infer<typeof physicalSchema>
 
 function PhysicalContent() {
   const router = useRouter()
+  const mutation = useUpdateUser()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
   const {} = useForm<PhysicalFormData>({
@@ -57,11 +59,18 @@ function PhysicalContent() {
     !selected.weight.startsWith('Exp:')
   const onSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault()
-    if (isValid) {
-      // Keep the selected values in cookie instead of removing them
-      // removeCookie('info_physical') // Remove this line
-      router.push(`/info/country?name=${name}`)
+    if (!isValid) return
+
+    try {
+      mutation.mutate({
+        height: selected.height,
+        weight: selected.weight,
+      })
+    } catch (err) {
+      console.error('Failed to update physical info', err)
     }
+
+    router.push(`/info/country?name=${name}`)
   }
 
   return (

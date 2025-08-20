@@ -1,33 +1,31 @@
 'use client'
+
 import { z } from 'zod'
 import React from 'react'
 import Link from 'next/link'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
-import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { setCookie, getCookie } from '@/utils/cookie'
+import { useSendOTPEmail } from '@/service/auth/hook'
 import { FormInput } from '@/app/auth/components/FormInput'
 
 const signInSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(1),
 })
-
 type FormData = z.infer<typeof signInSchema>
 
 export default function SignIn() {
-  const router = useRouter()
+  const { mutateAsync } = useSendOTPEmail({ mode: 'signin' })
 
   const {
+    watch,
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
-    watch,
+    formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(signInSchema),
-    mode: 'onChange',
     defaultValues: (() => {
       if (typeof window !== 'undefined') {
         const cookie = getCookie('auth_signin')
@@ -37,25 +35,26 @@ export default function SignIn() {
           } catch {}
         }
       }
-      return { email: '', password: '' }
+      return { email: '' }
     })(),
   })
-  const email = watch('email')
-  const password = watch('password')
-  React.useEffect(() => {
-    setCookie('auth_signin', JSON.stringify({ email, password }))
-  }, [email, password])
 
-  const onSubmit = async () => {
-    router.push('/auth/signin/success')
+  const email = watch('email')
+
+  React.useEffect(() => {
+    setCookie('auth_signin', JSON.stringify({ email }))
+  }, [email])
+
+  const onSubmit = async (data: FormData) => {
+    await mutateAsync({ email: data.email })
   }
 
   return (
     <div className="flex flex-col h-full w-full p-8">
       <div className="w-full flex flex-col h-full gap-y-20">
-        <div className="text-left text-purple-blaze">
+        <div>
           <Header />
-          <h2 className="text-base font-bold text-black mt-5">Let&apos;s Start!</h2>
+          <h2 className="text-base font-bold text-black mt-5">Welcome Back!</h2>
           <h3 className="mt-1.5 text-black text-[10px] font-normal">
             don&apos;t have an account?
             <Link href="/auth/signup" className="text-purple-blaze hover:underline mx-0.5">
@@ -66,41 +65,20 @@ export default function SignIn() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full">
           <div className="space-y-6">
-            <div>
-              <FormInput
-                id="email"
-                type="email"
-                label="Email"
-                placeholder="Exp: Jessica@gmail.com"
-                error={!!errors.email}
-                {...register('email')}
-              />
-              {errors.email && (
-                <div className="absolute text-red-500 text-xs font-light mt-1">
-                  email or password is not exist
-                  <Link href="/auth/signup" className="text-purple-blaze px-1 hover:underline">
-                    Sign Up
-                  </Link>
-                </div>
-              )}
-            </div>
-            <div>
-              <FormInput
-                id="password"
-                type="password"
-                label="Password"
-                placeholder="Exp: 1234567889@@"
-                error={!!errors.password}
-                {...register('password')}
-              />
-            </div>
+            <FormInput
+              id="email"
+              type="email"
+              label="Email"
+              placeholder="Exp: Jessica@gmail.com"
+              error={!!errors.email}
+              {...register('email')}
+            />
           </div>
           <Button
-            className="sticky bottom-0 w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl"
             type="submit"
-            disabled={isSubmitting}
+            className="sticky bottom-0 w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl"
           >
-            Lets go!
+            Get Verification code
           </Button>
         </form>
       </div>

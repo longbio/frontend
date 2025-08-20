@@ -7,6 +7,7 @@ import { Suspense, useState } from 'react'
 import AddButton from '../components/AddButton'
 import { Toggle } from '@/components/ui/toggle'
 import StickyNav from '../components/StickyNav'
+import { useUpdateUser } from '@/service/user/hook'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { setCookie, getCookie } from '@/utils/cookie'
@@ -33,6 +34,7 @@ type SkillFormType = z.infer<typeof skillSchema>
 
 function SkillContent() {
   const router = useRouter()
+  const mutation = useUpdateUser()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
   const [customSkills, setCustomSkills] = useState<string[]>([])
@@ -79,6 +81,14 @@ function SkillContent() {
   }
 
   const onSubmit = () => {
+    try {
+      mutation.mutate({
+        skill: selected.join(', '),
+      })
+    } catch (err) {
+      console.error('Failed to update skill info', err)
+    }
+
     router.push(`/info/interest?name=${name}`)
   }
 

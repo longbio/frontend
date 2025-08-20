@@ -7,9 +7,11 @@ import Header from '@/components/Header'
 import { Input } from '@/components/ui/input'
 import { Toggle } from '@/components/ui/toggle'
 import StickyNav from '../components/StickyNav'
+import { useUpdateUser } from '@/service/user/hook'
 import { Progress } from '@/components/ui/progress'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import type { TravelItem } from '@/service/user/type'
 import { setCookie, getCookie } from '@/utils/cookie'
 import { useFlagCountries } from '@/service/countries'
 import type { CountryItem } from '@/service/countries/types'
@@ -64,6 +66,7 @@ function TravelContent() {
 
   const styles = watch('styles')
   const country = watch('country')
+  const mutation = useUpdateUser()
 
   useEffect(() => {
     setCookie('info_travel', JSON.stringify({ styles, country }))
@@ -99,7 +102,18 @@ function TravelContent() {
     setValue('country', updated, { shouldValidate: true })
   }
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
+    const travelData: TravelItem = {
+      styles: styles || [],
+      countries: (country as CountryItem[])?.map((c) => c.name) || [],
+    }
+
+    try {
+      await mutation.mutateAsync({ travel: [travelData] })
+    } catch (err) {
+      console.error('Failed to update travel info', err)
+    }
+
     router.push(`/info/physical?name=${name}`)
   }
 

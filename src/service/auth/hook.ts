@@ -1,63 +1,82 @@
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { useMutation } from '@tanstack/react-query'
-import { sendSignupEmail, verifySignupCode } from './function'
-import type { UseMutationOptions } from '@tanstack/react-query'
-import type { SignupParams, VerifySignupCodeParams } from './types'
+import { useRouter } from 'next/navigation'
+import { verifySignupCode, sendSignupEmail } from './function'
+import type { VerifySignupCodeParams, SignupParams } from './types'
 
-export function useSendOTPEmail(
-  options?: Omit<UseMutationOptions<void, Error, SignupParams>, 'onSuccess'>
-) {
+export function useSendOTPEmail(options?: { mode?: 'signup' | 'signin' }) {
   const router = useRouter()
+
   return useMutation<void, Error, SignupParams>({
-    mutationFn: (params: SignupParams) => sendSignupEmail(params),
-    onSuccess: (_data: void, variables: { email: string }) => {
+    mutationFn: (params) => sendSignupEmail(params),
+    onSuccess: (_data, variables) => {
       const searchParams = new URLSearchParams({ email: variables.email })
-      router.push(`/auth/signup/verify?${searchParams.toString()}`)
+      if (options?.mode === 'signin') {
+        router.push(`/auth/signin/verify?${searchParams.toString()}`)
+      } else {
+        router.push(`/auth/signup/verify?${searchParams.toString()}`)
+      }
     },
-    ...options,
   })
 }
 
-export function useVerifySignupCode() {
+export function useVerifySignupCode(mode: 'signup' | 'signin' = 'signup') {
   const [error, setError] = useState<string | null>(null)
   const [isSuccess, setIsSuccess] = useState(false)
+  const [isNewUser, setIsNewUser] = useState<boolean | null>(null)
 
   const { mutateAsync, isPending } = useMutation<
     { status: number; message: string; data?: { isNewUser?: boolean } },
     Error,
     VerifySignupCodeParams
   >({
-    mutationFn: (params: VerifySignupCodeParams) => verifySignupCode(params),
+    mutationFn: (params) => verifySignupCode(params),
     onSuccess: (data) => {
       if (data.status === 200) {
-        if (data.data?.isNewUser === false) {
-          setError('This email is already registered.')
-          setIsSuccess(false)
+        const newUser = data.data?.isNewUser ?? null
+        setIsNewUser(newUser)
+
+        if (mode === 'signin') {
+          if (newUser === false) {
+            setIsSuccess(true)
+            setError(null)
+          } else if (newUser === true) {
+            setIsSuccess(false)
+            setError('Email not registered. Please sign up first.')
+          }
         } else {
-          setIsSuccess(true)
-          setError(null)
+          if (newUser === true) {
+            setIsSuccess(true)
+            setError(null)
+          } else if (newUser === false) {
+            setIsSuccess(false)
+            setError('This email is already registered.')
+          }
         }
       } else {
-        setError(data.message || 'Invalid verification code. Please try again.')
         setIsSuccess(false)
+        setError(data.message || 'Invalid verification code. Please try again.')
       }
     },
     onError: (err) => {
-      setError(err.message || 'Verification failed. Please check your code and try again.')
       setIsSuccess(false)
+      setError(err.message || 'Verification failed. Please check your code and try again.')
+      setIsNewUser(null)
     },
   })
 
   const handleVerify = async (email: string, code: string) => {
     setError(null)
     setIsSuccess(false)
+    setIsNewUser(null)
+
     if (!code.trim()) {
       setError('Please enter verification code')
-      return
+      return null
     }
-    await mutateAsync({ email, code })
+
+    return await mutateAsync({ email, code })
   }
 
-  return { handleVerify, error, isPending, isSuccess }
+  return { handleVerify, error, isPending, isSuccess, isNewUser }
 }

@@ -47,8 +47,7 @@ export function VerificationCodeInput({
   }
 
   // Show timeout error when timer expires and no code is entered
-  const showTimeoutError =
-    isTimeUp && !value && !isSuccess && !error?.includes('already registered')
+  const showTimeoutError = isTimeUp && !value && !isSuccess && !error
 
   return (
     <div className="relative">

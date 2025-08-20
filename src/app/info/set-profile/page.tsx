@@ -11,6 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { setCookie, getCookie } from '@/utils/cookie'
 import { Info, Plus, Trash, User } from 'lucide-react'
 import CropperDialog from '../components/CropperDialog'
+import { useUploadProfileImage } from '@/service/user/hook'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useRef, useState, useEffect } from 'react'
 import getCroppedImg, { dataURLtoFile } from '@/app/info/components/cropImage'
@@ -21,6 +22,7 @@ function SetProfileContent() {
   const name = searchParams.get('name') || ''
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [showDelete, setShowDelete] = useState(false)
+  const mutation = useUploadProfileImage()
 
   const SetProfileSchema = z.object({
     profile: z.instanceof(File).refine((file) => file && file.type.startsWith('image/'), {
@@ -54,10 +56,21 @@ function SetProfileContent() {
     setShowDelete(false)
   }
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
+    if (!file) {
+      return router.push(`/info/travel?name=${name}`)
+    }
+
+    try {
+      const response = await mutation.mutateAsync(file)
+      console.log('Uploaded profile image:', response.data.url)
+      setCookie('info_set_profile', JSON.stringify({ preview: response.data.url }))
+    } catch (err) {
+      console.error('Failed to upload profile image', err)
+    }
+
     router.push(`/info/travel?name=${name}`)
   }
-
   // For preview
   const [preview, setPreview] = useState<string | null>(() => {
     if (typeof window !== 'undefined') {

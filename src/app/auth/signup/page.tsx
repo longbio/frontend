@@ -19,7 +19,7 @@ const signUpSchema = z.object({
 type FormData = z.infer<typeof signUpSchema>
 
 export default function SignUp() {
-  const { mutateAsync } = useSendOTPEmail()
+  const { mutateAsync } = useSendOTPEmail({ mode: 'signup' })
 
   const {
     watch,
@@ -50,12 +50,8 @@ export default function SignUp() {
   }, [name, email])
 
   const onSubmit = async (data: FormData) => {
-    await mutateAsync({
-      email: data.email,
-    })
-    console.log(process.env.NEXT_PUBLIC_API_BASE_URL)
+    await mutateAsync({ email: data.email })
   }
-  console.log(process.env.NEXT_PUBLIC_API_BASE_URL)
   return (
     <div className="flex flex-col h-full w-full p-8">
       <div className="w-full flex flex-col h-full gap-y-20">
