@@ -18,8 +18,10 @@ function CongratsContent() {
         <div className="flex flex-col items-center w-full mt-12">
           <div className="text-lg font-bold text-center">
             <div className="flex justify-center gap-x-2">
-              <h1>“🎉 Congrats </h1>
-              <h2 className="text-xl text-gray-500">{name}!</h2>
+              <h1 className="text-gray-500">
+                <span className="text-black">“</span>🎉Congrats
+              </h1>
+              <h2 className="text-xl text-black">{name}!</h2>
             </div>
             <h3 className="text-base">
               Your profile is ready. You can now share it on social media and with your friends.”

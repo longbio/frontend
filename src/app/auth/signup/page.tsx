@@ -57,10 +57,10 @@ export default function SignUp() {
       <div className="w-full flex flex-col h-full gap-y-20">
         <div>
           <Header />
-          <div className="flex items-center text-lg font-bold text-black mt-5">
+          <div className="flex items-center text-lg font-bold text-gray-500 mt-5">
             Hi
-            <h1 className={clsx(name && 'text-lg ml-1.5', 'text-gray-500')}>{name}</h1>
-            <h4 className="px-0.5">!</h4>
+            <h1 className={clsx(name && 'text-lg ml-1.5', 'text-black')}>{name}</h1>
+            <h4 className="px-0.5 text-black">!</h4>
           </div>
           <h3 className="mt-1.5 text-black text-[10px] font-normal">
             already have an account?

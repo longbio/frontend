@@ -36,7 +36,7 @@ function BirthdayContent() {
       } catch {}
     }
   }
-  const years = useMemo(() => range(1980, new Date().getFullYear()), [])
+  const years = useMemo(() => range(1950, new Date().getFullYear()), [])
   const months = useMemo(() => range(1, 12), [])
   const days = useMemo(() => range(1, 31), [])
   const pickers: PickerOptions = useMemo(
