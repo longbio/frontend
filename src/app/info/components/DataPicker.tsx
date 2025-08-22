@@ -130,7 +130,7 @@ export default function DatePicker({
                 key={val}
                 ref={isSelected ? selectedItemRef : null}
                 className={clsx(
-                  'w-18 text-center border-b text-sm font-medium cursor-pointer transition-all duration-200 select-none py-1 hover:rounded-lg',
+                  'w-48 text-center border-b text-sm font-medium cursor-pointer transition-all duration-200 select-none py-1 hover:rounded-lg',
                   isSelected
                     ? 'bg-gradient-to-r from-purple-200 to-purple-100 text-purple-700 transition border-gray-200 rounded-lg'
                     : 'bg-white text-gray-700 hover:bg-gray-100'
@@ -215,7 +215,7 @@ export default function DatePicker({
                     </span>
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="w-40 py-6 overflow-visible">
+                <DialogContent className="w-80 py-8 overflow-visible">
                   <DialogTitle>
                     <span className="sr-only">value</span>
                   </DialogTitle>
