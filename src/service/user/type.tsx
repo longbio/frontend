@@ -18,15 +18,15 @@ export interface PetInfo {
 
 export interface UpdateUserParams {
   fullName?: string
-  birthday?: string
+  birthDate?: string
   gender?: string
-  marital?: string
+  maritalStatus?: string
   education?: EducationItem[]
   travel?: TravelItem[]
   sport?: string
   skill?: string
-  weight?: string
-  height?: string
+  weight?: number
+  height?: number
   country?: string
   city?: string
   pet?: PetInfo

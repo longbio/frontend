@@ -48,7 +48,7 @@ function MaritalContent() {
   const onSubmit = async () => {
     if (selectedMarital) {
       try {
-        await mutation.mutateAsync({ marital: selectedMarital })
+        await mutation.mutateAsync({ maritalStatus: selectedMarital })
       } catch (err) {
         console.error('Failed to update marital', err)
       }
@@ -100,6 +100,16 @@ function MaritalContent() {
                 onCheckedChange={(checked) => {
                   if (checked) {
                     setValue('marital', 'divorced')
+                  }
+                }}
+              />
+              <SelectableOption
+                id="widowed"
+                label="Widowed"
+                checked={selectedMarital === 'widowed'}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setValue('marital', 'widowed')
                   }
                 }}
               />
