@@ -93,11 +93,11 @@ function GenderContent() {
               />
               <SelectableOption
                 id="Nonbinary"
-                label="Nonbinary"
-                checked={selectedGender === 'Nonbinary'}
+                label="Non-binary"
+                checked={selectedGender === 'non-binary'}
                 onCheckedChange={(checked) => {
                   if (checked) {
-                    setValue('gender', 'Nonbinary')
+                    setValue('gender', 'non-binary')
                   }
                 }}
               />

@@ -63,8 +63,14 @@ function PhysicalContent() {
 
     try {
       mutation.mutate({
-        height: selected.height,
-        weight: selected.weight,
+        height:
+          selected.height && !selected.height.startsWith('Exp:')
+            ? Number(selected.height.replace(/\D/g, ''))
+            : undefined,
+        weight:
+          selected.weight && !selected.weight.startsWith('Exp:')
+            ? Number(selected.weight.replace(/\D/g, ''))
+            : undefined,
       })
     } catch (err) {
       console.error('Failed to update physical info', err)

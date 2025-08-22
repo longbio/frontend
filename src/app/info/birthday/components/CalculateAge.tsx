@@ -34,9 +34,9 @@ const CalculateAge: React.FC<CalculateAgeProps> = ({ year, month, day }) => {
     return null
   }
   return (
-    <div className="flex items-center justify-start mt-4 mx-2 text-sm font-medium text-gray-700">
+    <div className="flex items-center justify-start mt-4 mx-2 text-sm font-medium text-gray-400">
       <h3>Your age is</h3>
-      <h2 className="mx-1 text-gray-400">{age}</h2>
+      <h2 className="mx-1 text-gray-700">{age}</h2>
     </div>
   )
 }
