@@ -76,6 +76,7 @@ async function request<T>(url: string, options: RequestOptions = {}): Promise<T>
       redirectToLoginPage()
     }
 
+    // NOTE: We need this for react-query requests to work correctly
     if (options.throwError) {
       throw new ApiError(e.message)
     }
@@ -85,14 +86,22 @@ async function request<T>(url: string, options: RequestOptions = {}): Promise<T>
 }
 
 export const http = {
-  get: <T>(url: string, options: RequestOptions = {}) =>
-    request<T>(url, { ...options, method: 'GET' }),
-  post: <T>(url: string, options: RequestOptions = {}) =>
-    request<T>(url, { ...options, method: 'POST' }),
-  put: <T>(url: string, options: RequestOptions = {}) =>
-    request<T>(url, { ...options, method: 'PUT' }),
-  delete: <T>(url: string, options: RequestOptions = {}) =>
-    request<T>(url, { ...options, method: 'DELETE' }),
-  patch: <T>(url: string, options: RequestOptions = {}) =>
-    request<T>(url, { ...options, method: 'PATCH' }),
+  get: <T>(url: string, options: RequestOptions = {}) => {
+    return request<T>(url, { ...options, method: 'GET' })
+  },
+
+  post: <T>(url: string, options: RequestOptions = {}) => {
+    return request<T>(url, { ...options, method: 'POST' })
+  },
+
+  put: <T>(url: string, options: RequestOptions = {}) => {
+    return request<T>(url, { ...options, method: 'PUT' })
+  },
+
+  delete: <T>(url: string, options: RequestOptions = {}) => {
+    return request<T>(url, { ...options, method: 'DELETE' })
+  },
+  patch: <T>(url: string, options: RequestOptions = {}) => {
+    return request<T>(url, { ...options, method: 'PATCH' })
+  },
 }

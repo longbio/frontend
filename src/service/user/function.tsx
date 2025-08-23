@@ -1,20 +1,19 @@
-import { UpdateUserParams } from './type'
+import { http } from '@/http'
+import { UpdateUserParams, UploadProfileImageResponse } from './type'
 
 export async function updateUser(params: UpdateUserParams) {
-  return fetch('/api/users/me', {
-    method: 'PATCH',
+  return http.patch('/v1/users/me', {
     body: JSON.stringify(params),
-    credentials: 'include',
-  }).then((res) => res.json())
+    throwError: true,
+  })
 }
 
 export async function uploadProfileImage(file: File) {
   const formData = new FormData()
   formData.append('image', file)
 
-  return fetch('/api/users/me/profile-image', {
-    method: 'POST',
+  return http.post<UploadProfileImageResponse>('/v1/users/me/profile-image', {
     body: formData,
-    credentials: 'include',
-  }).then((res) => res.json())
+    throwError: true,
+  })
 }
