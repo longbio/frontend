@@ -102,14 +102,13 @@ function BirthdayContent() {
 
   const onSubmit = async (data: BirthdayFormData) => {
     if (isAllFieldsSelected) {
-      const birthDate = data.birthday.toISOString().split('T')[0]
-
+      const birthDate = data.birthday.toISOString()
       await updateUser({
         fullName: name,
         birthDate,
       })
 
-      router.push(`/info/gender?name=${name}`)
+      router.push(`/info/gender?name=${encodeURIComponent(name)}`)
     }
   }
   return (

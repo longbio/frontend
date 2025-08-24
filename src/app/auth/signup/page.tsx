@@ -6,6 +6,7 @@ import React from 'react'
 import Link from 'next/link'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { useSendOTPEmail } from '@/service/auth/hook'
 import { setCookie, getCookie } from '@/utils/cookie'
@@ -19,6 +20,7 @@ const signUpSchema = z.object({
 type FormData = z.infer<typeof signUpSchema>
 
 export default function SignUp() {
+  const router = useRouter()
   const { mutateAsync } = useSendOTPEmail({ mode: 'signup' })
 
   const {
@@ -26,8 +28,7 @@ export default function SignUp() {
     register,
     handleSubmit,
     formState: { errors },
-    // eslint-disable-next-line
-  } = useForm<any>({
+  } = useForm<FormData>({
     resolver: zodResolver(signUpSchema),
     defaultValues: (() => {
       if (typeof window !== 'undefined') {
@@ -51,6 +52,10 @@ export default function SignUp() {
 
   const onSubmit = async (data: FormData) => {
     await mutateAsync({ email: data.email })
+    const encodedEmail = encodeURIComponent(data.email)
+    const encodedName = encodeURIComponent(data.name)
+
+    router.push(`/auth/signup/verify?email=${encodedEmail}&name=${encodedName}`)
   }
   return (
     <div className="flex flex-col h-full w-full p-8">
