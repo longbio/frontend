@@ -6,7 +6,7 @@ import type { RequestOptions } from './types'
 import { isClientSide } from '@/utils/environment'
 import { objectToQueryString } from '@/utils/objects'
 import { ApiError, AuthError } from '@/lib/exceptions'
-import { getAuthTokens, setAuthTokens } from '@/lib/auth-actions'
+import { getAuthTokens } from '@/lib/auth-actions'
 
 const isServer = !isClientSide()
 
@@ -27,33 +27,22 @@ async function request<T>(url: string, options: RequestOptions = {}): Promise<T>
   if (options.params) fullUrl.search = objectToQueryString(options.params)
 
   const headers: Record<string, string> = {}
-  let body: BodyInit | null | undefined = undefined
 
+  let body: BodyInit | null | undefined = undefined
   if (options.body !== undefined) {
-    body = JSON.stringify(options.body) // JSON.stringify همیشه
+    body = JSON.stringify(options.body)
     headers['Content-Type'] = 'application/json'
   }
-
-  // دریافت توکن
-  let accessToken: string | undefined
-  let refreshToken: string | undefined
-
-  if (isServer) {
-    const tokens = await getAuthTokens()
-    accessToken = tokens.accessToken
-    refreshToken = tokens.refreshToken
-  } else {
-    accessToken = localStorage.getItem('accessToken') || undefined
-    refreshToken = localStorage.getItem('refreshToken') || undefined
+  if (options.auth) {
+    const tokens = isServer
+      ? await getAuthTokens()
+      : { accessToken: localStorage.getItem('accessToken') || undefined }
+    if (tokens.accessToken) headers['Authorization'] = `Bearer ${tokens.accessToken}`
   }
-
-  if (accessToken) headers['Authorization'] = `Bearer ${accessToken}`
-  if (refreshToken) headers['X-Refresh-Token'] = refreshToken
 
   const mergedOptions: RequestInit = merge(
     {
       headers,
-      credentials: isClientSide() ? 'include' : undefined,
     },
     options,
     { body }
@@ -64,16 +53,10 @@ async function request<T>(url: string, options: RequestOptions = {}): Promise<T>
 
     if (response.status === 401) throw new AuthError()
 
-    const newAccessToken = response.headers.get('x-access-token')
-    const newRefreshToken = response.headers.get('x-refresh-token')
-    if (isServer && newAccessToken && newRefreshToken) {
-      await setAuthTokens(newAccessToken, newRefreshToken)
-    }
-
     if (!response.ok) {
       try {
-        const errorData = await response.json()
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
+        const errorData = await response.json().catch(() => null)
+        throw new Error(errorData?.message || `HTTP error! status: ${response.status}`)
       } catch {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
