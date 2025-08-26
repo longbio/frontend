@@ -27,7 +27,6 @@ async function request<T>(url: string, options: RequestOptions = {}): Promise<T>
   const headers: Record<string, string> = {}
 
   let body: BodyInit | null | undefined = undefined
-
   if (options.body !== undefined) {
     if (options.body instanceof FormData) {
       body = options.body
@@ -35,12 +34,6 @@ async function request<T>(url: string, options: RequestOptions = {}): Promise<T>
       body = JSON.stringify(options.body)
       headers['Content-Type'] = 'application/json'
     }
-  }
-
-  if (options.auth) {
-    const token = isServer ? undefined : localStorage.getItem('accessToken')
-
-    if (token) headers['Authorization'] = `Bearer ${token}`
   }
 
   const mergedOptions: RequestInit = merge(
@@ -83,8 +76,6 @@ export const http = {
     request<T>(url, { ...options, method: 'POST' }),
   put: <T>(url: string, options: RequestOptions = {}) =>
     request<T>(url, { ...options, method: 'PUT' }),
-  patch: <T>(url: string, options: RequestOptions = {}) =>
-    request<T>(url, { ...options, method: 'PATCH' }),
   delete: <T>(url: string, options: RequestOptions = {}) =>
     request<T>(url, { ...options, method: 'DELETE' }),
 }
