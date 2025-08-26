@@ -1,4 +1,3 @@
-// http.ts
 import { merge } from 'lodash'
 import { toast } from 'react-toastify'
 import { redirect } from 'next/navigation'
@@ -6,7 +5,6 @@ import type { RequestOptions } from './types'
 import { isClientSide } from '@/utils/environment'
 import { objectToQueryString } from '@/utils/objects'
 import { ApiError, AuthError } from '@/lib/exceptions'
-import { getAuthTokens } from '@/lib/auth-actions'
 
 const isServer = !isClientSide()
 
@@ -29,20 +27,26 @@ async function request<T>(url: string, options: RequestOptions = {}): Promise<T>
   const headers: Record<string, string> = {}
 
   let body: BodyInit | null | undefined = undefined
+
   if (options.body !== undefined) {
-    body = JSON.stringify(options.body)
-    headers['Content-Type'] = 'application/json'
+    if (options.body instanceof FormData) {
+      body = options.body
+    } else {
+      body = JSON.stringify(options.body)
+      headers['Content-Type'] = 'application/json'
+    }
   }
+
   if (options.auth) {
-    const tokens = isServer
-      ? await getAuthTokens()
-      : { accessToken: localStorage.getItem('accessToken') || undefined }
-    if (tokens.accessToken) headers['Authorization'] = `Bearer ${tokens.accessToken}`
+    const token = isServer ? undefined : localStorage.getItem('accessToken')
+
+    if (token) headers['Authorization'] = `Bearer ${token}`
   }
 
   const mergedOptions: RequestInit = merge(
     {
       headers,
+      credentials: 'include',
     },
     options,
     { body }
