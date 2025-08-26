@@ -3,11 +3,10 @@ import { UpdateUserParams, UploadProfileImageResponse } from './type'
 
 export async function updateUser(params: UpdateUserParams) {
   return http.patch('/v1/users/me', {
-    body: JSON.stringify(params),
+    body: params,
     throwError: true,
   })
 }
-
 export async function uploadProfileImage(file: File) {
   const formData = new FormData()
   formData.append('image', file)
