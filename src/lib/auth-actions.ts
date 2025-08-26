@@ -1,10 +1,8 @@
 'use server'
-
 import { cookies } from 'next/headers'
 
 export async function setAuthTokens(accessToken: string, refreshToken: string) {
   const cookieStore = await cookies()
-
   cookieStore.set('accessToken', accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -12,7 +10,6 @@ export async function setAuthTokens(accessToken: string, refreshToken: string) {
     maxAge: 60 * 15,
     path: '/',
   })
-
   cookieStore.set('refreshToken', refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -24,10 +21,10 @@ export async function setAuthTokens(accessToken: string, refreshToken: string) {
 
 export async function getAuthTokens() {
   const cookieStore = await cookies()
-  const accessToken = cookieStore.get('accessToken')?.value
-  const refreshToken = cookieStore.get('refreshToken')?.value
-
-  return { accessToken, refreshToken }
+  return {
+    accessToken: cookieStore.get('accessToken')?.value,
+    refreshToken: cookieStore.get('refreshToken')?.value,
+  }
 }
 
 export async function clearAuthTokens() {
