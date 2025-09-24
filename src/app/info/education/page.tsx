@@ -109,7 +109,7 @@ function EducationContent() {
                 }}
               />
               {selectedEducation === 'student' && (
-                <div className="ml-8 mt-2">
+                <div className="flex flex-col xl:gap-y-1 ml-8 mt-2">
                   <AddMoreBox
                     options={topics}
                     setOptions={setTopics}
@@ -133,8 +133,8 @@ function EducationContent() {
                         setUniversities([...universities, ...newUniversities])
                       }
                     }}
-                    placeholder="Add other university..."
-                    buttonLabel="Add Other University"
+                    placeholder="Other university..."
+                    buttonLabel="Other University"
                   />
                   <GraduationYearBox
                     graduationYear={graduationYear}
@@ -153,7 +153,7 @@ function EducationContent() {
                 }}
               />
               {selectedEducation === 'graduated' && (
-                <div className="flex flex-col gap-y-1 ml-8 mt-2">
+                <div className="flex flex-col xl:gap-y-1 ml-8 mt-2">
                   <AddMoreBox
                     options={topics}
                     setOptions={setTopics}
@@ -177,8 +177,8 @@ function EducationContent() {
                         setUniversities([...universities, ...newUniversities])
                       }
                     }}
-                    placeholder="Add other university..."
-                    buttonLabel="Add Other University"
+                    placeholder="Other university..."
+                    buttonLabel="Other University"
                   />
                   <GraduationYearBox
                     graduationYear={graduationYear}

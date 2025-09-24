@@ -81,7 +81,7 @@ export default function AddMoreBox({
 
   return (
     <>
-      <div className="flex flex-wrap items-center h-9 my-3.5 xl:my-0 gap-2 max-w-full relative add-more-container">
+      <div className="flex flex-wrap items-center h-9 mt-3.5 xl:my-0 gap-2 max-w-full relative add-more-container">
         <button
           type="button"
           className="flex items-center justify-center text-purple-blaze text-sm hover:text-purple-blaze/70 transition gap-x-1"
