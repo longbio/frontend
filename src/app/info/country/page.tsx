@@ -47,21 +47,27 @@ function CountryContent() {
   } = useForm<CountryFormData>({
     resolver: zodResolver(countrySchema),
     mode: 'onChange',
-    defaultValues: (() => {
-      if (typeof window !== 'undefined') {
-        const cookie = getCookie('info_country')
-        if (cookie) {
-          try {
-            return JSON.parse(decodeURIComponent(cookie))
-          } catch {}
-        }
-      }
-      return {}
-    })(),
+    defaultValues: {},
   })
 
   const birthPlace = watch('birthPlace')
   const livePlace = watch('livePlace')
+
+  // Load cookie values on client side only
+  useEffect(() => {
+    const cookie = getCookie('info_country')
+    if (cookie) {
+      try {
+        const data = JSON.parse(decodeURIComponent(cookie))
+        if (data.birthPlace) {
+          setValue('birthPlace', data.birthPlace)
+        }
+        if (data.livePlace) {
+          setValue('livePlace', data.livePlace)
+        }
+      } catch {}
+    }
+  }, [setValue])
 
   useEffect(() => {
     setCookie('info_country', JSON.stringify({ birthPlace, livePlace }))
@@ -84,7 +90,7 @@ function CountryContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={57.18} />
-      <Header className="mt-4" />
+      <Header className="mt-4" showBackButton />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">
