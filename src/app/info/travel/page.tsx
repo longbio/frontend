@@ -50,23 +50,29 @@ function TravelContent() {
 
   const { control, handleSubmit, setValue, watch } = useForm({
     resolver: zodResolver(travelSchema),
-    defaultValues: (() => {
-      if (typeof window !== 'undefined') {
-        const cookie = getCookie('info_travel')
-        if (cookie) {
-          try {
-            return JSON.parse(decodeURIComponent(cookie))
-          } catch {}
-        }
-      }
-      return { styles: [], country: [] }
-    })(),
+    defaultValues: { styles: [], country: [] },
     mode: 'onChange',
   })
 
   const styles = watch('styles')
   const country = watch('country')
   const mutation = useUpdateUser()
+
+  // Load cookie values on client side only
+  useEffect(() => {
+    const cookie = getCookie('info_travel')
+    if (cookie) {
+      try {
+        const data = JSON.parse(decodeURIComponent(cookie))
+        if (data.styles) {
+          setValue('styles', data.styles)
+        }
+        if (data.country) {
+          setValue('country', data.country)
+        }
+      } catch {}
+    }
+  }, [setValue])
 
   useEffect(() => {
     setCookie('info_travel', JSON.stringify({ styles, country }))
@@ -120,7 +126,7 @@ function TravelContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress className="shrink-0" value={42.9} />
-      <Header className="mt-4" />
+      <Header className="mt-4" showBackButton />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">

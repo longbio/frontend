@@ -38,17 +38,7 @@ function PetContent() {
   } = useForm<PetFormType>({
     resolver: zodResolver(petSchema),
     mode: 'onChange',
-    defaultValues: (() => {
-      if (typeof window !== 'undefined') {
-        const cookie = getCookie('info_pet')
-        if (cookie) {
-          try {
-            return JSON.parse(decodeURIComponent(cookie))
-          } catch {}
-        }
-      }
-      return { hasPet: undefined }
-    })(),
+    defaultValues: { hasPet: undefined },
   })
   const hasPet = watch('hasPet')
   const petName = watch('petName')
@@ -61,6 +51,28 @@ function PetContent() {
   const [zoom, setZoom] = React.useState(1)
   const [openCropper, setOpenCropper] = React.useState(false)
   const [croppedAreaPixels, setCroppedAreaPixels] = React.useState<Area | null>(null)
+
+  // Load cookie values on client side only
+  React.useEffect(() => {
+    const cookie = getCookie('info_pet')
+    if (cookie) {
+      try {
+        const data = JSON.parse(decodeURIComponent(cookie))
+        if (data.hasPet !== undefined) {
+          setValue('hasPet', data.hasPet)
+        }
+        if (data.petName) {
+          setValue('petName', data.petName)
+        }
+        if (data.petBreed) {
+          setValue('petBreed', data.petBreed)
+        }
+        if (data.petImage) {
+          setCroppedImage(data.petImage)
+        }
+      } catch {}
+    }
+  }, [setValue])
 
   React.useEffect(() => {
     setCookie('info_pet', JSON.stringify({ hasPet, petName, petBreed, petImage: croppedImage }))
@@ -133,7 +145,7 @@ function PetContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={64.32} className="shrink-0" />
-      <Header className="mt-4" />
+      <Header className="mt-4" showBackButton />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">

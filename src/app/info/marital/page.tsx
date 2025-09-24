@@ -27,20 +27,24 @@ function MaritalContent() {
   const { handleSubmit, setValue, watch } = useForm<MaritalFormData>({
     resolver: zodResolver(maritalSchema),
     mode: 'onChange',
-    defaultValues: (() => {
-      if (typeof window !== 'undefined') {
-        const cookie = getCookie('info_marital')
-        if (cookie) {
-          try {
-            return JSON.parse(decodeURIComponent(cookie))
-          } catch {}
-        }
-      }
-      return {}
-    })(),
+    defaultValues: {},
   })
   const selectedMarital = watch('marital')
   const mutation = useUpdateUser()
+  
+  // Load cookie values on client side only
+  React.useEffect(() => {
+    const cookie = getCookie('info_marital')
+    if (cookie) {
+      try {
+        const data = JSON.parse(decodeURIComponent(cookie))
+        if (data.marital) {
+          setValue('marital', data.marital)
+        }
+      } catch {}
+    }
+  }, [setValue])
+  
   React.useEffect(() => {
     if (selectedMarital) setCookie('info_marital', JSON.stringify({ marital: selectedMarital }))
   }, [selectedMarital])
@@ -59,7 +63,7 @@ function MaritalContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={21.42} />
-      <Header className="mt-4" />
+      <Header className="mt-4" showBackButton />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">

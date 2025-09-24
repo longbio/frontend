@@ -27,20 +27,24 @@ function GenderContent() {
   const { handleSubmit, setValue, watch } = useForm<GenderFormData>({
     resolver: zodResolver(genderSchema),
     mode: 'onChange',
-    defaultValues: (() => {
-      if (typeof window !== 'undefined') {
-        const cookie = getCookie('info_gender')
-        if (cookie) {
-          try {
-            return JSON.parse(decodeURIComponent(cookie))
-          } catch {}
-        }
-      }
-      return {}
-    })(),
+    defaultValues: {},
   })
   const selectedGender = watch('gender')
   const mutation = useUpdateUser()
+  
+  // Load cookie values on client side only
+  React.useEffect(() => {
+    const cookie = getCookie('info_gender')
+    if (cookie) {
+      try {
+        const data = JSON.parse(decodeURIComponent(cookie))
+        if (data.gender) {
+          setValue('gender', data.gender)
+        }
+      } catch {}
+    }
+  }, [setValue])
+  
   React.useEffect(() => {
     if (selectedGender) setCookie('info_gender', JSON.stringify({ gender: selectedGender }))
   }, [selectedGender])
@@ -59,7 +63,7 @@ function GenderContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={14.28} />
-      <Header className="mt-4" />
+      <Header className="mt-4" showBackButton />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">

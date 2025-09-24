@@ -39,17 +39,21 @@ function InterestContent() {
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
   const [customInterests, setCustomInterests] = useState<string[]>([])
-  const [selected, setSelected] = useState<string[]>(() => {
-    if (typeof window !== 'undefined') {
-      const cookie = getCookie('info_interest')
-      if (cookie) {
-        try {
-          return JSON.parse(decodeURIComponent(cookie)).selected || []
-        } catch {}
-      }
+  const [selected, setSelected] = useState<string[]>([])
+  
+  // Load cookie values on client side only
+  React.useEffect(() => {
+    const cookie = getCookie('info_interest')
+    if (cookie) {
+      try {
+        const data = JSON.parse(decodeURIComponent(cookie))
+        if (data.selected) {
+          setSelected(data.selected)
+        }
+      } catch {}
     }
-    return []
-  })
+  }, [])
+  
   React.useEffect(() => {
     setCookie('info_interest', JSON.stringify({ selected }))
   }, [selected])
@@ -97,7 +101,7 @@ function InterestContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={85.74} className="shrink-0" />
-      <Header className="mt-4" />
+      <Header className="mt-4" showBackButton />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">

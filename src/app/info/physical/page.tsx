@@ -34,20 +34,21 @@ function PhysicalContent() {
     height: heightOptions,
     weight: weightOptions,
   }
-  const [selected, setSelected] = useState<Record<string, string>>(() => {
-    if (typeof window !== 'undefined') {
-      const cookie = getCookie('info_physical')
-      if (cookie) {
-        try {
-          return JSON.parse(decodeURIComponent(cookie))
-        } catch {}
-      }
-    }
-    return {
-      height: 'Exp: 173 cm',
-      weight: 'Exp: 56 kg',
-    }
+  const [selected, setSelected] = useState<Record<string, string>>({
+    height: 'Exp: 173 cm',
+    weight: 'Exp: 56 kg',
   })
+
+  // Load cookie values on client side only
+  React.useEffect(() => {
+    const cookie = getCookie('info_physical')
+    if (cookie) {
+      try {
+        const data = JSON.parse(decodeURIComponent(cookie))
+        setSelected(data)
+      } catch {}
+    }
+  }, [])
   const handleSetSelected = (val: Record<string, string>) => {
     setSelected(val)
     setCookie('info_physical', JSON.stringify(val))
@@ -82,7 +83,7 @@ function PhysicalContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={50.04} />
-      <Header className="mt-4" />
+      <Header className="mt-4" showBackButton />
       <form onSubmit={onSubmit} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">

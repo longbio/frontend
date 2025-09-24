@@ -13,12 +13,18 @@ export interface University {
   region: string
 }
 
-export interface OpenAlexInstitutionsResponse {
-  results: University[]
+export interface Topic {
+  id: string
+  name: string
+  display_name: string
+  description: string
+  universities: University[]
+}
+
+export interface TopicsResponse {
+  topics: Topic[]
   meta: {
     count: number
-    db_response_time_ms: number
-    page: number
-    per_page: number
+    last_updated: string
   }
 }

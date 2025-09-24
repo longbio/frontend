@@ -31,19 +31,23 @@ function EducationContent() {
   const { handleSubmit, setValue, watch } = useForm<EducationFormData>({
     resolver: zodResolver(educationSchema),
     mode: 'onChange',
-    defaultValues: (() => {
-      if (typeof window !== 'undefined') {
-        const cookie = getCookie('info_education')
-        if (cookie) {
-          try {
-            return JSON.parse(decodeURIComponent(cookie))
-          } catch {}
-        }
-      }
-      return {}
-    })(),
+    defaultValues: {},
   })
   const selectedEducation = watch('education')
+
+  // Load cookie values on client side only
+  React.useEffect(() => {
+    const cookie = getCookie('info_education')
+    if (cookie) {
+      try {
+        const data = JSON.parse(decodeURIComponent(cookie))
+        if (data.education) {
+          setValue('education', data.education)
+        }
+      } catch {}
+    }
+  }, [setValue])
+
   React.useEffect(() => {
     if (selectedEducation)
       setCookie('info_education', JSON.stringify({ education: selectedEducation }))
@@ -82,7 +86,7 @@ function EducationContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={28.56} />
-      <Header className="mt-4" />
+      <Header className="mt-4" showBackButton />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">
@@ -106,16 +110,31 @@ function EducationContent() {
               />
               {selectedEducation === 'student' && (
                 <div className="ml-8 mt-2">
-                  <AddUniversityBox
-                    universities={universities}
-                    setUniversities={setUniversities}
-                    placeholder="Add university..."
-                  />
                   <AddMoreBox
                     options={topics}
                     setOptions={setTopics}
                     placeholder="Add topic..."
                     buttonLabel="Add Topic"
+                  />
+                  <AddUniversityBox
+                    universities={universities}
+                    setUniversities={setUniversities}
+                    placeholder="Add university..."
+                    disabled={topics.length === 0}
+                    selectedTopics={topics}
+                  />
+                  <AddMoreBox
+                    options={[]}
+                    setOptions={(newOptions) => {
+                      const newUniversities = newOptions.filter(
+                        (option) => !universities.includes(option)
+                      )
+                      if (newUniversities.length > 0) {
+                        setUniversities([...universities, ...newUniversities])
+                      }
+                    }}
+                    placeholder="Add other university..."
+                    buttonLabel="Add Other University"
                   />
                   <GraduationYearBox
                     graduationYear={graduationYear}
@@ -134,17 +153,32 @@ function EducationContent() {
                 }}
               />
               {selectedEducation === 'graduated' && (
-                <div className="ml-8 mt-2">
-                  <AddUniversityBox
-                    universities={universities}
-                    setUniversities={setUniversities}
-                    placeholder="Add university..."
-                  />
+                <div className="flex flex-col gap-y-1 ml-8 mt-2">
                   <AddMoreBox
                     options={topics}
                     setOptions={setTopics}
                     placeholder="Add topic..."
                     buttonLabel="Add Topic"
+                  />
+                  <AddUniversityBox
+                    universities={universities}
+                    setUniversities={setUniversities}
+                    placeholder="Add university..."
+                    disabled={topics.length === 0}
+                    selectedTopics={topics}
+                  />
+                  <AddMoreBox
+                    options={[]}
+                    setOptions={(newOptions) => {
+                      const newUniversities = newOptions.filter(
+                        (option) => !universities.includes(option)
+                      )
+                      if (newUniversities.length > 0) {
+                        setUniversities([...universities, ...newUniversities])
+                      }
+                    }}
+                    placeholder="Add other university..."
+                    buttonLabel="Add Other University"
                   />
                   <GraduationYearBox
                     graduationYear={graduationYear}

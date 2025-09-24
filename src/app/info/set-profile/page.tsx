@@ -72,18 +72,21 @@ function SetProfileContent() {
     router.push(`/info/travel?name=${name}`)
   }
   // For preview
-  const [preview, setPreview] = useState<string | null>(() => {
-    if (typeof window !== 'undefined') {
-      const cookie = getCookie('info_set_profile')
-      if (cookie) {
-        try {
-          const parsed = JSON.parse(decodeURIComponent(cookie))
-          return parsed.preview || null
-        } catch {}
-      }
+  const [preview, setPreview] = useState<string | null>(null)
+  
+  // Load cookie values on client side only
+  useEffect(() => {
+    const cookie = getCookie('info_set_profile')
+    if (cookie) {
+      try {
+        const parsed = JSON.parse(decodeURIComponent(cookie))
+        if (parsed.preview) {
+          setPreview(parsed.preview)
+        }
+      } catch {}
     }
-    return null
-  })
+  }, [])
+  
   useEffect(() => {
     setCookie('info_set_profile', JSON.stringify({ preview }))
   }, [preview])
@@ -109,7 +112,7 @@ function SetProfileContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={35.7} />
-      <Header className="mt-4" />
+      <Header className="mt-4" showBackButton />
       <CropperDialog
         open={showCropper}
         onOpenChange={setShowCropper}

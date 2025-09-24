@@ -20,25 +20,31 @@ const birthdaySchema = z.object({
 })
 type BirthdayFormData = z.infer<typeof birthdaySchema>
 
-const range = (start: number, end: number) =>
-  Array.from({ length: end - start + 1 }, (_, i) => (start + i).toString())
+const range = (start: number, end: number, descending = false) =>
+  Array.from({ length: end - start + 1 }, (_, i) =>
+    descending ? (end - i).toString() : (start + i).toString()
+  )
 
 function BirthdayContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { mutateAsync: updateUser } = useUpdateUser()
-  let name = searchParams.get('name') || ''
-  if (!name && typeof window !== 'undefined') {
-    const cookie = getCookie('info_name')
-    if (cookie) {
-      try {
-        name = JSON.parse(decodeURIComponent(cookie))
-      } catch {}
+  const [name, setName] = useState(searchParams.get('name') || '')
+
+  useEffect(() => {
+    if (!name) {
+      const cookie = getCookie('info_name')
+      if (cookie) {
+        try {
+          const cookieName = JSON.parse(decodeURIComponent(cookie))
+          setName(cookieName)
+        } catch {}
+      }
     }
-  }
-  const years = useMemo(() => range(1950, new Date().getFullYear()), [])
-  const months = useMemo(() => range(1, 12), [])
-  const days = useMemo(() => range(1, 31), [])
+  }, [name])
+  const years = useMemo(() => range(1950, new Date().getFullYear(), true), [])
+  const months = useMemo(() => range(1, 12, true), [])
+  const days = useMemo(() => range(1, 31, true), [])
   const pickers: PickerOptions = useMemo(
     () => ({
       year: years,
@@ -81,7 +87,6 @@ function BirthdayContent() {
     mode: 'onChange',
   })
 
-  // Check if all date fields are properly selected (not default "Exp:" values)
   const isAllFieldsSelected = useMemo(() => {
     const day = selected.day
     const month = selected.month
@@ -114,7 +119,7 @@ function BirthdayContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={7.14} />
-      <Header className="mt-4" />
+      <Header className="mt-4" showBackButton />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">
