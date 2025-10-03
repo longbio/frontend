@@ -11,7 +11,7 @@ import { setCookie, getCookie } from '@/utils/cookie'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 // Schema
-const countrySchema = z
+const bornSchema = z
   .object({
     birthPlace: z
       .string()
@@ -24,9 +24,9 @@ const countrySchema = z
     message: 'At least one field is required',
     path: ['birthPlace'],
   })
-type CountryFormData = z.infer<typeof countrySchema>
+type BornFormData = z.infer<typeof bornSchema>
 
-function CountryContent() {
+function BornContent() {
   const router = useRouter()
   const { mutateAsync: updateUser } = useUpdateUser()
   const searchParams = useSearchParams()
@@ -38,8 +38,8 @@ function CountryContent() {
     setValue,
     register,
     formState: { errors },
-  } = useForm<CountryFormData>({
-    resolver: zodResolver(countrySchema),
+  } = useForm<BornFormData>({
+    resolver: zodResolver(bornSchema),
     mode: 'onChange',
     defaultValues: {},
   })
@@ -49,7 +49,7 @@ function CountryContent() {
 
   // Load cookie values on client side only
   useEffect(() => {
-    const cookie = getCookie('info_country')
+    const cookie = getCookie('info_born')
     if (cookie) {
       try {
         const data = JSON.parse(decodeURIComponent(cookie))
@@ -64,10 +64,10 @@ function CountryContent() {
   }, [setValue])
 
   useEffect(() => {
-    setCookie('info_country', JSON.stringify({ birthPlace, livePlace }))
+    setCookie('info_born', JSON.stringify({ birthPlace, livePlace }))
   }, [birthPlace, livePlace])
 
-  const onSubmit = async (data: CountryFormData) => {
+  const onSubmit = async (data: BornFormData) => {
     try {
       // eslint-disable-next-line
       const updateData: any = {}
@@ -98,7 +98,9 @@ function CountryContent() {
             <h1 className="text-2xl font-bold text-left w-full">
               Welcome to <br /> LongBio, {name}!
             </h1>
-            <span className="text-sm font-normal text-left w-full">Choose your country.</span>
+            <span className="text-sm font-normal text-left w-full">
+              Where were you born and where do you live?
+            </span>
           </div>
 
           <div className="flex flex-col space-y-6 w-full mt-20">
@@ -147,10 +149,10 @@ function CountryContent() {
   )
 }
 
-export default function Country() {
+export default function Born() {
   return (
     <Suspense>
-      <CountryContent />
+      <BornContent />
     </Suspense>
   )
 }
