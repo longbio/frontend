@@ -3,13 +3,13 @@ import { z } from 'zod'
 import { Info } from 'lucide-react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
-import { Suspense, useState } from 'react'
 import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
 import { useUpdateUser } from '@/service/user/hook'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { setCookie, getCookie } from '@/utils/cookie'
 import { useRouter, useSearchParams } from 'next/navigation'
+import React, { Suspense, useState, useEffect } from 'react'
 import DatePicker, { PickerOptions } from '@/app/info/components/DataPicker'
 
 const physicalSchema = z.object({
@@ -40,7 +40,7 @@ function PhysicalContent() {
   })
 
   // Load cookie values on client side only
-  React.useEffect(() => {
+  useEffect(() => {
     const cookie = getCookie('info_physical')
     if (cookie) {
       try {

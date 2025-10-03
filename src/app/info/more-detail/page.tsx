@@ -1,10 +1,9 @@
 'use client'
 import { z } from 'zod'
-import React from 'react'
-import { Suspense } from 'react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import StickyNav from '../components/StickyNav'
+import React, { Suspense, useEffect } from 'react'
 import { useUpdateUser } from '@/service/user/hook'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -26,15 +25,16 @@ function MoreDetailContent() {
     handleSubmit,
     formState: { errors },
     watch,
+    setValue,
   } = useForm<MoreDetailFormType>({
     resolver: zodResolver(moreDetailSchema),
     mode: 'onChange',
     defaultValues: {},
   })
   const detail = watch('detail')
-  
+
   // Load cookie values on client side only
-  React.useEffect(() => {
+  useEffect(() => {
     const cookie = getCookie('info_more_detail')
     if (cookie) {
       try {
@@ -45,8 +45,8 @@ function MoreDetailContent() {
       } catch {}
     }
   }, [setValue])
-  
-  React.useEffect(() => {
+
+  useEffect(() => {
     setCookie('info_more_detail', JSON.stringify({ detail }))
   }, [detail])
 
