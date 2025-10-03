@@ -67,7 +67,34 @@ function EducationContent() {
         : 'graduated'
 
     try {
-      await mutation.mutateAsync({ educationalStatus })
+      // eslint-disable-next-line
+      const updateData: any = {
+        educationalStatus,
+      }
+
+      // Only add education details if user is student or graduated
+      if (selectedEducation === 'student' || selectedEducation === 'graduated') {
+        // eslint-disable-next-line
+        const educationData: any = {}
+
+        if (topics.length > 0) {
+          educationData.topic = topics.join(', ')
+        }
+
+        if (universities.length > 0) {
+          educationData.university = universities.join(', ')
+        }
+
+        if (graduationYear) {
+          educationData.graduationYear = graduationYear
+        }
+
+        if (Object.keys(educationData).length > 0) {
+          updateData.education = educationData
+        }
+      }
+
+      await mutation.mutateAsync(updateData)
     } catch (err) {
       console.error('Failed to update education', err)
     }
