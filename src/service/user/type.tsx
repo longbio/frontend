@@ -21,7 +21,7 @@ export interface UpdateUserParams {
   birthDate?: string
   gender?: string
   maritalStatus?: string
-  education?: EducationItem[]
+  educationalStatus?: string
   travel?: TravelItem[]
   sport?: string
   skill?: string
