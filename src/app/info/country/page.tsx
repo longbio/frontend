@@ -9,40 +9,34 @@ import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { setCookie, getCookie } from '@/utils/cookie'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useCountriesAndCities } from '@/service/countries'
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from '@/components/ui/select'
 
 // Schema
-const countrySchema = z.object({
-  birthPlace: z
-    .string()
-    .min(1, 'Entering place of birth is required.')
-    .regex(/^[a-zA-Zآ-ی\s]+$/),
-  livePlace: z
-    .string()
-    .min(1, 'Entering your place of residence is required.')
-    .regex(/^[a-zA-Zآ-ی\s]+$/),
-})
+const countrySchema = z
+  .object({
+    birthPlace: z
+      .string()
+      .refine((val) => !val || /^[a-zA-Zآ-ی\s]+$/.test(val), 'Only letters and spaces allowed'),
+    livePlace: z
+      .string()
+      .refine((val) => !val || /^[a-zA-Zآ-ی\s]+$/.test(val), 'Only letters and spaces allowed'),
+  })
+  .refine((data) => data.birthPlace || data.livePlace, {
+    message: 'At least one field is required',
+    path: ['birthPlace'],
+  })
 type CountryFormData = z.infer<typeof countrySchema>
 
 function CountryContent() {
   const router = useRouter()
-  const mutation = useUpdateUser()
+  const { mutateAsync: updateUser } = useUpdateUser()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
-
-  const { data: countriesData, loading, error } = useCountriesAndCities()
 
   const {
     handleSubmit,
     watch,
     setValue,
+    register,
     formState: { errors },
   } = useForm<CountryFormData>({
     resolver: zodResolver(countrySchema),
@@ -73,19 +67,26 @@ function CountryContent() {
     setCookie('info_country', JSON.stringify({ birthPlace, livePlace }))
   }, [birthPlace, livePlace])
 
-  const onSubmit = () => {
+  const onSubmit = async (data: CountryFormData) => {
     try {
-      mutation.mutate({
-        country: birthPlace,
-        city: livePlace,
-      })
+      // eslint-disable-next-line
+      const updateData: any = {}
+
+      if (data.birthPlace) {
+        updateData.bornPlace = data.birthPlace
+      }
+
+      if (data.livePlace) {
+        updateData.livePlace = data.livePlace
+      }
+
+      await updateUser(updateData)
+
+      router.push(`/info/pet?name=${name}`)
     } catch (err) {
       console.error('Failed to update country info', err)
     }
-
-    router.push(`/info/pet?name=${name}`)
   }
-  const selectedCountryObj = countriesData.find((c) => c.country === birthPlace)
 
   return (
     <div className="flex flex-col h-full w-full p-8">
@@ -101,61 +102,35 @@ function CountryContent() {
           </div>
 
           <div className="flex flex-col space-y-6 w-full mt-20">
-            {/* Country Select */}
             <div>
-              <label className="text-xl font-bold block mb-2">Country of Birth</label>
-              <Select
-                value={birthPlace || ''}
-                onValueChange={(value) => setValue('birthPlace', value, { shouldValidate: true })}
-                disabled={loading || !!error}
-              >
-                <SelectTrigger
-                  className={
-                    errors.birthPlace
-                      ? 'w-full border-red-500 focus-visible:ring-red-500/50 rounded-full'
-                      : 'w-full border rounded-full px-4 py-2 text-sm mt-3'
-                  }
-                >
-                  <SelectValue placeholder="Select your country..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {countriesData.map((c) => (
-                    <SelectItem key={c.country} value={c.country}>
-                      {c.country}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <label className="text-xl font-bold block mb-2">The place where you were born</label>
+              <input
+                {...register('birthPlace')}
+                type="text"
+                placeholder="Exp: isfahan"
+                className={
+                  errors.birthPlace
+                    ? 'w-full border-red-500 focus-visible:ring-red-500/50 rounded-full px-4 py-2 text-sm mt-3'
+                    : 'w-full border rounded-full px-4 py-2 text-sm mt-3'
+                }
+              />
               {errors.birthPlace && (
                 <span className="text-red-500 text-xs mt-1 block">{errors.birthPlace.message}</span>
               )}
             </div>
 
-            {/* City Select */}
             <div>
-              <label className="text-xl font-bold block mb-2">City of Birth</label>
-              <Select
-                value={livePlace || ''}
-                onValueChange={(value) => setValue('livePlace', value, { shouldValidate: true })}
-                disabled={!selectedCountryObj || loading || !!error}
-              >
-                <SelectTrigger
-                  className={
-                    errors.livePlace
-                      ? 'w-full border-red-500 focus-visible:ring-red-500/50 rounded-full'
-                      : 'w-full border rounded-full px-4 py-2 text-sm mt-3'
-                  }
-                >
-                  <SelectValue placeholder="Select your city..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {selectedCountryObj?.cities.map((city) => (
-                    <SelectItem key={city} value={city}>
-                      {city}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <label className="text-xl font-bold block mb-2">The place where you live</label>
+              <input
+                {...register('livePlace')}
+                type="text"
+                placeholder="Exp: tehran"
+                className={
+                  errors.livePlace
+                    ? 'w-full border-red-500 focus-visible:ring-red-500/50 rounded-full px-4 py-2 text-sm mt-3'
+                    : 'w-full border rounded-full px-4 py-2 text-sm mt-3'
+                }
+              />
               {errors.livePlace && (
                 <span className="text-red-500 text-xs mt-1 block">{errors.livePlace.message}</span>
               )}

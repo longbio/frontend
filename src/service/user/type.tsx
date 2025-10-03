@@ -27,8 +27,8 @@ export interface UpdateUserParams {
   skill?: string
   weight?: number
   height?: number
-  country?: string
-  city?: string
+  bornPlace?: string
+  livePlace?: string
   pet?: PetInfo
   interests?: string
   details?: string
