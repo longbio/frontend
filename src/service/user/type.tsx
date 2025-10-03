@@ -29,7 +29,7 @@ export interface UpdateUserParams {
   }
   travel?: TravelItem[]
   sport?: string
-  skill?: string
+  skill?: string[]
   weight?: number
   height?: number
   bornPlace?: string
