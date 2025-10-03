@@ -30,7 +30,7 @@ export interface UpdateUserParams {
   bornPlace?: string
   livePlace?: string
   pet?: PetInfo
-  interests?: string
+  interests?: string[]
   details?: string
 }
 
