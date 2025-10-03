@@ -20,7 +20,7 @@ type PhysicalFormData = z.infer<typeof physicalSchema>
 
 function PhysicalContent() {
   const router = useRouter()
-  const mutation = useUpdateUser()
+  const { mutateAsync: updateUser } = useUpdateUser()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
   const {} = useForm<PhysicalFormData>({
@@ -54,16 +54,14 @@ function PhysicalContent() {
     setCookie('info_physical', JSON.stringify(val))
   }
   const isValid =
-    selected.height &&
-    selected.weight &&
-    !selected.height.startsWith('Exp:') &&
-    !selected.weight.startsWith('Exp:')
-  const onSubmit = (e?: React.FormEvent) => {
+    (selected.height && !selected.height.startsWith('Exp:')) ||
+    (selected.weight && !selected.weight.startsWith('Exp:'))
+  const onSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault()
     if (!isValid) return
 
     try {
-      mutation.mutate({
+      await updateUser({
         height:
           selected.height && !selected.height.startsWith('Exp:')
             ? Number(selected.height.replace(/\D/g, ''))
@@ -73,11 +71,11 @@ function PhysicalContent() {
             ? Number(selected.weight.replace(/\D/g, ''))
             : undefined,
       })
+
+      router.push(`/info/country?name=${name}`)
     } catch (err) {
       console.error('Failed to update physical info', err)
     }
-
-    router.push(`/info/country?name=${name}`)
   }
 
   return (
