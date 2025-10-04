@@ -27,6 +27,11 @@ export interface UpdateUserParams {
     university?: string
     graduationYear?: string
   }
+  jobStatus?: string
+  job?: {
+    position?: string
+    company?: string
+  }
   travel?: TravelItem[]
   sport?: string
   skill?: string[]

@@ -99,7 +99,7 @@ function EducationContent() {
       console.error('Failed to update education', err)
     }
 
-    router.push(`/info/set-profile?name=${name}`)
+    router.push(`/info/job?name=${name}`)
   }
 
   return (
@@ -224,7 +224,7 @@ function EducationContent() {
         </div>
         <StickyNav
           onNext={handleSubmit(onSubmit)}
-          onSkip={() => router.push(`/info/set-profile?name=${name}`)}
+          onSkip={() => router.push(`/info/job?name=${name}`)}
           className="mt-8"
         />
       </form>
