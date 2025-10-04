@@ -36,7 +36,7 @@ function CongratsContent() {
       </div>
       <Button
         className="sticky bottom-0 w-full h-fit bg-purple-blaze rounded-full"
-        onClick={() => router.push('/bio')}
+        onClick={() => router.push('/bio/2')}
       >
         View My Profile!
       </Button>

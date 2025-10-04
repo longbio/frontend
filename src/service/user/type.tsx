@@ -51,3 +51,40 @@ export interface UploadProfileImageResponse {
     url: string
   }
 }
+
+export interface GetUserByIdResponse {
+  success: boolean
+  message: string
+  data: {
+    id: string
+    name: string
+    email: string
+    profileImage?: string
+    topImage?: string
+    gender: string
+    marital: string
+    birthday: {
+      day: string
+      month: string
+      year: string
+    }
+    country: {
+      birthCountry: string
+      birthCity: string
+    }
+    physical: {
+      height: string
+      weight: string
+    }
+    pet: {
+      hasPet: boolean
+      petName: string
+      petBreed: string
+      petImage?: string
+    }
+    interests: string[]
+    skills: string[]
+    sports: string[]
+    education: string
+  }
+}
