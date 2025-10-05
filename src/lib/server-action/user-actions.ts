@@ -1,7 +1,11 @@
 'use server'
 
 import { getAuthTokens } from '@/lib/auth-actions'
-import type { UpdateUserParams, UploadProfileImageResponse } from '@/service/user/type'
+import type {
+  UpdateUserParams,
+  UploadProfileImageResponse,
+  GetUserByIdResponse,
+} from '@/service/user/type'
 
 export async function updateUserServerAction(params: UpdateUserParams) {
   console.log('updateUserServerAction called with params:', params)
@@ -62,5 +66,28 @@ export async function uploadProfileImageServerAction(file: File) {
 
   const json = (await res.json()) as UploadProfileImageResponse
   console.log('POST /v1/users/me/profile-image response JSON:', json)
+  return json
+}
+
+export async function getUserByIdServerAction(userId: string): Promise<GetUserByIdResponse> {
+  console.log('getUserByIdServerAction called with userId:', userId)
+
+  const res = await fetch(`https://api.longbio.me/v1/users/${userId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  console.log(`GET https://api.longbio.me/v1/users/${userId} status:`, res.status)
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => null)
+    console.log(`GET https://api.longbio.me/v1/users/${userId} error response:`, data)
+    throw new Error(data?.message || 'Failed to get user data')
+  }
+
+  const json = await res.json()
+  console.log(`GET https://api.longbio.me/v1/users/${userId} response JSON:`, json)
   return json
 }

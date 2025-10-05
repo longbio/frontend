@@ -35,12 +35,12 @@ type SportFormType = z.infer<typeof sportSchema>
 
 function SportContent() {
   const router = useRouter()
-  const mutation = useUpdateUser()
+  const { mutateAsync: updateUser } = useUpdateUser()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
   const [customSports, setCustomSports] = useState<string[]>([])
   const [selected, setSelected] = useState<string[]>([])
-  
+
   // Load cookie values on client side only
   React.useEffect(() => {
     const cookie = getCookie('info_sport')
@@ -53,7 +53,7 @@ function SportContent() {
       } catch {}
     }
   }, [])
-  
+
   React.useEffect(() => {
     setCookie('info_sport', JSON.stringify({ selected }))
   }, [selected])
@@ -86,10 +86,10 @@ function SportContent() {
     setValue('sports', updated, { shouldValidate: true })
   }
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     try {
-      mutation.mutate({
-        sport: selected.join(', '),
+      await updateUser({
+        favoriteSport: selected.length > 0 ? selected[0] : 'None',
       })
     } catch (err) {
       console.error('Failed to update sport info', err)

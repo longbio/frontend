@@ -11,7 +11,7 @@ import { useUpdateUser } from '@/service/user/hook'
 import { Progress } from '@/components/ui/progress'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { TravelItem } from '@/service/user/type'
+// import type { TravelItem } from '@/service/user/type'
 import { setCookie, getCookie } from '@/utils/cookie'
 import { useFlagCountries } from '@/service/countries'
 import type { CountryItem } from '@/service/countries/types'
@@ -56,7 +56,7 @@ function TravelContent() {
 
   const styles = watch('styles')
   const country = watch('country')
-  const mutation = useUpdateUser()
+  const { mutateAsync: updateUser } = useUpdateUser()
 
   // Load cookie values on client side only
   useEffect(() => {
@@ -109,13 +109,10 @@ function TravelContent() {
   }
 
   const onSubmit = async () => {
-    const travelData: TravelItem = {
-      styles: styles || [],
-      countries: (country as CountryItem[])?.map((c) => c.name) || [],
-    }
-
     try {
-      await mutation.mutateAsync({ travel: [travelData] })
+      await updateUser({
+        travelStyle: styles && styles.length > 0 ? styles[0] : 'None',
+      })
     } catch (err) {
       console.error('Failed to update travel info', err)
     }

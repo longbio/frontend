@@ -39,7 +39,7 @@ function SkillContent() {
   const name = searchParams.get('name') || ''
   const [customSkills, setCustomSkills] = useState<string[]>([])
   const [selected, setSelected] = useState<string[]>([])
-  
+
   // Load cookie values on client side only
   React.useEffect(() => {
     const cookie = getCookie('info_skill')
@@ -52,7 +52,7 @@ function SkillContent() {
       } catch {}
     }
   }, [])
-  
+
   React.useEffect(() => {
     setCookie('info_skill', JSON.stringify({ selected }))
   }, [selected])
@@ -84,10 +84,10 @@ function SkillContent() {
     setValue('skills', updated, { shouldValidate: true })
   }
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     try {
-      mutation.mutate({
-        skill: selected.join(', '),
+      await mutation.mutateAsync({
+        skill: selected,
       })
     } catch (err) {
       console.error('Failed to update skill info', err)

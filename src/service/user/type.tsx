@@ -21,16 +21,26 @@ export interface UpdateUserParams {
   birthDate?: string
   gender?: string
   maritalStatus?: string
-  education?: EducationItem[]
-  travel?: TravelItem[]
-  sport?: string
-  skill?: string
+  educationalStatus?: string
+  education?: {
+    topic?: string
+    university?: string
+    graduationYear?: string
+  }
+  jobStatus?: string
+  job?: {
+    position?: string
+    company?: string
+  }
+  travelStyle?: string
+  favoriteSport?: string
+  skill?: string[]
   weight?: number
   height?: number
-  country?: string
-  city?: string
+  bornPlace?: string
+  livePlace?: string
   pet?: PetInfo
-  interests?: string
+  interests?: string[]
   details?: string
 }
 
@@ -39,5 +49,42 @@ export interface UploadProfileImageResponse {
   message: string
   data: {
     url: string
+  }
+}
+
+export interface GetUserByIdResponse {
+  success: boolean
+  message: string
+  data: {
+    id: string
+    name: string
+    email: string
+    profileImage?: string
+    topImage?: string
+    gender: string
+    marital: string
+    birthday: {
+      day: string
+      month: string
+      year: string
+    }
+    country: {
+      birthCountry: string
+      birthCity: string
+    }
+    physical: {
+      height: string
+      weight: string
+    }
+    pet: {
+      hasPet: boolean
+      petName: string
+      petBreed: string
+      petImage?: string
+    }
+    interests: string[]
+    skills: string[]
+    sports: string[]
+    education: string
   }
 }

@@ -1,10 +1,10 @@
 import { topicsData } from './data'
-import type { Topic, TopicsResponse } from './types'
+import type { Topic } from './types'
 
 export async function fetchTopics(): Promise<Topic[]> {
   try {
     // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 300))
+    await new Promise((resolve) => setTimeout(resolve, 300))
     return topicsData
   } catch (error) {
     console.error('Error fetching topics:', error)
@@ -15,8 +15,8 @@ export async function fetchTopics(): Promise<Topic[]> {
 export async function fetchUniversitiesByTopic(topicId: string): Promise<Topic | null> {
   try {
     // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 200))
-    const topic = topicsData.find(t => t.id === topicId)
+    await new Promise((resolve) => setTimeout(resolve, 200))
+    const topic = topicsData.find((t) => t.id === topicId)
     return topic || null
   } catch (error) {
     console.error('Error fetching universities by topic:', error)

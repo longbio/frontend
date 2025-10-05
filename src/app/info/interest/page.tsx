@@ -1,7 +1,7 @@
 'use client'
 import { z } from 'zod'
-import React from 'react'
 import Header from '@/components/Header'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Suspense, useState } from 'react'
 import { Toggle } from '@/components/ui/toggle'
@@ -40,9 +40,9 @@ function InterestContent() {
   const name = searchParams.get('name') || ''
   const [customInterests, setCustomInterests] = useState<string[]>([])
   const [selected, setSelected] = useState<string[]>([])
-  
+
   // Load cookie values on client side only
-  React.useEffect(() => {
+  useEffect(() => {
     const cookie = getCookie('info_interest')
     if (cookie) {
       try {
@@ -53,8 +53,8 @@ function InterestContent() {
       } catch {}
     }
   }, [])
-  
-  React.useEffect(() => {
+
+  useEffect(() => {
     setCookie('info_interest', JSON.stringify({ selected }))
   }, [selected])
 
@@ -86,10 +86,10 @@ function InterestContent() {
     setValue('interests', updated, { shouldValidate: true })
   }
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     try {
-      mutation.mutate({
-        interests: selected.join(', '),
+      await mutation.mutateAsync({
+        interests: selected,
       })
     } catch (err) {
       console.error('Failed to update interests info', err)

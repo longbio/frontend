@@ -1,7 +1,7 @@
 'use client'
 import { z } from 'zod'
-import React from 'react'
 import { Info } from 'lucide-react'
+import React, { useEffect } from 'react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import { Suspense, useState } from 'react'
@@ -10,7 +10,6 @@ import { Progress } from '@/components/ui/progress'
 import { useUpdateUser } from '@/service/user/hook'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { setCookie, getCookie } from '@/utils/cookie'
-import type { EducationItem } from '@/service/user/type'
 import { AddUniversityBox } from './components/AddMoreBox'
 import { useRouter, useSearchParams } from 'next/navigation'
 import GraduationYearBox from './components/GraduationYearBox'
@@ -36,7 +35,7 @@ function EducationContent() {
   const selectedEducation = watch('education')
 
   // Load cookie values on client side only
-  React.useEffect(() => {
+  useEffect(() => {
     const cookie = getCookie('info_education')
     if (cookie) {
       try {
@@ -48,7 +47,7 @@ function EducationContent() {
     }
   }, [setValue])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (selectedEducation)
       setCookie('info_education', JSON.stringify({ education: selectedEducation }))
   }, [selectedEducation])
@@ -60,27 +59,47 @@ function EducationContent() {
   const onSubmit = async () => {
     if (!selectedEducation) return router.push(`/info/set-profile?name=${name}`)
 
-    const educationItems: EducationItem[] = [
-      {
-        status:
-          selectedEducation === 'not-interested'
-            ? 'not interested'
-            : selectedEducation === 'student'
-            ? 'student'
-            : 'graduated',
-        university: universities.join(', ') || undefined,
-        topic: topics.join(', ') || undefined,
-        graduationYear: graduationYear ? Number(graduationYear) : undefined,
-      },
-    ]
+    const educationalStatus =
+      selectedEducation === 'not-interested'
+        ? 'not interested'
+        : selectedEducation === 'student'
+        ? 'student'
+        : 'graduated'
 
     try {
-      await mutation.mutateAsync({ education: educationItems })
+      // eslint-disable-next-line
+      const updateData: any = {
+        educationalStatus,
+      }
+
+      // Only add education details if user is student or graduated
+      if (selectedEducation === 'student' || selectedEducation === 'graduated') {
+        // eslint-disable-next-line
+        const educationData: any = {}
+
+        if (topics.length > 0) {
+          educationData.topic = topics.join(', ')
+        }
+
+        if (universities.length > 0) {
+          educationData.university = universities.join(', ')
+        }
+
+        if (graduationYear) {
+          educationData.graduationYear = graduationYear
+        }
+
+        if (Object.keys(educationData).length > 0) {
+          updateData.education = educationData
+        }
+      }
+
+      await mutation.mutateAsync(updateData)
     } catch (err) {
       console.error('Failed to update education', err)
     }
 
-    router.push(`/info/set-profile?name=${name}`)
+    router.push(`/info/job?name=${name}`)
   }
 
   return (
@@ -205,7 +224,7 @@ function EducationContent() {
         </div>
         <StickyNav
           onNext={handleSubmit(onSubmit)}
-          onSkip={() => router.push(`/info/set-profile?name=${name}`)}
+          onSkip={() => router.push(`/info/job?name=${name}`)}
           className="mt-8"
         />
       </form>

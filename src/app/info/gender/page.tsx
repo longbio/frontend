@@ -1,9 +1,9 @@
 'use client'
 import { z } from 'zod'
-import React from 'react'
 import { Suspense } from 'react'
 import { Info } from 'lucide-react'
 import Header from '@/components/Header'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import StickyNav from '../components/StickyNav'
 import { useUpdateUser } from '@/service/user/hook'
@@ -31,9 +31,9 @@ function GenderContent() {
   })
   const selectedGender = watch('gender')
   const mutation = useUpdateUser()
-  
+
   // Load cookie values on client side only
-  React.useEffect(() => {
+  useEffect(() => {
     const cookie = getCookie('info_gender')
     if (cookie) {
       try {
@@ -44,8 +44,8 @@ function GenderContent() {
       } catch {}
     }
   }, [setValue])
-  
-  React.useEffect(() => {
+
+  useEffect(() => {
     if (selectedGender) setCookie('info_gender', JSON.stringify({ gender: selectedGender }))
   }, [selectedGender])
 
