@@ -6,7 +6,7 @@ import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
-import { useUpdateUser } from '@/service/user/hook'
+import { useUpdateUser, useUpdatePet } from '@/service/user/hook'
 import { setCookie, getCookie } from '@/utils/cookie'
 import LabeledInput from '../components/LabeledInput'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -23,6 +23,7 @@ type PetFormType = z.infer<typeof petSchema>
 function PetContent() {
   const router = useRouter()
   const mutation = useUpdateUser()
+  const petMutation = useUpdatePet()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
   const {
@@ -65,22 +66,23 @@ function PetContent() {
 
   const onSubmit = async () => {
     try {
-      // eslint-disable-next-line
-      const petData: any = {}
+      // Update user with pet status
+      await mutation.mutateAsync({
+        pet: {
+          hasPet,
+          type: petBreed || '',
+          breed: petBreed || '',
+        },
+      })
 
-      if (petName) {
-        petData.name = petName
-      }
+      // Send pet details to the new API if user has a pet
+      if (hasPet && (petName || petBreed)) {
+        const petData = {
+          name: petName || '',
+          breed: petBreed || '',
+        }
 
-      if (petBreed) {
-        petData.breed = petBreed
-      }
-
-      // Only send if there's data to send
-      if (Object.keys(petData).length > 0) {
-        await mutation.mutateAsync({
-          pet: petData,
-        })
+        await petMutation.mutateAsync(petData)
       }
     } catch (err) {
       console.error('Failed to update pet info', err)

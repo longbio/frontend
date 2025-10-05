@@ -7,7 +7,6 @@ import { useForm } from 'react-hook-form'
 import { Suspense, useState } from 'react'
 import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
-import { useUpdateUser } from '@/service/user/hook'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { setCookie, getCookie } from '@/utils/cookie'
 import { AddUniversityBox } from './components/AddMoreBox'
@@ -15,6 +14,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import GraduationYearBox from './components/GraduationYearBox'
 import AddMoreBox from '@/app/info/education/components/AddMoreBox'
 import SelectableOption from '@/app/info/components/SelectableOption'
+import { useUpdateUser, useUpdateEducation } from '@/service/user/hook'
 
 const educationSchema = z.object({
   education: z.string({
@@ -55,6 +55,7 @@ function EducationContent() {
   const [topics, setTopics] = useState<string[]>([])
   const [graduationYear, setGraduationYear] = useState<string | null>(null)
   const mutation = useUpdateUser()
+  const educationMutation = useUpdateEducation()
 
   const onSubmit = async () => {
     if (!selectedEducation) return router.push(`/info/set-profile?name=${name}`)
@@ -67,34 +68,21 @@ function EducationContent() {
         : 'graduated'
 
     try {
-      // eslint-disable-next-line
-      const updateData: any = {
+      // Update user with educational status
+      await mutation.mutateAsync({
         educationalStatus,
-      }
+      })
 
-      // Only add education details if user is student or graduated
+      // Send education details to the new API if user is student or graduated
       if (selectedEducation === 'student' || selectedEducation === 'graduated') {
-        // eslint-disable-next-line
-        const educationData: any = {}
-
-        if (topics.length > 0) {
-          educationData.topic = topics.join(', ')
+        const educationData = {
+          university: universities.length > 0 ? universities.join(', ') : '',
+          topic: topics.length > 0 ? topics.join(', ') : '',
+          graduationYear: graduationYear || '',
         }
 
-        if (universities.length > 0) {
-          educationData.university = universities.join(', ')
-        }
-
-        if (graduationYear) {
-          educationData.graduationYear = graduationYear
-        }
-
-        if (Object.keys(educationData).length > 0) {
-          updateData.education = educationData
-        }
+        await educationMutation.mutateAsync(educationData)
       }
-
-      await mutation.mutateAsync(updateData)
     } catch (err) {
       console.error('Failed to update education', err)
     }
