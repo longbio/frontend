@@ -124,3 +124,26 @@ export async function updatePetServerAction(data: { name: string; breed: string 
   const json = await res.json()
   return json
 }
+
+export async function updateJobServerAction(data: { position: string; company: string }) {
+  const { accessToken } = await getAuthTokens()
+
+  if (!accessToken) throw new Error('Unauthorized')
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/job`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(data),
+  })
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null)
+    throw new Error(errorData?.message || 'Failed to update job')
+  }
+
+  const json = await res.json()
+  return json
+}

@@ -6,6 +6,7 @@ import {
   getUserByIdServerAction,
   updateEducationServerAction,
   updatePetServerAction,
+  updateJobServerAction,
 } from '@/lib/server-action/user-actions'
 import type { UpdateUserParams } from './type'
 
@@ -37,5 +38,11 @@ export function useUpdateEducation() {
 export function useUpdatePet() {
   return useMutation({
     mutationFn: (data: { name: string; breed: string }) => updatePetServerAction(data),
+  })
+}
+
+export function useUpdateJob() {
+  return useMutation({
+    mutationFn: (data: { position: string; company: string }) => updateJobServerAction(data),
   })
 }
