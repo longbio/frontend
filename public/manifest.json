@@ -1,0 +1,21 @@
+{
+  "name": "LongBio",
+  "short_name": "LongBio",
+  "description": "Discover amazing people and their stories. Connect with like-minded individuals and share your own journey.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#8B5CF6",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/assets/images/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["social", "lifestyle", "networking"],
+  "lang": "en",
+  "dir": "ltr"
+}

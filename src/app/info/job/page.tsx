@@ -8,7 +8,7 @@ import { Suspense, useState } from 'react'
 import StickyNav from '../components/StickyNav'
 import AddMoreBox from './components/AddMoreBox'
 import { Progress } from '@/components/ui/progress'
-import { useUpdateUser } from '@/service/user/hook'
+import { useUpdateJob } from '@/service/user/hook'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { setCookie, getCookie } from '@/utils/cookie'
 import { useJobPositions } from '@/service/jobs/hook'
@@ -51,7 +51,7 @@ function JobContent() {
 
   const [positions, setPositions] = useState<string[]>([])
   const [companies, setCompanies] = useState<string[]>([])
-  const mutation = useUpdateUser()
+  const jobMutation = useUpdateJob()
 
   const { data: jobPositions } = useJobPositions()
 
@@ -76,37 +76,16 @@ function JobContent() {
   const onSubmit = async () => {
     if (!selectedJob) return router.push(`/info/set-profile?name=${name}`)
 
-    const jobStatus =
-      selectedJob === 'not-interested'
-        ? 'not interested'
-        : selectedJob === 'employed'
-        ? 'employed'
-        : 'unemployed'
-
     try {
-      // eslint-disable-next-line
-      const updateData: any = {
-        jobStatus,
+      // Send job details to the new API if user is employed
+      if (selectedJob === 'employed' && (positions.length > 0 || companies.length > 0)) {
+        const jobData = {
+          position: positions.length > 0 ? positions.join(', ') : '',
+          company: companies.length > 0 ? companies.join(', ') : '',
+        }
+
+        await jobMutation.mutateAsync(jobData)
       }
-
-      if (selectedJob === 'employed') {
-        // eslint-disable-next-line
-        const jobData: any = {}
-
-        if (positions.length > 0) {
-          jobData.position = positions.join(', ')
-        }
-
-        if (companies.length > 0) {
-          jobData.company = companies.join(', ')
-        }
-
-        if (Object.keys(jobData).length > 0) {
-          updateData.job = jobData
-        }
-      }
-
-      await mutation.mutateAsync(updateData)
     } catch (err) {
       console.error('Failed to update job info', err)
     }
@@ -179,16 +158,6 @@ function JobContent() {
                 onCheckedChange={(checked) => {
                   if (checked) {
                     setValue('job', 'unemployed')
-                  }
-                }}
-              />
-              <SelectableOption
-                id="not-interested"
-                label="Not interested in work"
-                checked={selectedJob === 'not-interested'}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    setValue('job', 'not-interested')
                   }
                 }}
               />

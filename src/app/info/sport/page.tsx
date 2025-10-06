@@ -88,9 +88,11 @@ function SportContent() {
 
   const onSubmit = async () => {
     try {
-      await updateUser({
-        favoriteSport: selected.length > 0 ? selected[0] : 'None',
-      })
+      if (selected.length > 0) {
+        await updateUser({
+          favoriteSport: selected[0],
+        })
+      }
     } catch (err) {
       console.error('Failed to update sport info', err)
     }

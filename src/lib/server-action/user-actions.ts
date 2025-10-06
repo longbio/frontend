@@ -8,10 +8,7 @@ import type {
 } from '@/service/user/type'
 
 export async function updateUserServerAction(params: UpdateUserParams) {
-  console.log('updateUserServerAction called with params:', params)
-
   const { accessToken } = await getAuthTokens()
-  console.log('Access token from cookies:', accessToken)
 
   if (!accessToken) throw new Error('Unauthorized')
 
@@ -24,11 +21,8 @@ export async function updateUserServerAction(params: UpdateUserParams) {
     body: JSON.stringify(params),
   })
 
-  console.log('PATCH /v1/users/me status:', res.status)
-
   if (!res.ok) {
     const data = await res.json().catch(() => null)
-    console.log('PATCH /v1/users/me error response:', data)
     throw new Error(data?.message || 'Failed to update user')
   }
 
@@ -38,10 +32,7 @@ export async function updateUserServerAction(params: UpdateUserParams) {
 }
 
 export async function uploadProfileImageServerAction(file: File) {
-  console.log('uploadProfileImageServerAction called with file:', file.name)
-
   const { accessToken } = await getAuthTokens()
-  console.log('Access token from cookies:', accessToken)
 
   if (!accessToken) throw new Error('Unauthorized')
 
@@ -60,34 +51,172 @@ export async function uploadProfileImageServerAction(file: File) {
 
   if (!res.ok) {
     const data = await res.json().catch(() => null)
-    console.log('POST /v1/users/me/profile-image error response:', data)
     throw new Error(data?.message || 'Failed to upload profile image')
   }
 
   const json = (await res.json()) as UploadProfileImageResponse
-  console.log('POST /v1/users/me/profile-image response JSON:', json)
   return json
 }
 
 export async function getUserByIdServerAction(userId: string): Promise<GetUserByIdResponse> {
-  console.log('getUserByIdServerAction called with userId:', userId)
+  try {
+    console.log('Fetching user data for ID:', userId)
+    const res = await fetch(`https://api.longbio.me/v1/users/${userId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
 
-  const res = await fetch(`https://api.longbio.me/v1/users/${userId}`, {
-    method: 'GET',
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => null)
+      throw new Error(errorData?.message || `Failed to get user data. Status: ${res.status}`)
+    }
+
+    const json = await res.json()
+    console.log('API Success Response:', json)
+    return json
+  } catch (error) {
+    console.error('getUserByIdServerAction Error:', error)
+    throw error
+  }
+}
+
+export async function updateEducationServerAction(data: {
+  university: string
+  topic: string
+  graduationYear: string
+}) {
+  const { accessToken } = await getAuthTokens()
+
+  if (!accessToken) throw new Error('Unauthorized')
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/education`, {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
     },
+    body: JSON.stringify(data),
   })
 
-  console.log(`GET https://api.longbio.me/v1/users/${userId} status:`, res.status)
-
   if (!res.ok) {
-    const data = await res.json().catch(() => null)
-    console.log(`GET https://api.longbio.me/v1/users/${userId} error response:`, data)
-    throw new Error(data?.message || 'Failed to get user data')
+    const errorData = await res.json().catch(() => null)
+    throw new Error(errorData?.message || 'Failed to update education')
   }
 
   const json = await res.json()
-  console.log(`GET https://api.longbio.me/v1/users/${userId} response JSON:`, json)
+  return json
+}
+
+export async function updatePetServerAction(data: { name: string; breed: string }) {
+  const { accessToken } = await getAuthTokens()
+
+  if (!accessToken) throw new Error('Unauthorized')
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/pet`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(data),
+  })
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null)
+    throw new Error(errorData?.message || 'Failed to update pet')
+  }
+
+  const json = await res.json()
+  return json
+}
+
+export async function updateJobServerAction(data: { position: string; company: string }) {
+  const { accessToken } = await getAuthTokens()
+
+  if (!accessToken) throw new Error('Unauthorized')
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/job`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(data),
+  })
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null)
+    throw new Error(errorData?.message || 'Failed to update job')
+  }
+
+  const json = await res.json()
+  return json
+}
+
+export async function getEducationServerAction() {
+  const { accessToken } = await getAuthTokens()
+
+  if (!accessToken) throw new Error('Unauthorized')
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/education`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null)
+    throw new Error(errorData?.message || 'Failed to get education data')
+  }
+
+  const json = await res.json()
+  return json
+}
+
+export async function getPetServerAction() {
+  const { accessToken } = await getAuthTokens()
+
+  if (!accessToken) throw new Error('Unauthorized')
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/pet`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null)
+    throw new Error(errorData?.message || 'Failed to get pet data')
+  }
+
+  const json = await res.json()
+  return json
+}
+
+export async function getJobServerAction() {
+  const { accessToken } = await getAuthTokens()
+
+  if (!accessToken) throw new Error('Unauthorized')
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/job`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null)
+    throw new Error(errorData?.message || 'Failed to get job data')
+  }
+
+  const json = await res.json()
   return json
 }
