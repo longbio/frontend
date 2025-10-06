@@ -143,7 +143,7 @@ export async function updateJobServerAction(data: { position: string; company: s
       'Content-Type': 'application/json',
       Authorization: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify({ jobs: data }),
   })
 
   if (!res.ok) {

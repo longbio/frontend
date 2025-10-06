@@ -72,7 +72,7 @@ function PhysicalContent() {
             : undefined,
       })
 
-      router.push(`/info/country?name=${name}`)
+      router.push(`/info/born?name=${name}`)
     } catch (err) {
       console.error('Failed to update physical info', err)
     }
