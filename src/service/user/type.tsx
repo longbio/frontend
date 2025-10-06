@@ -53,38 +53,34 @@ export interface UploadProfileImageResponse {
 }
 
 export interface GetUserByIdResponse {
-  success: boolean
+  status: number
   message: string
   data: {
-    id: string
-    name: string
+    id: number
+    birthDate: string | null
     email: string
-    profileImage?: string
-    topImage?: string
+    fullName: string
+    job: string
+    travelStyle: string
+    favoriteSport: string
     gender: string
-    marital: string
-    birthday: {
-      day: string
-      month: string
-      year: string
-    }
-    country: {
-      birthCountry: string
-      birthCity: string
-    }
-    physical: {
-      height: string
-      weight: string
-    }
+    maritalStatus: string
+    educationalStatus: string
+    profileImage: string
+    height: number
+    weight: number
+    bornPlace: string
+    livePlace: string
     pet: {
-      hasPet: boolean
-      petName: string
-      petBreed: string
-      petImage?: string
+      name: string
+      breed: string
     }
-    interests: string[]
+    doesExercise: boolean
     skills: string[]
-    sports: string[]
-    education: string
+    interests: string[]
+    visitedCountries: string[]
+    details: string
+    createdAt: string
+    updatedAt: string
   }
 }

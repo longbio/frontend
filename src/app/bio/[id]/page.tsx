@@ -16,19 +16,25 @@ import {
   Star,
   PawPrint,
   BookOpen,
+  Share2,
 } from 'lucide-react'
-import { getUserDataFromCookies, calculateAge, type UserData } from '@/utils/userData'
+import type { GetUserByIdResponse } from '@/service/user/type'
 import { useSearchParams, useParams, useRouter } from 'next/navigation'
-import { useGetUserById } from '@/service/user/hook'
+import { useGetUserById, useGetEducation, useGetPet, useGetJob } from '@/service/user/hook'
+import ShareScreenshot from './components/ShareScreenshot'
 
 function BioContent() {
   const [profileImage, setProfileImage] = useState<string | null>(null)
-  const [userData, setUserData] = useState<UserData | null>(null)
+  const [userData, setUserData] = useState<GetUserByIdResponse['data'] | null>(null)
   const [loading, setLoading] = useState(true)
+  const [showScreenshot, setShowScreenshot] = useState(false)
   const searchParams = useSearchParams()
   const params = useParams()
   const router = useRouter()
   const { mutateAsync: getUserById } = useGetUserById()
+  const { data: educationData, isLoading: educationLoading } = useGetEducation()
+  const { data: petData, isLoading: petLoading } = useGetPet()
+  const { data: jobData, isLoading: jobLoading } = useGetJob()
 
   const userId = params.id as string
 
@@ -37,39 +43,25 @@ function BioContent() {
       try {
         setLoading(true)
 
-        // First try to get data from API
+        // Get data from API only
         if (userId && userId !== 'undefined') {
-          try {
-            const apiData = await getUserById(userId)
-            if (apiData?.success && apiData.data) {
-              setUserData(apiData.data)
-              setLoading(false)
-              return
+          const apiData = await getUserById(userId)
+
+          if (apiData?.data) {
+            setUserData(apiData.data)
+            if (apiData.data.profileImage) {
+              setProfileImage(apiData.data.profileImage)
             }
-          } catch (error) {
-            console.log('API fetch failed, falling back to cookies:', error)
+          } else {
+            console.warn('No data received from API')
           }
-        }
-
-        // Fallback to cookies
-        if (typeof window !== 'undefined') {
-          const data = getUserDataFromCookies()
-
-          // Get name from URL parameter as fallback
-          const nameFromUrl = searchParams.get('name')
-          if (nameFromUrl && (!data.name || data.name === 'Fari Zadeh')) {
-            data.name = nameFromUrl
-          }
-
-          setUserData(data)
-
-          // Set profile image if available
-          if (data.profileImage) {
-            setProfileImage(data.profileImage)
-          }
+        } else {
+          console.warn('Invalid userId:', userId)
         }
       } catch (error) {
         console.error('Error fetching user data:', error)
+        // Set some default data or show error message
+        setUserData(null)
       } finally {
         setLoading(false)
       }
@@ -113,14 +105,70 @@ function BioContent() {
   }
 
   if (!userData) {
-    return <div>Error loading profile data</div>
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center">
+          <div className="text-red-500 mb-4">
+            <svg
+              className="w-16 h-16 mx-auto"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
+            </svg>
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Error Loading Profile</h2>
+          <p className="text-gray-600 mb-4">
+            We couldn&apos;t load the profile data. Please check the user ID and try again.
+          </p>
+          <p className="text-sm text-gray-500">User ID: {userId}</p>
+        </div>
+      </div>
+    )
   }
 
-  const age = calculateAge(userData.birthday)
-  const birthdayFormatted = `${userData.birthday.year} / ${userData.birthday.month.padStart(
-    2,
-    '0'
-  )} / ${userData.birthday.day.padStart(2, '0')}`
+  const age = userData.birthDate
+    ? new Date().getFullYear() - new Date(userData.birthDate).getFullYear()
+    : null
+
+  // Mapping for skills and interests IDs to actual names
+  const skillMapping: { [key: string]: string } = {
+    '1': 'Sports',
+    '2': 'Painting',
+    '3': 'Music',
+    '4': 'Singing',
+    '5': 'Cultural Travel',
+    '6': 'Dancing',
+    '7': 'Physics and Math',
+    '8': 'Cooking',
+    '9': 'Photography',
+    '10': 'Road Trip',
+    '11': 'Eco-Tourism',
+  }
+
+  const interestMapping: { [key: string]: string } = {
+    '1': 'Reading',
+    '2': 'Movies',
+    '3': 'Gaming',
+    '4': 'Art',
+    '5': 'Technology',
+    '6': 'Fashion',
+    '7': 'Food',
+    '8': 'Nature',
+    '9': 'Fitness',
+    '10': 'Travel',
+  }
+
+  // Convert ID arrays to actual names
+  const displaySkills = userData.skills?.map((skill) => skillMapping[skill] || skill) || []
+  const displayInterests =
+    userData.interests?.map((interest) => interestMapping[interest] || interest) || []
 
   return (
     <div className="flex flex-col w-full h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
@@ -174,51 +222,66 @@ function BioContent() {
               </div>
             </div>
 
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">{userData.name}</h3>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">{userData.fullName}</h3>
             <p className="text-gray-600 mb-4">
-              {userData.education === 'student'
+              {userData.educationalStatus === 'student'
                 ? 'Student'
-                : userData.education === 'graduated'
+                : userData.educationalStatus === 'graduated'
                 ? 'Graduated'
                 : 'Professional'}
             </p>
 
             <div className="flex justify-center gap-3 flex-wrap">
-              <div className="flex items-center gap-1 bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm">
-                <MapPin className="w-4 h-4" />
-                <span>
-                  {userData.country.birthCity}, {userData.country.birthCountry}
-                </span>
-              </div>
-              <div className="flex items-center gap-1 bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-sm">
-                <Calendar className="w-4 h-4" />
-                <span>Age {age}</span>
-              </div>
-              <div className="flex items-center gap-1 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
-                <Ruler className="w-4 h-4" />
-                <span>
-                  {userData.physical.height}, {userData.physical.weight}
-                </span>
-              </div>
+              {(userData.bornPlace || userData.livePlace) && (
+                <div className="flex items-center gap-1 bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm">
+                  <MapPin className="w-4 h-4" />
+                  <span>
+                    {userData.bornPlace && userData.livePlace
+                      ? `${userData.bornPlace}, ${userData.livePlace}`
+                      : userData.bornPlace || userData.livePlace}
+                  </span>
+                </div>
+              )}
+              {age && (
+                <div className="flex items-center gap-1 bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-sm">
+                  <Calendar className="w-4 h-4" />
+                  <span>Age {age}</span>
+                </div>
+              )}
+              {(userData.height > 0 || userData.weight > 0) && (
+                <div className="flex items-center gap-1 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+                  <Ruler className="w-4 h-4" />
+                  <span>
+                    {userData.height > 0 && userData.weight > 0
+                      ? `${userData.height}cm, ${userData.weight}kg`
+                      : userData.height > 0
+                      ? `${userData.height}cm`
+                      : `${userData.weight}kg`}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
           <div className="flex justify-center gap-6 text-sm text-gray-600">
-            <span className="flex items-center gap-1">
-              <Heart className="w-4 h-4" />
-              {userData.gender}
-            </span>
-            <span className="flex items-center gap-1">
-              <Heart className="w-4 h-4" />
-              {userData.marital}
-            </span>
+            {userData.gender && userData.gender.trim() !== '' && (
+              <span className="flex items-center gap-1">
+                <Heart className="w-4 h-4" />
+                {userData.gender}
+              </span>
+            )}
+            {userData.maritalStatus && userData.maritalStatus.trim() !== '' && (
+              <span className="flex items-center gap-1">
+                <Heart className="w-4 h-4" />
+                {userData.maritalStatus}
+              </span>
+            )}
           </div>
         </div>
 
-        {/* Personal Details Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          {/* Birth Date */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+        {/* Birth Date  */}
+        {userData.birthDate && (
+          <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-purple-600" />
@@ -231,11 +294,14 @@ function BioContent() {
                 <Edit3 className="w-4 h-4 text-gray-500" />
               </button>
             </div>
-            <p className="text-gray-700">{birthdayFormatted}</p>
+            <p className="text-gray-700">{userData.birthDate}</p>
           </div>
+        )}
 
-          {/* Education */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+        {/* Education  */}
+        {(educationData?.data ||
+          (userData.educationalStatus && userData.educationalStatus !== 'none')) && (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <GraduationCap className="w-5 h-5 text-purple-600" />
@@ -248,112 +314,291 @@ function BioContent() {
                 <Edit3 className="w-4 h-4 text-gray-500" />
               </button>
             </div>
-            <p className="text-gray-700">{userData.education}</p>
+            {educationData?.data ? (
+              <div className="space-y-1">
+                {educationData.data.university && (
+                  <div>University: {educationData.data.university}</div>
+                )}
+                {educationData.data.topic && <div>Topic: {educationData.data.topic}</div>}
+                {educationData.data.graduationYear && (
+                  <div>Graduation Year: {educationData.data.graduationYear}</div>
+                )}
+              </div>
+            ) : educationLoading ? (
+              'Loading...'
+            ) : (
+              <p className="text-gray-700 capitalize">{userData.educationalStatus}</p>
+            )}
           </div>
-        </div>
+        )}
 
-        {/* Interests */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Star className="w-5 h-5 text-purple-600" />
-              <h3 className="font-bold text-gray-900">Interests</h3>
-            </div>
-            <button
-              onClick={() => handleEditSection('interests')}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <Edit3 className="w-4 h-4 text-gray-500" />
-            </button>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {userData.interests.map((interest, index) => (
-              <span
-                key={index}
-                className="px-3 py-1 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 rounded-full text-sm border border-purple-200"
-              >
-                {interest}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Skills and Sports */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          {/* Skills */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+        {/* Job  */}
+        {((jobData?.data && (jobData.data.position || jobData.data.company)) ||
+          (userData.job && userData.job.trim() !== '')) && (
+          <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-purple-600" />
-                <h3 className="font-bold text-gray-900">Skills</h3>
+                <h3 className="font-bold text-gray-900">Job</h3>
               </div>
               <button
-                onClick={() => handleEditSection('skills')}
+                onClick={() => handleEditSection('job')}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 <Edit3 className="w-4 h-4 text-gray-500" />
               </button>
             </div>
-            <div className="space-y-2">
-              {userData.skills.map((skill, index) => (
-                <div key={index} className="text-gray-700 text-sm">
-                  • {skill}
-                </div>
-              ))}
-            </div>
+            {jobData?.data ? (
+              <div className="space-y-1">
+                {jobData.data.position && <div>Position: {jobData.data.position}</div>}
+                {jobData.data.company && <div>Company: {jobData.data.company}</div>}
+              </div>
+            ) : jobLoading ? (
+              'Loading...'
+            ) : (
+              <p className="text-gray-700">{userData.job}</p>
+            )}
           </div>
+        )}
 
-          {/* Sports */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+        {/* Travel Style  */}
+        {userData.travelStyle && userData.travelStyle.trim() !== '' && (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Dumbbell className="w-5 h-5 text-purple-600" />
-                <h3 className="font-bold text-gray-900">Sports & Activities</h3>
+                <MapPin className="w-5 h-5 text-purple-600" />
+                <h3 className="font-bold text-gray-900">Travel Style</h3>
               </div>
               <button
-                onClick={() => handleEditSection('sports')}
+                onClick={() => handleEditSection('travel')}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 <Edit3 className="w-4 h-4 text-gray-500" />
               </button>
             </div>
-            <div className="space-y-2">
-              {userData.sports.map((sport, index) => (
-                <div key={index} className="text-gray-700 text-sm">
-                  • {sport}
+            <p className="text-gray-700">{userData.travelStyle}</p>
+          </div>
+        )}
+
+        {/* Physical Info and Location - Responsive Grid */}
+        {(userData.height > 0 ||
+          userData.weight > 0 ||
+          userData.bornPlace ||
+          userData.livePlace) && (
+          <div
+            className={`grid gap-4 mb-4 ${
+              (userData.height > 0 || userData.weight > 0) &&
+              (userData.bornPlace || userData.livePlace)
+                ? 'grid-cols-1 md:grid-cols-2'
+                : 'grid-cols-1'
+            }`}
+          >
+            {/* Physical Info  */}
+            {(userData.height > 0 || userData.weight > 0) && (
+              <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Ruler className="w-5 h-5 text-purple-600" />
+                    <h3 className="font-bold text-gray-900">Physical Info</h3>
+                  </div>
+                  <button
+                    onClick={() => handleEditSection('physical')}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <Edit3 className="w-4 h-4 text-gray-500" />
+                  </button>
                 </div>
+                <div className="space-y-1">
+                  {userData.height > 0 && (
+                    <p className="text-gray-700">Height: {userData.height} cm</p>
+                  )}
+                  {userData.weight > 0 && (
+                    <p className="text-gray-700">Weight: {userData.weight} kg</p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Location Info  */}
+            {(userData.bornPlace || userData.livePlace) && (
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-5 h-5 text-purple-600" />
+                    <h3 className="font-bold text-gray-900">Location</h3>
+                  </div>
+                  <button
+                    onClick={() => handleEditSection('location')}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <Edit3 className="w-4 h-4 text-gray-500" />
+                  </button>
+                </div>
+                <div className="space-y-1">
+                  {userData.bornPlace && (
+                    <p className="text-gray-700">Born: {userData.bornPlace}</p>
+                  )}
+                  {userData.livePlace && (
+                    <p className="text-gray-700">Live: {userData.livePlace}</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Visited Countries  */}
+        {userData.visitedCountries && userData.visitedCountries.length > 0 && (
+          <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-purple-600" />
+                <h3 className="font-bold text-gray-900">Visited Countries</h3>
+              </div>
+              <button
+                onClick={() => handleEditSection('travel')}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Edit3 className="w-4 h-4 text-gray-500" />
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {userData.visitedCountries.map((country, index) => (
+                <span
+                  key={index}
+                  className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-purple-200"
+                >
+                  {country}
+                </span>
               ))}
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Pet Information */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <PawPrint className="w-5 h-5 text-purple-600" />
-              <h3 className="font-bold text-gray-900">Pet Information</h3>
+        {/* Details  */}
+        {userData.details && userData.details.trim() !== '' && (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <User className="w-5 h-5 text-purple-600" />
+                <h3 className="font-bold text-gray-900">About Me</h3>
+              </div>
+              <button
+                onClick={() => handleEditSection('details')}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Edit3 className="w-4 h-4 text-gray-500" />
+              </button>
             </div>
-            <button
-              onClick={() => handleEditSection('pet')}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <Edit3 className="w-4 h-4 text-gray-500" />
-            </button>
+            <p className="text-gray-700">{userData.details}</p>
           </div>
+        )}
 
-          {userData.pet.hasPet ? (
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full overflow-hidden">
-                {userData.pet.petImage ? (
-                  <Image
-                    src={userData.pet.petImage}
-                    alt="pet picture"
-                    width={64}
-                    height={64}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
+        {/* Interests  */}
+        {displayInterests && displayInterests.length > 0 && (
+          <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Star className="w-5 h-5 text-purple-600" />
+                <h3 className="font-bold text-gray-900">Interests</h3>
+              </div>
+              <button
+                onClick={() => handleEditSection('interests')}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Edit3 className="w-4 h-4 text-gray-500" />
+              </button>
+            </div>
+            <div className="flex gap-2 overflow-x-auto interests-scroll pt-2 pb-3">
+              {displayInterests.map((interest, index) => (
+                <span
+                  key={index}
+                  className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-purple-200 whitespace-nowrap flex-shrink-0"
+                >
+                  {interest}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {((displaySkills && displaySkills.length > 0) ||
+          (userData.favoriteSport && userData.favoriteSport !== 'None')) && (
+          <div
+            className={`grid gap-4 mb-4 ${
+              displaySkills &&
+              displaySkills.length > 0 &&
+              userData.favoriteSport &&
+              userData.favoriteSport !== 'None'
+                ? 'grid-cols-1 md:grid-cols-2'
+                : 'grid-cols-1'
+            }`}
+          >
+            {/* Skills */}
+            {displaySkills && displaySkills.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-purple-600" />
+                    <h3 className="font-bold text-gray-900">Skills</h3>
+                  </div>
+                  <button
+                    onClick={() => handleEditSection('skills')}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <Edit3 className="w-4 h-4 text-gray-500" />
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {displaySkills.map((skill, index) => (
+                    <div key={index} className="text-gray-700 text-sm">
+                      • {skill}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Sports  */}
+            {userData.favoriteSport && userData.favoriteSport !== 'None' && (
+              <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Dumbbell className="w-5 h-5 text-purple-600" />
+                    <h3 className="font-bold text-gray-900">Favorite Sport</h3>
+                  </div>
+                  <button
+                    onClick={() => handleEditSection('sports')}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <Edit3 className="w-4 h-4 text-gray-500" />
+                  </button>
+                </div>
+                <p className="text-gray-700">{userData.favoriteSport}</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Pet Information  */}
+        {(petData?.data || userData.pet.name || userData.pet.breed) && (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <PawPrint className="w-5 h-5 text-purple-600" />
+                <h3 className="font-bold text-gray-900">Pet Information</h3>
+              </div>
+              <button
+                onClick={() => handleEditSection('pet')}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Edit3 className="w-4 h-4 text-gray-500" />
+              </button>
+            </div>
+
+            {petData?.data ? (
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-full overflow-hidden">
                   <Image
                     src="/assets/images/pet.png"
                     alt="pet picture"
@@ -361,17 +606,100 @@ function BioContent() {
                     height={64}
                     className="w-full h-full object-cover"
                   />
-                )}
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900">{petData.data.name}</h4>
+                  <p className="text-gray-600 text-sm">{petData.data.breed}</p>
+                </div>
               </div>
-              <div>
-                <h4 className="font-bold text-gray-900">{userData.pet.petName}</h4>
-                <p className="text-gray-600 text-sm">{userData.pet.petBreed}</p>
-                <p className="text-gray-500 text-xs">Age 3</p>
+            ) : petLoading ? (
+              <p className="text-gray-500">Loading...</p>
+            ) : (
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-full overflow-hidden">
+                  <Image
+                    src="/assets/images/pet.png"
+                    alt="pet picture"
+                    width={64}
+                    height={64}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div>
+                  {userData.pet.name && (
+                    <h4 className="font-bold text-gray-900">{userData.pet.name}</h4>
+                  )}
+                  {userData.pet.breed && (
+                    <p className="text-gray-600 text-sm">{userData.pet.breed}</p>
+                  )}
+                </div>
               </div>
+            )}
+          </div>
+        )}
+
+        {/* Share with Friend Button  */}
+        <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-6 mb-4">
+          <div className="text-center">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Share Your Bio</h3>
+            <p className="text-gray-600 text-sm mb-4">
+              Share your bio with friends and let them know more about you!
+            </p>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={async () => {
+                  try {
+                    if (navigator.share) {
+                      await navigator.share({
+                        title: `${userData.fullName}'s Bio`,
+                        text: `Check out ${userData.fullName}'s bio on LongBio!`,
+                        url: window.location.href,
+                      })
+                    } else {
+                      await navigator.clipboard.writeText(window.location.href)
+
+                      // Show custom toast instead of alert
+                      const toast = document.createElement('div')
+                      toast.className =
+                        'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 flex items-center gap-2'
+                      toast.innerHTML = `
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Bio link copied to clipboard!
+                      `
+                      document.body.appendChild(toast)
+
+                      setTimeout(() => {
+                        toast.remove()
+                      }, 3000)
+                    }
+                  } catch (error) {
+                    console.error('Error sharing:', error)
+                    // Fallback to clipboard
+                    try {
+                      await navigator.clipboard.writeText(window.location.href)
+                      alert('Bio link copied to clipboard!')
+                    } catch (clipboardError) {
+                      console.error('Clipboard error:', clipboardError)
+                    }
+                  }
+                }}
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                <Share2 className="w-5 h-5" />
+                Share Link
+              </button>
+
+              <button
+                onClick={() => setShowScreenshot(true)}
+                className="inline-flex items-center gap-2 bg-white text-purple-600 border-2 border-purple-600 px-6 py-3 rounded-full font-medium hover:bg-purple-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                <Share2 className="w-5 h-5" />
+                Screenshot
+              </button>
             </div>
-          ) : (
-            <p className="text-gray-500">No pets</p>
-          )}
+          </div>
         </div>
 
         {/* Social Media - Commented out for now */}
@@ -395,6 +723,11 @@ function BioContent() {
           </div>
         </div> */}
       </div>
+
+      {/* Share Screenshot Modal */}
+      {showScreenshot && userData && (
+        <ShareScreenshot userData={userData} onClose={() => setShowScreenshot(false)} />
+      )}
     </div>
   )
 }

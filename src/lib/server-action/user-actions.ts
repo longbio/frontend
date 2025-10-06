@@ -59,20 +59,27 @@ export async function uploadProfileImageServerAction(file: File) {
 }
 
 export async function getUserByIdServerAction(userId: string): Promise<GetUserByIdResponse> {
-  const res = await fetch(`https://api.longbio.me/v1/users/${userId}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
+  try {
+    console.log('Fetching user data for ID:', userId)
+    const res = await fetch(`https://api.longbio.me/v1/users/${userId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
 
-  if (!res.ok) {
-    const data = await res.json().catch(() => null)
-    throw new Error(data?.message || 'Failed to get user data')
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => null)
+      throw new Error(errorData?.message || `Failed to get user data. Status: ${res.status}`)
+    }
+
+    const json = await res.json()
+    console.log('API Success Response:', json)
+    return json
+  } catch (error) {
+    console.error('getUserByIdServerAction Error:', error)
+    throw error
   }
-
-  const json = await res.json()
-  return json
 }
 
 export async function updateEducationServerAction(data: {
@@ -142,6 +149,72 @@ export async function updateJobServerAction(data: { position: string; company: s
   if (!res.ok) {
     const errorData = await res.json().catch(() => null)
     throw new Error(errorData?.message || 'Failed to update job')
+  }
+
+  const json = await res.json()
+  return json
+}
+
+export async function getEducationServerAction() {
+  const { accessToken } = await getAuthTokens()
+
+  if (!accessToken) throw new Error('Unauthorized')
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/education`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null)
+    throw new Error(errorData?.message || 'Failed to get education data')
+  }
+
+  const json = await res.json()
+  return json
+}
+
+export async function getPetServerAction() {
+  const { accessToken } = await getAuthTokens()
+
+  if (!accessToken) throw new Error('Unauthorized')
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/pet`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null)
+    throw new Error(errorData?.message || 'Failed to get pet data')
+  }
+
+  const json = await res.json()
+  return json
+}
+
+export async function getJobServerAction() {
+  const { accessToken } = await getAuthTokens()
+
+  if (!accessToken) throw new Error('Unauthorized')
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/job`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null)
+    throw new Error(errorData?.message || 'Failed to get job data')
   }
 
   const json = await res.json()
