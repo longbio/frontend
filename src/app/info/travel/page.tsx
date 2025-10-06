@@ -97,7 +97,6 @@ function TravelContent() {
   }, [data, countryInput, selectedCountries])
 
   const handleAddCountry = (country: CountryItem) => {
-    if (selectedCountries.length >= 5) return
     const updated = [...selectedCountries, country]
     setValue('country', updated, { shouldValidate: true })
     setCountryInput('')
@@ -169,7 +168,7 @@ function TravelContent() {
                 value={countryInput}
                 onChange={(e) => setCountryInput(e.target.value)}
                 placeholder="Type to search countries..."
-                disabled={loading || selectedCountries.length >= 5}
+                disabled={loading}
                 className="mt-3"
               />
               {countryInput && countrySuggestions.length > 0 && (
