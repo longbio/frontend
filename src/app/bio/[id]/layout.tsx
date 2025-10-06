@@ -1,7 +1,11 @@
 import type { Metadata } from 'next'
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const userId = params.id
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id: userId } = await params
 
   return {
     title: `Bio - LongBio`,
