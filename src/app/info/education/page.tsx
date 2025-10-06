@@ -47,18 +47,48 @@ function EducationContent() {
     }
   }, [setValue])
 
+  const [universities, setUniversities] = useState<string[]>([])
+  const [topics, setTopics] = useState<string[]>([])
+  const [graduationYear, setGraduationYear] = useState<string | null>(null)
+  const [validationError, setValidationError] = useState<string>('')
+  const mutation = useUpdateUser()
+  const educationMutation = useUpdateEducation()
+
   useEffect(() => {
     if (selectedEducation)
       setCookie('info_education', JSON.stringify({ education: selectedEducation }))
   }, [selectedEducation])
-  const [universities, setUniversities] = useState<string[]>([])
-  const [topics, setTopics] = useState<string[]>([])
-  const [graduationYear, setGraduationYear] = useState<string | null>(null)
-  const mutation = useUpdateUser()
-  const educationMutation = useUpdateEducation()
+
+  // Clear validation error when all required fields are filled
+  useEffect(() => {
+    if (
+      validationError &&
+      (selectedEducation === 'student' || selectedEducation === 'graduated') &&
+      universities.length > 0 &&
+      topics.length > 0 &&
+      graduationYear
+    ) {
+      setValidationError('')
+    }
+  }, [universities, topics, graduationYear, validationError, selectedEducation])
 
   const onSubmit = async () => {
     if (!selectedEducation) return router.push(`/info/set-profile?name=${name}`)
+
+    setValidationError('')
+
+    if (selectedEducation === 'student' || selectedEducation === 'graduated') {
+      // Check if any field is missing
+      const missingFields = []
+      if (topics.length === 0) missingFields.push('topic')
+      if (universities.length === 0) missingFields.push('university')
+      if (!graduationYear) missingFields.push('graduation year')
+
+      if (missingFields.length > 0) {
+        setValidationError(`Please fill all fields: ${missingFields.join(', ')}`)
+        return
+      }
+    }
 
     const educationalStatus =
       selectedEducation === 'not-interested'
@@ -68,7 +98,6 @@ function EducationContent() {
         : 'graduated'
 
     try {
-      // Update user with educational status
       await mutation.mutateAsync({
         educationalStatus,
       })
@@ -207,6 +236,9 @@ function EducationContent() {
                 <Info className="size-4" />
                 <span>You can always update this later</span>
               </div>
+              {validationError && (
+                <div className="text-red-500 text-sm mt-2">{validationError}</div>
+              )}
             </div>
           </div>
         </div>

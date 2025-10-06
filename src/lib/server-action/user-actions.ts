@@ -137,7 +137,7 @@ export async function updateJobServerAction(data: { position: string; company: s
 
   if (!accessToken) throw new Error('Unauthorized')
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/job`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/jobs`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
