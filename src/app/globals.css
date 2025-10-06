@@ -142,3 +142,26 @@ input[type='number'] {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
+
+/* Custom scrollbar for interests */
+.interests-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #d8b4fe transparent;
+}
+
+.interests-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+
+.interests-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.interests-scroll::-webkit-scrollbar-thumb {
+  background-color: #d8b4fe;
+  border-radius: 2px;
+}
+
+.interests-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #c084fc;
+}
