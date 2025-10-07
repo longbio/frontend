@@ -78,12 +78,13 @@ function JobContent() {
 
     try {
       // Send job details to the new API if user is employed
-      if (selectedJob === 'employed' && (positions.length > 0 || companies.length > 0)) {
+      if (selectedJob === 'employed') {
         const jobData = {
           position: positions.length > 0 ? positions.join(', ') : '',
           company: companies.length > 0 ? companies.join(', ') : '',
         }
 
+        console.log('Sending job data:', jobData)
         await jobMutation.mutateAsync(jobData)
       }
     } catch (err) {

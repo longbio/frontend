@@ -3,13 +3,13 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import {
   updateUserServerAction,
   uploadProfileImageServerAction,
-  getUserByIdServerAction,
   updateEducationServerAction,
   updatePetServerAction,
   updateJobServerAction,
   getEducationServerAction,
   getPetServerAction,
   getJobServerAction,
+  getCurrentUserServerAction,
 } from '@/lib/server-action/user-actions'
 import type { UpdateUserParams } from './type'
 
@@ -22,12 +22,6 @@ export function useUpdateUser() {
 export function useUploadProfileImage() {
   return useMutation({
     mutationFn: uploadProfileImageServerAction,
-  })
-}
-
-export function useGetUserById() {
-  return useMutation({
-    mutationFn: (userId: string) => getUserByIdServerAction(userId),
   })
 }
 
@@ -68,5 +62,12 @@ export function useGetJob() {
   return useQuery({
     queryKey: ['job'],
     queryFn: getJobServerAction,
+  })
+}
+
+export function useGetCurrentUser() {
+  return useQuery({
+    queryKey: ['currentUser'],
+    queryFn: getCurrentUserServerAction,
   })
 }
