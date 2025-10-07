@@ -58,11 +58,7 @@ export interface GetUserByIdResponse {
   data: {
     id: number
     birthDate: string | null
-    email: string
     fullName: string
-    job: string
-    travelStyle: string
-    favoriteSport: string
     gender: string
     maritalStatus: string
     educationalStatus: string
@@ -71,16 +67,25 @@ export interface GetUserByIdResponse {
     weight: number
     bornPlace: string
     livePlace: string
+    doesExercise: boolean
+    favoriteSport: string
+    travelStyle: string
+    details: string
+    education: {
+      topic: string
+      university: string
+      graduationYear: string
+    }
+    job: {
+      company: string
+      position: string
+    }
     pet: {
       name: string
       breed: string
     }
-    doesExercise: boolean
-    skills: string[]
-    interests: string[]
-    visitedCountries: string[]
-    details: string
-    createdAt: string
-    updatedAt: string
+    skills: string[] | null
+    interests: string[] | null
+    visitedCountries: string[] | null
   }
 }

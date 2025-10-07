@@ -1,10 +1,9 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import html2canvas from 'html2canvas'
 import Image from 'next/image'
+import html2canvas from 'html2canvas'
+import { useState, useRef } from 'react'
 import { Download, Share2, X } from 'lucide-react'
-
 import type { GetUserByIdResponse } from '@/service/user/type'
 
 interface ShareScreenshotProps {
@@ -190,10 +189,15 @@ export default function ShareScreenshot({ userData, onClose }: ShareScreenshotPr
                 </div>
               )}
 
-              {userData.job && (
+              {userData.job && (userData.job.position || userData.job.company) && (
                 <div className="bg-white rounded-lg p-3 shadow-sm">
                   <h3 className="font-semibold text-gray-900 text-sm mb-1">Job</h3>
-                  <p className="text-gray-600 text-sm">{userData.job}</p>
+                  {userData.job.position && (
+                    <p className="text-gray-600 text-sm">Position: {userData.job.position}</p>
+                  )}
+                  {userData.job.company && (
+                    <p className="text-gray-600 text-sm">Company: {userData.job.company}</p>
+                  )}
                 </div>
               )}
 

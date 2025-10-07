@@ -6,9 +6,6 @@ import {
   updateEducationServerAction,
   updatePetServerAction,
   updateJobServerAction,
-  getEducationServerAction,
-  getPetServerAction,
-  getJobServerAction,
   getCurrentUserServerAction,
 } from '@/lib/server-action/user-actions'
 import type { UpdateUserParams } from './type'
@@ -41,27 +38,6 @@ export function useUpdatePet() {
 export function useUpdateJob() {
   return useMutation({
     mutationFn: (data: { position: string; company: string }) => updateJobServerAction(data),
-  })
-}
-
-export function useGetEducation() {
-  return useQuery({
-    queryKey: ['education'],
-    queryFn: getEducationServerAction,
-  })
-}
-
-export function useGetPet() {
-  return useQuery({
-    queryKey: ['pet'],
-    queryFn: getPetServerAction,
-  })
-}
-
-export function useGetJob() {
-  return useQuery({
-    queryKey: ['job'],
-    queryFn: getJobServerAction,
   })
 }
 
