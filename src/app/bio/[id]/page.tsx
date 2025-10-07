@@ -19,6 +19,7 @@ import {
   Share2,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useGetEducation, useGetPet, useGetJob } from '@/service/user/hook'
 import ShareScreenshot from './components/ShareScreenshot'
 import type { GetUserByIdResponse } from '@/service/user/type'
 
@@ -27,73 +28,151 @@ function BioContent({ userId }: { userId: string }) {
   const [userData, setUserData] = useState<GetUserByIdResponse['data'] | null>(null)
   const [loading, setLoading] = useState(true)
   const [showScreenshot, setShowScreenshot] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
-  // State for additional data
-  const [educationData, setEducationData] = useState<{
-    data?: { university?: string; topic?: string; graduationYear?: string }
-  } | null>(null)
-  const [petData, setPetData] = useState<{ data?: { name?: string; breed?: string } } | null>(null)
-  const [jobData, setJobData] = useState<{ data?: { position?: string; company?: string } } | null>(
-    null
-  )
+  // Use hooks for additional data
+  const { data: educationData, isLoading: educationLoading } = useGetEducation()
+  const { data: petData, isLoading: petLoading } = useGetPet()
+  const { data: jobData, isLoading: jobLoading } = useGetJob()
 
   // Fetch user data by ID from the API
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         setLoading(true)
-
-        // Fetch main user data
         const userResponse = await fetch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/users/${userId}`
         )
-        if (!userResponse.ok) {
-          throw new Error('Failed to fetch user data')
+        if (userResponse.ok) {
+          const userData = await userResponse.json()
+          setUserData(userData.data)
+          if (userData.data.profileImage) {
+            setProfileImage(userData.data.profileImage)
+          }
+        } else {
+          // If user not found, try to get essential data from localStorage
+          const localUserData = localStorage.getItem('userData')
+          if (localUserData) {
+            const parsedData = JSON.parse(localUserData)
+            // Only use essential fields from localStorage
+            setUserData({
+              id: parseInt(userId),
+              fullName: parsedData.fullName || 'User',
+              email: parsedData.email || '',
+              birthDate: parsedData.birthDate || null,
+              height: parsedData.height || 0,
+              weight: parsedData.weight || 0,
+              bornPlace: parsedData.bornPlace || '',
+              livePlace: parsedData.livePlace || '',
+              profileImage: parsedData.profileImage || '',
+              educationalStatus: parsedData.educationalStatus || '',
+              job: parsedData.job || '',
+              pet: parsedData.pet || { name: '', breed: '' },
+              travelStyle: parsedData.travelStyle || '',
+              favoriteSport: parsedData.favoriteSport || '',
+              gender: parsedData.gender || '',
+              maritalStatus: parsedData.maritalStatus || '',
+              doesExercise: parsedData.doesExercise || false,
+              skills: parsedData.skills || [],
+              interests: parsedData.interests || [],
+              visitedCountries: parsedData.visitedCountries || [],
+              details: parsedData.details || '',
+              createdAt: parsedData.createdAt || '',
+              updatedAt: parsedData.updatedAt || '',
+            })
+            if (parsedData.profileImage) {
+              setProfileImage(parsedData.profileImage)
+            }
+          } else {
+            setUserData({
+              id: parseInt(userId),
+              fullName: 'User',
+              email: '',
+              birthDate: null,
+              height: 0,
+              weight: 0,
+              bornPlace: '',
+              livePlace: '',
+              profileImage: '',
+              educationalStatus: '',
+              job: '',
+              pet: { name: '', breed: '' },
+              travelStyle: '',
+              favoriteSport: '',
+              gender: '',
+              maritalStatus: '',
+              doesExercise: false,
+              skills: [],
+              interests: [],
+              visitedCountries: [],
+              details: '',
+              createdAt: '',
+              updatedAt: '',
+            })
+          }
         }
-        const userData = await userResponse.json()
-        setUserData(userData.data)
-        if (userData.data.profileImage) {
-          setProfileImage(userData.data.profileImage)
-        }
-
-        // Fetch education data
-        try {
-          const educationResponse = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/users/${userId}/education`
-          )
-          if (educationResponse.ok) {
-            const education = await educationResponse.json()
-            setEducationData(education)
-          }
-        } catch {}
-
-        // Fetch pet data
-        try {
-          const petResponse = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/users/${userId}/pet`
-          )
-          if (petResponse.ok) {
-            const pet = await petResponse.json()
-            setPetData(pet)
-          }
-        } catch {}
-
-        // Fetch job data
-        try {
-          const jobResponse = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/users/${userId}/job`
-          )
-          if (jobResponse.ok) {
-            const job = await jobResponse.json()
-            setJobData(job)
-          }
-        } catch {}
-
         setLoading(false)
       } catch {
-        setError('Failed to load user data')
+        // If API fails, try localStorage for essential data
+        const localUserData = localStorage.getItem('userData')
+        if (localUserData) {
+          const parsedData = JSON.parse(localUserData)
+          // Only use essential fields from localStorage
+          setUserData({
+            id: parseInt(userId),
+            fullName: parsedData.fullName || 'User',
+            email: parsedData.email || '',
+            birthDate: parsedData.birthDate || null,
+            height: parsedData.height || 0,
+            weight: parsedData.weight || 0,
+            bornPlace: parsedData.bornPlace || '',
+            livePlace: parsedData.livePlace || '',
+            profileImage: parsedData.profileImage || '',
+            educationalStatus: parsedData.educationalStatus || '',
+            job: parsedData.job || '',
+            pet: parsedData.pet || { name: '', breed: '' },
+            travelStyle: parsedData.travelStyle || '',
+            favoriteSport: parsedData.favoriteSport || '',
+            gender: parsedData.gender || '',
+            maritalStatus: parsedData.maritalStatus || '',
+            doesExercise: parsedData.doesExercise || false,
+            skills: parsedData.skills || [],
+            interests: parsedData.interests || [],
+            visitedCountries: parsedData.visitedCountries || [],
+            details: parsedData.details || '',
+            createdAt: parsedData.createdAt || '',
+            updatedAt: parsedData.updatedAt || '',
+          })
+          if (parsedData.profileImage) {
+            setProfileImage(parsedData.profileImage)
+          }
+        } else {
+          setUserData({
+            id: parseInt(userId),
+            fullName: 'User',
+            email: '',
+            birthDate: null,
+            height: 0,
+            weight: 0,
+            bornPlace: '',
+            livePlace: '',
+            profileImage: '',
+            educationalStatus: '',
+            job: '',
+            pet: { name: '', breed: '' },
+            travelStyle: '',
+            favoriteSport: '',
+            gender: '',
+            maritalStatus: '',
+            doesExercise: false,
+            skills: [],
+            interests: [],
+            visitedCountries: [],
+            details: '',
+            createdAt: '',
+            updatedAt: '',
+          })
+        }
         setLoading(false)
       }
     }
@@ -126,44 +205,12 @@ function BioContent({ userId }: { userId: string }) {
     }
   }
 
-  if (loading) {
+  if (loading || educationLoading || petLoading || jobLoading) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-blaze mx-auto mb-4"></div>
           <p className="text-gray-600">Loading profile...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center">
-          <div className="text-red-500 mb-4">
-            <svg
-              className="w-16 h-16 mx-auto"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-              />
-            </svg>
-          </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Error Loading Profile</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
-          >
-            Try Again
-          </button>
         </div>
       </div>
     )
@@ -389,6 +436,8 @@ function BioContent({ userId }: { userId: string }) {
                   <div>Graduation Year: {educationData.data.graduationYear}</div>
                 )}
               </div>
+            ) : educationLoading ? (
+              'Loading...'
             ) : (
               <p className="text-gray-700 capitalize">{userData.educationalStatus}</p>
             )}
@@ -416,6 +465,8 @@ function BioContent({ userId }: { userId: string }) {
                 {jobData.data.position && <div>Position: {jobData.data.position}</div>}
                 {jobData.data.company && <div>Company: {jobData.data.company}</div>}
               </div>
+            ) : jobLoading ? (
+              'Loading...'
             ) : (
               <p className="text-gray-700">{userData.job}</p>
             )}
@@ -674,6 +725,8 @@ function BioContent({ userId }: { userId: string }) {
                   <p className="text-gray-600 text-sm">{petData.data.breed}</p>
                 </div>
               </div>
+            ) : petLoading ? (
+              <p className="text-gray-500">Loading...</p>
             ) : (
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-full overflow-hidden">
