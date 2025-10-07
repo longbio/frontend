@@ -22,7 +22,7 @@ import {
 import { useRouter, useParams } from 'next/navigation'
 import ShareScreenshot from './components/ShareScreenshot'
 import type { GetUserByIdResponse } from '@/service/user/type'
-import { useGetEducation, useGetPet, useGetJob } from '@/service/user/hook'
+// Avoid server actions here; use plain client GET requests
 
 // Client-only wrapper to prevent SSR issues with hooks
 const ClientOnlyBioContent = dynamic(() => Promise.resolve(BioContent), {
@@ -34,13 +34,18 @@ function BioContent({ userId }: { userId: string }) {
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [userData, setUserData] = useState<GetUserByIdResponse['data'] | null>(null)
   const [loading, setLoading] = useState(true)
+  const [educationData, setEducationData] = useState<{
+    university?: string
+    topic?: string
+    graduationYear?: string
+  } | null>(null)
+  const [educationLoading, setEducationLoading] = useState(false)
+  const [petData, setPetData] = useState<{ name?: string; breed?: string } | null>(null)
+  const [petLoading, setPetLoading] = useState(false)
+  const [jobData, setJobData] = useState<{ position?: string; company?: string } | null>(null)
+  const [jobLoading, setJobLoading] = useState(false)
   const [showScreenshot, setShowScreenshot] = useState(false)
   const router = useRouter()
-
-  // Use hooks for additional data
-  const { data: educationData, isLoading: educationLoading } = useGetEducation()
-  const { data: petData, isLoading: petLoading } = useGetPet()
-  const { data: jobData, isLoading: jobLoading } = useGetJob()
 
   // Fetch user data by ID from the API
   useEffect(() => {
@@ -48,10 +53,7 @@ function BioContent({ userId }: { userId: string }) {
       try {
         setLoading(true)
         const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL
-        if (!apiUrl) {
-          throw new Error('API base URL is not configured')
-        }
-        const userResponse = await fetch(`${apiUrl}/v1/users/${userId}`)
+        const userResponse = await fetch(`${apiUrl}/v1/users/${userId}`, { credentials: 'include' })
         if (userResponse.ok) {
           const userData = await userResponse.json()
           setUserData(userData.data)
@@ -192,6 +194,33 @@ function BioContent({ userId }: { userId: string }) {
       fetchUserData()
     }
   }, [userId])
+
+  // Fetch extra sections via simple GETs (client-side)
+  useEffect(() => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL
+    if (!apiUrl) return
+    // Education
+    setEducationLoading(true)
+    fetch(`${apiUrl}/v1/educations`, { credentials: 'include' })
+      .then(async (r) => (r.ok ? r.json() : null))
+      .then((json) => setEducationData(json?.data ?? null))
+      .catch(() => {})
+      .finally(() => setEducationLoading(false))
+    // Pet
+    setPetLoading(true)
+    fetch(`${apiUrl}/v1/pet`, { credentials: 'include' })
+      .then(async (r) => (r.ok ? r.json() : null))
+      .then((json) => setPetData(json?.data ?? null))
+      .catch(() => {})
+      .finally(() => setPetLoading(false))
+    // Job
+    setJobLoading(true)
+    fetch(`${apiUrl}/v1/job`, { credentials: 'include' })
+      .then(async (r) => (r.ok ? r.json() : null))
+      .then((json) => setJobData(json?.data ?? null))
+      .catch(() => {})
+      .finally(() => setJobLoading(false))
+  }, [])
 
   const handleEditSection = (section: string) => {
     // Navigate to the appropriate step based on section
@@ -389,13 +418,13 @@ function BioContent({ userId }: { userId: string }) {
           </div>
 
           <div className="flex justify-center gap-6 text-sm text-gray-600">
-            {userData.gender && userData.gender.trim() !== '' && (
+            {typeof userData.gender === 'string' && userData.gender.trim() !== '' && (
               <span className="flex items-center gap-1">
                 <Heart className="w-4 h-4" />
                 {userData.gender}
               </span>
             )}
-            {userData.maritalStatus && userData.maritalStatus.trim() !== '' && (
+            {typeof userData.maritalStatus === 'string' && userData.maritalStatus.trim() !== '' && (
               <span className="flex items-center gap-1">
                 <Heart className="w-4 h-4" />
                 {userData.maritalStatus}
@@ -424,7 +453,9 @@ function BioContent({ userId }: { userId: string }) {
         )}
 
         {/* Education  */}
-        {(educationData?.data ||
+        {(educationData?.university ||
+          educationData?.topic ||
+          educationData?.graduationYear ||
           (userData.educationalStatus && userData.educationalStatus !== 'none')) && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
             <div className="flex items-center justify-between mb-4">
@@ -439,14 +470,12 @@ function BioContent({ userId }: { userId: string }) {
                 <Edit3 className="w-4 h-4 text-gray-500" />
               </button>
             </div>
-            {educationData?.data ? (
+            {educationData ? (
               <div className="space-y-1">
-                {educationData.data.university && (
-                  <div>University: {educationData.data.university}</div>
-                )}
-                {educationData.data.topic && <div>Topic: {educationData.data.topic}</div>}
-                {educationData.data.graduationYear && (
-                  <div>Graduation Year: {educationData.data.graduationYear}</div>
+                {educationData.university && <div>University: {educationData.university}</div>}
+                {educationData.topic && <div>Topic: {educationData.topic}</div>}
+                {educationData.graduationYear && (
+                  <div>Graduation Year: {educationData.graduationYear}</div>
                 )}
               </div>
             ) : educationLoading ? (
@@ -458,8 +487,8 @@ function BioContent({ userId }: { userId: string }) {
         )}
 
         {/* Job  */}
-        {((jobData?.data && (jobData.data.position || jobData.data.company)) ||
-          (userData.job && userData.job.trim() !== '')) && (
+        {((jobData && (jobData.position || jobData.company)) ||
+          (typeof userData.job === 'string' && userData.job.trim() !== '')) && (
           <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
@@ -473,21 +502,23 @@ function BioContent({ userId }: { userId: string }) {
                 <Edit3 className="w-4 h-4 text-gray-500" />
               </button>
             </div>
-            {jobData?.data ? (
+            {jobData ? (
               <div className="space-y-1">
-                {jobData.data.position && <div>Position: {jobData.data.position}</div>}
-                {jobData.data.company && <div>Company: {jobData.data.company}</div>}
+                {jobData.position && <div>Position: {jobData.position}</div>}
+                {jobData.company && <div>Company: {jobData.company}</div>}
               </div>
             ) : jobLoading ? (
               'Loading...'
             ) : (
-              <p className="text-gray-700">{userData.job}</p>
+              <p className="text-gray-700">
+                {typeof userData.job === 'string' ? userData.job : ''}
+              </p>
             )}
           </div>
         )}
 
         {/* Travel Style  */}
-        {userData.travelStyle && userData.travelStyle.trim() !== '' && (
+        {typeof userData.travelStyle === 'string' && userData.travelStyle.trim() !== '' && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
@@ -602,7 +633,7 @@ function BioContent({ userId }: { userId: string }) {
         )}
 
         {/* Details  */}
-        {userData.details && userData.details.trim() !== '' && (
+        {typeof userData.details === 'string' && userData.details.trim() !== '' && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
@@ -707,7 +738,9 @@ function BioContent({ userId }: { userId: string }) {
         )}
 
         {/* Pet Information  */}
-        {(petData?.data || userData.pet.name || userData.pet.breed) && (
+        {((petData && (petData.name || petData.breed)) ||
+          userData.pet.name ||
+          userData.pet.breed) && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
@@ -722,7 +755,7 @@ function BioContent({ userId }: { userId: string }) {
               </button>
             </div>
 
-            {petData?.data ? (
+            {petData ? (
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-full overflow-hidden">
                   <Image
@@ -734,8 +767,8 @@ function BioContent({ userId }: { userId: string }) {
                   />
                 </div>
                 <div>
-                  <h4 className="font-bold text-gray-900">{petData.data.name}</h4>
-                  <p className="text-gray-600 text-sm">{petData.data.breed}</p>
+                  {petData.name && <h4 className="font-bold text-gray-900">{petData.name}</h4>}
+                  {petData.breed && <p className="text-gray-600 text-sm">{petData.breed}</p>}
                 </div>
               </div>
             ) : petLoading ? (
