@@ -18,12 +18,11 @@ import {
   BookOpen,
   Share2,
 } from 'lucide-react'
-import type { GetUserByIdResponse } from '@/service/user/type'
 import { useRouter } from 'next/navigation'
-import { useGetCurrentUser, useGetEducation, useGetPet, useGetJob } from '@/service/user/hook'
 import ShareScreenshot from './components/ShareScreenshot'
+import type { GetUserByIdResponse } from '@/service/user/type'
 
-function BioContent() {
+function BioContent({ userId }: { userId: string }) {
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [userData, setUserData] = useState<GetUserByIdResponse['data'] | null>(null)
   const [loading, setLoading] = useState(true)
@@ -31,39 +30,78 @@ function BioContent() {
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
-  const {
-    data: currentUserData,
-    isLoading: currentUserLoading,
-    error: currentUserError,
-  } = useGetCurrentUser()
-  const { data: educationData, isLoading: educationLoading } = useGetEducation()
-  const { data: petData, isLoading: petLoading } = useGetPet()
-  const { data: jobData, isLoading: jobLoading } = useGetJob()
+  // State for additional data
+  const [educationData, setEducationData] = useState<{
+    data?: { university?: string; topic?: string; graduationYear?: string }
+  } | null>(null)
+  const [petData, setPetData] = useState<{ data?: { name?: string; breed?: string } } | null>(null)
+  const [jobData, setJobData] = useState<{ data?: { position?: string; company?: string } } | null>(
+    null
+  )
 
+  // Fetch user data by ID from the API
   useEffect(() => {
-    try {
-      if (currentUserError) {
-        console.error('Current user error:', currentUserError)
+    const fetchUserData = async () => {
+      try {
+        setLoading(true)
+
+        // Fetch main user data
+        const userResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/users/${userId}`
+        )
+        if (!userResponse.ok) {
+          throw new Error('Failed to fetch user data')
+        }
+        const userData = await userResponse.json()
+        setUserData(userData.data)
+        if (userData.data.profileImage) {
+          setProfileImage(userData.data.profileImage)
+        }
+
+        // Fetch education data
+        try {
+          const educationResponse = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/users/${userId}/education`
+          )
+          if (educationResponse.ok) {
+            const education = await educationResponse.json()
+            setEducationData(education)
+          }
+        } catch {}
+
+        // Fetch pet data
+        try {
+          const petResponse = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/users/${userId}/pet`
+          )
+          if (petResponse.ok) {
+            const pet = await petResponse.json()
+            setPetData(pet)
+          }
+        } catch {}
+
+        // Fetch job data
+        try {
+          const jobResponse = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/users/${userId}/job`
+          )
+          if (jobResponse.ok) {
+            const job = await jobResponse.json()
+            setJobData(job)
+          }
+        } catch {}
+
+        setLoading(false)
+      } catch {
         setError('Failed to load user data')
         setLoading(false)
-        return
       }
-
-      if (currentUserData?.data) {
-        setUserData(currentUserData.data)
-        if (currentUserData.data.profileImage) {
-          setProfileImage(currentUserData.data.profileImage)
-        }
-        setLoading(false)
-      } else if (!currentUserLoading) {
-        setLoading(false)
-      }
-    } catch (error) {
-      console.error('Error in useEffect:', error)
-      setError('An unexpected error occurred')
-      setLoading(false)
     }
-  }, [currentUserData, currentUserLoading, currentUserError])
+
+    if (userId) {
+      fetchUserData()
+    }
+  }, [userId])
 
   const handleEditSection = (section: string) => {
     // Navigate to the appropriate step based on section
@@ -88,7 +126,7 @@ function BioContent() {
     }
   }
 
-  if (loading || currentUserLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
@@ -351,8 +389,6 @@ function BioContent() {
                   <div>Graduation Year: {educationData.data.graduationYear}</div>
                 )}
               </div>
-            ) : educationLoading ? (
-              'Loading...'
             ) : (
               <p className="text-gray-700 capitalize">{userData.educationalStatus}</p>
             )}
@@ -380,8 +416,6 @@ function BioContent() {
                 {jobData.data.position && <div>Position: {jobData.data.position}</div>}
                 {jobData.data.company && <div>Company: {jobData.data.company}</div>}
               </div>
-            ) : jobLoading ? (
-              'Loading...'
             ) : (
               <p className="text-gray-700">{userData.job}</p>
             )}
@@ -640,8 +674,6 @@ function BioContent() {
                   <p className="text-gray-600 text-sm">{petData.data.breed}</p>
                 </div>
               </div>
-            ) : petLoading ? (
-              <p className="text-gray-500">Loading...</p>
             ) : (
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-full overflow-hidden">
@@ -764,10 +796,15 @@ function BioContent() {
   )
 }
 
-export default function Bio() {
+export default function Bio({ params }: { params: Promise<{ id: string }> }) {
   return (
     <Suspense>
-      <BioContent />
+      <BioWrapper params={params} />
     </Suspense>
   )
+}
+
+async function BioWrapper({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  return <BioContent userId={id} />
 }
