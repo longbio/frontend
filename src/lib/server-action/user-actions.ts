@@ -27,7 +27,6 @@ export async function updateUserServerAction(params: UpdateUserParams) {
   }
 
   const json = await res.json()
-  console.log('PATCH /v1/users/me response JSON:', json)
   return json
 }
 
@@ -47,8 +46,6 @@ export async function uploadProfileImageServerAction(file: File) {
     body: formData,
   })
 
-  console.log('POST /v1/users/me/profile-image status:', res.status)
-
   if (!res.ok) {
     const data = await res.json().catch(() => null)
     throw new Error(data?.message || 'Failed to upload profile image')
@@ -56,30 +53,6 @@ export async function uploadProfileImageServerAction(file: File) {
 
   const json = (await res.json()) as UploadProfileImageResponse
   return json
-}
-
-export async function getUserByIdServerAction(userId: string): Promise<GetUserByIdResponse> {
-  try {
-    console.log('Fetching user data for ID:', userId)
-    const res = await fetch(`https://api.longbio.me/v1/users/${userId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => null)
-      throw new Error(errorData?.message || `Failed to get user data. Status: ${res.status}`)
-    }
-
-    const json = await res.json()
-    console.log('API Success Response:', json)
-    return json
-  } catch (error) {
-    console.error('getUserByIdServerAction Error:', error)
-    throw error
-  }
 }
 
 export async function updateEducationServerAction(data: {
@@ -215,6 +188,28 @@ export async function getJobServerAction() {
   if (!res.ok) {
     const errorData = await res.json().catch(() => null)
     throw new Error(errorData?.message || 'Failed to get job data')
+  }
+
+  const json = await res.json()
+  return json
+}
+
+export async function getCurrentUserServerAction(): Promise<GetUserByIdResponse> {
+  const { accessToken } = await getAuthTokens()
+
+  if (!accessToken) throw new Error('Unauthorized')
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/users/me`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null)
+    throw new Error(errorData?.message || 'Failed to get current user data')
   }
 
   const json = await res.json()

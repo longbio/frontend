@@ -19,8 +19,8 @@ import {
   Share2,
 } from 'lucide-react'
 import type { GetUserByIdResponse } from '@/service/user/type'
-import { useSearchParams, useParams, useRouter } from 'next/navigation'
-import { useGetUserById, useGetEducation, useGetPet, useGetJob } from '@/service/user/hook'
+import { useRouter } from 'next/navigation'
+import { useGetCurrentUser, useGetEducation, useGetPet, useGetJob } from '@/service/user/hook'
 import ShareScreenshot from './components/ShareScreenshot'
 
 function BioContent() {
@@ -28,47 +28,23 @@ function BioContent() {
   const [userData, setUserData] = useState<GetUserByIdResponse['data'] | null>(null)
   const [loading, setLoading] = useState(true)
   const [showScreenshot, setShowScreenshot] = useState(false)
-  const searchParams = useSearchParams()
-  const params = useParams()
   const router = useRouter()
-  const { mutateAsync: getUserById } = useGetUserById()
+  const { data: currentUserData, isLoading: currentUserLoading } = useGetCurrentUser()
   const { data: educationData, isLoading: educationLoading } = useGetEducation()
   const { data: petData, isLoading: petLoading } = useGetPet()
   const { data: jobData, isLoading: jobLoading } = useGetJob()
 
-  const userId = params.id as string
-
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        setLoading(true)
-
-        // Get data from API only
-        if (userId && userId !== 'undefined') {
-          const apiData = await getUserById(userId)
-
-          if (apiData?.data) {
-            setUserData(apiData.data)
-            if (apiData.data.profileImage) {
-              setProfileImage(apiData.data.profileImage)
-            }
-          } else {
-            console.warn('No data received from API')
-          }
-        } else {
-          console.warn('Invalid userId:', userId)
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error)
-        // Set some default data or show error message
-        setUserData(null)
-      } finally {
-        setLoading(false)
+    if (currentUserData?.data) {
+      setUserData(currentUserData.data)
+      if (currentUserData.data.profileImage) {
+        setProfileImage(currentUserData.data.profileImage)
       }
+      setLoading(false)
+    } else if (!currentUserLoading) {
+      setLoading(false)
     }
-
-    fetchUserData()
-  }, [userId, searchParams, getUserById])
+  }, [currentUserData, currentUserLoading])
 
   const handleEditSection = (section: string) => {
     // Navigate to the appropriate step based on section
@@ -93,7 +69,7 @@ function BioContent() {
     }
   }
 
-  if (loading) {
+  if (loading || currentUserLoading) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
@@ -125,9 +101,8 @@ function BioContent() {
           </div>
           <h2 className="text-xl font-bold text-gray-900 mb-2">Error Loading Profile</h2>
           <p className="text-gray-600 mb-4">
-            We couldn&apos;t load the profile data. Please check the user ID and try again.
+            We couldn&apos;t load the profile data. Please try again.
           </p>
-          <p className="text-sm text-gray-500">User ID: {userId}</p>
         </div>
       </div>
     )
@@ -223,13 +198,14 @@ function BioContent() {
             </div>
 
             <h3 className="text-2xl font-bold text-gray-900 mb-2">{userData.fullName}</h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600 mb-2">
               {userData.educationalStatus === 'student'
                 ? 'Student'
                 : userData.educationalStatus === 'graduated'
                 ? 'Graduated'
                 : 'Professional'}
             </p>
+            {userData.email && <p className="text-gray-500 text-sm mb-4">{userData.email}</p>}
 
             <div className="flex justify-center gap-3 flex-wrap">
               {(userData.bornPlace || userData.livePlace) && (
@@ -415,6 +391,7 @@ function BioContent() {
                   {userData.weight > 0 && (
                     <p className="text-gray-700">Weight: {userData.weight} kg</p>
                   )}
+                  <p className="text-gray-700">Exercise: {userData.doesExercise ? 'Yes' : 'No'}</p>
                 </div>
               </div>
             )}
@@ -653,10 +630,12 @@ function BioContent() {
                       await navigator.share({
                         title: `${userData.fullName}'s Bio`,
                         text: `Check out ${userData.fullName}'s bio on LongBio!`,
-                        url: window.location.href,
+                        url: `${window.location.origin}/bio/${userData.id}`,
                       })
                     } else {
-                      await navigator.clipboard.writeText(window.location.href)
+                      await navigator.clipboard.writeText(
+                        `${window.location.origin}/bio/${userData.id}`
+                      )
 
                       // Show custom toast instead of alert
                       const toast = document.createElement('div')
@@ -678,7 +657,9 @@ function BioContent() {
                     console.error('Error sharing:', error)
                     // Fallback to clipboard
                     try {
-                      await navigator.clipboard.writeText(window.location.href)
+                      await navigator.clipboard.writeText(
+                        `${window.location.origin}/bio/${userData.id}`
+                      )
                       alert('Bio link copied to clipboard!')
                     } catch (clipboardError) {
                       console.error('Clipboard error:', clipboardError)
