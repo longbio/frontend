@@ -19,9 +19,9 @@ import {
   Share2,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useGetEducation, useGetPet, useGetJob } from '@/service/user/hook'
 import ShareScreenshot from './components/ShareScreenshot'
 import type { GetUserByIdResponse } from '@/service/user/type'
+import { useGetEducation, useGetPet, useGetJob } from '@/service/user/hook'
 
 function BioContent({ userId }: { userId: string }) {
   const [profileImage, setProfileImage] = useState<string | null>(null)
@@ -40,9 +40,11 @@ function BioContent({ userId }: { userId: string }) {
     const fetchUserData = async () => {
       try {
         setLoading(true)
-        const userResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/users/${userId}`
-        )
+        const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL
+        if (!apiUrl) {
+          throw new Error('API base URL is not configured')
+        }
+        const userResponse = await fetch(`${apiUrl}/v1/users/${userId}`)
         if (userResponse.ok) {
           const userData = await userResponse.json()
           setUserData(userData.data)
@@ -51,7 +53,8 @@ function BioContent({ userId }: { userId: string }) {
           }
         } else {
           // If user not found, try to get essential data from localStorage
-          const localUserData = localStorage.getItem('userData')
+          const localUserData =
+            typeof window !== 'undefined' ? localStorage.getItem('userData') : null
           if (localUserData) {
             const parsedData = JSON.parse(localUserData)
             // Only use essential fields from localStorage
@@ -114,7 +117,8 @@ function BioContent({ userId }: { userId: string }) {
         setLoading(false)
       } catch {
         // If API fails, try localStorage for essential data
-        const localUserData = localStorage.getItem('userData')
+        const localUserData =
+          typeof window !== 'undefined' ? localStorage.getItem('userData') : null
         if (localUserData) {
           const parsedData = JSON.parse(localUserData)
           // Only use essential fields from localStorage
@@ -237,7 +241,9 @@ function BioContent({ userId }: { userId: string }) {
           </div>
           <h2 className="text-xl font-bold text-gray-900 mb-2">No Profile Data</h2>
           <p className="text-gray-600 mb-4">
-            No profile data available. Please complete your profile setup.
+            {!process.env.NEXT_PUBLIC_API_BASE_URL
+              ? 'API configuration error. Please check your environment variables.'
+              : 'No profile data available. Please complete your profile setup.'}
           </p>
         </div>
       </div>
