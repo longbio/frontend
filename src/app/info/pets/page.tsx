@@ -1,9 +1,9 @@
 'use client'
 import { z } from 'zod'
 import React from 'react'
-import { Suspense } from 'react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
+import { Suspense, useEffect } from 'react'
 import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
 import { setCookie, getCookie } from '@/utils/cookie'
@@ -13,11 +13,26 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import SelectableOption from '../components/SelectableOption'
 import { useUpdateUser, useUpdatePet } from '@/service/user/hook'
 
-const petSchema = z.object({
-  hasPet: z.boolean({ required_error: 'Selection is required.' }),
-  petName: z.string().optional(),
-  petBreed: z.string().optional(),
-})
+const petSchema = z
+  .object({
+    hasPet: z.boolean({ required_error: 'Selection is required.' }),
+    petName: z.string().optional(),
+    petBreed: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.hasPet === true) {
+        return (
+          data.petName && data.petName.trim() !== '' && data.petBreed && data.petBreed.trim() !== ''
+        )
+      }
+      return true
+    },
+    {
+      message: 'Please fill in both pet name and breed when you have a pet',
+      path: ['hasPet'],
+    }
+  )
 type PetFormType = z.infer<typeof petSchema>
 
 function PetContent() {
@@ -41,8 +56,7 @@ function PetContent() {
   const petName = watch('petName')
   const petBreed = watch('petBreed')
 
-  // Load cookie values on client side only
-  React.useEffect(() => {
+  useEffect(() => {
     const cookie = getCookie('info_pet')
     if (cookie) {
       try {
@@ -64,24 +78,33 @@ function PetContent() {
     setCookie('info_pet', JSON.stringify({ hasPet, petName, petBreed }))
   }, [hasPet, petName, petBreed])
 
-  const onSubmit = async () => {
+  const onSubmit = async (data: PetFormType) => {
     try {
       // Update user with pet status
       await mutation.mutateAsync({
         pet: {
-          hasPet,
-          type: petBreed || '',
-          breed: petBreed || '',
+          hasPet: data.hasPet,
+          type: data.petBreed || '',
+          breed: data.petBreed || '',
         },
       })
 
-      // Send pet details to the new API if user has a pet
-      if (hasPet && (petName || petBreed)) {
-        const petData = {
-          name: petName || '',
-          breed: petBreed || '',
+      if (data.hasPet === true) {
+        if (
+          !data.petName ||
+          data.petName.trim() === '' ||
+          !data.petBreed ||
+          data.petBreed.trim() === ''
+        ) {
+          return
         }
 
+        const petData = {
+          name: data.petName.trim(),
+          breed: data.petBreed.trim(),
+        }
+
+        console.log('Sending pet data:', petData)
         await petMutation.mutateAsync(petData)
       }
     } catch (err) {
@@ -120,6 +143,9 @@ function PetContent() {
               checked={hasPet === false}
               onCheckedChange={() => setValue('hasPet', false, { shouldValidate: true })}
             />
+            {errors.hasPet && (
+              <div className="text-red-500 text-sm mt-2">{errors.hasPet.message}</div>
+            )}
           </div>
           {hasPet && (
             <div className="flex flex-col space-y-6 w-full my-24">

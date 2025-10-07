@@ -15,21 +15,46 @@ import { useJobPositions } from '@/service/jobs/hook'
 import { useRouter, useSearchParams } from 'next/navigation'
 import SelectableOption from '@/app/info/components/SelectableOption'
 
-const jobSchema = z.object({
-  job: z.string({
-    required_error: 'Please select your job status',
-  }),
-})
+const jobSchema = z
+  .object({
+    job: z.string({
+      required_error: 'Please select your job status',
+    }),
+    positions: z.array(z.string()).optional(),
+    companies: z.array(z.string()).optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.job === 'employed') {
+        return (
+          data.positions && data.positions.length > 0 && data.companies && data.companies.length > 0
+        )
+      }
+      return true
+    },
+    {
+      message: 'Please add at least one position and one company when employed',
+      path: ['job'],
+    }
+  )
 type JobFormData = z.infer<typeof jobSchema>
 
 function JobContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
-  const { handleSubmit, setValue, watch } = useForm<JobFormData>({
+  const {
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<JobFormData>({
     resolver: zodResolver(jobSchema),
     mode: 'onChange',
-    defaultValues: {},
+    defaultValues: {
+      positions: [],
+      companies: [],
+    },
   })
   const selectedJob = watch('job')
 
@@ -56,6 +81,14 @@ function JobContent() {
   const { data: jobPositions } = useJobPositions()
 
   useEffect(() => {
+    setValue('positions', positions)
+  }, [positions, setValue])
+
+  useEffect(() => {
+    setValue('companies', companies)
+  }, [companies, setValue])
+
+  useEffect(() => {
     setCompanies([])
   }, [positions])
 
@@ -73,18 +106,26 @@ function JobContent() {
     return Array.from(allCompanies)
   }
 
-  const onSubmit = async () => {
-    if (!selectedJob) return router.push(`/info/set-profile?name=${name}`)
+  const onSubmit = async (data: JobFormData) => {
+    if (!data.job) return router.push(`/info/set-profile?name=${name}`)
 
     try {
-      // Send job details to the new API if user is employed
-      if (selectedJob === 'employed') {
-        const jobData = {
-          position: positions.length > 0 ? positions.join(', ') : '',
-          company: companies.length > 0 ? companies.join(', ') : '',
+      if (data.job === 'employed') {
+        if (
+          !data.positions ||
+          data.positions.length === 0 ||
+          !data.companies ||
+          data.companies.length === 0
+        ) {
+          console.error('Validation failed: missing position or company data')
+          return
         }
 
-        console.log('Sending job data:', jobData)
+        const jobData = {
+          position: data.positions.join(', '),
+          company: data.companies.join(', '),
+        }
+
         await jobMutation.mutateAsync(jobData)
       }
     } catch (err) {
@@ -166,6 +207,7 @@ function JobContent() {
                 <Info className="size-4" />
                 <span>You can always update this later</span>
               </div>
+              {errors.job && <div className="text-red-500 text-sm mt-2">{errors.job.message}</div>}
             </div>
           </div>
         </div>
