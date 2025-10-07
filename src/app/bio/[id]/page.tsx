@@ -2,7 +2,7 @@
 // import Link from 'next/link'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
-import { Suspense, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import ImageUploader from './components/ImageUploader'
 // import petPic from '/assets/images/pet.png'
 import {
@@ -19,7 +19,7 @@ import {
   BookOpen,
   Share2,
 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import ShareScreenshot from './components/ShareScreenshot'
 import type { GetUserByIdResponse } from '@/service/user/type'
 import { useGetEducation, useGetPet, useGetJob } from '@/service/user/hook'
@@ -862,15 +862,8 @@ function BioContent({ userId }: { userId: string }) {
   )
 }
 
-export default function Bio({ params }: { params: Promise<{ id: string }> }) {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <BioWrapper params={params} />
-    </Suspense>
-  )
-}
-
-async function BioWrapper({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
+export default function Bio() {
+  const params = useParams<{ id: string }>()
+  const id = params?.id || ''
   return <ClientOnlyBioContent userId={id} />
 }
