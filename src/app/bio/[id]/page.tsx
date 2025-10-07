@@ -1,6 +1,7 @@
 'use client'
 // import Link from 'next/link'
 import Image from 'next/image'
+import dynamic from 'next/dynamic'
 import { Suspense, useState, useEffect } from 'react'
 import ImageUploader from './components/ImageUploader'
 // import petPic from '/assets/images/pet.png'
@@ -22,6 +23,12 @@ import { useRouter } from 'next/navigation'
 import ShareScreenshot from './components/ShareScreenshot'
 import type { GetUserByIdResponse } from '@/service/user/type'
 import { useGetEducation, useGetPet, useGetJob } from '@/service/user/hook'
+
+// Client-only wrapper to prevent SSR issues with hooks
+const ClientOnlyBioContent = dynamic(() => Promise.resolve(BioContent), {
+  ssr: false,
+  loading: () => <div>Loading...</div>,
+})
 
 function BioContent({ userId }: { userId: string }) {
   const [profileImage, setProfileImage] = useState<string | null>(null)
@@ -857,7 +864,7 @@ function BioContent({ userId }: { userId: string }) {
 
 export default function Bio({ params }: { params: Promise<{ id: string }> }) {
   return (
-    <Suspense>
+    <Suspense fallback={<div>Loading...</div>}>
       <BioWrapper params={params} />
     </Suspense>
   )
@@ -865,5 +872,5 @@ export default function Bio({ params }: { params: Promise<{ id: string }> }) {
 
 async function BioWrapper({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  return <BioContent userId={id} />
+  return <ClientOnlyBioContent userId={id} />
 }
