@@ -19,7 +19,7 @@ import {
   BookOpen,
   Share2,
 } from 'lucide-react'
-import { useRouter, useParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import ShareScreenshot from './components/ShareScreenshot'
 import type { GetUserByIdResponse } from '@/service/user/type'
 
@@ -49,123 +49,12 @@ function BioContent({ userId }: { userId: string }) {
             setProfileImage(userData.data.profileImage)
           }
         } else {
-          // If user not found, try to get essential data from localStorage
-          const localUserData =
-            typeof window !== 'undefined' ? localStorage.getItem('userData') : null
-          if (localUserData) {
-            const parsedData = JSON.parse(localUserData)
-            // Only use essential fields from localStorage
-            setUserData({
-              id: parseInt(userId),
-              fullName: parsedData.fullName || 'User',
-              birthDate: parsedData.birthDate || null,
-              height: parsedData.height || 0,
-              weight: parsedData.weight || 0,
-              bornPlace: parsedData.bornPlace || '',
-              livePlace: parsedData.livePlace || '',
-              profileImage: parsedData.profileImage || '',
-              educationalStatus: parsedData.educationalStatus || '',
-              job: parsedData.job || { company: '', position: '' },
-              pet: parsedData.pet || { name: '', breed: '' },
-              travelStyle: parsedData.travelStyle || '',
-              favoriteSport: parsedData.favoriteSport || '',
-              gender: parsedData.gender || '',
-              maritalStatus: parsedData.maritalStatus || '',
-              doesExercise: parsedData.doesExercise || false,
-              skills: parsedData.skills || null,
-              interests: parsedData.interests || null,
-              visitedCountries: parsedData.visitedCountries || null,
-              details: parsedData.details || '',
-              education: parsedData.education || { topic: '', university: '', graduationYear: '' },
-            })
-            if (parsedData.profileImage) {
-              setProfileImage(parsedData.profileImage)
-            }
-          } else {
-            setUserData({
-              id: parseInt(userId),
-              fullName: 'User',
-              birthDate: null,
-              height: 0,
-              weight: 0,
-              bornPlace: '',
-              livePlace: '',
-              profileImage: '',
-              educationalStatus: '',
-              job: { company: '', position: '' },
-              pet: { name: '', breed: '' },
-              travelStyle: '',
-              favoriteSport: '',
-              gender: '',
-              maritalStatus: '',
-              doesExercise: false,
-              skills: null,
-              interests: null,
-              visitedCountries: null,
-              details: '',
-              education: { topic: '', university: '', graduationYear: '' },
-            })
-          }
+          setUserData(null)
         }
         setLoading(false)
-      } catch {
-        // If API fails, try localStorage for essential data
-        const localUserData =
-          typeof window !== 'undefined' ? localStorage.getItem('userData') : null
-        if (localUserData) {
-          const parsedData = JSON.parse(localUserData)
-          // Only use essential fields from localStorage
-          setUserData({
-            id: parseInt(userId),
-            fullName: parsedData.fullName || 'User',
-            birthDate: parsedData.birthDate || null,
-            height: parsedData.height || 0,
-            weight: parsedData.weight || 0,
-            bornPlace: parsedData.bornPlace || '',
-            livePlace: parsedData.livePlace || '',
-            profileImage: parsedData.profileImage || '',
-            educationalStatus: parsedData.educationalStatus || '',
-            job: parsedData.job || { company: '', position: '' },
-            pet: parsedData.pet || { name: '', breed: '' },
-            travelStyle: parsedData.travelStyle || '',
-            favoriteSport: parsedData.favoriteSport || '',
-            gender: parsedData.gender || '',
-            maritalStatus: parsedData.maritalStatus || '',
-            doesExercise: parsedData.doesExercise || false,
-            skills: parsedData.skills || null,
-            interests: parsedData.interests || null,
-            visitedCountries: parsedData.visitedCountries || null,
-            details: parsedData.details || '',
-            education: parsedData.education || { topic: '', university: '', graduationYear: '' },
-          })
-          if (parsedData.profileImage) {
-            setProfileImage(parsedData.profileImage)
-          }
-        } else {
-          setUserData({
-            id: parseInt(userId),
-            fullName: 'User',
-            birthDate: null,
-            height: 0,
-            weight: 0,
-            bornPlace: '',
-            livePlace: '',
-            profileImage: '',
-            educationalStatus: '',
-            job: { company: '', position: '' },
-            pet: { name: '', breed: '' },
-            travelStyle: '',
-            favoriteSport: '',
-            gender: '',
-            maritalStatus: '',
-            doesExercise: false,
-            skills: null,
-            interests: null,
-            visitedCountries: null,
-            details: '',
-            education: { topic: '', university: '', graduationYear: '' },
-          })
-        }
+      } catch (error) {
+        console.error('API request failed:', error)
+        setUserData(null)
         setLoading(false)
       }
     }
@@ -817,8 +706,7 @@ function BioContent({ userId }: { userId: string }) {
   )
 }
 
-export default function Bio() {
-  const params = useParams<{ id: string }>()
+export default function Bio({ params }: { params: { id: string } }) {
   const id = params?.id || ''
   return <ClientOnlyBioContent userId={id} />
 }
