@@ -19,6 +19,7 @@ import {
   Share2,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useGetEducation, useGetPet, useGetJob } from '@/service/user/hook'
 import ShareScreenshot from './components/ShareScreenshot'
 import type { GetUserByIdResponse } from '@/service/user/type'
 
@@ -30,22 +31,16 @@ function BioContent({ userId }: { userId: string }) {
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
-  // State for additional data
-  const [educationData, setEducationData] = useState<{
-    data?: { university?: string; topic?: string; graduationYear?: string }
-  } | null>(null)
-  const [petData, setPetData] = useState<{ data?: { name?: string; breed?: string } } | null>(null)
-  const [jobData, setJobData] = useState<{ data?: { position?: string; company?: string } } | null>(
-    null
-  )
+  // Use hooks for additional data
+  const { data: educationData, isLoading: educationLoading } = useGetEducation()
+  const { data: petData, isLoading: petLoading } = useGetPet()
+  const { data: jobData, isLoading: jobLoading } = useGetJob()
 
   // Fetch user data by ID from the API
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         setLoading(true)
-
-        // Fetch main user data
         const userResponse = await fetch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/users/${userId}`
         )
@@ -57,40 +52,6 @@ function BioContent({ userId }: { userId: string }) {
         if (userData.data.profileImage) {
           setProfileImage(userData.data.profileImage)
         }
-
-        // Fetch education data
-        try {
-          const educationResponse = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/users/${userId}/education`
-          )
-          if (educationResponse.ok) {
-            const education = await educationResponse.json()
-            setEducationData(education)
-          }
-        } catch {}
-
-        // Fetch pet data
-        try {
-          const petResponse = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/users/${userId}/pet`
-          )
-          if (petResponse.ok) {
-            const pet = await petResponse.json()
-            setPetData(pet)
-          }
-        } catch {}
-
-        // Fetch job data
-        try {
-          const jobResponse = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/users/${userId}/job`
-          )
-          if (jobResponse.ok) {
-            const job = await jobResponse.json()
-            setJobData(job)
-          }
-        } catch {}
-
         setLoading(false)
       } catch {
         setError('Failed to load user data')
@@ -126,7 +87,7 @@ function BioContent({ userId }: { userId: string }) {
     }
   }
 
-  if (loading) {
+  if (loading || educationLoading || petLoading || jobLoading) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
@@ -389,6 +350,8 @@ function BioContent({ userId }: { userId: string }) {
                   <div>Graduation Year: {educationData.data.graduationYear}</div>
                 )}
               </div>
+            ) : educationLoading ? (
+              'Loading...'
             ) : (
               <p className="text-gray-700 capitalize">{userData.educationalStatus}</p>
             )}
@@ -416,6 +379,8 @@ function BioContent({ userId }: { userId: string }) {
                 {jobData.data.position && <div>Position: {jobData.data.position}</div>}
                 {jobData.data.company && <div>Company: {jobData.data.company}</div>}
               </div>
+            ) : jobLoading ? (
+              'Loading...'
             ) : (
               <p className="text-gray-700">{userData.job}</p>
             )}
@@ -674,6 +639,8 @@ function BioContent({ userId }: { userId: string }) {
                   <p className="text-gray-600 text-sm">{petData.data.breed}</p>
                 </div>
               </div>
+            ) : petLoading ? (
+              <p className="text-gray-500">Loading...</p>
             ) : (
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-full overflow-hidden">
