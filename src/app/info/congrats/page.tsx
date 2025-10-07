@@ -60,15 +60,12 @@ function CongratsContent() {
         className="sticky bottom-0 w-full h-fit bg-purple-blaze rounded-full"
         onClick={() => {
           if (userId) {
-            router.push(`/bio/${userId}`)
+            router.push(`/bio`)
           } else {
             console.error('User ID not available')
           }
         }}
-        disabled={!userId}
-      >
-        {userId ? 'View My Profile!' : 'Loading...'}
-      </Button>
+      ></Button>
     </div>
   )
 }
