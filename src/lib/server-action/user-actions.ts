@@ -64,7 +64,7 @@ export async function updateEducationServerAction(data: {
 
   if (!accessToken) throw new Error('Unauthorized')
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/education`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/educations`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -133,7 +133,7 @@ export async function getEducationServerAction() {
 
   if (!accessToken) throw new Error('Unauthorized')
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/education`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/educations`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
