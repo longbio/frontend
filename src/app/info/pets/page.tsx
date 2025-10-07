@@ -6,12 +6,12 @@ import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import StickyNav from '../components/StickyNav'
 import { Progress } from '@/components/ui/progress'
-import { useUpdateUser, useUpdatePet } from '@/service/user/hook'
 import { setCookie, getCookie } from '@/utils/cookie'
 import LabeledInput from '../components/LabeledInput'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
 import SelectableOption from '../components/SelectableOption'
+import { useUpdateUser, useUpdatePet } from '@/service/user/hook'
 
 const petSchema = z.object({
   hasPet: z.boolean({ required_error: 'Selection is required.' }),

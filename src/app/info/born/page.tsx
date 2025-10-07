@@ -82,7 +82,7 @@ function BornContent() {
 
       await updateUser(updateData)
 
-      router.push(`/info/pet?name=${name}`)
+      router.push(`/info/pets?name=${name}`)
     } catch (err) {
       console.error('Failed to update country info', err)
     }
@@ -142,7 +142,7 @@ function BornContent() {
 
         <StickyNav
           onNext={handleSubmit(onSubmit)}
-          onSkip={() => router.push(`/info/pet?name=${name}`)}
+          onSkip={() => router.push(`/info/pets?name=${name}`)}
         />
       </form>
     </div>
