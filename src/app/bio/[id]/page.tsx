@@ -28,23 +28,42 @@ function BioContent() {
   const [userData, setUserData] = useState<GetUserByIdResponse['data'] | null>(null)
   const [loading, setLoading] = useState(true)
   const [showScreenshot, setShowScreenshot] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
-  const { data: currentUserData, isLoading: currentUserLoading } = useGetCurrentUser()
+
+  const {
+    data: currentUserData,
+    isLoading: currentUserLoading,
+    error: currentUserError,
+  } = useGetCurrentUser()
   const { data: educationData, isLoading: educationLoading } = useGetEducation()
   const { data: petData, isLoading: petLoading } = useGetPet()
   const { data: jobData, isLoading: jobLoading } = useGetJob()
 
   useEffect(() => {
-    if (currentUserData?.data) {
-      setUserData(currentUserData.data)
-      if (currentUserData.data.profileImage) {
-        setProfileImage(currentUserData.data.profileImage)
+    try {
+      if (currentUserError) {
+        console.error('Current user error:', currentUserError)
+        setError('Failed to load user data')
+        setLoading(false)
+        return
       }
-      setLoading(false)
-    } else if (!currentUserLoading) {
+
+      if (currentUserData?.data) {
+        setUserData(currentUserData.data)
+        if (currentUserData.data.profileImage) {
+          setProfileImage(currentUserData.data.profileImage)
+        }
+        setLoading(false)
+      } else if (!currentUserLoading) {
+        setLoading(false)
+      }
+    } catch (error) {
+      console.error('Error in useEffect:', error)
+      setError('An unexpected error occurred')
       setLoading(false)
     }
-  }, [currentUserData, currentUserLoading])
+  }, [currentUserData, currentUserLoading, currentUserError])
 
   const handleEditSection = (section: string) => {
     // Navigate to the appropriate step based on section
@@ -80,7 +99,7 @@ function BioContent() {
     )
   }
 
-  if (!userData) {
+  if (error) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
@@ -100,8 +119,40 @@ function BioContent() {
             </svg>
           </div>
           <h2 className="text-xl font-bold text-gray-900 mb-2">Error Loading Profile</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (!userData) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center">
+          <div className="text-gray-500 mb-4">
+            <svg
+              className="w-16 h-16 mx-auto"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
+            </svg>
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">No Profile Data</h2>
           <p className="text-gray-600 mb-4">
-            We couldn&apos;t load the profile data. Please try again.
+            No profile data available. Please complete your profile setup.
           </p>
         </div>
       </div>
