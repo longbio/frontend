@@ -87,7 +87,7 @@ export async function updatePetServerAction(data: { name: string; breed: string 
 
   if (!accessToken) throw new Error('Unauthorized')
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/pet`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/pets`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
