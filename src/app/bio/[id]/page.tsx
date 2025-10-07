@@ -28,7 +28,6 @@ function BioContent({ userId }: { userId: string }) {
   const [userData, setUserData] = useState<GetUserByIdResponse['data'] | null>(null)
   const [loading, setLoading] = useState(true)
   const [showScreenshot, setShowScreenshot] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
   // Use hooks for additional data
@@ -44,17 +43,136 @@ function BioContent({ userId }: { userId: string }) {
         const userResponse = await fetch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/users/${userId}`
         )
-        if (!userResponse.ok) {
-          throw new Error('Failed to fetch user data')
-        }
-        const userData = await userResponse.json()
-        setUserData(userData.data)
-        if (userData.data.profileImage) {
-          setProfileImage(userData.data.profileImage)
+        if (userResponse.ok) {
+          const userData = await userResponse.json()
+          setUserData(userData.data)
+          if (userData.data.profileImage) {
+            setProfileImage(userData.data.profileImage)
+          }
+        } else {
+          // If user not found, try to get essential data from localStorage
+          const localUserData = localStorage.getItem('userData')
+          if (localUserData) {
+            const parsedData = JSON.parse(localUserData)
+            // Only use essential fields from localStorage
+            setUserData({
+              id: parseInt(userId),
+              fullName: parsedData.fullName || 'User',
+              email: parsedData.email || '',
+              birthDate: parsedData.birthDate || null,
+              height: parsedData.height || 0,
+              weight: parsedData.weight || 0,
+              bornPlace: parsedData.bornPlace || '',
+              livePlace: parsedData.livePlace || '',
+              profileImage: parsedData.profileImage || '',
+              educationalStatus: parsedData.educationalStatus || '',
+              job: parsedData.job || '',
+              pet: parsedData.pet || { name: '', breed: '' },
+              travelStyle: parsedData.travelStyle || '',
+              favoriteSport: parsedData.favoriteSport || '',
+              gender: parsedData.gender || '',
+              maritalStatus: parsedData.maritalStatus || '',
+              doesExercise: parsedData.doesExercise || false,
+              skills: parsedData.skills || [],
+              interests: parsedData.interests || [],
+              visitedCountries: parsedData.visitedCountries || [],
+              details: parsedData.details || '',
+              createdAt: parsedData.createdAt || '',
+              updatedAt: parsedData.updatedAt || '',
+            })
+            if (parsedData.profileImage) {
+              setProfileImage(parsedData.profileImage)
+            }
+          } else {
+            setUserData({
+              id: parseInt(userId),
+              fullName: 'User',
+              email: '',
+              birthDate: null,
+              height: 0,
+              weight: 0,
+              bornPlace: '',
+              livePlace: '',
+              profileImage: '',
+              educationalStatus: '',
+              job: '',
+              pet: { name: '', breed: '' },
+              travelStyle: '',
+              favoriteSport: '',
+              gender: '',
+              maritalStatus: '',
+              doesExercise: false,
+              skills: [],
+              interests: [],
+              visitedCountries: [],
+              details: '',
+              createdAt: '',
+              updatedAt: '',
+            })
+          }
         }
         setLoading(false)
       } catch {
-        setError('Failed to load user data')
+        // If API fails, try localStorage for essential data
+        const localUserData = localStorage.getItem('userData')
+        if (localUserData) {
+          const parsedData = JSON.parse(localUserData)
+          // Only use essential fields from localStorage
+          setUserData({
+            id: parseInt(userId),
+            fullName: parsedData.fullName || 'User',
+            email: parsedData.email || '',
+            birthDate: parsedData.birthDate || null,
+            height: parsedData.height || 0,
+            weight: parsedData.weight || 0,
+            bornPlace: parsedData.bornPlace || '',
+            livePlace: parsedData.livePlace || '',
+            profileImage: parsedData.profileImage || '',
+            educationalStatus: parsedData.educationalStatus || '',
+            job: parsedData.job || '',
+            pet: parsedData.pet || { name: '', breed: '' },
+            travelStyle: parsedData.travelStyle || '',
+            favoriteSport: parsedData.favoriteSport || '',
+            gender: parsedData.gender || '',
+            maritalStatus: parsedData.maritalStatus || '',
+            doesExercise: parsedData.doesExercise || false,
+            skills: parsedData.skills || [],
+            interests: parsedData.interests || [],
+            visitedCountries: parsedData.visitedCountries || [],
+            details: parsedData.details || '',
+            createdAt: parsedData.createdAt || '',
+            updatedAt: parsedData.updatedAt || '',
+          })
+          if (parsedData.profileImage) {
+            setProfileImage(parsedData.profileImage)
+          }
+        } else {
+          setUserData({
+            id: parseInt(userId),
+            fullName: 'User',
+            email: '',
+            birthDate: null,
+            height: 0,
+            weight: 0,
+            bornPlace: '',
+            livePlace: '',
+            profileImage: '',
+            educationalStatus: '',
+            job: '',
+            pet: { name: '', breed: '' },
+            travelStyle: '',
+            favoriteSport: '',
+            gender: '',
+            maritalStatus: '',
+            doesExercise: false,
+            skills: [],
+            interests: [],
+            visitedCountries: [],
+            details: '',
+            createdAt: '',
+            updatedAt: '',
+          })
+        }
         setLoading(false)
       }
     }
@@ -93,38 +211,6 @@ function BioContent({ userId }: { userId: string }) {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-blaze mx-auto mb-4"></div>
           <p className="text-gray-600">Loading profile...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center">
-          <div className="text-red-500 mb-4">
-            <svg
-              className="w-16 h-16 mx-auto"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-              />
-            </svg>
-          </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Error Loading Profile</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
-          >
-            Try Again
-          </button>
         </div>
       </div>
     )
