@@ -22,9 +22,7 @@ import {
 import { useRouter, useParams } from 'next/navigation'
 import ShareScreenshot from './components/ShareScreenshot'
 import type { GetUserByIdResponse } from '@/service/user/type'
-// Avoid server actions here; use plain client GET requests
 
-// Client-only wrapper to prevent SSR issues with hooks
 const ClientOnlyBioContent = dynamic(() => Promise.resolve(BioContent), {
   ssr: false,
   loading: () => <div>Loading...</div>,
@@ -34,16 +32,6 @@ function BioContent({ userId }: { userId: string }) {
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [userData, setUserData] = useState<GetUserByIdResponse['data'] | null>(null)
   const [loading, setLoading] = useState(true)
-  const [educationData, setEducationData] = useState<{
-    university?: string
-    topic?: string
-    graduationYear?: string
-  } | null>(null)
-  const [educationLoading, setEducationLoading] = useState(false)
-  const [petData, setPetData] = useState<{ name?: string; breed?: string } | null>(null)
-  const [petLoading, setPetLoading] = useState(false)
-  const [jobData, setJobData] = useState<{ position?: string; company?: string } | null>(null)
-  const [jobLoading, setJobLoading] = useState(false)
   const [showScreenshot, setShowScreenshot] = useState(false)
   const router = useRouter()
 
@@ -70,7 +58,6 @@ function BioContent({ userId }: { userId: string }) {
             setUserData({
               id: parseInt(userId),
               fullName: parsedData.fullName || 'User',
-              email: parsedData.email || '',
               birthDate: parsedData.birthDate || null,
               height: parsedData.height || 0,
               weight: parsedData.weight || 0,
@@ -78,19 +65,18 @@ function BioContent({ userId }: { userId: string }) {
               livePlace: parsedData.livePlace || '',
               profileImage: parsedData.profileImage || '',
               educationalStatus: parsedData.educationalStatus || '',
-              job: parsedData.job || '',
+              job: parsedData.job || { company: '', position: '' },
               pet: parsedData.pet || { name: '', breed: '' },
               travelStyle: parsedData.travelStyle || '',
               favoriteSport: parsedData.favoriteSport || '',
               gender: parsedData.gender || '',
               maritalStatus: parsedData.maritalStatus || '',
               doesExercise: parsedData.doesExercise || false,
-              skills: parsedData.skills || [],
-              interests: parsedData.interests || [],
-              visitedCountries: parsedData.visitedCountries || [],
+              skills: parsedData.skills || null,
+              interests: parsedData.interests || null,
+              visitedCountries: parsedData.visitedCountries || null,
               details: parsedData.details || '',
-              createdAt: parsedData.createdAt || '',
-              updatedAt: parsedData.updatedAt || '',
+              education: parsedData.education || { topic: '', university: '', graduationYear: '' },
             })
             if (parsedData.profileImage) {
               setProfileImage(parsedData.profileImage)
@@ -99,7 +85,6 @@ function BioContent({ userId }: { userId: string }) {
             setUserData({
               id: parseInt(userId),
               fullName: 'User',
-              email: '',
               birthDate: null,
               height: 0,
               weight: 0,
@@ -107,19 +92,18 @@ function BioContent({ userId }: { userId: string }) {
               livePlace: '',
               profileImage: '',
               educationalStatus: '',
-              job: '',
+              job: { company: '', position: '' },
               pet: { name: '', breed: '' },
               travelStyle: '',
               favoriteSport: '',
               gender: '',
               maritalStatus: '',
               doesExercise: false,
-              skills: [],
-              interests: [],
-              visitedCountries: [],
+              skills: null,
+              interests: null,
+              visitedCountries: null,
               details: '',
-              createdAt: '',
-              updatedAt: '',
+              education: { topic: '', university: '', graduationYear: '' },
             })
           }
         }
@@ -134,7 +118,6 @@ function BioContent({ userId }: { userId: string }) {
           setUserData({
             id: parseInt(userId),
             fullName: parsedData.fullName || 'User',
-            email: parsedData.email || '',
             birthDate: parsedData.birthDate || null,
             height: parsedData.height || 0,
             weight: parsedData.weight || 0,
@@ -142,19 +125,18 @@ function BioContent({ userId }: { userId: string }) {
             livePlace: parsedData.livePlace || '',
             profileImage: parsedData.profileImage || '',
             educationalStatus: parsedData.educationalStatus || '',
-            job: parsedData.job || '',
+            job: parsedData.job || { company: '', position: '' },
             pet: parsedData.pet || { name: '', breed: '' },
             travelStyle: parsedData.travelStyle || '',
             favoriteSport: parsedData.favoriteSport || '',
             gender: parsedData.gender || '',
             maritalStatus: parsedData.maritalStatus || '',
             doesExercise: parsedData.doesExercise || false,
-            skills: parsedData.skills || [],
-            interests: parsedData.interests || [],
-            visitedCountries: parsedData.visitedCountries || [],
+            skills: parsedData.skills || null,
+            interests: parsedData.interests || null,
+            visitedCountries: parsedData.visitedCountries || null,
             details: parsedData.details || '',
-            createdAt: parsedData.createdAt || '',
-            updatedAt: parsedData.updatedAt || '',
+            education: parsedData.education || { topic: '', university: '', graduationYear: '' },
           })
           if (parsedData.profileImage) {
             setProfileImage(parsedData.profileImage)
@@ -163,7 +145,6 @@ function BioContent({ userId }: { userId: string }) {
           setUserData({
             id: parseInt(userId),
             fullName: 'User',
-            email: '',
             birthDate: null,
             height: 0,
             weight: 0,
@@ -171,19 +152,18 @@ function BioContent({ userId }: { userId: string }) {
             livePlace: '',
             profileImage: '',
             educationalStatus: '',
-            job: '',
+            job: { company: '', position: '' },
             pet: { name: '', breed: '' },
             travelStyle: '',
             favoriteSport: '',
             gender: '',
             maritalStatus: '',
             doesExercise: false,
-            skills: [],
-            interests: [],
-            visitedCountries: [],
+            skills: null,
+            interests: null,
+            visitedCountries: null,
             details: '',
-            createdAt: '',
-            updatedAt: '',
+            education: { topic: '', university: '', graduationYear: '' },
           })
         }
         setLoading(false)
@@ -194,33 +174,6 @@ function BioContent({ userId }: { userId: string }) {
       fetchUserData()
     }
   }, [userId])
-
-  // Fetch extra sections via simple GETs (client-side)
-  useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL
-    if (!apiUrl) return
-    // Education
-    setEducationLoading(true)
-    fetch(`${apiUrl}/v1/educations`, { credentials: 'include' })
-      .then(async (r) => (r.ok ? r.json() : null))
-      .then((json) => setEducationData(json?.data ?? null))
-      .catch(() => {})
-      .finally(() => setEducationLoading(false))
-    // Pet
-    setPetLoading(true)
-    fetch(`${apiUrl}/v1/pet`, { credentials: 'include' })
-      .then(async (r) => (r.ok ? r.json() : null))
-      .then((json) => setPetData(json?.data ?? null))
-      .catch(() => {})
-      .finally(() => setPetLoading(false))
-    // Job
-    setJobLoading(true)
-    fetch(`${apiUrl}/v1/job`, { credentials: 'include' })
-      .then(async (r) => (r.ok ? r.json() : null))
-      .then((json) => setJobData(json?.data ?? null))
-      .catch(() => {})
-      .finally(() => setJobLoading(false))
-  }, [])
 
   const handleEditSection = (section: string) => {
     // Navigate to the appropriate step based on section
@@ -245,7 +198,7 @@ function BioContent({ userId }: { userId: string }) {
     }
   }
 
-  if (loading || educationLoading || petLoading || jobLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
@@ -383,7 +336,6 @@ function BioContent({ userId }: { userId: string }) {
                 ? 'Graduated'
                 : 'Professional'}
             </p>
-            {userData.email && <p className="text-gray-500 text-sm mb-4">{userData.email}</p>}
 
             <div className="flex justify-center gap-3 flex-wrap">
               {(userData.bornPlace || userData.livePlace) && (
@@ -453,9 +405,9 @@ function BioContent({ userId }: { userId: string }) {
         )}
 
         {/* Education  */}
-        {(educationData?.university ||
-          educationData?.topic ||
-          educationData?.graduationYear ||
+        {(userData.education?.university ||
+          userData.education?.topic ||
+          userData.education?.graduationYear ||
           (userData.educationalStatus && userData.educationalStatus !== 'none')) && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
             <div className="flex items-center justify-between mb-4">
@@ -470,16 +422,18 @@ function BioContent({ userId }: { userId: string }) {
                 <Edit3 className="w-4 h-4 text-gray-500" />
               </button>
             </div>
-            {educationData ? (
+            {userData.education?.university ||
+            userData.education?.topic ||
+            userData.education?.graduationYear ? (
               <div className="space-y-1">
-                {educationData.university && <div>University: {educationData.university}</div>}
-                {educationData.topic && <div>Topic: {educationData.topic}</div>}
-                {educationData.graduationYear && (
-                  <div>Graduation Year: {educationData.graduationYear}</div>
+                {userData.education.university && (
+                  <div>University: {userData.education.university}</div>
+                )}
+                {userData.education.topic && <div>Topic: {userData.education.topic}</div>}
+                {userData.education.graduationYear && (
+                  <div>Graduation Year: {userData.education.graduationYear}</div>
                 )}
               </div>
-            ) : educationLoading ? (
-              'Loading...'
             ) : (
               <p className="text-gray-700 capitalize">{userData.educationalStatus}</p>
             )}
@@ -487,8 +441,7 @@ function BioContent({ userId }: { userId: string }) {
         )}
 
         {/* Job  */}
-        {((jobData && (jobData.position || jobData.company)) ||
-          (typeof userData.job === 'string' && userData.job.trim() !== '')) && (
+        {(userData.job?.position || userData.job?.company) && (
           <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
@@ -502,18 +455,10 @@ function BioContent({ userId }: { userId: string }) {
                 <Edit3 className="w-4 h-4 text-gray-500" />
               </button>
             </div>
-            {jobData ? (
-              <div className="space-y-1">
-                {jobData.position && <div>Position: {jobData.position}</div>}
-                {jobData.company && <div>Company: {jobData.company}</div>}
-              </div>
-            ) : jobLoading ? (
-              'Loading...'
-            ) : (
-              <p className="text-gray-700">
-                {typeof userData.job === 'string' ? userData.job : ''}
-              </p>
-            )}
+            <div className="space-y-1">
+              {userData.job.position && <div>Position: {userData.job.position}</div>}
+              {userData.job.company && <div>Company: {userData.job.company}</div>}
+            </div>
           </div>
         )}
 
@@ -738,9 +683,7 @@ function BioContent({ userId }: { userId: string }) {
         )}
 
         {/* Pet Information  */}
-        {((petData && (petData.name || petData.breed)) ||
-          userData.pet.name ||
-          userData.pet.breed) && (
+        {(userData.pet.name || userData.pet.breed) && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
@@ -754,46 +697,25 @@ function BioContent({ userId }: { userId: string }) {
                 <Edit3 className="w-4 h-4 text-gray-500" />
               </button>
             </div>
-
-            {petData ? (
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full overflow-hidden">
-                  <Image
-                    src="/assets/images/pet.png"
-                    alt="pet picture"
-                    width={64}
-                    height={64}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div>
-                  {petData.name && <h4 className="font-bold text-gray-900">{petData.name}</h4>}
-                  {petData.breed && <p className="text-gray-600 text-sm">{petData.breed}</p>}
-                </div>
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full overflow-hidden">
+                <Image
+                  src="/assets/images/pet.png"
+                  alt="pet picture"
+                  width={64}
+                  height={64}
+                  className="w-full h-full object-cover"
+                />
               </div>
-            ) : petLoading ? (
-              <p className="text-gray-500">Loading...</p>
-            ) : (
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full overflow-hidden">
-                  <Image
-                    src="/assets/images/pet.png"
-                    alt="pet picture"
-                    width={64}
-                    height={64}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div>
-                  {userData.pet.name && (
-                    <h4 className="font-bold text-gray-900">{userData.pet.name}</h4>
-                  )}
-                  {userData.pet.breed && (
-                    <p className="text-gray-600 text-sm">{userData.pet.breed}</p>
-                  )}
-                </div>
+              <div>
+                {userData.pet.name && (
+                  <h4 className="font-bold text-gray-900">{userData.pet.name}</h4>
+                )}
+                {userData.pet.breed && (
+                  <p className="text-gray-600 text-sm">{userData.pet.breed}</p>
+                )}
               </div>
-            )}
+            </div>
           </div>
         )}
 
