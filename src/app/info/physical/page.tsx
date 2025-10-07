@@ -111,7 +111,7 @@ function PhysicalContent() {
             </div>
           </div>
         </div>
-        <StickyNav onNext={onSubmit} onSkip={() => router.push(`/info/country?name=${name}`)} />
+        <StickyNav onNext={onSubmit} onSkip={() => router.push(`/info/born?name=${name}`)} />
       </form>
     </div>
   )
