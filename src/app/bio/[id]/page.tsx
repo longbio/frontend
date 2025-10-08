@@ -19,9 +19,9 @@ import {
   BookOpen,
   Share2,
 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import ShareScreenshot from './components/ShareScreenshot'
-// import type { GetUserByIdResponse } from '@/service/user/type'
+import type { GetUserByIdResponse } from '@/service/user/type'
 import { useGetCurrentUser } from '@/service/user/hook'
 
 const ClientOnlyBioContent = dynamic(() => Promise.resolve(BioContent), {
@@ -29,15 +29,71 @@ const ClientOnlyBioContent = dynamic(() => Promise.resolve(BioContent), {
   loading: () => <div>Loading...</div>,
 })
 
-function BioContent() {
+function BioContent({ userId }: { userId: string }) {
   const [profileImage, setProfileImage] = useState<string | null>(null)
+  const [userData, setUserData] = useState<GetUserByIdResponse['data'] | null>(null)
+  const [loading, setLoading] = useState(true)
   const [showScreenshot, setShowScreenshot] = useState(false)
+  const [isOwner, setIsOwner] = useState(false)
   const router = useRouter()
 
-  // Get current user data using the hook
-  const { data: currentUserResponse, isLoading: loading } = useGetCurrentUser()
+  // Get current user data to check if this is the owner
+  const { data: currentUserResponse } = useGetCurrentUser()
+  const currentUserId = currentUserResponse?.data?.id
 
-  const userData = currentUserResponse?.data || null
+  // Fetch user data by ID from the API
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        setLoading(true)
+        const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL
+
+        // Check if current user is the owner
+        const isCurrentUserOwner = Boolean(currentUserId && currentUserId.toString() === userId)
+        setIsOwner(isCurrentUserOwner)
+
+        if (isCurrentUserOwner) {
+          // If owner, try to get data from /users/me first
+          try {
+            const meResponse = await fetch(`${apiUrl}/v1/users/me`, { credentials: 'include' })
+            if (meResponse.ok) {
+              const meData = await meResponse.json()
+              setUserData(meData.data)
+              if (meData.data.profileImage) {
+                setProfileImage(meData.data.profileImage)
+              }
+              setLoading(false)
+              return
+            }
+          } catch {
+            console.log('Failed to fetch from /users/me, falling back to /users/[id]')
+          }
+        }
+
+        // Fallback to public API or if not owner
+        const userResponse = await fetch(`${apiUrl}/v1/users/${userId}`, { credentials: 'include' })
+        if (userResponse.ok) {
+          const userData = await userResponse.json()
+          setUserData(userData.data)
+          if (userData.data.profileImage) {
+            setProfileImage(userData.data.profileImage)
+          }
+        } else {
+          // If user not found, show error
+          setUserData(null)
+        }
+        setLoading(false)
+      } catch (error) {
+        console.error('Error fetching user data:', error)
+        setUserData(null)
+        setLoading(false)
+      }
+    }
+
+    if (userId) {
+      fetchUserData()
+    }
+  }, [userId, currentUserId])
 
   // Set profile image when user data is loaded
   useEffect(() => {
@@ -67,6 +123,19 @@ function BioContent() {
     if (stepUrl) {
       router.push(stepUrl)
     }
+  }
+
+  // Helper function to render edit button
+  const renderEditButton = (section: string) => {
+    if (!isOwner) return null
+    return (
+      <button
+        onClick={() => handleEditSection(section)}
+        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+      >
+        <Edit3 className="w-4 h-4 text-gray-500" />
+      </button>
+    )
   }
 
   if (loading) {
@@ -158,12 +227,7 @@ function BioContent() {
               <User className="w-5 h-5 text-purple-600" />
               <h2 className="text-lg font-bold text-gray-900">Basic Information</h2>
             </div>
-            <button
-              onClick={() => handleEditSection('personal')}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <Edit3 className="w-4 h-4 text-gray-500" />
-            </button>
+            {renderEditButton('personal')}
           </div>
 
           <div className="text-center mb-4">
@@ -190,12 +254,14 @@ function BioContent() {
                   )}
                 </div>
                 {/* Edit Button Overlay */}
-                <button
-                  onClick={() => handleEditSection('profile')}
-                  className="absolute -bottom-1 -right-1 w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center shadow-lg hover:bg-purple-700 transition-colors"
-                >
-                  <Edit3 className="w-4 h-4 text-white" />
-                </button>
+                {isOwner && (
+                  <button
+                    onClick={() => handleEditSection('profile')}
+                    className="absolute -bottom-1 -right-1 w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center shadow-lg hover:bg-purple-700 transition-colors"
+                  >
+                    <Edit3 className="w-4 h-4 text-white" />
+                  </button>
+                )}
               </div>
             </div>
 
@@ -264,12 +330,7 @@ function BioContent() {
                 <Calendar className="w-5 h-5 text-purple-600" />
                 <h3 className="font-bold text-gray-900">Birth Date</h3>
               </div>
-              <button
-                onClick={() => handleEditSection('personal')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Edit3 className="w-4 h-4 text-gray-500" />
-              </button>
+              {renderEditButton('personal')}
             </div>
             <p className="text-gray-700">{userData.birthDate}</p>
           </div>
@@ -286,12 +347,7 @@ function BioContent() {
                 <GraduationCap className="w-5 h-5 text-purple-600" />
                 <h3 className="font-bold text-gray-900">Education</h3>
               </div>
-              <button
-                onClick={() => handleEditSection('education')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Edit3 className="w-4 h-4 text-gray-500" />
-              </button>
+              {renderEditButton('education')}
             </div>
             {userData.education?.university ||
             userData.education?.topic ||
@@ -319,12 +375,7 @@ function BioContent() {
                 <BookOpen className="w-5 h-5 text-purple-600" />
                 <h3 className="font-bold text-gray-900">Job</h3>
               </div>
-              <button
-                onClick={() => handleEditSection('job')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Edit3 className="w-4 h-4 text-gray-500" />
-              </button>
+              {renderEditButton('job')}
             </div>
             <div className="space-y-1">
               {userData.job.position && <div>Position: {userData.job.position}</div>}
@@ -341,12 +392,7 @@ function BioContent() {
                 <MapPin className="w-5 h-5 text-purple-600" />
                 <h3 className="font-bold text-gray-900">Travel Style</h3>
               </div>
-              <button
-                onClick={() => handleEditSection('travel')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Edit3 className="w-4 h-4 text-gray-500" />
-              </button>
+              {renderEditButton('travel')}
             </div>
             <p className="text-gray-700">{userData.travelStyle}</p>
           </div>
@@ -373,12 +419,7 @@ function BioContent() {
                     <Ruler className="w-5 h-5 text-purple-600" />
                     <h3 className="font-bold text-gray-900">Physical Info</h3>
                   </div>
-                  <button
-                    onClick={() => handleEditSection('physical')}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                  >
-                    <Edit3 className="w-4 h-4 text-gray-500" />
-                  </button>
+                  {renderEditButton('physical')}
                 </div>
                 <div className="space-y-1">
                   {userData.height > 0 && (
@@ -400,12 +441,7 @@ function BioContent() {
                     <MapPin className="w-5 h-5 text-purple-600" />
                     <h3 className="font-bold text-gray-900">Location</h3>
                   </div>
-                  <button
-                    onClick={() => handleEditSection('location')}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                  >
-                    <Edit3 className="w-4 h-4 text-gray-500" />
-                  </button>
+                  {renderEditButton('location')}
                 </div>
                 <div className="space-y-1">
                   {userData.bornPlace && (
@@ -428,12 +464,7 @@ function BioContent() {
                 <MapPin className="w-5 h-5 text-purple-600" />
                 <h3 className="font-bold text-gray-900">Visited Countries</h3>
               </div>
-              <button
-                onClick={() => handleEditSection('travel')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Edit3 className="w-4 h-4 text-gray-500" />
-              </button>
+              {renderEditButton('travel')}
             </div>
             <div className="flex flex-wrap gap-2">
               {userData.visitedCountries.map((country, index) => (
@@ -456,12 +487,7 @@ function BioContent() {
                 <User className="w-5 h-5 text-purple-600" />
                 <h3 className="font-bold text-gray-900">About Me</h3>
               </div>
-              <button
-                onClick={() => handleEditSection('details')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Edit3 className="w-4 h-4 text-gray-500" />
-              </button>
+              {renderEditButton('details')}
             </div>
             <p className="text-gray-700">{userData.details}</p>
           </div>
@@ -475,12 +501,7 @@ function BioContent() {
                 <Star className="w-5 h-5 text-purple-600" />
                 <h3 className="font-bold text-gray-900">Interests</h3>
               </div>
-              <button
-                onClick={() => handleEditSection('interests')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Edit3 className="w-4 h-4 text-gray-500" />
-              </button>
+              {renderEditButton('interests')}
             </div>
             <div className="flex gap-2 overflow-x-auto interests-scroll pt-2 pb-3">
               {displayInterests.map((interest, index) => (
@@ -515,12 +536,7 @@ function BioContent() {
                     <BookOpen className="w-5 h-5 text-purple-600" />
                     <h3 className="font-bold text-gray-900">Skills</h3>
                   </div>
-                  <button
-                    onClick={() => handleEditSection('skills')}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                  >
-                    <Edit3 className="w-4 h-4 text-gray-500" />
-                  </button>
+                  {renderEditButton('skills')}
                 </div>
                 <div className="space-y-2">
                   {displaySkills.map((skill, index) => (
@@ -540,12 +556,7 @@ function BioContent() {
                     <Dumbbell className="w-5 h-5 text-purple-600" />
                     <h3 className="font-bold text-gray-900">Favorite Sport</h3>
                   </div>
-                  <button
-                    onClick={() => handleEditSection('sports')}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                  >
-                    <Edit3 className="w-4 h-4 text-gray-500" />
-                  </button>
+                  {renderEditButton('sports')}
                 </div>
                 <p className="text-gray-700">{userData.favoriteSport}</p>
               </div>
@@ -561,12 +572,7 @@ function BioContent() {
                 <PawPrint className="w-5 h-5 text-purple-600" />
                 <h3 className="font-bold text-gray-900">Pet Information</h3>
               </div>
-              <button
-                onClick={() => handleEditSection('pet')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Edit3 className="w-4 h-4 text-gray-500" />
-              </button>
+              {renderEditButton('pet')}
             </div>
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-full overflow-hidden">
@@ -687,5 +693,7 @@ function BioContent() {
 }
 
 export default function Bio() {
-  return <ClientOnlyBioContent />
+  const params = useParams<{ id: string }>()
+  const id = params?.id || ''
+  return <ClientOnlyBioContent userId={id} />
 }
