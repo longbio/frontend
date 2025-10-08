@@ -21,48 +21,30 @@ import {
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import ShareScreenshot from './components/ShareScreenshot'
-import type { GetUserByIdResponse } from '@/service/user/type'
+// import type { GetUserByIdResponse } from '@/service/user/type'
+import { useGetCurrentUser } from '@/service/user/hook'
 
 const ClientOnlyBioContent = dynamic(() => Promise.resolve(BioContent), {
   ssr: false,
   loading: () => <div>Loading...</div>,
 })
 
-function BioContent({ userId }: { userId: string }) {
+function BioContent() {
   const [profileImage, setProfileImage] = useState<string | null>(null)
-  const [userData, setUserData] = useState<GetUserByIdResponse['data'] | null>(null)
-  const [loading, setLoading] = useState(true)
   const [showScreenshot, setShowScreenshot] = useState(false)
   const router = useRouter()
 
-  // Fetch user data by ID from the API
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        setLoading(true)
-        const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL
-        const userResponse = await fetch(`${apiUrl}/v1/users/${userId}`, { credentials: 'include' })
-        if (userResponse.ok) {
-          const userData = await userResponse.json()
-          setUserData(userData.data)
-          if (userData.data.profileImage) {
-            setProfileImage(userData.data.profileImage)
-          }
-        } else {
-          setUserData(null)
-        }
-        setLoading(false)
-      } catch (error) {
-        console.error('API request failed:', error)
-        setUserData(null)
-        setLoading(false)
-      }
-    }
+  // Get current user data using the hook
+  const { data: currentUserResponse, isLoading: loading } = useGetCurrentUser()
 
-    if (userId) {
-      fetchUserData()
+  const userData = currentUserResponse?.data || null
+
+  // Set profile image when user data is loaded
+  useEffect(() => {
+    if (userData?.profileImage) {
+      setProfileImage(userData.profileImage)
     }
-  }, [userId])
+  }, [userData])
 
   const handleEditSection = (section: string) => {
     // Navigate to the appropriate step based on section
@@ -619,27 +601,27 @@ function BioContent({ userId }: { userId: string }) {
               <button
                 onClick={async () => {
                   try {
+                    // Create the shareable link using the API endpoint
+                    const shareUrl = `https://api.longbio.me/v1/users/${userData.id}`
+
                     if (navigator.share) {
                       await navigator.share({
                         title: `${userData.fullName}'s Bio`,
                         text: `Check out ${userData.fullName}'s bio on LongBio!`,
-                        url: `${window.location.origin}/bio/${userData.id}`,
+                        url: shareUrl,
                       })
                     } else {
-                      await navigator.clipboard.writeText(
-                        `${window.location.origin}/bio/${userData.id}`
-                      )
+                      await navigator.clipboard.writeText(shareUrl)
 
-                      // Show custom toast instead of alert
                       const toast = document.createElement('div')
                       toast.className =
                         'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 flex items-center gap-2'
                       toast.innerHTML = `
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        Bio link copied to clipboard!
-                      `
+                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                         </svg>
+                         Bio link copied to clipboard!
+                       `
                       document.body.appendChild(toast)
 
                       setTimeout(() => {
@@ -648,11 +630,9 @@ function BioContent({ userId }: { userId: string }) {
                     }
                   } catch (error) {
                     console.error('Error sharing:', error)
-                    // Fallback to clipboard
                     try {
-                      await navigator.clipboard.writeText(
-                        `${window.location.origin}/bio/${userData.id}`
-                      )
+                      const shareUrl = `https://api.longbio.me/v1/users/${userData.id}`
+                      await navigator.clipboard.writeText(shareUrl)
                       alert('Bio link copied to clipboard!')
                     } catch (clipboardError) {
                       console.error('Clipboard error:', clipboardError)
@@ -706,7 +686,6 @@ function BioContent({ userId }: { userId: string }) {
   )
 }
 
-export default function Bio({ params }: { params: { id: string } }) {
-  const id = params?.id || ''
-  return <ClientOnlyBioContent userId={id} />
+export default function Bio() {
+  return <ClientOnlyBioContent />
 }

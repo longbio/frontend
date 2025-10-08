@@ -1,37 +1,17 @@
 'use client'
 
 import React from 'react'
+import { Suspense } from 'react'
 import Header from '@/components/Header'
 import Congrats from './components/congrats'
 import { Button } from '@/components/ui/button'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Suspense } from 'react'
 
 function CongratsContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
-  const [userId, setUserId] = React.useState<string>('')
-
-  React.useEffect(() => {
-    // Get user ID from API only
-    const getUserData = async () => {
-      try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL
-        const response = await fetch(`${apiUrl}/v1/users/me`, { credentials: 'include' })
-        if (response.ok) {
-          const userData = await response.json()
-          setUserId(userData.data.id.toString())
-        } else {
-          console.error('Failed to get user data from API')
-        }
-      } catch (error) {
-        console.error('Error getting user ID:', error)
-      }
-    }
-
-    getUserData()
-  }, [])
+  // No need to get user ID anymore since bio page uses users/me
 
   return (
     <div className="flex flex-col items-center justify-between h-full p-8 bg-white">
@@ -59,15 +39,10 @@ function CongratsContent() {
       <Button
         className="sticky bottom-0 w-full h-fit bg-purple-blaze rounded-full"
         onClick={() => {
-          if (userId) {
-            router.push(`/bio/${userId}`)
-          } else {
-            console.error('User ID not available')
-          }
+          router.push('/bio')
         }}
-        disabled={!userId}
       >
-        {userId ? 'View My Profile!' : 'Loading...'}
+        View My Profile!
       </Button>
     </div>
   )
