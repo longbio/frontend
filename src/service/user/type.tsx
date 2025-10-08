@@ -33,6 +33,7 @@ export interface UpdateUserParams {
     company?: string
   }
   travelStyle?: string
+  visitedCountries?: string[]
   favoriteSport?: string
   skill?: string[]
   weight?: number

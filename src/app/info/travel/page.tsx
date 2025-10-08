@@ -111,6 +111,7 @@ function TravelContent() {
     try {
       await updateUser({
         travelStyle: styles && styles.length > 0 ? styles[0] : 'None',
+        visitedCountries: selectedCountries.map((country: CountryItem) => country.name),
       })
     } catch (err) {
       console.error('Failed to update travel info', err)
