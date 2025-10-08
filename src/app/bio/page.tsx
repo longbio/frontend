@@ -20,7 +20,7 @@ import {
   Share2,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import ShareScreenshot from './components/ShareScreenshot'
+import ShareModal from './components/ShareModal'
 // import type { GetUserByIdResponse } from '@/service/user/type'
 import { useGetCurrentUser } from '@/service/user/hook'
 
@@ -31,7 +31,7 @@ const ClientOnlyBioContent = dynamic(() => Promise.resolve(BioContent), {
 
 function BioContent() {
   const [profileImage, setProfileImage] = useState<string | null>(null)
-  const [showScreenshot, setShowScreenshot] = useState(false)
+  const [showShareModal, setShowShareModal] = useState(false)
   const router = useRouter()
 
   // Get current user data using the hook
@@ -597,62 +597,13 @@ function BioContent() {
             <p className="text-gray-600 text-sm mb-4">
               Share your bio with friends and let them know more about you!
             </p>
-            <div className="flex gap-3 justify-center">
-              <button
-                onClick={async () => {
-                  try {
-                    // Create the shareable link using the API endpoint
-                    const shareUrl = `https://api.longbio.me/v1/users/${userData.id}`
-
-                    if (navigator.share) {
-                      await navigator.share({
-                        title: `${userData.fullName}'s Bio`,
-                        text: `Check out ${userData.fullName}'s bio on LongBio!`,
-                        url: shareUrl,
-                      })
-                    } else {
-                      await navigator.clipboard.writeText(shareUrl)
-
-                      const toast = document.createElement('div')
-                      toast.className =
-                        'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 flex items-center gap-2'
-                      toast.innerHTML = `
-                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                         </svg>
-                         Bio link copied to clipboard!
-                       `
-                      document.body.appendChild(toast)
-
-                      setTimeout(() => {
-                        toast.remove()
-                      }, 3000)
-                    }
-                  } catch (error) {
-                    console.error('Error sharing:', error)
-                    try {
-                      const shareUrl = `https://api.longbio.me/v1/users/${userData.id}`
-                      await navigator.clipboard.writeText(shareUrl)
-                      alert('Bio link copied to clipboard!')
-                    } catch (clipboardError) {
-                      console.error('Clipboard error:', clipboardError)
-                    }
-                  }
-                }}
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-              >
-                <Share2 className="w-5 h-5" />
-                Share Link
-              </button>
-
-              <button
-                onClick={() => setShowScreenshot(true)}
-                className="inline-flex items-center gap-2 bg-white text-purple-600 border-2 border-purple-600 px-6 py-3 rounded-full font-medium hover:bg-purple-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-              >
-                <Share2 className="w-5 h-5" />
-                Screenshot
-              </button>
-            </div>
+            <button
+              onClick={() => setShowShareModal(true)}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-full font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
+              <Share2 className="w-5 h-5" />
+              Share Bio
+            </button>
           </div>
         </div>
 
@@ -678,9 +629,13 @@ function BioContent() {
         </div> */}
       </div>
 
-      {/* Share Screenshot Modal */}
-      {showScreenshot && userData && (
-        <ShareScreenshot userData={userData} onClose={() => setShowScreenshot(false)} />
+      {/* Share Modal */}
+      {showShareModal && userData && (
+        <ShareModal
+          isOpen={showShareModal}
+          onClose={() => setShowShareModal(false)}
+          userData={userData}
+        />
       )}
     </div>
   )
