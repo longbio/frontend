@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { X, Copy, Share2 } from 'lucide-react'
+import { X, Copy, Share2, Check } from 'lucide-react'
 import {
   TelegramShareButton,
   WhatsappShareButton,
@@ -55,7 +55,7 @@ export default function ShareModal({ isOpen, onClose, userData }: ShareModalProp
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
+      <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-gray-900">Share Bio</h2>
@@ -81,14 +81,13 @@ export default function ShareModal({ isOpen, onClose, userData }: ShareModalProp
           )}
 
           {/* Social Media Buttons */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="flex justify-center gap-3">
             <TelegramShareButton
               url={shareUrl}
               title={shareTitle}
               className="flex flex-col items-center gap-2 p-4 bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-colors"
             >
               <TelegramIcon size={32} round />
-              <span className="text-sm font-medium">Telegram</span>
             </TelegramShareButton>
 
             <WhatsappShareButton
@@ -98,7 +97,6 @@ export default function ShareModal({ isOpen, onClose, userData }: ShareModalProp
               className="flex flex-col items-center gap-2 p-4 bg-green-500 hover:bg-green-600 text-white rounded-xl transition-colors"
             >
               <WhatsappIcon size={32} round />
-              <span className="text-sm font-medium">WhatsApp</span>
             </WhatsappShareButton>
 
             <LinkedinShareButton
@@ -107,26 +105,26 @@ export default function ShareModal({ isOpen, onClose, userData }: ShareModalProp
               className="flex flex-col items-center gap-2 p-4 bg-blue-700 hover:bg-blue-800 text-white rounded-xl transition-colors"
             >
               <LinkedinIcon size={32} round />
-              <span className="text-sm font-medium">LinkedIn</span>
             </LinkedinShareButton>
           </div>
 
           {/* Copy Link */}
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <input
               type="text"
               value={shareUrl}
               readOnly
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm truncate"
             />
             <button
               onClick={handleCopyLink}
-              className={`px-4 py-3 rounded-xl font-medium transition-colors flex items-center gap-2 ${
+              className={`px-4 py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2 whitespace-nowrap ${
                 copied ? 'bg-green-500 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
               }`}
             >
-              <Copy className="w-4 h-4" />
-              {copied ? 'Copied!' : 'Copy'}
+              {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
+              <span className="hidden sm:inline">{copied ? 'Copied!' : 'Copy'}</span>
+              <span className="sm:hidden">{copied ? 'Copied' : 'Copy'}</span>
             </button>
           </div>
         </div>
