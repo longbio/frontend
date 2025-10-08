@@ -1,7 +1,6 @@
 'use client'
 
-import React from 'react'
-import { Suspense } from 'react'
+import React, { Suspense } from 'react'
 import Header from '@/components/Header'
 import Congrats from './components/congrats'
 import { Button } from '@/components/ui/button'
@@ -11,7 +10,6 @@ function CongratsContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
-  // No need to get user ID anymore since bio page uses users/me
 
   return (
     <div className="flex flex-col items-center justify-between h-full p-8 bg-white">

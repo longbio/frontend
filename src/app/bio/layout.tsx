@@ -87,6 +87,6 @@ export async function generateMetadata({
   }
 }
 
-export default function BioLayout({ children }: { children: React.ReactNode }) {
+export default function PublicBioLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
