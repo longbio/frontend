@@ -129,23 +129,9 @@ function BioContent() {
     '11': 'Eco-Tourism',
   }
 
-  const interestMapping: { [key: string]: string } = {
-    '1': 'Reading',
-    '2': 'Movies',
-    '3': 'Gaming',
-    '4': 'Art',
-    '5': 'Technology',
-    '6': 'Fashion',
-    '7': 'Food',
-    '8': 'Nature',
-    '9': 'Fitness',
-    '10': 'Travel',
-  }
-
-  // Convert ID arrays to actual names
+  // Convert ID arrays to actual names or use direct values if they're already strings
   const displaySkills = userData.skills?.map((skill) => skillMapping[skill] || skill) || []
-  const displayInterests =
-    userData.interests?.map((interest) => interestMapping[interest] || interest) || []
+  const displayInterests = userData.interests || []
 
   return (
     <div className="flex flex-col w-full h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
@@ -209,13 +195,18 @@ function BioContent() {
             </p>
 
             <div className="flex justify-center gap-3 flex-wrap">
-              {(userData.bornPlace || userData.livePlace) && (
+              {((userData.bornPlace && userData.bornPlace.trim() !== '') ||
+                (userData.livePlace && userData.livePlace.trim() !== '')) && (
                 <div className="flex items-center gap-1 bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm">
                   <MapPin className="w-4 h-4" />
                   <span>
-                    {userData.bornPlace && userData.livePlace
+                    {userData.bornPlace &&
+                    userData.bornPlace.trim() !== '' &&
+                    userData.livePlace &&
+                    userData.livePlace.trim() !== ''
                       ? `${userData.bornPlace}, ${userData.livePlace}`
-                      : userData.bornPlace || userData.livePlace}
+                      : (userData.bornPlace && userData.bornPlace.trim() !== '') ||
+                        (userData.livePlace && userData.livePlace.trim() !== '')}
                   </span>
                 </div>
               )}
@@ -355,12 +346,13 @@ function BioContent() {
         {/* Physical Info and Location - Responsive Grid */}
         {(userData.height > 0 ||
           userData.weight > 0 ||
-          userData.bornPlace ||
-          userData.livePlace) && (
+          (userData.bornPlace && userData.bornPlace.trim() !== '') ||
+          (userData.livePlace && userData.livePlace.trim() !== '')) && (
           <div
             className={`grid gap-4 mb-4 ${
               (userData.height > 0 || userData.weight > 0) &&
-              (userData.bornPlace || userData.livePlace)
+              ((userData.bornPlace && userData.bornPlace.trim() !== '') ||
+                (userData.livePlace && userData.livePlace.trim() !== ''))
                 ? 'grid-cols-1 md:grid-cols-2'
                 : 'grid-cols-1'
             }`}
@@ -393,7 +385,8 @@ function BioContent() {
             )}
 
             {/* Location Info  */}
-            {(userData.bornPlace || userData.livePlace) && (
+            {((userData.bornPlace && userData.bornPlace.trim() !== '') ||
+              (userData.livePlace && userData.livePlace.trim() !== '')) && (
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
@@ -401,17 +394,17 @@ function BioContent() {
                     <h3 className="font-bold text-gray-900">Location</h3>
                   </div>
                   <button
-                    onClick={() => handleEditSection('location')}
+                    onClick={() => handleEditSection('country')}
                     className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                   >
                     <Edit3 className="w-4 h-4 text-gray-500" />
                   </button>
                 </div>
                 <div className="space-y-1">
-                  {userData.bornPlace && (
+                  {userData.bornPlace && userData.bornPlace.trim() !== '' && (
                     <p className="text-gray-700">Born: {userData.bornPlace}</p>
                   )}
-                  {userData.livePlace && (
+                  {userData.livePlace && userData.livePlace.trim() !== '' && (
                     <p className="text-gray-700">Live: {userData.livePlace}</p>
                   )}
                 </div>
