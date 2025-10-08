@@ -4,12 +4,17 @@ import React, { Suspense } from 'react'
 import Header from '@/components/Header'
 import Congrats from './components/congrats'
 import { Button } from '@/components/ui/button'
+import { useGetCurrentUser } from '@/service/user/hook'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 function CongratsContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
+
+  // Get current user data to get the user ID
+  const { data: currentUserResponse } = useGetCurrentUser()
+  const userId = currentUserResponse?.data?.id
 
   return (
     <div className="flex flex-col items-center justify-between h-full p-8 bg-white">
@@ -37,7 +42,7 @@ function CongratsContent() {
       <Button
         className="sticky bottom-0 w-full h-fit bg-purple-blaze rounded-full"
         onClick={() => {
-          router.push('/bio')
+          router.push(`/bio/${userId}`)
         }}
       >
         View My Profile!
