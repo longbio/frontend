@@ -20,24 +20,27 @@ import {
 import { useParams } from 'next/navigation'
 import type { GetUserByIdResponse } from '@/service/user/type'
 // import { useGetCurrentUser } from '@/service/user/hook'
+import dayjs from 'dayjs'
 
 const ClientOnlyBioContent = dynamic(() => Promise.resolve(BioContent), {
   ssr: false,
   loading: () => <div>Loading...</div>,
 })
 
-function BioContent({ userId }: { userId: string }) {
+function BioContent({ username }: { username: string }) {
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [userData, setUserData] = useState<GetUserByIdResponse['data'] | null>(null)
   const [loading, setLoading] = useState(true)
 
-  // Fetch user data by ID from the API
+  // Fetch user data by username from the API
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         setLoading(true)
         const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL
-        const userResponse = await fetch(`${apiUrl}/v1/users/${userId}`, { credentials: 'include' })
+        const userResponse = await fetch(`${apiUrl}/v1/users/${username}`, {
+          credentials: 'include',
+        })
         if (userResponse.ok) {
           const userData = await userResponse.json()
           setUserData(userData.data)
@@ -56,10 +59,10 @@ function BioContent({ userId }: { userId: string }) {
       }
     }
 
-    if (userId) {
+    if (username) {
       fetchUserData()
     }
-  }, [userId])
+  }, [username])
 
   // Set profile image when user data is loaded
   useEffect(() => {
@@ -240,7 +243,7 @@ function BioContent({ userId }: { userId: string }) {
               <Calendar className="w-5 h-5 text-purple-600" />
               <h3 className="font-bold text-gray-900">Birth Date</h3>
             </div>
-            <p className="text-gray-700">{userData.birthDate}</p>
+            <p className="text-gray-700">{dayjs(userData.birthDate).format('MMMM DD, YYYY')}</p>
           </div>
         )}
 
@@ -254,21 +257,32 @@ function BioContent({ userId }: { userId: string }) {
               <GraduationCap className="w-5 h-5 text-purple-600" />
               <h3 className="font-bold text-gray-900">Education</h3>
             </div>
-            {userData.education?.university ||
-            userData.education?.topic ||
-            userData.education?.graduationYear ? (
-              <div className="space-y-1">
-                {userData.education.university && (
-                  <div>University: {userData.education.university}</div>
-                )}
-                {userData.education.topic && <div>Topic: {userData.education.topic}</div>}
-                {userData.education.graduationYear && (
-                  <div>Graduation Year: {userData.education.graduationYear}</div>
-                )}
-              </div>
-            ) : (
-              <p className="text-gray-700 capitalize">{userData.educationalStatus}</p>
-            )}
+            <div className="space-y-2">
+              {userData.educationalStatus && userData.educationalStatus !== 'none' && (
+                <div className="text-gray-700">
+                  <span className="font-medium">Status: </span>
+                  <span className="capitalize">{userData.educationalStatus}</span>
+                </div>
+              )}
+              {userData.education?.university && (
+                <div className="text-gray-700">
+                  <span className="font-medium">University: </span>
+                  {userData.education.university}
+                </div>
+              )}
+              {userData.education?.topic && (
+                <div className="text-gray-700">
+                  <span className="font-medium">Topic: </span>
+                  {userData.education.topic}
+                </div>
+              )}
+              {userData.education?.graduationYear && (
+                <div className="text-gray-700">
+                  <span className="font-medium">Graduation Year: </span>
+                  {userData.education.graduationYear}
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -286,16 +300,39 @@ function BioContent({ userId }: { userId: string }) {
           </div>
         )}
 
-        {/* Travel Style  */}
-        {typeof userData.travelStyle === 'string' && userData.travelStyle.trim() !== '' && (
+        {/* Travel  */}
+        {(typeof userData.travelStyle === 'string' && userData.travelStyle.trim() !== '') ||
+        (userData.visitedCountries && userData.visitedCountries.length > 0) ? (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
             <div className="flex items-center gap-2 mb-4">
               <MapPin className="w-5 h-5 text-purple-600" />
-              <h3 className="font-bold text-gray-900">Travel Style</h3>
+              <h3 className="font-bold text-gray-900">Travel</h3>
             </div>
-            <p className="text-gray-700">{userData.travelStyle}</p>
+            <div className="space-y-3">
+              {typeof userData.travelStyle === 'string' && userData.travelStyle.trim() !== '' && (
+                <div className="text-gray-700">
+                  <span className="font-medium">Travel Style: </span>
+                  {userData.travelStyle}
+                </div>
+              )}
+              {userData.visitedCountries && userData.visitedCountries.length > 0 && (
+                <div>
+                  <div className="font-medium text-gray-700 mb-2">Visited Countries:</div>
+                  <div className="flex flex-wrap gap-2">
+                    {userData.visitedCountries.map((country, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-purple-200"
+                      >
+                        {country}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-        )}
+        ) : null}
 
         {/* Physical Info and Location - Responsive Grid */}
         {(userData.height > 0 ||
@@ -348,26 +385,6 @@ function BioContent({ userId }: { userId: string }) {
                 </div>
               </div>
             )}
-          </div>
-        )}
-
-        {/* Visited Countries  */}
-        {userData.visitedCountries && userData.visitedCountries.length > 0 && (
-          <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
-            <div className="flex items-center gap-2 mb-4">
-              <MapPin className="w-5 h-5 text-purple-600" />
-              <h3 className="font-bold text-gray-900">Visited Countries</h3>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {userData.visitedCountries.map((country, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-purple-200"
-                >
-                  {country}
-                </span>
-              ))}
-            </div>
           </div>
         )}
 
@@ -499,7 +516,7 @@ function BioContent({ userId }: { userId: string }) {
 }
 
 export default function Bio() {
-  const params = useParams<{ id: string }>()
-  const id = params?.id || ''
-  return <ClientOnlyBioContent userId={id} />
+  const params = useParams<{ username: string }>()
+  const username = params?.username || ''
+  return <ClientOnlyBioContent username={username} />
 }

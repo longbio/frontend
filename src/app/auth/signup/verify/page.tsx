@@ -41,7 +41,7 @@ function VerifySignUpContent() {
   }
   useEffect(() => {
     if (isSuccess && isNewUser === true) {
-      router.push(`/info/birthday?name=${encodeURIComponent(name)}`)
+      router.push(`/auth/username?name=${encodeURIComponent(name)}`)
     }
   }, [isSuccess, isNewUser, router, name])
 

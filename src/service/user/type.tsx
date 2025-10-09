@@ -18,6 +18,7 @@ export interface PetInfo {
 
 export interface UpdateUserParams {
   fullName?: string
+  username?: string
   birthDate?: string
   gender?: string
   maritalStatus?: string
@@ -58,6 +59,7 @@ export interface GetUserByIdResponse {
   message: string
   data: {
     id: number
+    username: string
     birthDate: string | null
     fullName: string
     gender: string
