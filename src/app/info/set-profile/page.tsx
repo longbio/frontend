@@ -20,6 +20,7 @@ function SetProfileContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
+  const isEditMode = searchParams.get('edit') === 'true'
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [showDelete, setShowDelete] = useState(false)
   const mutation = useUploadProfileImage()
@@ -58,7 +59,11 @@ function SetProfileContent() {
 
   const onSubmit = async () => {
     if (!file) {
-      return router.push(`/info/travel?name=${name}`)
+      if (isEditMode) {
+        return router.push('/bio')
+      } else {
+        return router.push(`/info/travel?name=${name}`)
+      }
     }
 
     try {
@@ -69,11 +74,16 @@ function SetProfileContent() {
       console.error('Failed to upload profile image', err)
     }
 
-    router.push(`/info/travel?name=${name}`)
+    // If in edit mode, return to bio page, otherwise continue to next step
+    if (isEditMode) {
+      router.push('/bio')
+    } else {
+      router.push(`/info/travel?name=${name}`)
+    }
   }
   // For preview
   const [preview, setPreview] = useState<string | null>(null)
-  
+
   // Load cookie values on client side only
   useEffect(() => {
     const cookie = getCookie('info_set_profile')
@@ -86,7 +96,7 @@ function SetProfileContent() {
       } catch {}
     }
   }, [])
-  
+
   useEffect(() => {
     setCookie('info_set_profile', JSON.stringify({ preview }))
   }, [preview])
@@ -196,7 +206,13 @@ function SetProfileContent() {
         </div>
         <StickyNav
           onNext={handleSubmit(onSubmit)}
-          onSkip={() => router.push(`/info/travel?name=${name}`)}
+          onSkip={() => {
+            if (isEditMode) {
+              router.push('/bio')
+            } else {
+              router.push(`/info/travel?name=${name}`)
+            }
+          }}
         />
       </form>
     </div>

@@ -72,7 +72,7 @@ function BioContent() {
 
     const stepUrl = stepMap[section]
     if (stepUrl) {
-      router.push(stepUrl)
+      router.push(`${stepUrl}?edit=true`)
     }
   }
 

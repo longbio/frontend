@@ -24,6 +24,7 @@ function MaritalContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
+  const isEditMode = searchParams.get('edit') === 'true'
   const { handleSubmit, setValue, watch } = useForm<MaritalFormData>({
     resolver: zodResolver(maritalSchema),
     mode: 'onChange',
@@ -31,7 +32,7 @@ function MaritalContent() {
   })
   const selectedMarital = watch('marital')
   const mutation = useUpdateUser()
-  
+
   // Load cookie values on client side only
   React.useEffect(() => {
     const cookie = getCookie('info_marital')
@@ -44,7 +45,7 @@ function MaritalContent() {
       } catch {}
     }
   }, [setValue])
-  
+
   React.useEffect(() => {
     if (selectedMarital) setCookie('info_marital', JSON.stringify({ marital: selectedMarital }))
   }, [selectedMarital])
@@ -57,7 +58,13 @@ function MaritalContent() {
         console.error('Failed to update marital', err)
       }
     }
-    router.push(`/info/education?name=${name}`)
+
+    // If in edit mode, return to bio page, otherwise continue to next step
+    if (isEditMode) {
+      router.push('/bio')
+    } else {
+      router.push(`/info/education?name=${name}`)
+    }
   }
 
   return (
@@ -126,7 +133,13 @@ function MaritalContent() {
         </div>
         <StickyNav
           onNext={handleSubmit(onSubmit)}
-          onSkip={() => router.push(`/info/education?name=${name}`)}
+          onSkip={() => {
+            if (isEditMode) {
+              router.push('/bio')
+            } else {
+              router.push(`/info/education?name=${name}`)
+            }
+          }}
         />
       </form>
     </div>

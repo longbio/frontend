@@ -43,6 +43,7 @@ function JobContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
+  const isEditMode = searchParams.get('edit') === 'true'
   const {
     handleSubmit,
     setValue,
@@ -107,7 +108,13 @@ function JobContent() {
   }
 
   const onSubmit = async (data: JobFormData) => {
-    if (!data.job) return router.push(`/info/set-profile?name=${name}`)
+    if (!data.job) {
+      if (isEditMode) {
+        return router.push('/bio')
+      } else {
+        return router.push(`/info/set-profile?name=${name}`)
+      }
+    }
 
     try {
       if (data.job === 'employed') {
@@ -132,7 +139,12 @@ function JobContent() {
       console.error('Failed to update job info', err)
     }
 
-    router.push(`/info/set-profile?name=${name}`)
+    // If in edit mode, return to bio page, otherwise continue to next step
+    if (isEditMode) {
+      router.push('/bio')
+    } else {
+      router.push(`/info/set-profile?name=${name}`)
+    }
   }
 
   return (
@@ -213,7 +225,13 @@ function JobContent() {
         </div>
         <StickyNav
           onNext={handleSubmit(onSubmit)}
-          onSkip={() => router.push(`/info/set-profile?name=${name}`)}
+          onSkip={() => {
+            if (isEditMode) {
+              router.push('/bio')
+            } else {
+              router.push(`/info/set-profile?name=${name}`)
+            }
+          }}
           className="mt-8"
         />
       </form>

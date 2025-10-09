@@ -47,6 +47,7 @@ function TravelContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
+  const isEditMode = searchParams.get('edit') === 'true'
 
   const { control, handleSubmit, setValue, watch } = useForm({
     resolver: zodResolver(travelSchema),
@@ -117,7 +118,12 @@ function TravelContent() {
       console.error('Failed to update travel info', err)
     }
 
-    router.push(`/info/physical?name=${name}`)
+    // If in edit mode, return to bio page, otherwise continue to next step
+    if (isEditMode) {
+      router.push('/bio')
+    } else {
+      router.push(`/info/physical?name=${name}`)
+    }
   }
 
   return (
@@ -224,7 +230,13 @@ function TravelContent() {
 
         <StickyNav
           onNext={handleSubmit(onSubmit)}
-          onSkip={() => router.push(`/info/physical?name=${name}`)}
+          onSkip={() => {
+            if (isEditMode) {
+              router.push('/bio')
+            } else {
+              router.push(`/info/physical?name=${name}`)
+            }
+          }}
         />
       </form>
     </div>
