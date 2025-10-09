@@ -23,6 +23,7 @@ function PhysicalContent() {
   const { mutateAsync: updateUser } = useUpdateUser()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
+  const isEditMode = searchParams.get('edit') === 'true'
   const {} = useForm<PhysicalFormData>({
     resolver: zodResolver(physicalSchema),
     mode: 'onChange',
@@ -72,7 +73,12 @@ function PhysicalContent() {
             : undefined,
       })
 
-      router.push(`/info/born?name=${name}`)
+      // If in edit mode, return to bio page, otherwise continue to next step
+      if (isEditMode) {
+        router.push('/bio')
+      } else {
+        router.push(`/info/born?name=${name}`)
+      }
     } catch (err) {
       console.error('Failed to update physical info', err)
     }
@@ -111,7 +117,16 @@ function PhysicalContent() {
             </div>
           </div>
         </div>
-        <StickyNav onNext={onSubmit} onSkip={() => router.push(`/info/born?name=${name}`)} />
+        <StickyNav
+          onNext={onSubmit}
+          onSkip={() => {
+            if (isEditMode) {
+              router.push('/bio')
+            } else {
+              router.push(`/info/born?name=${name}`)
+            }
+          }}
+        />
       </form>
     </div>
   )

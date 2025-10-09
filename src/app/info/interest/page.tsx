@@ -38,6 +38,7 @@ function InterestContent() {
   const mutation = useUpdateUser()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
+  const isEditMode = searchParams.get('edit') === 'true'
   const [customInterests, setCustomInterests] = useState<string[]>([])
   const [selected, setSelected] = useState<string[]>([])
 
@@ -95,7 +96,12 @@ function InterestContent() {
       console.error('Failed to update interests info', err)
     }
 
-    router.push(`/info/more-detail?name=${name}`)
+    // If in edit mode, return to bio page, otherwise continue to next step
+    if (isEditMode) {
+      router.push('/bio')
+    } else {
+      router.push(`/info/more-detail?name=${name}`)
+    }
   }
 
   return (
@@ -138,7 +144,13 @@ function InterestContent() {
         </div>
         <StickyNav
           onNext={handleSubmit(onSubmit)}
-          onSkip={() => router.push(`/info/more-detail?name=${name}`)}
+          onSkip={() => {
+            if (isEditMode) {
+              router.push('/bio')
+            } else {
+              router.push(`/info/more-detail?name=${name}`)
+            }
+          }}
           className="mt-8"
         />
       </form>

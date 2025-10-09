@@ -31,6 +31,7 @@ function BornContent() {
   const { mutateAsync: updateUser } = useUpdateUser()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
+  const isEditMode = searchParams.get('edit') === 'true'
 
   const {
     handleSubmit,
@@ -82,7 +83,12 @@ function BornContent() {
 
       await updateUser(updateData)
 
-      router.push(`/info/pets?name=${name}`)
+      // If in edit mode, return to bio page, otherwise continue to next step
+      if (isEditMode) {
+        router.push('/bio')
+      } else {
+        router.push(`/info/pets?name=${name}`)
+      }
     } catch (err) {
       console.error('Failed to update country info', err)
     }
@@ -142,7 +148,13 @@ function BornContent() {
 
         <StickyNav
           onNext={handleSubmit(onSubmit)}
-          onSkip={() => router.push(`/info/pets?name=${name}`)}
+          onSkip={() => {
+            if (isEditMode) {
+              router.push('/bio')
+            } else {
+              router.push(`/info/pets?name=${name}`)
+            }
+          }}
         />
       </form>
     </div>

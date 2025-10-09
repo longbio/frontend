@@ -37,6 +37,7 @@ function SkillContent() {
   const mutation = useUpdateUser()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
+  const isEditMode = searchParams.get('edit') === 'true'
   const [customSkills, setCustomSkills] = useState<string[]>([])
   const [selected, setSelected] = useState<string[]>([])
 
@@ -93,7 +94,12 @@ function SkillContent() {
       console.error('Failed to update skill info', err)
     }
 
-    router.push(`/info/interest?name=${name}`)
+    // If in edit mode, return to bio page, otherwise continue to next step
+    if (isEditMode) {
+      router.push('/bio')
+    } else {
+      router.push(`/info/interest?name=${name}`)
+    }
   }
 
   return (
@@ -134,7 +140,13 @@ function SkillContent() {
         </div>
         <StickyNav
           onNext={handleSubmit(onSubmit)}
-          onSkip={() => router.push(`/info/interest?name=${name}`)}
+          onSkip={() => {
+            if (isEditMode) {
+              router.push('/bio')
+            } else {
+              router.push(`/info/interest?name=${name}`)
+            }
+          }}
           className="mt-8"
         />
       </form>

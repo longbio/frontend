@@ -27,6 +27,7 @@ function EducationContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
+  const isEditMode = searchParams.get('edit') === 'true'
   const { handleSubmit, setValue, watch } = useForm<EducationFormData>({
     resolver: zodResolver(educationSchema),
     mode: 'onChange',
@@ -73,7 +74,13 @@ function EducationContent() {
   }, [universities, topics, graduationYear, validationError, selectedEducation])
 
   const onSubmit = async () => {
-    if (!selectedEducation) return router.push(`/info/set-profile?name=${name}`)
+    if (!selectedEducation) {
+      if (isEditMode) {
+        return router.push('/bio')
+      } else {
+        return router.push(`/info/set-profile?name=${name}`)
+      }
+    }
 
     setValidationError('')
 
@@ -116,7 +123,12 @@ function EducationContent() {
       console.error('Failed to update education', err)
     }
 
-    router.push(`/info/jobs?name=${name}`)
+    // If in edit mode, return to bio page, otherwise continue to next step
+    if (isEditMode) {
+      router.push('/bio')
+    } else {
+      router.push(`/info/jobs?name=${name}`)
+    }
   }
 
   return (
@@ -244,7 +256,13 @@ function EducationContent() {
         </div>
         <StickyNav
           onNext={handleSubmit(onSubmit)}
-          onSkip={() => router.push(`/info/jobs?name=${name}`)}
+          onSkip={() => {
+            if (isEditMode) {
+              router.push('/bio')
+            } else {
+              router.push(`/info/jobs?name=${name}`)
+            }
+          }}
           className="mt-8"
         />
       </form>

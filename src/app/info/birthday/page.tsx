@@ -30,6 +30,7 @@ function BirthdayContent() {
   const searchParams = useSearchParams()
   const { mutateAsync: updateUser } = useUpdateUser()
   const [name, setName] = useState(searchParams.get('name') || '')
+  const isEditMode = searchParams.get('edit') === 'true'
 
   useEffect(() => {
     if (!name) {
@@ -113,7 +114,12 @@ function BirthdayContent() {
         birthDate,
       })
 
-      router.push(`/info/gender?name=${encodeURIComponent(name)}`)
+      // If in edit mode, return to bio page, otherwise continue to next step
+      if (isEditMode) {
+        router.push('/bio')
+      } else {
+        router.push(`/info/gender?name=${encodeURIComponent(name)}`)
+      }
     }
   }
   return (
@@ -153,7 +159,13 @@ function BirthdayContent() {
         </div>
         <StickyNav
           onNext={handleSubmit(onSubmit)}
-          onSkip={() => router.push(`/info/gender?name=${name}`)}
+          onSkip={() => {
+            if (isEditMode) {
+              router.push('/bio')
+            } else {
+              router.push(`/info/gender?name=${name}`)
+            }
+          }}
         />
       </form>
     </div>

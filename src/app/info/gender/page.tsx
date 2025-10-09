@@ -24,6 +24,7 @@ function GenderContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
+  const isEditMode = searchParams.get('edit') === 'true'
   const { handleSubmit, setValue, watch } = useForm<GenderFormData>({
     resolver: zodResolver(genderSchema),
     mode: 'onChange',
@@ -57,7 +58,13 @@ function GenderContent() {
         console.error('Failed to update gender', err)
       }
     }
-    router.push(`/info/marital?name=${name}`)
+
+    // If in edit mode, return to bio page, otherwise continue to next step
+    if (isEditMode) {
+      router.push('/bio')
+    } else {
+      router.push(`/info/marital?name=${name}`)
+    }
   }
 
   return (
@@ -114,7 +121,13 @@ function GenderContent() {
         </div>
         <StickyNav
           onNext={handleSubmit(onSubmit)}
-          onSkip={() => router.push(`/info/marital?name=${name}`)}
+          onSkip={() => {
+            if (isEditMode) {
+              router.push('/bio')
+            } else {
+              router.push(`/info/marital?name=${name}`)
+            }
+          }}
         />
       </form>
     </div>
