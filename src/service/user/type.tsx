@@ -18,6 +18,7 @@ export interface PetInfo {
 
 export interface UpdateUserParams {
   fullName?: string
+  username?: string
   birthDate?: string
   gender?: string
   maritalStatus?: string
