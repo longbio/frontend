@@ -196,21 +196,6 @@ function BioContent() {
             <p className="text-gray-600 mb-2">{userData.username ? `@${userData.username}` : ''}</p>
 
             <div className="flex justify-center gap-3 flex-wrap">
-              {((userData.bornPlace && userData.bornPlace.trim() !== '') ||
-                (userData.livePlace && userData.livePlace.trim() !== '')) && (
-                <div className="flex items-center gap-1 bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm">
-                  <MapPin className="w-4 h-4" />
-                  <span>
-                    {userData.bornPlace &&
-                    userData.bornPlace.trim() !== '' &&
-                    userData.livePlace &&
-                    userData.livePlace.trim() !== ''
-                      ? `${userData.bornPlace}, ${userData.livePlace}`
-                      : (userData.bornPlace && userData.bornPlace.trim() !== '') ||
-                        (userData.livePlace && userData.livePlace.trim() !== '')}
-                  </span>
-                </div>
-              )}
               {age && (
                 <div className="flex items-center gap-1 bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-sm">
                   <Calendar className="w-4 h-4" />
@@ -230,6 +215,29 @@ function BioContent() {
                 </div>
               )}
             </div>
+
+            {/* Location Info */}
+            {((userData.bornPlace && userData.bornPlace.trim() !== '') ||
+              (userData.livePlace && userData.livePlace.trim() !== '')) && (
+              <div className="mt-4 p-3 bg-gray-50 rounded-xl border border-gray-200">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <MapPin className="w-4 h-4 text-purple-600" />
+                  <span className="text-sm font-medium text-gray-700">Location</span>
+                </div>
+                <div className="text-center space-y-1">
+                  {userData.bornPlace && userData.bornPlace.trim() !== '' && (
+                    <p className="text-sm text-gray-600">
+                      <span className="font-medium">Born:</span> {userData.bornPlace}
+                    </p>
+                  )}
+                  {userData.livePlace && userData.livePlace.trim() !== '' && (
+                    <p className="text-sm text-gray-600">
+                      <span className="font-medium">Live:</span> {userData.livePlace}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex justify-center gap-6 text-sm text-gray-600">
@@ -403,33 +411,6 @@ function BioContent() {
             </div>
           </div>
         ) : null}
-
-        {/* Location Info */}
-        {((userData.bornPlace && userData.bornPlace.trim() !== '') ||
-          (userData.livePlace && userData.livePlace.trim() !== '')) && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-purple-600" />
-                <h3 className="font-bold text-gray-900">Location</h3>
-              </div>
-              <button
-                onClick={() => handleEditSection('country')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Edit3 className="w-4 h-4 text-gray-500" />
-              </button>
-            </div>
-            <div className="space-y-1">
-              {userData.bornPlace && userData.bornPlace.trim() !== '' && (
-                <p className="text-gray-700">Born: {userData.bornPlace}</p>
-              )}
-              {userData.livePlace && userData.livePlace.trim() !== '' && (
-                <p className="text-gray-700">Live: {userData.livePlace}</p>
-              )}
-            </div>
-          </div>
-        )}
 
         {/* Details  */}
         {typeof userData.details === 'string' && userData.details.trim() !== '' && (
