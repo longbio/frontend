@@ -264,6 +264,25 @@ function BioContent() {
           </div>
         </div>
 
+        {/* Details  */}
+        {typeof userData.details === 'string' && userData.details.trim() !== '' && (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <User className="w-5 h-5 text-purple-600" />
+                <h3 className="font-bold text-gray-900">About Me</h3>
+              </div>
+              <button
+                onClick={() => handleEditSection('details')}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Edit3 className="w-4 h-4 text-gray-500" />
+              </button>
+            </div>
+            <p className="text-gray-700">{userData.details}</p>
+          </div>
+        )}
+
         {/* Birth Date  */}
         {userData.birthDate && (
           <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
@@ -411,25 +430,6 @@ function BioContent() {
             </div>
           </div>
         ) : null}
-
-        {/* Details  */}
-        {typeof userData.details === 'string' && userData.details.trim() !== '' && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <User className="w-5 h-5 text-purple-600" />
-                <h3 className="font-bold text-gray-900">About Me</h3>
-              </div>
-              <button
-                onClick={() => handleEditSection('details')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Edit3 className="w-4 h-4 text-gray-500" />
-              </button>
-            </div>
-            <p className="text-gray-700">{userData.details}</p>
-          </div>
-        )}
 
         {/* Interests  */}
         {displayInterests && displayInterests.length > 0 && (
