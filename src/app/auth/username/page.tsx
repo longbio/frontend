@@ -2,7 +2,7 @@
 
 import { z } from 'zod'
 import Header from '@/components/Header'
-import React, { useEffect } from 'react'
+import React, { useEffect, Suspense } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { useUpdateUser } from '@/service/user/hook'
@@ -20,7 +20,7 @@ const usernameSchema = z.object({
 
 type FormData = z.infer<typeof usernameSchema>
 
-export default function UsernamePage() {
+function UsernamePageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
@@ -96,5 +96,13 @@ export default function UsernamePage() {
         </form>
       </div>
     </div>
+  )
+}
+
+export default function UsernamePage() {
+  return (
+    <Suspense>
+      <UsernamePageContent />
+    </Suspense>
   )
 }
