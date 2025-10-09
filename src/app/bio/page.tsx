@@ -3,8 +3,8 @@
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import { useState, useEffect } from 'react'
-import ImageUploader from './components/ImageUploader'
 // import petPic from '/assets/images/pet.png'
+import ImageUploader from './components/ImageUploader'
 import {
   MapPin,
   Calendar,
