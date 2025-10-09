@@ -11,15 +11,20 @@ import {
   Ruler,
   User,
   Heart,
+  Users,
+  Venus,
+  Mars,
   GraduationCap,
   Dumbbell,
   Star,
   PawPrint,
   BookOpen,
+  ExternalLink,
 } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import type { GetUserByIdResponse } from '@/service/user/type'
 // import { useGetCurrentUser } from '@/service/user/hook'
+import { useFlagCountries } from '@/service/countries'
 import dayjs from 'dayjs'
 
 const ClientOnlyBioContent = dynamic(() => Promise.resolve(BioContent), {
@@ -31,6 +36,7 @@ function BioContent({ username }: { username: string }) {
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [userData, setUserData] = useState<GetUserByIdResponse['data'] | null>(null)
   const [loading, setLoading] = useState(true)
+  const { data: countriesData } = useFlagCountries()
 
   // Fetch user data by username from the API
   useEffect(() => {
@@ -223,7 +229,15 @@ function BioContent({ username }: { username: string }) {
           <div className="flex justify-center gap-6 text-sm text-gray-600">
             {typeof userData.gender === 'string' && userData.gender.trim() !== '' && (
               <span className="flex items-center gap-1">
-                <Heart className="w-4 h-4" />
+                {userData.gender.toLowerCase() === 'male' ||
+                userData.gender.toLowerCase() === 'مرد' ? (
+                  <Mars className="w-4 h-4" />
+                ) : userData.gender.toLowerCase() === 'female' ||
+                  userData.gender.toLowerCase() === 'زن' ? (
+                  <Venus className="w-4 h-4" />
+                ) : (
+                  <Users className="w-4 h-4" />
+                )}
                 {userData.gender}
               </span>
             )}
@@ -319,74 +333,38 @@ function BioContent({ username }: { username: string }) {
                 <div>
                   <div className="font-medium text-gray-700 mb-2">Visited Countries:</div>
                   <div className="flex flex-wrap gap-2">
-                    {userData.visitedCountries.map((country, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-purple-200"
-                      >
-                        {country}
-                      </span>
-                    ))}
+                    {userData.visitedCountries.map((country, index) => {
+                      // Find the country data to get the flag
+                      const countryData = countriesData?.find(
+                        (c) => c.name.toLowerCase() === country.toLowerCase()
+                      )
+
+                      return (
+                        <span
+                          key={index}
+                          className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-purple-200"
+                        >
+                          {countryData?.image ? (
+                            <Image
+                              src={countryData.image}
+                              alt={country}
+                              width={16}
+                              height={12}
+                              className="object-contain rounded-sm"
+                            />
+                          ) : (
+                            <span className="text-xs">{countryData?.emoji || '🏳️'}</span>
+                          )}
+                          {country}
+                        </span>
+                      )
+                    })}
                   </div>
                 </div>
               )}
             </div>
           </div>
         ) : null}
-
-        {/* Physical Info and Location - Responsive Grid */}
-        {(userData.height > 0 ||
-          userData.weight > 0 ||
-          (userData.bornPlace && userData.bornPlace.trim() !== '') ||
-          (userData.livePlace && userData.livePlace.trim() !== '')) && (
-          <div
-            className={`grid gap-4 mb-4 ${
-              (userData.height > 0 || userData.weight > 0) &&
-              ((userData.bornPlace && userData.bornPlace.trim() !== '') ||
-                (userData.livePlace && userData.livePlace.trim() !== ''))
-                ? 'grid-cols-1 md:grid-cols-2'
-                : 'grid-cols-1'
-            }`}
-          >
-            {/* Physical Info  */}
-            {(userData.height > 0 || userData.weight > 0) && (
-              <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4">
-                <div className="flex items-center gap-2 mb-4">
-                  <Ruler className="w-5 h-5 text-purple-600" />
-                  <h3 className="font-bold text-gray-900">Physical Info</h3>
-                </div>
-                <div className="space-y-1">
-                  {userData.height > 0 && (
-                    <p className="text-gray-700">Height: {userData.height} cm</p>
-                  )}
-                  {userData.weight > 0 && (
-                    <p className="text-gray-700">Weight: {userData.weight} kg</p>
-                  )}
-                  <p className="text-gray-700">Exercise: {userData.doesExercise ? 'Yes' : 'No'}</p>
-                </div>
-              </div>
-            )}
-
-            {/* Location Info  */}
-            {((userData.bornPlace && userData.bornPlace.trim() !== '') ||
-              (userData.livePlace && userData.livePlace.trim() !== '')) && (
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-                <div className="flex items-center gap-2 mb-4">
-                  <MapPin className="w-5 h-5 text-purple-600" />
-                  <h3 className="font-bold text-gray-900">Location</h3>
-                </div>
-                <div className="space-y-1">
-                  {userData.bornPlace && userData.bornPlace.trim() !== '' && (
-                    <p className="text-gray-700">Born: {userData.bornPlace}</p>
-                  )}
-                  {userData.livePlace && userData.livePlace.trim() !== '' && (
-                    <p className="text-gray-700">Live: {userData.livePlace}</p>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
 
         {/* Details  */}
         {typeof userData.details === 'string' && userData.details.trim() !== '' && (
@@ -420,13 +398,14 @@ function BioContent({ username }: { username: string }) {
         )}
 
         {((displaySkills && displaySkills.length > 0) ||
-          (userData.favoriteSport && userData.favoriteSport !== 'None')) && (
+          (userData.favoriteSport && userData.favoriteSport !== 'None') ||
+          userData.doesExercise !== undefined) && (
           <div
             className={`grid gap-4 mb-4 ${
               displaySkills &&
               displaySkills.length > 0 &&
-              userData.favoriteSport &&
-              userData.favoriteSport !== 'None'
+              ((userData.favoriteSport && userData.favoriteSport !== 'None') ||
+                userData.doesExercise !== undefined)
                 ? 'grid-cols-1 md:grid-cols-2'
                 : 'grid-cols-1'
             }`}
@@ -449,15 +428,25 @@ function BioContent({ username }: { username: string }) {
             )}
 
             {/* Sports  */}
-            {userData.favoriteSport && userData.favoriteSport !== 'None' && (
+            {(userData.favoriteSport && userData.favoriteSport !== 'None') ||
+            userData.doesExercise !== undefined ? (
               <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4">
                 <div className="flex items-center gap-2 mb-4">
                   <Dumbbell className="w-5 h-5 text-purple-600" />
-                  <h3 className="font-bold text-gray-900">Favorite Sport</h3>
+                  <h3 className="font-bold text-gray-900">Sports & Exercise</h3>
                 </div>
-                <p className="text-gray-700">{userData.favoriteSport}</p>
+                <div className="space-y-1">
+                  {userData.favoriteSport && userData.favoriteSport !== 'None' && (
+                    <p className="text-gray-700">Favorite Sport: {userData.favoriteSport}</p>
+                  )}
+                  {userData.doesExercise !== undefined && (
+                    <p className="text-gray-700">
+                      Exercise: {userData.doesExercise ? 'Yes' : 'No'}
+                    </p>
+                  )}
+                </div>
               </div>
-            )}
+            ) : null}
           </div>
         )}
 
@@ -490,26 +479,24 @@ function BioContent({ username }: { username: string }) {
           </div>
         )}
 
-        {/* Social Media - Commented out for now */}
-        {/* <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Globe className="w-5 h-5 text-purple-600" />
-              <h3 className="font-bold text-gray-900">Social Media</h3>
-            </div>
+        {/* Create Your Bio Button */}
+        <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-6 mb-4">
+          <div className="text-center">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Create Your Long Bio</h3>
+            <p className="text-gray-600 text-sm mb-4">
+              Join LongBio and create your personalized bio page to share with friends!
+            </p>
+            <a
+              href="https://longbio.me"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-full font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
+              <ExternalLink className="w-5 h-5" />
+              Get Started
+            </a>
           </div>
-          <div className="flex gap-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition-transform">
-              <Instagram className="w-6 h-6 text-white" />
-            </div>
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition-transform">
-              <Twitter className="w-6 h-6 text-white" />
-            </div>
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition-transform">
-              <Facebook className="w-6 h-6 text-white" />
-            </div>
-          </div>
-        </div> */}
+        </div>
       </div>
     </div>
   )
