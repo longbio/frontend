@@ -19,6 +19,7 @@ import {
   BookOpen,
   Share2,
 } from 'lucide-react'
+import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
 import ShareModal from './components/ShareModal'
 // import type { GetUserByIdResponse } from '@/service/user/type'
@@ -186,13 +187,7 @@ function BioContent() {
             </div>
 
             <h3 className="text-2xl font-bold text-gray-900 mb-2">{userData.fullName}</h3>
-            <p className="text-gray-600 mb-2">
-              {userData.educationalStatus === 'student'
-                ? 'Student'
-                : userData.educationalStatus === 'graduated'
-                ? 'Graduated'
-                : 'Professional'}
-            </p>
+            <p className="text-gray-600 mb-2">{userData.username ? `@${userData.username}` : ''}</p>
 
             <div className="flex justify-center gap-3 flex-wrap">
               {((userData.bornPlace && userData.bornPlace.trim() !== '') ||
@@ -262,7 +257,7 @@ function BioContent() {
                 <Edit3 className="w-4 h-4 text-gray-500" />
               </button>
             </div>
-            <p className="text-gray-700">{userData.birthDate}</p>
+            <p className="text-gray-700">{dayjs(userData.birthDate).format('MMMM DD, YYYY')}</p>
           </div>
         )}
 
@@ -284,21 +279,32 @@ function BioContent() {
                 <Edit3 className="w-4 h-4 text-gray-500" />
               </button>
             </div>
-            {userData.education?.university ||
-            userData.education?.topic ||
-            userData.education?.graduationYear ? (
-              <div className="space-y-1">
-                {userData.education.university && (
-                  <div>University: {userData.education.university}</div>
-                )}
-                {userData.education.topic && <div>Topic: {userData.education.topic}</div>}
-                {userData.education.graduationYear && (
-                  <div>Graduation Year: {userData.education.graduationYear}</div>
-                )}
-              </div>
-            ) : (
-              <p className="text-gray-700 capitalize">{userData.educationalStatus}</p>
-            )}
+            <div className="space-y-2">
+              {userData.educationalStatus && userData.educationalStatus !== 'none' && (
+                <div className="text-gray-700">
+                  <span className="font-medium">Status: </span>
+                  <span className="capitalize">{userData.educationalStatus}</span>
+                </div>
+              )}
+              {userData.education?.university && (
+                <div className="text-gray-700">
+                  <span className="font-medium">University: </span>
+                  {userData.education.university}
+                </div>
+              )}
+              {userData.education?.topic && (
+                <div className="text-gray-700">
+                  <span className="font-medium">Topic: </span>
+                  {userData.education.topic}
+                </div>
+              )}
+              {userData.education?.graduationYear && (
+                <div className="text-gray-700">
+                  <span className="font-medium">Graduation Year: </span>
+                  {userData.education.graduationYear}
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -324,13 +330,14 @@ function BioContent() {
           </div>
         )}
 
-        {/* Travel Style  */}
-        {typeof userData.travelStyle === 'string' && userData.travelStyle.trim() !== '' && (
+        {/* Travel  */}
+        {(typeof userData.travelStyle === 'string' && userData.travelStyle.trim() !== '') ||
+        (userData.visitedCountries && userData.visitedCountries.length > 0) ? (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-purple-600" />
-                <h3 className="font-bold text-gray-900">Travel Style</h3>
+                <h3 className="font-bold text-gray-900">Travel</h3>
               </div>
               <button
                 onClick={() => handleEditSection('travel')}
@@ -339,9 +346,31 @@ function BioContent() {
                 <Edit3 className="w-4 h-4 text-gray-500" />
               </button>
             </div>
-            <p className="text-gray-700">{userData.travelStyle}</p>
+            <div className="space-y-3">
+              {typeof userData.travelStyle === 'string' && userData.travelStyle.trim() !== '' && (
+                <div className="text-gray-700">
+                  <span className="font-medium">Travel Style: </span>
+                  {userData.travelStyle}
+                </div>
+              )}
+              {userData.visitedCountries && userData.visitedCountries.length > 0 && (
+                <div>
+                  <div className="font-medium text-gray-700 mb-2">Visited Countries:</div>
+                  <div className="flex flex-wrap gap-2">
+                    {userData.visitedCountries.map((country, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-purple-200"
+                      >
+                        {country}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-        )}
+        ) : null}
 
         {/* Physical Info and Location - Responsive Grid */}
         {(userData.height > 0 ||
@@ -410,34 +439,6 @@ function BioContent() {
                 </div>
               </div>
             )}
-          </div>
-        )}
-
-        {/* Visited Countries  */}
-        {userData.visitedCountries && userData.visitedCountries.length > 0 && (
-          <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-purple-600" />
-                <h3 className="font-bold text-gray-900">Visited Countries</h3>
-              </div>
-              <button
-                onClick={() => handleEditSection('travel')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Edit3 className="w-4 h-4 text-gray-500" />
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {userData.visitedCountries.map((country, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-purple-200"
-                >
-                  {country}
-                </span>
-              ))}
-            </div>
           </div>
         )}
 

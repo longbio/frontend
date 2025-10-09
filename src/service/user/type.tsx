@@ -59,6 +59,7 @@ export interface GetUserByIdResponse {
   message: string
   data: {
     id: number
+    username: string
     birthDate: string | null
     fullName: string
     gender: string
