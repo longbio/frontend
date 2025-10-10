@@ -91,7 +91,7 @@ function SportContent() {
     try {
       if (selected.length > 0) {
         await updateUser({
-          favoriteSport: selected[0],
+          favoriteSport: selected,
         })
       }
     } catch (err) {

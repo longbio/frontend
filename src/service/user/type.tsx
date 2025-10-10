@@ -33,9 +33,9 @@ export interface UpdateUserParams {
     position?: string
     company?: string
   }
-  travelStyle?: string
+  travelStyle?: string[]
   visitedCountries?: string[]
-  favoriteSport?: string
+  favoriteSport?: string[]
   skill?: string[]
   weight?: number
   height?: number
@@ -71,8 +71,8 @@ export interface GetUserByIdResponse {
     bornPlace: string
     livePlace: string
     doesExercise: boolean
-    favoriteSport: string
-    travelStyle: string
+    favoriteSport: string[]
+    travelStyle: string[]
     details: string
     education: {
       topic: string

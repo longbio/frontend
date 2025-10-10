@@ -1,10 +1,27 @@
 'use client'
+import dayjs from 'dayjs'
 // import Link from 'next/link'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
+import html2canvas from 'html2canvas'
+import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import { Input } from '@/components/ui/input'
 // import petPic from '/assets/images/pet.png'
+import ShareModal from './components/ShareModal'
+import { Button } from '@/components/ui/button'
 import ImageUploader from './components/ImageUploader'
+import { useFlagCountries } from '@/service/countries'
+import { useGetCurrentUser } from '@/service/user/hook'
+// import type { GetUserByIdResponse } from '@/service/user/type'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import {
   MapPin,
   Calendar,
@@ -21,13 +38,10 @@ import {
   PawPrint,
   BookOpen,
   Share2,
+  Camera,
+  Crown,
+  CheckCircle,
 } from 'lucide-react'
-import dayjs from 'dayjs'
-import { useRouter } from 'next/navigation'
-import ShareModal from './components/ShareModal'
-// import type { GetUserByIdResponse } from '@/service/user/type'
-import { useGetCurrentUser } from '@/service/user/hook'
-import { useFlagCountries } from '@/service/countries'
 
 const ClientOnlyBioContent = dynamic(() => Promise.resolve(BioContent), {
   ssr: false,
@@ -37,15 +51,15 @@ const ClientOnlyBioContent = dynamic(() => Promise.resolve(BioContent), {
 function BioContent() {
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [showShareModal, setShowShareModal] = useState(false)
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const router = useRouter()
 
-  // Get current user data using the hook
   const { data: currentUserResponse, isLoading: loading } = useGetCurrentUser()
   const { data: countriesData } = useFlagCountries()
 
   const userData = currentUserResponse?.data || null
 
-  // Set profile image when user data is loaded
   useEffect(() => {
     if (userData?.profileImage) {
       setProfileImage(userData.profileImage)
@@ -53,7 +67,6 @@ function BioContent() {
   }, [userData])
 
   const handleEditSection = (section: string) => {
-    // Navigate to the appropriate step based on section
     const stepMap: { [key: string]: string } = {
       personal: '/info/birthday',
       gender: '/info/gender',
@@ -74,6 +87,40 @@ function BioContent() {
     if (stepUrl) {
       router.push(`${stepUrl}?edit=true`)
     }
+  }
+
+  const handleScreenshot = async () => {
+    try {
+      const element = document.getElementById('bio-content')
+      if (!element) return
+
+      const canvas = await html2canvas(element, {
+        backgroundColor: '#f9fafb',
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+      })
+
+      const link = document.createElement('a')
+      link.download = `${userData?.fullName || 'bio'}-screenshot.png`
+      link.href = canvas.toDataURL()
+      link.click()
+    } catch (error) {
+      console.error('Screenshot failed:', error)
+    }
+  }
+
+  const handlePremiumSubmit = () => {
+    if (!email && !phone) {
+      alert('Please enter either email or phone number')
+      return
+    }
+
+    // Here you would typically send the data to your backend
+    console.log('Premium signup:', { email, phone })
+    setEmail('')
+    setPhone('')
+    alert('Thank you for your interest in Premium! We will contact you soon.')
   }
 
   if (loading) {
@@ -140,10 +187,18 @@ function BioContent() {
   const displaySkills = userData.skills?.map((skill) => skillMapping[skill] || skill) || []
   const displayInterests = userData.interests || []
 
+  // Debug location data
+  console.log('Location Debug:', {
+    bornPlace: userData.bornPlace,
+    livePlace: userData.livePlace,
+    bornPlaceType: typeof userData.bornPlace,
+    livePlaceType: typeof userData.livePlace,
+  })
+
   return (
     <div className="flex flex-col w-full h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
       {/* Main Content */}
-      <div className="flex-1 px-4 pt-8 pb-4 overflow-y-auto">
+      <div id="bio-content" className="flex-1 px-4 pt-8 pb-4 overflow-y-auto">
         {/* Basic Info Section */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
           <div className="flex items-center justify-between mb-4">
@@ -193,7 +248,10 @@ function BioContent() {
             </div>
 
             <h3 className="text-2xl font-bold text-gray-900 mb-2">{userData.fullName}</h3>
-            <p className="text-gray-600 mb-2">{userData.username ? `@${userData.username}` : ''}</p>
+            <div className="flex items-center justify-center gap-1 mb-2">
+              <p className="text-gray-600">{userData.username ? `@${userData.username}` : ''}</p>
+              {userData.username === 'mahdi' && <CheckCircle className="w-5 h-5 text-blue-500" />}
+            </div>
 
             <div className="flex justify-center gap-3 flex-wrap">
               {age && (
@@ -217,24 +275,32 @@ function BioContent() {
             </div>
 
             {/* Location Info */}
-            {((userData.bornPlace && userData.bornPlace.trim() !== '') ||
-              (userData.livePlace && userData.livePlace.trim() !== '')) && (
+            {((userData.bornPlace &&
+              typeof userData.bornPlace === 'string' &&
+              userData.bornPlace.trim() !== '') ||
+              (userData.livePlace &&
+                typeof userData.livePlace === 'string' &&
+                userData.livePlace.trim() !== '')) && (
               <div className="mt-4 p-3 bg-gray-50 rounded-xl border border-gray-200">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <MapPin className="w-4 h-4 text-purple-600" />
                   <span className="text-sm font-medium text-gray-700">Location</span>
                 </div>
                 <div className="text-center space-y-1">
-                  {userData.bornPlace && userData.bornPlace.trim() !== '' && (
-                    <p className="text-sm text-gray-600">
-                      <span className="font-medium">Born:</span> {userData.bornPlace}
-                    </p>
-                  )}
-                  {userData.livePlace && userData.livePlace.trim() !== '' && (
-                    <p className="text-sm text-gray-600">
-                      <span className="font-medium">Live:</span> {userData.livePlace}
-                    </p>
-                  )}
+                  {userData.bornPlace &&
+                    typeof userData.bornPlace === 'string' &&
+                    userData.bornPlace.trim() !== '' && (
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium">Born:</span> {userData.bornPlace}
+                      </p>
+                    )}
+                  {userData.livePlace &&
+                    typeof userData.livePlace === 'string' &&
+                    userData.livePlace.trim() !== '' && (
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium">Live:</span> {userData.livePlace}
+                      </p>
+                    )}
                 </div>
               </div>
             )}
@@ -372,7 +438,7 @@ function BioContent() {
         )}
 
         {/* Travel  */}
-        {(typeof userData.travelStyle === 'string' && userData.travelStyle.trim() !== '') ||
+        {(userData.travelStyle && userData.travelStyle.length > 0) ||
         (userData.visitedCountries && userData.visitedCountries.length > 0) ? (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
             <div className="flex items-center justify-between mb-4">
@@ -388,10 +454,19 @@ function BioContent() {
               </button>
             </div>
             <div className="space-y-3">
-              {typeof userData.travelStyle === 'string' && userData.travelStyle.trim() !== '' && (
-                <div className="text-gray-700">
-                  <span className="font-medium">Travel Style: </span>
-                  {userData.travelStyle}
+              {userData.travelStyle && userData.travelStyle.length > 0 && (
+                <div>
+                  <div className="font-medium text-gray-700 mb-2">Travel Styles:</div>
+                  <div className="flex flex-wrap gap-2">
+                    {userData.travelStyle.map((style, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-purple-200"
+                      >
+                        {style}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
               {userData.visitedCountries && userData.visitedCountries.length > 0 && (
@@ -459,74 +534,69 @@ function BioContent() {
           </div>
         )}
 
-        {((displaySkills && displaySkills.length > 0) ||
-          (userData.favoriteSport && userData.favoriteSport !== 'None') ||
-          userData.doesExercise !== undefined) && (
-          <div
-            className={`grid gap-4 mb-4 ${
-              displaySkills &&
-              displaySkills.length > 0 &&
-              ((userData.favoriteSport && userData.favoriteSport !== 'None') ||
-                userData.doesExercise !== undefined)
-                ? 'grid-cols-1 md:grid-cols-2'
-                : 'grid-cols-1'
-            }`}
-          >
-            {/* Skills */}
-            {displaySkills && displaySkills.length > 0 && (
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <BookOpen className="w-5 h-5 text-purple-600" />
-                    <h3 className="font-bold text-gray-900">Skills</h3>
-                  </div>
-                  <button
-                    onClick={() => handleEditSection('skills')}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                  >
-                    <Edit3 className="w-4 h-4 text-gray-500" />
-                  </button>
-                </div>
-                <div className="space-y-2">
-                  {displaySkills.map((skill, index) => (
-                    <div key={index} className="text-gray-700 text-sm">
-                      • {skill}
-                    </div>
-                  ))}
-                </div>
+        {/* Skills */}
+        {displaySkills && displaySkills.length > 0 && (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-purple-600" />
+                <h3 className="font-bold text-gray-900">Skills</h3>
               </div>
-            )}
-
-            {/* Sports  */}
-            {(userData.favoriteSport && userData.favoriteSport !== 'None') ||
-            userData.doesExercise !== undefined ? (
-              <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <Dumbbell className="w-5 h-5 text-purple-600" />
-                    <h3 className="font-bold text-gray-900">Sports & Exercise</h3>
-                  </div>
-                  <button
-                    onClick={() => handleEditSection('sports')}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                  >
-                    <Edit3 className="w-4 h-4 text-gray-500" />
-                  </button>
+              <button
+                onClick={() => handleEditSection('skills')}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Edit3 className="w-4 h-4 text-gray-500" />
+              </button>
+            </div>
+            <div className="space-y-2">
+              {displaySkills.map((skill, index) => (
+                <div key={index} className="text-gray-700 text-sm">
+                  • {skill}
                 </div>
-                <div className="space-y-1">
-                  {userData.favoriteSport && userData.favoriteSport !== 'None' && (
-                    <p className="text-gray-700">Favorite Sport: {userData.favoriteSport}</p>
-                  )}
-                  {userData.doesExercise !== undefined && (
-                    <p className="text-gray-700">
-                      Exercise: {userData.doesExercise ? 'Yes' : 'No'}
-                    </p>
-                  )}
-                </div>
-              </div>
-            ) : null}
+              ))}
+            </div>
           </div>
         )}
+
+        {/* Sports  */}
+        {(userData.favoriteSport && userData.favoriteSport.length > 0) ||
+        userData.doesExercise !== undefined ? (
+          <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Dumbbell className="w-5 h-5 text-purple-600" />
+                <h3 className="font-bold text-gray-900">Sports & Exercise</h3>
+              </div>
+              <button
+                onClick={() => handleEditSection('sports')}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Edit3 className="w-4 h-4 text-gray-500" />
+              </button>
+            </div>
+            <div className="space-y-3">
+              {userData.favoriteSport && userData.favoriteSport.length > 0 && (
+                <div>
+                  <div className="font-medium text-gray-700 mb-2">Favorite Sports:</div>
+                  <div className="flex flex-wrap gap-2">
+                    {userData.favoriteSport.map((sport, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-purple-200"
+                      >
+                        {sport}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {userData.doesExercise !== undefined && (
+                <p className="text-gray-700">Exercise: {userData.doesExercise ? 'Yes' : 'No'}</p>
+              )}
+            </div>
+          </div>
+        ) : null}
 
         {/* Pet Information  */}
         {(userData.pet.name || userData.pet.breed) && (
@@ -572,13 +642,95 @@ function BioContent() {
             <p className="text-gray-600 text-sm mb-4">
               Share your bio with friends and let them know more about you!
             </p>
-            <button
-              onClick={() => setShowShareModal(true)}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-full font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-            >
-              <Share2 className="w-5 h-5" />
-              Share your Long Bio
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                onClick={() => setShowShareModal(true)}
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                <Share2 className="w-5 h-5" />
+                Share your Long Bio
+              </button>
+              <button
+                onClick={handleScreenshot}
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-3 rounded-full font-medium hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                <Camera className="w-5 h-5" />
+                Take Screenshot & Share on Social Media
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Premium Version Button */}
+        <div className="bg-gradient-to-r from-yellow-100 to-orange-100 rounded-2xl shadow-sm border border-yellow-200 p-6 mb-4">
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Crown className="w-6 h-6 text-yellow-600" />
+              <h3 className="text-lg font-bold text-gray-900">Premium Version</h3>
+            </div>
+            <p className="text-gray-600 text-sm mb-4">
+              Unlock advanced features and customization options!
+            </p>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-4 rounded-full font-medium hover:from-yellow-600 hover:to-orange-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+                  <Crown className="w-5 h-5" />
+                  Get Premium
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <Crown className="w-6 h-6 text-yellow-600" />
+                    Premium Version
+                  </DialogTitle>
+                  <DialogDescription>
+                    Unlock advanced features and customization options!
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-6">
+                  {/* Contact Form */}
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                        Email Address
+                      </label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Enter your email"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                        Phone Number
+                      </label>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="Enter your phone number"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Submit Button */}
+                  <Button
+                    onClick={handlePremiumSubmit}
+                    className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white hover:from-yellow-600 hover:to-orange-600"
+                  >
+                    Get Premium Access
+                  </Button>
+
+                  <p className="text-xs text-gray-500 text-center">
+                    We&apos;ll contact you within 24 hours with premium access details
+                  </p>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
 
