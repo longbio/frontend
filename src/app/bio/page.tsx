@@ -92,22 +92,28 @@ function BioContent() {
   const handleScreenshot = async () => {
     try {
       const element = document.getElementById('bio-content')
-      if (!element) return
+      if (!element) {
+        return
+      }
 
       const canvas = await html2canvas(element, {
         backgroundColor: '#f9fafb',
-        scale: 2,
+        scale: 1.5,
         useCORS: true,
         allowTaint: true,
+        scrollX: 0,
+        scrollY: 0,
+        width: element.scrollWidth,
+        height: element.scrollHeight,
       })
 
       const link = document.createElement('a')
       link.download = `${userData?.fullName || 'bio'}-screenshot.png`
-      link.href = canvas.toDataURL()
+      link.href = canvas.toDataURL('image/png')
+      document.body.appendChild(link)
       link.click()
-    } catch (error) {
-      console.error('Screenshot failed:', error)
-    }
+      document.body.removeChild(link)
+    } catch {}
   }
 
   const handlePremiumSubmit = () => {
@@ -645,17 +651,17 @@ function BioContent() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
                 onClick={() => setShowShareModal(true)}
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="inline-flex basis-1/2 items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-3 rounded-xl font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 <Share2 className="w-5 h-5" />
-                Share your Long Bio
+                <span className="whitespace-nowrap">Share Link</span>
               </button>
               <button
                 onClick={handleScreenshot}
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-3 rounded-full font-medium hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="inline-flex basis-1/2 items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-3 py-3 rounded-xl font-medium hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 <Camera className="w-5 h-5" />
-                Take Screenshot & Share on Social Media
+                <span className="whitespace-nowrap">Take Screenshot</span>
               </button>
             </div>
           </div>
