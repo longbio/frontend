@@ -29,9 +29,6 @@ function CongratsContent() {
           </div>
           <Congrats />
           <h1 className="text-xl font-bold text-center mt-2">Congrats !</h1>
-          <span className="text-xs font-light text-center text-black mt-4">
-            Blah Blah Blah Blah Blah Blah Blah Blah
-          </span>
         </div>
       </div>
       <Button
