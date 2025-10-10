@@ -655,7 +655,7 @@ function BioContent() {
                 className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-3 rounded-full font-medium hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 <Camera className="w-5 h-5" />
-                Take Screenshot
+                Take Screenshot & Share on Social Media
               </button>
             </div>
           </div>
