@@ -71,8 +71,8 @@ export interface GetUserByIdResponse {
     bornPlace: string
     livePlace: string
     doesExercise: boolean
-    favoriteSport: string
-    travelStyle: string
+    favoriteSport: string[]
+    travelStyle: string[]
     details: string
     education: {
       topic: string

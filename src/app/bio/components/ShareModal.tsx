@@ -17,13 +17,14 @@ interface ShareModalProps {
   userData: {
     id: number
     fullName: string
+    username: string
   }
 }
 
 export default function ShareModal({ isOpen, onClose, userData }: ShareModalProps) {
   const [copied, setCopied] = useState(false)
 
-  const shareUrl = `https://longbio.me/bio/${userData.id}`
+  const shareUrl = `https://longbio.me/bio/${userData.username}`
   const shareTitle = `${userData.fullName}'s Bio`
   const shareText = `Check out ${userData.fullName}'s bio on LongBio!`
 
