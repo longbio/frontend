@@ -33,9 +33,9 @@ export interface UpdateUserParams {
     position?: string
     company?: string
   }
-  travelStyle?: string
+  travelStyle?: string[]
   visitedCountries?: string[]
-  favoriteSport?: string
+  favoriteSport?: string[]
   skill?: string[]
   weight?: number
   height?: number

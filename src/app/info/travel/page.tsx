@@ -111,7 +111,7 @@ function TravelContent() {
   const onSubmit = async () => {
     try {
       await updateUser({
-        travelStyle: styles && styles.length > 0 ? styles[0] : 'None',
+        travelStyle: styles && styles.length > 0 ? styles : [],
         visitedCountries: selectedCountries.map((country: CountryItem) => country.name),
       })
     } catch (err) {
