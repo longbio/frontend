@@ -3,14 +3,25 @@ import dayjs from 'dayjs'
 // import Link from 'next/link'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
+import html2canvas from 'html2canvas'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import { Input } from '@/components/ui/input'
 // import petPic from '/assets/images/pet.png'
 import ShareModal from './components/ShareModal'
+import { Button } from '@/components/ui/button'
 import ImageUploader from './components/ImageUploader'
 import { useFlagCountries } from '@/service/countries'
 import { useGetCurrentUser } from '@/service/user/hook'
 // import type { GetUserByIdResponse } from '@/service/user/type'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import {
   MapPin,
   Calendar,
@@ -27,6 +38,8 @@ import {
   PawPrint,
   BookOpen,
   Share2,
+  Camera,
+  Crown,
 } from 'lucide-react'
 
 const ClientOnlyBioContent = dynamic(() => Promise.resolve(BioContent), {
@@ -37,6 +50,8 @@ const ClientOnlyBioContent = dynamic(() => Promise.resolve(BioContent), {
 function BioContent() {
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [showShareModal, setShowShareModal] = useState(false)
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const router = useRouter()
 
   const { data: currentUserResponse, isLoading: loading } = useGetCurrentUser()
@@ -71,6 +86,40 @@ function BioContent() {
     if (stepUrl) {
       router.push(`${stepUrl}?edit=true`)
     }
+  }
+
+  const handleScreenshot = async () => {
+    try {
+      const element = document.getElementById('bio-content')
+      if (!element) return
+
+      const canvas = await html2canvas(element, {
+        backgroundColor: '#f9fafb',
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+      })
+
+      const link = document.createElement('a')
+      link.download = `${userData?.fullName || 'bio'}-screenshot.png`
+      link.href = canvas.toDataURL()
+      link.click()
+    } catch (error) {
+      console.error('Screenshot failed:', error)
+    }
+  }
+
+  const handlePremiumSubmit = () => {
+    if (!email && !phone) {
+      alert('Please enter either email or phone number')
+      return
+    }
+
+    // Here you would typically send the data to your backend
+    console.log('Premium signup:', { email, phone })
+    setEmail('')
+    setPhone('')
+    alert('Thank you for your interest in Premium! We will contact you soon.')
   }
 
   if (loading) {
@@ -148,7 +197,7 @@ function BioContent() {
   return (
     <div className="flex flex-col w-full h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
       {/* Main Content */}
-      <div className="flex-1 px-4 pt-8 pb-4 overflow-y-auto">
+      <div id="bio-content" className="flex-1 px-4 pt-8 pb-4 overflow-y-auto">
         {/* Basic Info Section */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
           <div className="flex items-center justify-between mb-4">
@@ -589,13 +638,95 @@ function BioContent() {
             <p className="text-gray-600 text-sm mb-4">
               Share your bio with friends and let them know more about you!
             </p>
-            <button
-              onClick={() => setShowShareModal(true)}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-full font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-            >
-              <Share2 className="w-5 h-5" />
-              Share your Long Bio
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                onClick={() => setShowShareModal(true)}
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                <Share2 className="w-5 h-5" />
+                Share your Long Bio
+              </button>
+              <button
+                onClick={handleScreenshot}
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-3 rounded-full font-medium hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                <Camera className="w-5 h-5" />
+                Take Screenshot
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Premium Version Button */}
+        <div className="bg-gradient-to-r from-yellow-100 to-orange-100 rounded-2xl shadow-sm border border-yellow-200 p-6 mb-4">
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Crown className="w-6 h-6 text-yellow-600" />
+              <h3 className="text-lg font-bold text-gray-900">Premium Version</h3>
+            </div>
+            <p className="text-gray-600 text-sm mb-4">
+              Unlock advanced features and customization options!
+            </p>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-4 rounded-full font-medium hover:from-yellow-600 hover:to-orange-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+                  <Crown className="w-5 h-5" />
+                  Get Premium
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <Crown className="w-6 h-6 text-yellow-600" />
+                    Premium Version
+                  </DialogTitle>
+                  <DialogDescription>
+                    Unlock advanced features and customization options!
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-6">
+                  {/* Contact Form */}
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                        Email Address
+                      </label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Enter your email"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                        Phone Number
+                      </label>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="Enter your phone number"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Submit Button */}
+                  <Button
+                    onClick={handlePremiumSubmit}
+                    className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white hover:from-yellow-600 hover:to-orange-600"
+                  >
+                    Get Premium Access
+                  </Button>
+
+                  <p className="text-xs text-gray-500 text-center">
+                    We&apos;ll contact you within 24 hours with premium access details
+                  </p>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
 
