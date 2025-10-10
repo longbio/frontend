@@ -261,24 +261,32 @@ function BioContent({ username }: { username: string }) {
             </div>
 
             {/* Location Info */}
-            {((userData.bornPlace && userData.bornPlace.trim() !== '') ||
-              (userData.livePlace && userData.livePlace.trim() !== '')) && (
+            {((userData.bornPlace &&
+              typeof userData.bornPlace === 'string' &&
+              userData.bornPlace.trim() !== '') ||
+              (userData.livePlace &&
+                typeof userData.livePlace === 'string' &&
+                userData.livePlace.trim() !== '')) && (
               <div className="mt-4 p-3 bg-gray-50 rounded-xl border border-gray-200">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <MapPin className="w-4 h-4 text-purple-600" />
                   <span className="text-sm font-medium text-gray-700">Location</span>
                 </div>
                 <div className="text-center space-y-1">
-                  {userData.bornPlace && userData.bornPlace.trim() !== '' && (
-                    <p className="text-sm text-gray-600">
-                      <span className="font-medium">Born:</span> {userData.bornPlace}
-                    </p>
-                  )}
-                  {userData.livePlace && userData.livePlace.trim() !== '' && (
-                    <p className="text-sm text-gray-600">
-                      <span className="font-medium">Live:</span> {userData.livePlace}
-                    </p>
-                  )}
+                  {userData.bornPlace &&
+                    typeof userData.bornPlace === 'string' &&
+                    userData.bornPlace.trim() !== '' && (
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium">Born:</span> {userData.bornPlace}
+                      </p>
+                    )}
+                  {userData.livePlace &&
+                    typeof userData.livePlace === 'string' &&
+                    userData.livePlace.trim() !== '' && (
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium">Live:</span> {userData.livePlace}
+                      </p>
+                    )}
                 </div>
               </div>
             )}

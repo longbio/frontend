@@ -1,10 +1,16 @@
 'use client'
+import dayjs from 'dayjs'
 // import Link from 'next/link'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 // import petPic from '/assets/images/pet.png'
+import ShareModal from './components/ShareModal'
 import ImageUploader from './components/ImageUploader'
+import { useFlagCountries } from '@/service/countries'
+import { useGetCurrentUser } from '@/service/user/hook'
+// import type { GetUserByIdResponse } from '@/service/user/type'
 import {
   MapPin,
   Calendar,
@@ -22,12 +28,6 @@ import {
   BookOpen,
   Share2,
 } from 'lucide-react'
-import dayjs from 'dayjs'
-import { useRouter } from 'next/navigation'
-import ShareModal from './components/ShareModal'
-// import type { GetUserByIdResponse } from '@/service/user/type'
-import { useGetCurrentUser } from '@/service/user/hook'
-import { useFlagCountries } from '@/service/countries'
 
 const ClientOnlyBioContent = dynamic(() => Promise.resolve(BioContent), {
   ssr: false,
@@ -39,13 +39,11 @@ function BioContent() {
   const [showShareModal, setShowShareModal] = useState(false)
   const router = useRouter()
 
-  // Get current user data using the hook
   const { data: currentUserResponse, isLoading: loading } = useGetCurrentUser()
   const { data: countriesData } = useFlagCountries()
 
   const userData = currentUserResponse?.data || null
 
-  // Set profile image when user data is loaded
   useEffect(() => {
     if (userData?.profileImage) {
       setProfileImage(userData.profileImage)
@@ -53,7 +51,6 @@ function BioContent() {
   }, [userData])
 
   const handleEditSection = (section: string) => {
-    // Navigate to the appropriate step based on section
     const stepMap: { [key: string]: string } = {
       personal: '/info/birthday',
       gender: '/info/gender',
@@ -140,6 +137,14 @@ function BioContent() {
   const displaySkills = userData.skills?.map((skill) => skillMapping[skill] || skill) || []
   const displayInterests = userData.interests || []
 
+  // Debug location data
+  console.log('Location Debug:', {
+    bornPlace: userData.bornPlace,
+    livePlace: userData.livePlace,
+    bornPlaceType: typeof userData.bornPlace,
+    livePlaceType: typeof userData.livePlace,
+  })
+
   return (
     <div className="flex flex-col w-full h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
       {/* Main Content */}
@@ -217,24 +222,32 @@ function BioContent() {
             </div>
 
             {/* Location Info */}
-            {((userData.bornPlace && userData.bornPlace.trim() !== '') ||
-              (userData.livePlace && userData.livePlace.trim() !== '')) && (
+            {((userData.bornPlace &&
+              typeof userData.bornPlace === 'string' &&
+              userData.bornPlace.trim() !== '') ||
+              (userData.livePlace &&
+                typeof userData.livePlace === 'string' &&
+                userData.livePlace.trim() !== '')) && (
               <div className="mt-4 p-3 bg-gray-50 rounded-xl border border-gray-200">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <MapPin className="w-4 h-4 text-purple-600" />
                   <span className="text-sm font-medium text-gray-700">Location</span>
                 </div>
                 <div className="text-center space-y-1">
-                  {userData.bornPlace && userData.bornPlace.trim() !== '' && (
-                    <p className="text-sm text-gray-600">
-                      <span className="font-medium">Born:</span> {userData.bornPlace}
-                    </p>
-                  )}
-                  {userData.livePlace && userData.livePlace.trim() !== '' && (
-                    <p className="text-sm text-gray-600">
-                      <span className="font-medium">Live:</span> {userData.livePlace}
-                    </p>
-                  )}
+                  {userData.bornPlace &&
+                    typeof userData.bornPlace === 'string' &&
+                    userData.bornPlace.trim() !== '' && (
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium">Born:</span> {userData.bornPlace}
+                      </p>
+                    )}
+                  {userData.livePlace &&
+                    typeof userData.livePlace === 'string' &&
+                    userData.livePlace.trim() !== '' && (
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium">Live:</span> {userData.livePlace}
+                      </p>
+                    )}
                 </div>
               </div>
             )}
