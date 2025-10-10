@@ -256,7 +256,7 @@ function BioContent() {
             <h3 className="text-2xl font-bold text-gray-900 mb-2">{userData.fullName}</h3>
             <div className="flex items-center justify-center gap-1 mb-2">
               <p className="text-gray-600">{userData.username ? `@${userData.username}` : ''}</p>
-              {userData.username === 'mahdi' && <CheckCircle className="w-5 h-5 text-blue-500" />}
+              {userData.username === 'mehdi' && <CheckCircle className="w-5 h-5 text-blue-500" />}
             </div>
 
             <div className="flex justify-center gap-3 flex-wrap">
