@@ -1,5 +1,5 @@
 import './globals.css'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import Providers from '../../providers'
 import { ViewTransitions } from 'next-view-transitions'
@@ -31,10 +31,21 @@ const gilroy = localFont({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://longbio.me'),
   title: 'Long Bio',
   icons: {
     icon: '/assets/images/logo.svg',
   },
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#8B5CF6' },
+    { media: '(prefers-color-scheme: dark)', color: '#7C3AED' },
+  ],
 }
 
 export default function RootLayout({

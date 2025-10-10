@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 
 export async function generateMetadata({
   params,
@@ -62,13 +62,6 @@ export async function generateMetadata({
     applicationName: 'LongBio',
     category: 'social',
 
-    // Viewport and mobile
-    viewport: {
-      width: 'device-width',
-      initialScale: 1,
-      maximumScale: 1,
-    },
-
     // Icons
     icons: {
       icon: '/assets/images/logo.svg',
@@ -78,13 +71,17 @@ export async function generateMetadata({
 
     // Manifest
     manifest: '/manifest.json',
-
-    // Theme
-    themeColor: [
-      { media: '(prefers-color-scheme: light)', color: '#8B5CF6' },
-      { media: '(prefers-color-scheme: dark)', color: '#7C3AED' },
-    ],
   }
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#8B5CF6' },
+    { media: '(prefers-color-scheme: dark)', color: '#7C3AED' },
+  ],
 }
 
 export default function PublicBioLayout({ children }: { children: React.ReactNode }) {
