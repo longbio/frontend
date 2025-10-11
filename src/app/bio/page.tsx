@@ -31,7 +31,6 @@ import { useFlagCountries } from '@/service/countries'
 
 const ClientOnlyBioContent = dynamic(() => Promise.resolve(BioContent), {
   ssr: false,
-  loading: () => <div>Loading...</div>,
 })
 
 function BioContent() {
@@ -61,18 +60,19 @@ function BioContent() {
       physical: '/info/physical',
       country: '/info/born',
       education: '/info/education',
-      job: '/info/job',
+      job: '/info/jobs',
       interests: '/info/interest',
       skills: '/info/skill',
       sports: '/info/sport',
       travel: '/info/travel',
-      pet: '/info/pet',
+      pet: '/info/pets',
       profile: '/info/set-profile',
+      details: '/info/more-detail',
     }
 
     const stepUrl = stepMap[section]
     if (stepUrl) {
-      router.push(`${stepUrl}?edit=true`)
+      router.push(stepUrl)
     }
   }
 
