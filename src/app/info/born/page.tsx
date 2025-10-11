@@ -115,7 +115,7 @@ function BornContent() {
               <input
                 {...register('birthPlace')}
                 type="text"
-                placeholder="Exp: isfahan"
+                placeholder="Exp: london"
                 className={
                   errors.birthPlace
                     ? 'w-full border-red-500 focus-visible:ring-red-500/50 rounded-full px-4 py-2 text-sm mt-3'
@@ -132,7 +132,7 @@ function BornContent() {
               <input
                 {...register('livePlace')}
                 type="text"
-                placeholder="Exp: tehran"
+                placeholder="Exp: london"
                 className={
                   errors.livePlace
                     ? 'w-full border-red-500 focus-visible:ring-red-500/50 rounded-full px-4 py-2 text-sm mt-3'
