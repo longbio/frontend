@@ -105,6 +105,16 @@ function MaritalContent() {
                 }}
               />
               <SelectableOption
+                id="in-relationship"
+                label="in-relationship"
+                checked={selectedMarital === 'in-relationship'}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setValue('marital', 'in-relationship')
+                  }
+                }}
+              />
+              <SelectableOption
                 id="divorced"
                 label="Divorced"
                 checked={selectedMarital === 'divorced'}
