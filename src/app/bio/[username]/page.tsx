@@ -3,11 +3,13 @@ import dayjs from 'dayjs'
 // import Link from 'next/link'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
+import { trackBioEvent } from '@/lib/gtag'
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 // import petPic from '/assets/images/pet.png'
 import { useFlagCountries } from '@/service/countries'
 import ImageUploader from '../components/ImageUploader'
+import { usePageTracking } from '@/hooks/usePageTracking'
 // import { useGetCurrentUser } from '@/service/user/hook'
 import type { GetUserByIdResponse } from '@/service/user/type'
 import {
@@ -39,6 +41,9 @@ function BioContent({ username }: { username: string }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const { data: countriesData } = useFlagCountries()
+
+  // Track page views
+  usePageTracking()
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -240,9 +245,7 @@ function BioContent({ username }: { username: string }) {
             <h3 className="text-2xl font-bold text-gray-900 mb-2">{userData.fullName}</h3>
             <div className="flex items-center justify-center gap-1 mb-2">
               <p className="text-gray-600">{userData.username ? `@${userData.username}` : ''}</p>
-              {(userData.username === 'mahdi' || userData.username === 'monabagheri') && (
-                <CheckCircle className="w-5 h-5 text-blue-500" />
-              )}
+              {userData.isVerified === true && <CheckCircle className="w-5 h-5 text-blue-500" />}
             </div>
 
             <div className="flex justify-center gap-3 flex-wrap">
@@ -566,9 +569,15 @@ function BioContent({ username }: { username: string }) {
               href="https://longbio.me"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => {
+                trackBioEvent('get_started_click', {
+                  source: 'public_bio',
+                  username: username,
+                })
+              }}
               className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-full font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
-              <ExternalLink className="w-5 h-5" />
+              <ExternalLink className="size-5" />
               Get Started
             </a>
           </div>

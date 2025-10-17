@@ -25,6 +25,7 @@
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.18",
     "embla-carousel-react": "^8.6.0",
+    "gtag": "^1.0.1",
     "html2canvas": "^1.4.1",
     "install": "^0.13.0",
     "lodash": "^4.17.21",
