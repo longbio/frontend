@@ -66,6 +66,7 @@ export interface GetUserByIdResponse {
     maritalStatus: string
     educationalStatus: string
     profileImage: string
+    isVerified?: boolean
     height: number
     weight: number
     bornPlace: string
