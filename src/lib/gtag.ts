@@ -1,6 +1,8 @@
 // Google Analytics configuration and utility functions
 
-export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID || ''
+// Only enable Google Analytics in production
+export const GA_TRACKING_ID =
+  process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_GA_ID || '' : ''
 
 // https://developers.google.com/analytics/devguides/collection/gtagjs/pages
 export const pageview = (url: string) => {

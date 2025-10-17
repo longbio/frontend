@@ -13,7 +13,9 @@ import { Button } from '@/components/ui/button'
 import ImageUploader from './components/ImageUploader'
 import { useFlagCountries } from '@/service/countries'
 import { useGetCurrentUser } from '@/service/user/hook'
+import { usePageTracking } from '@/hooks/usePageTracking'
 // import type { GetUserByIdResponse } from '@/service/user/type'
+import { trackShareAction, trackEditAction, trackPremiumSignup } from '@/lib/gtag'
 import {
   Dialog,
   DialogContent,
@@ -54,6 +56,9 @@ function BioContent() {
   const [phone, setPhone] = useState('')
   const router = useRouter()
 
+  // Track page views
+  usePageTracking()
+
   const { data: currentUserResponse, isLoading: loading } = useGetCurrentUser()
   const { data: countriesData } = useFlagCountries()
 
@@ -66,6 +71,9 @@ function BioContent() {
   }, [userData])
 
   const handleEditSection = (section: string) => {
+    // Track edit action
+    trackEditAction(section)
+
     const stepMap: { [key: string]: string } = {
       personal: '/info/birthday',
       gender: '/info/gender',
@@ -91,6 +99,9 @@ function BioContent() {
 
   const handleScreenshot = async () => {
     try {
+      // Track screenshot action
+      trackShareAction('screenshot')
+
       const element = document.getElementById('bio-content')
       if (!element) {
         return
@@ -121,6 +132,10 @@ function BioContent() {
       alert('Please enter either email or phone number')
       return
     }
+
+    // Track premium signup
+    const method = email ? 'email' : 'phone'
+    trackPremiumSignup(method)
 
     // Here you would typically send the data to your backend
     console.log('Premium signup:', { email, phone })
@@ -650,7 +665,10 @@ function BioContent() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
-                onClick={() => setShowShareModal(true)}
+                onClick={() => {
+                  trackShareAction('link')
+                  setShowShareModal(true)
+                }}
                 className="inline-flex basis-1/2 items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-3 rounded-xl font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 <Share2 className="w-5 h-5" />
