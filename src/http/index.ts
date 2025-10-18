@@ -21,7 +21,10 @@ function handleError(error: Error) {
 }
 
 async function request<T>(url: string, options: RequestOptions = {}): Promise<T> {
-  const fullUrl = new URL(url, process.env.NEXT_PUBLIC_API_BASE_URL)
+  const base = process.env.NEXT_PUBLIC_API_BASE_URL
+  if (!base) throw new Error('Missing NEXT_PUBLIC_API_BASE_URL environment variable')
+
+  const fullUrl = new URL(url, base)
   if (options.params) fullUrl.search = objectToQueryString(options.params)
 
   const headers: Record<string, string> = {}
