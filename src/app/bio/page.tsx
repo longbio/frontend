@@ -43,6 +43,8 @@ import {
   Camera,
   Crown,
   CheckCircle,
+  Download,
+  X,
 } from 'lucide-react'
 
 const ClientOnlyBioContent = dynamic(() => Promise.resolve(BioContent), {
@@ -52,6 +54,9 @@ const ClientOnlyBioContent = dynamic(() => Promise.resolve(BioContent), {
 function BioContent() {
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [showShareModal, setShowShareModal] = useState(false)
+  const [showScreenshotModal, setShowScreenshotModal] = useState(false)
+  const [screenshot, setScreenshot] = useState<string | null>(null)
+  const [isGeneratingScreenshot, setIsGeneratingScreenshot] = useState(false)
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const router = useRouter()
@@ -102,8 +107,12 @@ function BioContent() {
       // Track screenshot action
       trackShareAction('screenshot')
 
+      setIsGeneratingScreenshot(true)
+      setShowScreenshotModal(true)
+
       const element = document.getElementById('bio-content')
       if (!element) {
+        setIsGeneratingScreenshot(false)
         return
       }
 
@@ -118,13 +127,51 @@ function BioContent() {
         height: element.scrollHeight,
       })
 
-      const link = document.createElement('a')
-      link.download = `${userData?.fullName || 'bio'}-screenshot.png`
-      link.href = canvas.toDataURL('image/png')
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-    } catch {}
+      const dataURL = canvas.toDataURL('image/png')
+      setScreenshot(dataURL)
+      setIsGeneratingScreenshot(false)
+    } catch (error) {
+      console.error('Error generating screenshot:', error)
+      setIsGeneratingScreenshot(false)
+    }
+  }
+
+  const downloadScreenshot = () => {
+    if (!screenshot) return
+
+    const link = document.createElement('a')
+    link.download = `${userData?.fullName || 'bio'}-screenshot.png`
+    link.href = screenshot
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
+  const shareScreenshot = async () => {
+    if (!screenshot) return
+
+    try {
+      // Convert data URL to blob
+      const response = await fetch(screenshot)
+      const blob = await response.blob()
+      const file = new File([blob], `${userData?.fullName || 'bio'}-screenshot.png`, {
+        type: 'image/png',
+      })
+
+      if (navigator.share && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: `${userData?.fullName || 'User'}'s Bio`,
+          text: `Check out ${userData?.fullName || 'this user'}'s bio on LongBio!`,
+          files: [file],
+        })
+      } else {
+        // Fallback to download
+        downloadScreenshot()
+      }
+    } catch (error) {
+      console.error('Error sharing screenshot:', error)
+      downloadScreenshot()
+    }
   }
 
   const handlePremiumSubmit = () => {
@@ -787,6 +834,77 @@ function BioContent() {
           onClose={() => setShowShareModal(false)}
           userData={userData}
         />
+      )}
+
+      {/* Screenshot Modal */}
+      {showScreenshotModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-bold text-gray-900">اسکرین‌شات بیو</h3>
+              <button
+                onClick={() => {
+                  setShowScreenshotModal(false)
+                  setScreenshot(null)
+                }}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-4">
+              {isGeneratingScreenshot ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+                  <p className="text-gray-600">در حال تولید اسکرین‌شات...</p>
+                </div>
+              ) : !screenshot ? (
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Camera className="w-8 h-8 text-purple-600" />
+                  </div>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">اسکرین‌شات تولید شد</h4>
+                  <p className="text-gray-600 text-sm">اسکرین‌شات بیوی شما آماده است</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {/* Preview */}
+                  <div className="text-center">
+                    <Image
+                      src={screenshot}
+                      alt="Bio Screenshot"
+                      width={400}
+                      height={300}
+                      className="max-w-full h-auto rounded-lg shadow-lg mx-auto"
+                    />
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex gap-3 justify-center">
+                    <button
+                      onClick={downloadScreenshot}
+                      className="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+                    >
+                      <Download className="w-4 h-4" />
+                      دانلود
+                    </button>
+
+                    <button
+                      onClick={shareScreenshot}
+                      className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200"
+                    >
+                      <Share2 className="w-4 h-4" />
+                      اشتراک
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
