@@ -43,7 +43,6 @@ import {
   Camera,
   Crown,
   CheckCircle,
-  Download,
   X,
 } from 'lucide-react'
 
@@ -839,10 +838,10 @@ function BioContent() {
       {/* Screenshot Modal */}
       {showScreenshotModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-hidden">
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <h3 className="text-lg font-bold text-gray-900">اسکرین‌شات بیو</h3>
+              <h3 className="text-lg font-bold text-gray-900">Bio Screenshot</h3>
               <button
                 onClick={() => {
                   setShowScreenshotModal(false)
@@ -859,49 +858,33 @@ function BioContent() {
               {isGeneratingScreenshot ? (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-                  <p className="text-gray-600">در حال تولید اسکرین‌شات...</p>
+                  <p className="text-gray-600">Generating screenshot...</p>
                 </div>
-              ) : !screenshot ? (
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Camera className="w-8 h-8 text-purple-600" />
-                  </div>
-                  <h4 className="text-lg font-semibold text-gray-900 mb-2">اسکرین‌شات تولید شد</h4>
-                  <p className="text-gray-600 text-sm">اسکرین‌شات بیوی شما آماده است</p>
-                </div>
-              ) : (
+              ) : screenshot ? (
                 <div className="space-y-4">
-                  {/* Preview */}
+                  {/* Screenshot Preview */}
                   <div className="text-center">
                     <Image
                       src={screenshot}
                       alt="Bio Screenshot"
-                      width={400}
-                      height={300}
+                      width={800}
+                      height={600}
                       className="max-w-full h-auto rounded-lg shadow-lg mx-auto"
                     />
                   </div>
 
-                  {/* Actions */}
-                  <div className="flex gap-3 justify-center">
-                    <button
-                      onClick={downloadScreenshot}
-                      className="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors"
-                    >
-                      <Download className="w-4 h-4" />
-                      دانلود
-                    </button>
-
+                  {/* Share Button */}
+                  <div className="flex justify-center">
                     <button
                       onClick={shareScreenshot}
-                      className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200"
+                      className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl"
                     >
-                      <Share2 className="w-4 h-4" />
-                      اشتراک
+                      <Share2 className="w-5 h-5" />
+                      Share Screenshot
                     </button>
                   </div>
                 </div>
-              )}
+              ) : null}
             </div>
           </div>
         </div>
