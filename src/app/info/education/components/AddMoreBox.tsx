@@ -8,6 +8,7 @@ interface AddMoreBoxProps {
   placeholder?: string
   buttonLabel?: string
   staticOptions?: string[]
+  allUniversities?: string[]
 }
 
 export default function AddMoreBox({
@@ -38,8 +39,7 @@ export default function AddMoreBox({
   }
 
   const availableOptions = useMemo(
-    () =>
-      staticOptions || (buttonLabel?.includes('Topic') ? topics.map((t) => t.display_name) : []),
+    () => staticOptions || (buttonLabel?.includes('Topic') ? topics.map((t) => t.id) : []),
     [staticOptions, buttonLabel, topics]
   )
 
@@ -204,9 +204,9 @@ export function AddUniversityBox({
   const getRelatedUniversities = () => {
     const relatedUnis = new Set<string>()
     selectedTopics.forEach((topicName) => {
-      const topic = allTopics.find((t) => t.display_name === topicName)
+      const topic = allTopics.find((t) => t.id === topicName)
       if (topic) {
-        topic.universities.forEach((uni) => relatedUnis.add(uni.display_name))
+        topic.universities.forEach((uni) => relatedUnis.add(uni.name))
       }
     })
     return Array.from(relatedUnis)
@@ -216,7 +216,7 @@ export function AddUniversityBox({
   const getAllUniversities = () => {
     const allUnis = new Set<string>()
     allTopics.forEach((topic) => {
-      topic.universities.forEach((uni) => allUnis.add(uni.display_name))
+      topic.universities.forEach((uni) => allUnis.add(uni.name))
     })
     return Array.from(allUnis)
   }
