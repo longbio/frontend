@@ -8,12 +8,13 @@ import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 // import petPic from '/assets/images/pet.png'
-import ShareModal from './components/ShareModal'
 import { Button } from '@/components/ui/button'
+import ShareModal from './components/ShareModal'
 import ImageUploader from './components/ImageUploader'
 import { useFlagCountries } from '@/service/countries'
 import { useGetCurrentUser } from '@/service/user/hook'
 import { usePageTracking } from '@/hooks/usePageTracking'
+import ScreenshotModal from './components/ScreenshotModal'
 // import type { GetUserByIdResponse } from '@/service/user/type'
 import { trackShareAction, trackEditAction, trackPremiumSignup } from '@/lib/gtag'
 import {
@@ -43,7 +44,6 @@ import {
   Camera,
   Crown,
   CheckCircle,
-  X,
 } from 'lucide-react'
 
 const ClientOnlyBioContent = dynamic(() => Promise.resolve(BioContent), {
@@ -111,27 +111,67 @@ function BioContent() {
 
       const element = document.getElementById('bio-content')
       if (!element) {
+        console.error('Bio content element not found')
         setIsGeneratingScreenshot(false)
         return
       }
 
-      const canvas = await html2canvas(element, {
-        backgroundColor: '#f9fafb',
-        scale: 1.5,
-        useCORS: true,
-        allowTaint: true,
-        scrollX: 0,
-        scrollY: 0,
-        width: element.scrollWidth,
-        height: element.scrollHeight,
-      })
+      console.log('Taking screenshot of element:', element)
 
-      const dataURL = canvas.toDataURL('image/png')
+      // Wait a bit for any animations to complete
+      await new Promise((resolve) => setTimeout(resolve, 500))
+
+      // Try multiple approaches for better compatibility
+      let canvas
+      try {
+        canvas = await html2canvas(element, {
+          backgroundColor: '#f9fafb',
+          scale: 0.6,
+          useCORS: true,
+          allowTaint: true,
+          scrollX: 0,
+          scrollY: 0,
+          width: element.scrollWidth,
+          height: element.scrollHeight,
+          logging: false,
+          onclone: (clonedDoc) => {
+            // Ensure all images are loaded in the cloned document
+            const images = clonedDoc.querySelectorAll('img')
+            images.forEach((img) => {
+              if (!img.complete) {
+                img.style.display = 'none'
+              }
+            })
+
+            // Remove any elements that might cause issues
+            const buttons = clonedDoc.querySelectorAll('button')
+            buttons.forEach((btn) => {
+              btn.style.display = 'none'
+            })
+          },
+        })
+      } catch (html2canvasError) {
+        console.error('html2canvas failed, trying alternative approach:', html2canvasError)
+
+        // Fallback: try with simpler options
+        canvas = await html2canvas(element, {
+          backgroundColor: '#f9fafb',
+          scale: 0.5,
+          useCORS: false,
+          allowTaint: false,
+          logging: false,
+        })
+      }
+
+      console.log('Canvas created:', canvas)
+
+      const dataURL = canvas.toDataURL('image/jpeg', 0.7)
       setScreenshot(dataURL)
       setIsGeneratingScreenshot(false)
     } catch (error) {
       console.error('Error generating screenshot:', error)
       setIsGeneratingScreenshot(false)
+      alert('Failed to generate screenshot. Please try again.')
     }
   }
 
@@ -836,59 +876,16 @@ function BioContent() {
       )}
 
       {/* Screenshot Modal */}
-      {showScreenshotModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-hidden">
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <h3 className="text-lg font-bold text-gray-900">Bio Screenshot</h3>
-              <button
-                onClick={() => {
-                  setShowScreenshotModal(false)
-                  setScreenshot(null)
-                }}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5 text-gray-500" />
-              </button>
-            </div>
-
-            {/* Content */}
-            <div className="p-4">
-              {isGeneratingScreenshot ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-                  <p className="text-gray-600">Generating screenshot...</p>
-                </div>
-              ) : screenshot ? (
-                <div className="space-y-4">
-                  {/* Screenshot Preview */}
-                  <div className="text-center">
-                    <Image
-                      src={screenshot}
-                      alt="Bio Screenshot"
-                      width={800}
-                      height={600}
-                      className="max-w-full h-auto rounded-lg shadow-lg mx-auto"
-                    />
-                  </div>
-
-                  {/* Share Button */}
-                  <div className="flex justify-center">
-                    <button
-                      onClick={shareScreenshot}
-                      className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-                    >
-                      <Share2 className="w-5 h-5" />
-                      Share Screenshot
-                    </button>
-                  </div>
-                </div>
-              ) : null}
-            </div>
-          </div>
-        </div>
-      )}
+      <ScreenshotModal
+        isOpen={showScreenshotModal}
+        onClose={() => {
+          setShowScreenshotModal(false)
+          setScreenshot(null)
+        }}
+        screenshot={screenshot}
+        isGenerating={isGeneratingScreenshot}
+        onShare={shareScreenshot}
+      />
     </div>
   )
 }
