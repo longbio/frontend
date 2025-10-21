@@ -17,6 +17,7 @@ interface ScreenshotModalProps {
   screenshot: string | null
   isGenerating: boolean
   onShare: () => void
+  error?: string | null
 }
 
 export default function ScreenshotModal({
@@ -25,6 +26,7 @@ export default function ScreenshotModal({
   screenshot,
   isGenerating,
   onShare,
+  error,
 }: ScreenshotModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -35,6 +37,12 @@ export default function ScreenshotModal({
         </DialogHeader>
 
         <div className="space-y-4">
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-600 text-sm">{error}</p>
+            </div>
+          )}
+
           {isGenerating ? (
             <div className="text-center py-8">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
