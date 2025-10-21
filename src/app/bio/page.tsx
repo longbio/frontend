@@ -56,6 +56,7 @@ function BioContent() {
   const [showScreenshotModal, setShowScreenshotModal] = useState(false)
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [isGeneratingScreenshot, setIsGeneratingScreenshot] = useState(false)
+  const [screenshotError, setScreenshotError] = useState<string | null>(null)
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const router = useRouter()
@@ -107,11 +108,13 @@ function BioContent() {
       trackShareAction('screenshot')
 
       setIsGeneratingScreenshot(true)
+      setScreenshotError(null)
       setShowScreenshotModal(true)
 
       const element = document.getElementById('bio-content')
       if (!element) {
         console.error('Bio content element not found')
+        setScreenshotError('Bio content element not found')
         setIsGeneratingScreenshot(false)
         return
       }
@@ -170,8 +173,10 @@ function BioContent() {
       setIsGeneratingScreenshot(false)
     } catch (error) {
       console.error('Error generating screenshot:', error)
+      setScreenshotError(
+        `Failed to generate screenshot: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
       setIsGeneratingScreenshot(false)
-      alert('Failed to generate screenshot. Please try again.')
     }
   }
 
@@ -881,10 +886,12 @@ function BioContent() {
         onClose={() => {
           setShowScreenshotModal(false)
           setScreenshot(null)
+          setScreenshotError(null)
         }}
         screenshot={screenshot}
         isGenerating={isGeneratingScreenshot}
         onShare={shareScreenshot}
+        error={screenshotError}
       />
     </div>
   )
