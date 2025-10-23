@@ -8,12 +8,18 @@ import { useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 // import petPic from '/assets/images/pet.png'
 import { Button } from '@/components/ui/button'
-import ShareModal from './components/ShareModal'
 import ImageUploader from './components/ImageUploader'
 import { useFlagCountries } from '@/service/countries'
 import { useGetCurrentUser } from '@/service/user/hook'
 import { usePageTracking } from '@/hooks/usePageTracking'
-import ShareScreenshot from './components/ShareScreenshot'
+
+const ShareModal = dynamic(() => import('./components/ShareModal'), {
+  ssr: false,
+})
+
+const ShareScreenshot = dynamic(() => import('./components/ShareScreenshot'), {
+  ssr: false,
+})
 // import type { GetUserByIdResponse } from '@/service/user/type'
 import { trackShareAction, trackEditAction, trackPremiumSignup } from '@/lib/gtag'
 import {

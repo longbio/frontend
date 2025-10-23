@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Copy, Share2, Check } from 'lucide-react'
@@ -32,16 +32,35 @@ interface ShareModalProps {
 
 export default function ShareModal({ isOpen, onClose, userData }: ShareModalProps) {
   const [copied, setCopied] = useState(false)
+  const [hasNativeShare, setHasNativeShare] = useState(false)
 
   const shareUrl = `https://longbio.me/bio/${userData.username}`
   const shareTitle = `${userData.fullName}'s Bio`
   const shareText = `Check out ${userData.fullName}'s bio on LongBio!`
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setHasNativeShare(typeof navigator !== 'undefined' && 'share' in navigator)
+    }
+  }, [])
+
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText(shareUrl)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(shareUrl)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      } else {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea')
+        textArea.value = shareUrl
+        document.body.appendChild(textArea)
+        textArea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textArea)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      }
     } catch (error) {
       console.error('Failed to copy:', error)
     }
@@ -49,7 +68,7 @@ export default function ShareModal({ isOpen, onClose, userData }: ShareModalProp
 
   const handleNativeShare = async () => {
     try {
-      if (navigator.share) {
+      if (typeof navigator !== 'undefined' && navigator.share) {
         await navigator.share({
           title: shareTitle,
           text: shareText,
@@ -73,7 +92,7 @@ export default function ShareModal({ isOpen, onClose, userData }: ShareModalProp
 
         <div className="space-y-4">
           {/* Native Share (Mobile) */}
-          {typeof navigator !== 'undefined' && 'share' in navigator && (
+          {hasNativeShare && (
             <Button
               onClick={handleNativeShare}
               className="w-full flex items-center gap-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700"
