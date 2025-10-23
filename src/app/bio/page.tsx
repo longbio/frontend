@@ -116,12 +116,8 @@ function BioContent() {
       return
     }
 
-    // Track premium signup
     const method = email ? 'email' : 'phone'
     trackPremiumSignup(method)
-
-    // Here you would typically send the data to your backend
-    console.log('Premium signup:', { email, phone })
     setEmail('')
     setPhone('')
     alert('Thank you for your interest in Premium! We will contact you soon.')

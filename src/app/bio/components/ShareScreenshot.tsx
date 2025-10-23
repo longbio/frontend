@@ -35,31 +35,71 @@ export default function ShareScreenshot({
         return
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // Wait for any images to load
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+
+      // Ensure all images are loaded
+      const images = element.querySelectorAll('img')
+      const imagePromises = Array.from(images).map((img) => {
+        return new Promise((resolve) => {
+          if (img.complete) {
+            resolve(true)
+          } else {
+            img.onload = () => resolve(true)
+            img.onerror = () => resolve(true)
+            setTimeout(() => resolve(true), 3000)
+          }
+        })
+      })
+
+      await Promise.all(imagePromises)
+
+      // Scroll to top to capture everything
       element.scrollIntoView({ behavior: 'instant', block: 'start' })
-      await new Promise((resolve) => setTimeout(resolve, 200))
+      await new Promise((resolve) => setTimeout(resolve, 1000))
 
       const fullHeight = element.scrollHeight
       const fullWidth = element.scrollWidth
+      const maxHeight = 5000
+      const needsScaling = fullHeight > maxHeight
+      const scaleFactor = needsScaling ? maxHeight / fullHeight : 1
+      void element.offsetHeight
+
+      const originalOverflow = element.style.overflow
+      element.style.overflow = 'visible'
 
       const canvas = await html2canvas(element, {
         backgroundColor: '#f9fafb',
-        scale: 2,
+        scale: needsScaling ? 1.2 * scaleFactor : 1.8,
         useCORS: true,
         allowTaint: true,
         logging: false,
         width: fullWidth,
-        height: fullHeight,
+        height: needsScaling ? maxHeight : fullHeight,
         scrollX: 0,
         scrollY: 0,
         windowWidth: fullWidth,
-        windowHeight: fullHeight,
+        windowHeight: needsScaling ? maxHeight : fullHeight,
         x: 0,
         y: 0,
         foreignObjectRendering: true,
         removeContainer: true,
-        imageTimeout: 15000,
+        imageTimeout: 30000,
         onclone: (clonedDoc) => {
+          const images = clonedDoc.querySelectorAll('img')
+          images.forEach((img) => {
+            if (!img.complete) {
+              img.style.display = 'none'
+            }
+          })
+          const allElementsForOverflow = clonedDoc.querySelectorAll('*')
+          allElementsForOverflow.forEach((el) => {
+            const htmlEl = el as HTMLElement
+            htmlEl.style.overflow = 'visible'
+            htmlEl.style.overflowX = 'visible'
+            htmlEl.style.overflowY = 'visible'
+          })
+
           const stylesheets = clonedDoc.querySelectorAll('link[rel="stylesheet"], style')
           stylesheets.forEach((sheet) => sheet.remove())
           const safeStyle = clonedDoc.createElement('style')
@@ -320,18 +360,15 @@ export default function ShareScreenshot({
           })
         },
       })
-
-      console.log('Canvas generated:', canvas.width, 'x', canvas.height)
+      element.style.overflow = originalOverflow
 
       const dataURL = canvas.toDataURL('image/png', 1.0)
-      console.log('Screenshot generated successfully')
       setScreenshot(dataURL)
 
       if (onSuccess) {
         onSuccess()
       }
     } catch (error) {
-      console.error('Error generating screenshot:', error)
       const errorMessage = `Failed to generate screenshot: ${
         error instanceof Error ? error.message : 'Unknown error'
       }`
