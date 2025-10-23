@@ -68,7 +68,6 @@ function SetProfileContent() {
 
     try {
       const response = await mutation.mutateAsync(file)
-      console.log('Uploaded profile image:', response.data.url)
       setCookie('info_set_profile', JSON.stringify({ preview: response.data.url }))
     } catch (err) {
       console.error('Failed to upload profile image', err)

@@ -105,7 +105,6 @@ function PetContent() {
           breed: data.petBreed.trim(),
         }
 
-        console.log('Sending pet data:', petData)
         await petMutation.mutateAsync(petData)
       }
     } catch (err) {
