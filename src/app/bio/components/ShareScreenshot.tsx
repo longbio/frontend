@@ -2,8 +2,6 @@
 
 import Image from 'next/image'
 import { useState } from 'react'
-// @ts-expect-error - dom-to-image is not typed
-import * as domtoimage from 'dom-to-image'
 import html2canvas from '@html2canvas/html2canvas'
 import { Download, Share2, X } from 'lucide-react'
 import type { GetUserByIdResponse } from '@/service/user/type'
@@ -62,39 +60,31 @@ export default function ShareScreenshot({
 
       const fullHeight = element.scrollHeight
       const fullWidth = element.scrollWidth
-      const maxHeight = 5000
-      const needsScaling = fullHeight > maxHeight
-      const scaleFactor = needsScaling ? maxHeight / fullHeight : 1
       void element.offsetHeight
 
       const originalOverflow = element.style.overflow
       element.style.overflow = 'visible'
 
-      // Try dom-to-image first as it handles full content better
+      // Force all images to load before screenshot
+      const allImages = element.querySelectorAll('img')
+      for (const img of allImages) {
+        if (!img.complete) {
+          await new Promise((resolve) => {
+            img.onload = () => resolve(true)
+            img.onerror = () => resolve(true)
+            setTimeout(() => resolve(true), 2000)
+          })
+        }
+      }
+
+      // Use html2canvas with better settings for full content capture
       let dataURL: string
 
       try {
-        console.log('Trying dom-to-image...')
-        dataURL = await domtoimage.toPng(element, {
-          quality: 1.0,
-          bgcolor: '#f9fafb',
-          width: fullWidth,
-          height: fullHeight,
-          style: {
-            transform: needsScaling ? `scale(${scaleFactor})` : 'scale(1)',
-            transformOrigin: 'top left',
-          },
-          filter: () => {
-            return true
-          },
-        })
-        console.log('dom-to-image success')
-      } catch (domError) {
-        console.log('dom-to-image failed, falling back to html2canvas:', domError)
-
+        console.log('Using html2canvas with optimized settings...')
         const canvas = await html2canvas(element, {
           backgroundColor: '#f9fafb',
-          scale: needsScaling ? 0.8 * scaleFactor : 1.2,
+          scale: 0.5, // Very small scale to fit everything
           useCORS: true,
           allowTaint: true,
           logging: true,
@@ -113,17 +103,21 @@ export default function ShareScreenshot({
             return false
           },
           onclone: (clonedDoc) => {
+            // Force all images to load in cloned document
             const images = clonedDoc.querySelectorAll('img')
             images.forEach((img) => {
               const htmlImg = img as HTMLImageElement
               if (!htmlImg.complete) {
+                // Force reload the image
                 const src = htmlImg.src
                 htmlImg.src = ''
                 htmlImg.src = src
                 htmlImg.style.display = 'block'
+                htmlImg.style.visibility = 'visible'
               }
             })
 
+            // Remove overflow hidden from all elements to capture full content
             const allElementsForOverflow = clonedDoc.querySelectorAll('*')
             allElementsForOverflow.forEach((el) => {
               const htmlEl = el as HTMLElement
@@ -152,6 +146,7 @@ export default function ShareScreenshot({
                 display: block !important;
                 max-width: 100% !important;
                 height: auto !important;
+                visibility: visible !important;
               }
               
               h1, h2, h3, h4, h5, h6 {
@@ -396,6 +391,10 @@ export default function ShareScreenshot({
         })
 
         dataURL = canvas.toDataURL('image/png', 1.0)
+        console.log('html2canvas success')
+      } catch (error) {
+        console.log('html2canvas failed:', error)
+        throw error
       }
 
       // Restore original overflow
