@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import html2canvas from '@html2canvas/html2canvas'
 import { Download, Share2, X } from 'lucide-react'
 import type { GetUserByIdResponse } from '@/service/user/type'
@@ -22,44 +22,32 @@ export default function ShareScreenshot({
   const [isGenerating, setIsGenerating] = useState(false)
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const bioRef = useRef<HTMLDivElement>(null)
 
   const generateScreenshot = async () => {
-    if (!bioRef.current) {
-      setError('Element not found for screenshot generation')
-      return
-    }
-
     setIsGenerating(true)
     setError(null)
 
     try {
-      // Temporarily make the element visible for capture
-      const element = bioRef.current
-      const originalStyle = element.style.cssText
-
-      // Make element visible but off-screen
-      element.style.position = 'absolute'
-      element.style.left = '-9999px'
-      element.style.top = '0'
-      element.style.visibility = 'visible'
-      element.style.opacity = '1'
-      element.style.zIndex = '1'
-      element.style.width = '400px'
-      element.style.height = 'auto'
+      // Get the actual bio content from the main page
+      const element = document.getElementById('bio-content')
+      if (!element) {
+        setError('Bio content element not found')
+        setIsGenerating(false)
+        return
+      }
 
       // Wait for any images to load
       await new Promise((resolve) => setTimeout(resolve, 500))
 
       // Use minimal options to avoid oklch issues completely
       const canvas = await html2canvas(element, {
-        backgroundColor: '#f8fafc',
-        scale: 1,
+        backgroundColor: '#f9fafb',
+        scale: 0.6,
         useCORS: false,
         allowTaint: false,
         logging: false,
-        width: 400,
-        height: 600,
+        width: element.scrollWidth,
+        height: element.scrollHeight,
         onclone: (clonedDoc) => {
           // Remove all external stylesheets that might contain oklch
           const stylesheets = clonedDoc.querySelectorAll('link[rel="stylesheet"], style')
@@ -219,10 +207,7 @@ export default function ShareScreenshot({
 
       console.log('Canvas generated:', canvas.width, 'x', canvas.height)
 
-      // Restore original style
-      element.style.cssText = originalStyle
-
-      const dataURL = canvas.toDataURL('image/png', 1.0)
+      const dataURL = canvas.toDataURL('image/jpeg', 0.7)
       console.log('Screenshot generated successfully')
       setScreenshot(dataURL)
 
@@ -240,11 +225,6 @@ export default function ShareScreenshot({
       // Call error callback if provided
       if (onError) {
         onError(errorMessage)
-      }
-
-      // Restore original style in case of error
-      if (bioRef.current) {
-        bioRef.current.style.cssText = bioRef.current.style.cssText
       }
     } finally {
       setIsGenerating(false)
@@ -376,132 +356,6 @@ export default function ShareScreenshot({
               </div>
             </div>
           )}
-        </div>
-
-        {/* Hidden Bio for Screenshot */}
-        <div
-          ref={bioRef}
-          className="absolute -left-[9999px] top-0 opacity-0 pointer-events-none"
-          style={{
-            width: '400px',
-            height: 'auto',
-            background: '#f8fafc',
-            fontFamily: 'system-ui, -apple-system, sans-serif',
-          }}
-        >
-          <div
-            className="p-6 w-full"
-            style={{
-              background: 'linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%)',
-              minHeight: '600px',
-            }}
-          >
-            {/* Header */}
-            <div className="text-center mb-6">
-              <div
-                className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4"
-                style={{
-                  background: 'linear-gradient(90deg, #ddd6fe 0%, #fbcfe8 100%)',
-                }}
-              >
-                {userData.profileImage ? (
-                  <Image
-                    src={userData.profileImage}
-                    alt="Profile"
-                    width={64}
-                    height={64}
-                    className="w-16 h-16 rounded-full object-cover"
-                    crossOrigin="anonymous"
-                  />
-                ) : (
-                  <div className="w-16 h-16 rounded-full" style={{ background: '#d1d5db' }}></div>
-                )}
-              </div>
-              <h2 className="text-2xl font-bold mb-2" style={{ color: '#111827' }}>
-                {userData.fullName}
-              </h2>
-              <p className="text-sm" style={{ color: '#4b5563' }}>
-                {userData.educationalStatus === 'student'
-                  ? 'Student'
-                  : userData.educationalStatus === 'graduated'
-                  ? 'Graduated'
-                  : 'Professional'}
-              </p>
-            </div>
-
-            {/* Bio Content */}
-            <div className="space-y-4">
-              {userData.birthDate && (
-                <div
-                  className="rounded-lg p-3"
-                  style={{
-                    background: '#ffffff',
-                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-                  }}
-                >
-                  <h3 className="font-semibold text-sm mb-1" style={{ color: '#111827' }}>
-                    Birth Date
-                  </h3>
-                  <p className="text-sm" style={{ color: '#4b5563' }}>
-                    {userData.birthDate}
-                  </p>
-                </div>
-              )}
-
-              {userData.job && (userData.job.position || userData.job.company) && (
-                <div
-                  className="rounded-lg p-3"
-                  style={{
-                    background: '#ffffff',
-                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-                  }}
-                >
-                  <h3 className="font-semibold text-sm mb-1" style={{ color: '#111827' }}>
-                    Job
-                  </h3>
-                  {userData.job.position && (
-                    <p className="text-sm" style={{ color: '#4b5563' }}>
-                      Position: {userData.job.position}
-                    </p>
-                  )}
-                  {userData.job.company && (
-                    <p className="text-sm" style={{ color: '#4b5563' }}>
-                      Company: {userData.job.company}
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {userData.details && (
-                <div
-                  className="rounded-lg p-3"
-                  style={{
-                    background: '#ffffff',
-                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-                  }}
-                >
-                  <h3 className="font-semibold text-sm mb-1" style={{ color: '#111827' }}>
-                    About
-                  </h3>
-                  <p className="text-sm" style={{ color: '#4b5563' }}>
-                    {userData.details}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Footer */}
-            <div
-              className="text-center mt-6 pt-4"
-              style={{
-                borderTop: '1px solid #e5e7eb',
-              }}
-            >
-              <p className="text-xs" style={{ color: '#6b7280' }}>
-                Powered by LongBio
-              </p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
