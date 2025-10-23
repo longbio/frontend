@@ -249,7 +249,11 @@ export default function ShareScreenshot({
       const blob = await response.blob()
       const file = new File([blob], `${userData.fullName}-bio.png`, { type: 'image/png' })
 
-      if (navigator.share && navigator.canShare({ files: [file] })) {
+      if (
+        typeof navigator !== 'undefined' &&
+        navigator.share &&
+        navigator.canShare({ files: [file] })
+      ) {
         await navigator.share({
           title: `${userData.fullName}'s Bio`,
           text: `Check out ${userData.fullName}'s bio on LongBio!`,
