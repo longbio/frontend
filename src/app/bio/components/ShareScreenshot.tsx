@@ -28,7 +28,6 @@ export default function ShareScreenshot({
     setError(null)
 
     try {
-      // Get the actual bio content from the main page
       const element = document.getElementById('bio-content')
       if (!element) {
         setError('Bio content element not found')
@@ -36,24 +35,33 @@ export default function ShareScreenshot({
         return
       }
 
-      // Wait for any images to load
-      await new Promise((resolve) => setTimeout(resolve, 500))
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      element.scrollIntoView({ behavior: 'instant', block: 'start' })
+      await new Promise((resolve) => setTimeout(resolve, 200))
 
-      // Use minimal options to avoid oklch issues completely
+      const fullHeight = element.scrollHeight
+      const fullWidth = element.scrollWidth
+
       const canvas = await html2canvas(element, {
         backgroundColor: '#f9fafb',
-        scale: 0.6,
-        useCORS: false,
-        allowTaint: false,
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
         logging: false,
-        width: element.scrollWidth,
-        height: element.scrollHeight,
+        width: fullWidth,
+        height: fullHeight,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: fullWidth,
+        windowHeight: fullHeight,
+        x: 0,
+        y: 0,
+        foreignObjectRendering: true,
+        removeContainer: true,
+        imageTimeout: 15000,
         onclone: (clonedDoc) => {
-          // Remove all external stylesheets that might contain oklch
           const stylesheets = clonedDoc.querySelectorAll('link[rel="stylesheet"], style')
           stylesheets.forEach((sheet) => sheet.remove())
-
-          // Add our own completely safe styles
           const safeStyle = clonedDoc.createElement('style')
           safeStyle.textContent = `
             * {
@@ -87,6 +95,14 @@ export default function ShareScreenshot({
               border-radius: 50% !important;
             }
             
+            .rounded-2xl {
+              border-radius: 1rem !important;
+            }
+            
+            .rounded-xl {
+              border-radius: 0.75rem !important;
+            }
+            
             .rounded-lg {
               border-radius: 0.5rem !important;
             }
@@ -115,6 +131,10 @@ export default function ShareScreenshot({
               font-size: 1.5rem !important;
             }
             
+            .text-lg {
+              font-size: 1.125rem !important;
+            }
+            
             .mb-2 {
               margin-bottom: 0.5rem !important;
             }
@@ -127,20 +147,41 @@ export default function ShareScreenshot({
               margin-bottom: 1.5rem !important;
             }
             
-            .mt-6 {
-              margin-top: 1.5rem !important;
+            .mt-4 {
+              margin-top: 1rem !important;
             }
             
             .p-3 {
               padding: 0.75rem !important;
             }
             
+            .p-4 {
+              padding: 1rem !important;
+            }
+            
             .p-6 {
               padding: 1.5rem !important;
             }
             
-            .pt-4 {
-              padding-top: 1rem !important;
+            .pt-8 {
+              padding-top: 2rem !important;
+            }
+            
+            .pb-4 {
+              padding-bottom: 1rem !important;
+            }
+            
+            .px-4 {
+              padding-left: 1rem !important;
+              padding-right: 1rem !important;
+            }
+            
+            .w-24 {
+              width: 6rem !important;
+            }
+            
+            .h-24 {
+              height: 6rem !important;
             }
             
             .w-16 {
@@ -151,12 +192,20 @@ export default function ShareScreenshot({
               height: 4rem !important;
             }
             
-            .w-20 {
-              width: 5rem !important;
+            .w-5 {
+              width: 1.25rem !important;
             }
             
-            .h-20 {
-              height: 5rem !important;
+            .h-5 {
+              height: 1.25rem !important;
+            }
+            
+            .w-4 {
+              width: 1rem !important;
+            }
+            
+            .h-4 {
+              height: 1rem !important;
             }
             
             .mx-auto {
@@ -176,8 +225,40 @@ export default function ShareScreenshot({
               justify-content: center !important;
             }
             
-            .space-y-4 > * + * {
-              margin-top: 1rem !important;
+            .justify-between {
+              justify-content: space-between !important;
+            }
+            
+            .gap-1 {
+              gap: 0.25rem !important;
+            }
+            
+            .gap-2 {
+              gap: 0.5rem !important;
+            }
+            
+            .gap-3 {
+              gap: 0.75rem !important;
+            }
+            
+            .gap-4 {
+              gap: 1rem !important;
+            }
+            
+            .gap-6 {
+              gap: 1.5rem !important;
+            }
+            
+            .space-y-1 > * + * {
+              margin-top: 0.25rem !important;
+            }
+            
+            .space-y-2 > * + * {
+              margin-top: 0.5rem !important;
+            }
+            
+            .space-y-3 > * + * {
+              margin-top: 0.75rem !important;
             }
             
             .object-cover {
@@ -188,13 +269,48 @@ export default function ShareScreenshot({
               box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
             }
             
+            .shadow-lg {
+              box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+            }
+            
+            .border {
+              border-width: 1px !important;
+            }
+            
+            .border-4 {
+              border-width: 4px !important;
+            }
+            
             .border-t {
               border-top-width: 1px !important;
+            }
+            
+            .overflow-hidden {
+              overflow: hidden !important;
+            }
+            
+            .overflow-y-auto {
+              overflow-y: auto !important;
+            }
+            
+            .flex-wrap {
+              flex-wrap: wrap !important;
+            }
+            
+            .flex-shrink-0 {
+              flex-shrink: 0 !important;
+            }
+            
+            .whitespace-nowrap {
+              white-space: nowrap !important;
+            }
+            
+            .capitalize {
+              text-transform: capitalize !important;
             }
           `
           clonedDoc.head.appendChild(safeStyle)
 
-          // Force safe colors on all elements
           const allElements = clonedDoc.querySelectorAll('*')
           allElements.forEach((el) => {
             const htmlEl = el as HTMLElement
@@ -207,11 +323,10 @@ export default function ShareScreenshot({
 
       console.log('Canvas generated:', canvas.width, 'x', canvas.height)
 
-      const dataURL = canvas.toDataURL('image/jpeg', 0.7)
+      const dataURL = canvas.toDataURL('image/png', 1.0)
       console.log('Screenshot generated successfully')
       setScreenshot(dataURL)
 
-      // Call success callback if provided
       if (onSuccess) {
         onSuccess()
       }
@@ -222,7 +337,6 @@ export default function ShareScreenshot({
       }`
       setError(errorMessage)
 
-      // Call error callback if provided
       if (onError) {
         onError(errorMessage)
       }
@@ -244,7 +358,6 @@ export default function ShareScreenshot({
     if (!screenshot) return
 
     try {
-      // Convert data URL to blob
       const response = await fetch(screenshot)
       const blob = await response.blob()
       const file = new File([blob], `${userData.fullName}-bio.png`, { type: 'image/png' })
@@ -260,7 +373,6 @@ export default function ShareScreenshot({
           files: [file],
         })
       } else {
-        // Fallback to download
         downloadScreenshot()
       }
     } catch (error) {
@@ -331,28 +443,32 @@ export default function ShareScreenshot({
             <div className="space-y-4">
               {/* Preview */}
               <div className="text-center">
-                <Image
-                  src={screenshot}
-                  alt="Bio Screenshot"
-                  width={400}
-                  height={300}
-                  className="max-w-full h-auto rounded-lg shadow-lg mx-auto"
-                />
+                <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                  Screenshot Generated Successfully!
+                </h4>
+                <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
+                  <Image
+                    src={screenshot}
+                    alt="Bio Screenshot"
+                    width={400}
+                    height={600}
+                    className="w-full h-auto object-contain"
+                  />
+                </div>
               </div>
 
               {/* Actions */}
-              <div className="flex gap-3 justify-center">
+              <div className="flex gap-3">
                 <button
                   onClick={downloadScreenshot}
-                  className="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+                  className="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-cyan-700 transition-all duration-200"
                 >
                   <Download className="w-4 h-4" />
                   Download
                 </button>
-
                 <button
                   onClick={shareScreenshot}
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200"
+                  className="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200"
                 >
                   <Share2 className="w-4 h-4" />
                   Share
