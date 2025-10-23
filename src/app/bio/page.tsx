@@ -3,7 +3,6 @@ import dayjs from 'dayjs'
 // import Link from 'next/link'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
-import html2canvas from 'html2canvas'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
@@ -14,7 +13,7 @@ import ImageUploader from './components/ImageUploader'
 import { useFlagCountries } from '@/service/countries'
 import { useGetCurrentUser } from '@/service/user/hook'
 import { usePageTracking } from '@/hooks/usePageTracking'
-import ScreenshotModal from './components/ScreenshotModal'
+import ShareScreenshot from './components/ShareScreenshot'
 // import type { GetUserByIdResponse } from '@/service/user/type'
 import { trackShareAction, trackEditAction, trackPremiumSignup } from '@/lib/gtag'
 import {
@@ -53,10 +52,7 @@ const ClientOnlyBioContent = dynamic(() => Promise.resolve(BioContent), {
 function BioContent() {
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [showShareModal, setShowShareModal] = useState(false)
-  const [showScreenshotModal, setShowScreenshotModal] = useState(false)
-  const [screenshot, setScreenshot] = useState<string | null>(null)
-  const [isGeneratingScreenshot, setIsGeneratingScreenshot] = useState(false)
-  const [screenshotError, setScreenshotError] = useState<string | null>(null)
+  const [showShareScreenshot, setShowShareScreenshot] = useState(false)
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const router = useRouter()
@@ -102,120 +98,10 @@ function BioContent() {
     }
   }
 
-  const handleScreenshot = async () => {
-    try {
-      // Track screenshot action
-      trackShareAction('screenshot')
-
-      setIsGeneratingScreenshot(true)
-      setScreenshotError(null)
-      setShowScreenshotModal(true)
-
-      const element = document.getElementById('bio-content')
-      if (!element) {
-        console.error('Bio content element not found')
-        setScreenshotError('Bio content element not found')
-        setIsGeneratingScreenshot(false)
-        return
-      }
-
-      console.log('Taking screenshot of element:', element)
-
-      // Wait a bit for any animations to complete
-      await new Promise((resolve) => setTimeout(resolve, 500))
-
-      // Try multiple approaches for better compatibility
-      let canvas
-      try {
-        canvas = await html2canvas(element, {
-          backgroundColor: '#f9fafb',
-          scale: 0.6,
-          useCORS: true,
-          allowTaint: true,
-          scrollX: 0,
-          scrollY: 0,
-          width: element.scrollWidth,
-          height: element.scrollHeight,
-          logging: false,
-          onclone: (clonedDoc) => {
-            // Ensure all images are loaded in the cloned document
-            const images = clonedDoc.querySelectorAll('img')
-            images.forEach((img) => {
-              if (!img.complete) {
-                img.style.display = 'none'
-              }
-            })
-
-            // Remove any elements that might cause issues
-            const buttons = clonedDoc.querySelectorAll('button')
-            buttons.forEach((btn) => {
-              btn.style.display = 'none'
-            })
-          },
-        })
-      } catch (html2canvasError) {
-        console.error('html2canvas failed, trying alternative approach:', html2canvasError)
-
-        // Fallback: try with simpler options
-        canvas = await html2canvas(element, {
-          backgroundColor: '#f9fafb',
-          scale: 0.5,
-          useCORS: false,
-          allowTaint: false,
-          logging: false,
-        })
-      }
-
-      console.log('Canvas created:', canvas)
-
-      const dataURL = canvas.toDataURL('image/jpeg', 0.7)
-      setScreenshot(dataURL)
-      setIsGeneratingScreenshot(false)
-    } catch (error) {
-      console.error('Error generating screenshot:', error)
-      setScreenshotError(
-        `Failed to generate screenshot: ${error instanceof Error ? error.message : 'Unknown error'}`
-      )
-      setIsGeneratingScreenshot(false)
-    }
-  }
-
-  const downloadScreenshot = () => {
-    if (!screenshot) return
-
-    const link = document.createElement('a')
-    link.download = `${userData?.fullName || 'bio'}-screenshot.png`
-    link.href = screenshot
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
-
-  const shareScreenshot = async () => {
-    if (!screenshot) return
-
-    try {
-      // Convert data URL to blob
-      const response = await fetch(screenshot)
-      const blob = await response.blob()
-      const file = new File([blob], `${userData?.fullName || 'bio'}-screenshot.png`, {
-        type: 'image/png',
-      })
-
-      if (navigator.share && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          title: `${userData?.fullName || 'User'}'s Bio`,
-          text: `Check out ${userData?.fullName || 'this user'}'s bio on LongBio!`,
-          files: [file],
-        })
-      } else {
-        // Fallback to download
-        downloadScreenshot()
-      }
-    } catch (error) {
-      console.error('Error sharing screenshot:', error)
-      downloadScreenshot()
-    }
+  const handleScreenshot = () => {
+    // Track screenshot action
+    trackShareAction('screenshot')
+    setShowShareScreenshot(true)
   }
 
   const handlePremiumSubmit = () => {
@@ -880,19 +766,10 @@ function BioContent() {
         />
       )}
 
-      {/* Screenshot Modal */}
-      <ScreenshotModal
-        isOpen={showScreenshotModal}
-        onClose={() => {
-          setShowScreenshotModal(false)
-          setScreenshot(null)
-          setScreenshotError(null)
-        }}
-        screenshot={screenshot}
-        isGenerating={isGeneratingScreenshot}
-        onShare={shareScreenshot}
-        error={screenshotError}
-      />
+      {/* Share Screenshot Modal */}
+      {showShareScreenshot && userData && (
+        <ShareScreenshot userData={userData} onClose={() => setShowShareScreenshot(false)} />
+      )}
     </div>
   )
 }
