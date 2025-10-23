@@ -1,17 +1,24 @@
 'use client'
 
 import Image from 'next/image'
-import html2canvas from 'html2canvas'
 import { useState, useRef } from 'react'
+import html2canvas from '@html2canvas/html2canvas'
 import { Download, Share2, X } from 'lucide-react'
 import type { GetUserByIdResponse } from '@/service/user/type'
 
 interface ShareScreenshotProps {
   userData: GetUserByIdResponse['data']
   onClose: () => void
+  onSuccess?: () => void
+  onError?: (error: string) => void
 }
 
-export default function ShareScreenshot({ userData, onClose }: ShareScreenshotProps) {
+export default function ShareScreenshot({
+  userData,
+  onClose,
+  onSuccess,
+  onError,
+}: ShareScreenshotProps) {
   const [isGenerating, setIsGenerating] = useState(false)
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -42,48 +49,173 @@ export default function ShareScreenshot({ userData, onClose }: ShareScreenshotPr
       element.style.height = 'auto'
 
       // Wait for any images to load
-      await new Promise((resolve) => setTimeout(resolve, 200))
+      await new Promise((resolve) => setTimeout(resolve, 500))
 
-      console.log('Generating screenshot with element:', element)
-      console.log('Element dimensions:', {
-        width: element.offsetWidth,
-        height: element.offsetHeight,
-        scrollWidth: element.scrollWidth,
-        scrollHeight: element.scrollHeight,
+      // Use minimal options to avoid oklch issues completely
+      const canvas = await html2canvas(element, {
+        backgroundColor: '#f8fafc',
+        scale: 1,
+        useCORS: false,
+        allowTaint: false,
+        logging: false,
+        width: 400,
+        height: 600,
+        onclone: (clonedDoc) => {
+          // Remove all external stylesheets that might contain oklch
+          const stylesheets = clonedDoc.querySelectorAll('link[rel="stylesheet"], style')
+          stylesheets.forEach((sheet) => sheet.remove())
+
+          // Add our own completely safe styles
+          const safeStyle = clonedDoc.createElement('style')
+          safeStyle.textContent = `
+            * {
+              all: unset !important;
+              display: revert !important;
+              box-sizing: border-box !important;
+            }
+            
+            div {
+              display: block !important;
+            }
+            
+            img {
+              display: block !important;
+              max-width: 100% !important;
+              height: auto !important;
+            }
+            
+            h1, h2, h3, h4, h5, h6 {
+              display: block !important;
+              font-weight: bold !important;
+              margin: 0.5em 0 !important;
+            }
+            
+            p {
+              display: block !important;
+              margin: 0.5em 0 !important;
+            }
+            
+            .rounded-full {
+              border-radius: 50% !important;
+            }
+            
+            .rounded-lg {
+              border-radius: 0.5rem !important;
+            }
+            
+            .text-center {
+              text-align: center !important;
+            }
+            
+            .font-bold {
+              font-weight: bold !important;
+            }
+            
+            .font-semibold {
+              font-weight: 600 !important;
+            }
+            
+            .text-sm {
+              font-size: 0.875rem !important;
+            }
+            
+            .text-xs {
+              font-size: 0.75rem !important;
+            }
+            
+            .text-2xl {
+              font-size: 1.5rem !important;
+            }
+            
+            .mb-2 {
+              margin-bottom: 0.5rem !important;
+            }
+            
+            .mb-4 {
+              margin-bottom: 1rem !important;
+            }
+            
+            .mb-6 {
+              margin-bottom: 1.5rem !important;
+            }
+            
+            .mt-6 {
+              margin-top: 1.5rem !important;
+            }
+            
+            .p-3 {
+              padding: 0.75rem !important;
+            }
+            
+            .p-6 {
+              padding: 1.5rem !important;
+            }
+            
+            .pt-4 {
+              padding-top: 1rem !important;
+            }
+            
+            .w-16 {
+              width: 4rem !important;
+            }
+            
+            .h-16 {
+              height: 4rem !important;
+            }
+            
+            .w-20 {
+              width: 5rem !important;
+            }
+            
+            .h-20 {
+              height: 5rem !important;
+            }
+            
+            .mx-auto {
+              margin-left: auto !important;
+              margin-right: auto !important;
+            }
+            
+            .flex {
+              display: flex !important;
+            }
+            
+            .items-center {
+              align-items: center !important;
+            }
+            
+            .justify-center {
+              justify-content: center !important;
+            }
+            
+            .space-y-4 > * + * {
+              margin-top: 1rem !important;
+            }
+            
+            .object-cover {
+              object-fit: cover !important;
+            }
+            
+            .shadow-sm {
+              box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+            }
+            
+            .border-t {
+              border-top-width: 1px !important;
+            }
+          `
+          clonedDoc.head.appendChild(safeStyle)
+
+          // Force safe colors on all elements
+          const allElements = clonedDoc.querySelectorAll('*')
+          allElements.forEach((el) => {
+            const htmlEl = el as HTMLElement
+            htmlEl.style.color = '#1f2937'
+            htmlEl.style.backgroundColor = 'transparent'
+            htmlEl.style.borderColor = '#e5e7eb'
+          })
+        },
       })
-
-      let canvas
-      try {
-        canvas = await html2canvas(element, {
-          backgroundColor: '#f8fafc',
-          scale: 2,
-          useCORS: true,
-          allowTaint: true,
-          logging: true,
-          width: element.offsetWidth || 400,
-          height: element.offsetHeight || 600,
-          scrollX: 0,
-          scrollY: 0,
-          windowWidth: element.offsetWidth || 400,
-          windowHeight: element.offsetHeight || 600,
-          ignoreElements: (element) => {
-            return element.classList.contains('hidden')
-          },
-        })
-      } catch (html2canvasError) {
-        console.error('Primary html2canvas failed, trying fallback:', html2canvasError)
-
-        // Fallback with simpler options
-        canvas = await html2canvas(element, {
-          backgroundColor: '#f8fafc',
-          scale: 1,
-          useCORS: false,
-          allowTaint: false,
-          logging: false,
-          width: 400,
-          height: 600,
-        })
-      }
 
       console.log('Canvas generated:', canvas.width, 'x', canvas.height)
 
@@ -93,11 +225,22 @@ export default function ShareScreenshot({ userData, onClose }: ShareScreenshotPr
       const dataURL = canvas.toDataURL('image/png', 1.0)
       console.log('Screenshot generated successfully')
       setScreenshot(dataURL)
+
+      // Call success callback if provided
+      if (onSuccess) {
+        onSuccess()
+      }
     } catch (error) {
       console.error('Error generating screenshot:', error)
-      setError(
-        `Failed to generate screenshot: ${error instanceof Error ? error.message : 'Unknown error'}`
-      )
+      const errorMessage = `Failed to generate screenshot: ${
+        error instanceof Error ? error.message : 'Unknown error'
+      }`
+      setError(errorMessage)
+
+      // Call error callback if provided
+      if (onError) {
+        onError(errorMessage)
+      }
 
       // Restore original style in case of error
       if (bioRef.current) {
@@ -239,12 +382,28 @@ export default function ShareScreenshot({ userData, onClose }: ShareScreenshotPr
         <div
           ref={bioRef}
           className="absolute -left-[9999px] top-0 opacity-0 pointer-events-none"
-          style={{ width: '400px', height: 'auto' }}
+          style={{
+            width: '400px',
+            height: 'auto',
+            background: '#f8fafc',
+            fontFamily: 'system-ui, -apple-system, sans-serif',
+          }}
         >
-          <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 w-full">
+          <div
+            className="p-6 w-full"
+            style={{
+              background: 'linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%)',
+              minHeight: '600px',
+            }}
+          >
             {/* Header */}
             <div className="text-center mb-6">
-              <div className="w-20 h-20 bg-gradient-to-r from-purple-200 to-pink-200 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div
+                className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4"
+                style={{
+                  background: 'linear-gradient(90deg, #ddd6fe 0%, #fbcfe8 100%)',
+                }}
+              >
                 {userData.profileImage ? (
                   <Image
                     src={userData.profileImage}
@@ -255,11 +414,13 @@ export default function ShareScreenshot({ userData, onClose }: ShareScreenshotPr
                     crossOrigin="anonymous"
                   />
                 ) : (
-                  <div className="w-16 h-16 bg-gray-300 rounded-full"></div>
+                  <div className="w-16 h-16 rounded-full" style={{ background: '#d1d5db' }}></div>
                 )}
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">{userData.fullName}</h2>
-              <p className="text-gray-600 text-sm">
+              <h2 className="text-2xl font-bold mb-2" style={{ color: '#111827' }}>
+                {userData.fullName}
+              </h2>
+              <p className="text-sm" style={{ color: '#4b5563' }}>
                 {userData.educationalStatus === 'student'
                   ? 'Student'
                   : userData.educationalStatus === 'graduated'
@@ -271,35 +432,74 @@ export default function ShareScreenshot({ userData, onClose }: ShareScreenshotPr
             {/* Bio Content */}
             <div className="space-y-4">
               {userData.birthDate && (
-                <div className="bg-white rounded-lg p-3 shadow-sm">
-                  <h3 className="font-semibold text-gray-900 text-sm mb-1">Birth Date</h3>
-                  <p className="text-gray-600 text-sm">{userData.birthDate}</p>
+                <div
+                  className="rounded-lg p-3"
+                  style={{
+                    background: '#ffffff',
+                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+                  }}
+                >
+                  <h3 className="font-semibold text-sm mb-1" style={{ color: '#111827' }}>
+                    Birth Date
+                  </h3>
+                  <p className="text-sm" style={{ color: '#4b5563' }}>
+                    {userData.birthDate}
+                  </p>
                 </div>
               )}
 
               {userData.job && (userData.job.position || userData.job.company) && (
-                <div className="bg-white rounded-lg p-3 shadow-sm">
-                  <h3 className="font-semibold text-gray-900 text-sm mb-1">Job</h3>
+                <div
+                  className="rounded-lg p-3"
+                  style={{
+                    background: '#ffffff',
+                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+                  }}
+                >
+                  <h3 className="font-semibold text-sm mb-1" style={{ color: '#111827' }}>
+                    Job
+                  </h3>
                   {userData.job.position && (
-                    <p className="text-gray-600 text-sm">Position: {userData.job.position}</p>
+                    <p className="text-sm" style={{ color: '#4b5563' }}>
+                      Position: {userData.job.position}
+                    </p>
                   )}
                   {userData.job.company && (
-                    <p className="text-gray-600 text-sm">Company: {userData.job.company}</p>
+                    <p className="text-sm" style={{ color: '#4b5563' }}>
+                      Company: {userData.job.company}
+                    </p>
                   )}
                 </div>
               )}
 
               {userData.details && (
-                <div className="bg-white rounded-lg p-3 shadow-sm">
-                  <h3 className="font-semibold text-gray-900 text-sm mb-1">About</h3>
-                  <p className="text-gray-600 text-sm">{userData.details}</p>
+                <div
+                  className="rounded-lg p-3"
+                  style={{
+                    background: '#ffffff',
+                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+                  }}
+                >
+                  <h3 className="font-semibold text-sm mb-1" style={{ color: '#111827' }}>
+                    About
+                  </h3>
+                  <p className="text-sm" style={{ color: '#4b5563' }}>
+                    {userData.details}
+                  </p>
                 </div>
               )}
             </div>
 
             {/* Footer */}
-            <div className="text-center mt-6 pt-4 border-t border-gray-200">
-              <p className="text-xs text-gray-500">Powered by LongBio</p>
+            <div
+              className="text-center mt-6 pt-4"
+              style={{
+                borderTop: '1px solid #e5e7eb',
+              }}
+            >
+              <p className="text-xs" style={{ color: '#6b7280' }}>
+                Powered by LongBio
+              </p>
             </div>
           </div>
         </div>
