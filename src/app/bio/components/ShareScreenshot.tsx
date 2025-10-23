@@ -60,9 +60,8 @@ export default function ShareScreenshot({
 
       // Get the actual content dimensions (not just visible)
       const fullHeight = element.scrollHeight
-      const fullWidth = element.scrollWidth
+      const fullWidth = Math.max(element.scrollWidth, element.offsetWidth, 800) // Ensure minimum width
 
-      // Temporarily make element visible to capture full content
       const originalOverflow = element.style.overflow
       const originalMaxHeight = element.style.maxHeight
       const originalHeight = element.style.height
@@ -78,7 +77,7 @@ export default function ShareScreenshot({
         scale: 1.0,
         useCORS: true,
         allowTaint: true,
-        logging: false,
+        logging: true,
         width: fullWidth,
         height: fullHeight,
         scrollX: 0,
@@ -91,34 +90,48 @@ export default function ShareScreenshot({
         removeContainer: true,
         imageTimeout: 15000,
         onclone: (clonedDoc) => {
-          // Remove all stylesheets that might contain oklch
-          const stylesheets = clonedDoc.querySelectorAll('link[rel="stylesheet"], style')
-          stylesheets.forEach((sheet) => sheet.remove())
-
-          // Make sure all elements are visible and have proper dimensions
+          // Fix oklch colors and ensure all content is visible
           const allElements = clonedDoc.querySelectorAll('*')
           allElements.forEach((el) => {
             const htmlEl = el as HTMLElement
+
+            // Make sure all content is visible
             htmlEl.style.overflow = 'visible'
+            htmlEl.style.overflowX = 'visible'
+            htmlEl.style.overflowY = 'visible'
             htmlEl.style.maxHeight = 'none'
             htmlEl.style.height = 'auto'
-            htmlEl.style.color = '#1f2937'
-            htmlEl.style.backgroundColor = 'transparent'
+            htmlEl.style.maxWidth = 'none'
+            htmlEl.style.width = 'auto'
+
+            // Fix any oklch colors by replacing with safe colors
+            if (htmlEl.style.color && htmlEl.style.color.includes('oklch')) {
+              htmlEl.style.color = '#1f2937'
+            }
+            if (htmlEl.style.backgroundColor && htmlEl.style.backgroundColor.includes('oklch')) {
+              htmlEl.style.backgroundColor = 'transparent'
+            }
+            if (htmlEl.style.borderColor && htmlEl.style.borderColor.includes('oklch')) {
+              htmlEl.style.borderColor = '#e5e7eb'
+            }
           })
 
-          // Ensure images are visible
-          const images = clonedDoc.querySelectorAll('img')
-          images.forEach((img) => {
-            const htmlImg = img as HTMLImageElement
-            htmlImg.style.display = 'block'
-            htmlImg.style.visibility = 'visible'
-            htmlImg.style.maxWidth = '100%'
-            htmlImg.style.height = 'auto'
-          })
+          // Set minimum width for the main container
+          const mainContainer = clonedDoc.querySelector('#bio-content') as HTMLElement
+          if (mainContainer) {
+            mainContainer.style.minWidth = '800px'
+            mainContainer.style.width = '800px'
+            mainContainer.style.maxWidth = 'none'
+          }
         },
       })
 
-      const dataURL = canvas.toDataURL('image/png', 1.0)
+      const dataURL = canvas.toDataURL('image/png', 1.0) // Maximum quality PNG
+
+      // Check if dataURL is valid
+      if (!dataURL || dataURL === 'data:,') {
+        throw new Error('Failed to generate valid image data')
+      }
 
       // Restore original styles
       element.style.overflow = originalOverflow
@@ -245,13 +258,14 @@ export default function ShareScreenshot({
                 <h4 className="text-lg font-semibold text-gray-900 mb-4">
                   Screenshot Generated Successfully!
                 </h4>
-                <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
+                <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50 max-h-[30rem] max-w-full flex items-center justify-center">
                   <Image
                     src={screenshot}
                     alt="Bio Screenshot"
-                    width={400}
-                    height={600}
+                    width={800}
+                    height={610}
                     className="w-full h-auto object-contain"
+                    quality={100}
                   />
                 </div>
               </div>
