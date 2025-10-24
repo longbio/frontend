@@ -23,63 +23,103 @@ export default function ShareScreenshot({
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
+  const preloadImage = (src: string): Promise<HTMLImageElement> => {
+    return new Promise((resolve, reject) => {
+      const img = new window.Image()
+      img.crossOrigin = 'anonymous'
+      img.onload = () => resolve(img)
+      img.onerror = () => reject(new Error(`Failed to load image: ${src}`))
+      img.src = src
+    })
+  }
+
   const generateScreenshot = async () => {
     setIsGenerating(true)
     setError(null)
 
     try {
-      const element = document.getElementById('bio-content')
+      let element = document.getElementById('bio-content')
+
+      if (!element) {
+        element = document.querySelector('.flex-1.px-4.pt-8.pb-4.overflow-y-auto') as HTMLElement
+      }
+
       if (!element) {
         setError('Bio content element not found')
         setIsGenerating(false)
         return
       }
 
-      // Wait for any images to load
       await new Promise((resolve) => setTimeout(resolve, 2000))
 
-      // Ensure all images are loaded
       const images = element.querySelectorAll('img')
-      const imagePromises = Array.from(images).map((img) => {
-        return new Promise((resolve) => {
-          if (img.complete) {
-            resolve(true)
-          } else {
-            img.onload = () => resolve(true)
-            img.onerror = () => resolve(true)
-            setTimeout(() => resolve(true), 3000)
+      for (const img of images) {
+        const imgElement = img as HTMLImageElement
+
+        imgElement.style.display = 'block'
+        imgElement.style.visibility = 'visible'
+        imgElement.style.opacity = '1'
+
+        if (imgElement.src && !imgElement.complete) {
+          try {
+            await preloadImage(imgElement.src)
+          } catch {
+            console.warn('Failed to preload image:', imgElement.src)
           }
-        })
-      })
-
-      await Promise.all(imagePromises)
-
-      // Scroll to top to capture everything
+        }
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      void element.offsetHeight
       element.scrollIntoView({ behavior: 'instant', block: 'start' })
       await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // Get the actual content dimensions (not just visible)
       const fullHeight = element.scrollHeight
       const fullWidth = Math.max(element.scrollWidth, element.offsetWidth, 800) // Ensure minimum width
-
       const originalOverflow = element.style.overflow
       const originalMaxHeight = element.style.maxHeight
       const originalHeight = element.style.height
-
+      const originalOverflowY = element.style.overflowY
       element.style.overflow = 'visible'
+      element.style.overflowY = 'visible'
       element.style.maxHeight = 'none'
       element.style.height = 'auto'
 
       void element.offsetHeight
 
+      await new Promise((resolve) => setTimeout(resolve, 500))
+
+      const allImages = element.querySelectorAll('img')
+      allImages.forEach((img) => {
+        const imgElement = img as HTMLImageElement
+        imgElement.style.display = 'block'
+        imgElement.style.visibility = 'visible'
+        imgElement.style.opacity = '1'
+        imgElement.style.maxWidth = 'none'
+        imgElement.style.maxHeight = 'none'
+
+        if (imgElement.src && !imgElement.complete) {
+          const newImg = new window.Image()
+          newImg.crossOrigin = 'anonymous'
+          newImg.onload = () => {
+            imgElement.src = newImg.src
+          }
+          newImg.onerror = () => {
+            console.warn('Image failed to load:', imgElement.src)
+          }
+          newImg.src = imgElement.src
+        }
+      })
+
+      const actualHeight = Math.max(element.scrollHeight, element.offsetHeight, fullHeight)
+      const actualWidth = Math.max(element.scrollWidth, element.offsetWidth, fullWidth)
+
       const canvas = await html2canvas(element, {
         backgroundColor: '#f9fafb',
-        scale: 1.0,
+        scale: 2.0,
         useCORS: true,
         allowTaint: true,
-        logging: true,
-        width: fullWidth,
-        height: fullHeight,
+        logging: false,
+        width: actualWidth,
+        height: actualHeight,
         scrollX: 0,
         scrollY: 0,
         windowWidth: fullWidth,
@@ -88,14 +128,16 @@ export default function ShareScreenshot({
         y: 0,
         foreignObjectRendering: true,
         removeContainer: true,
-        imageTimeout: 15000,
+        imageTimeout: 20000,
+        proxy: undefined,
+        ignoreElements: (element) => {
+          return element.classList?.contains('screenshot-ignore') || false
+        },
         onclone: (clonedDoc) => {
-          // Fix oklch colors and ensure all content is visible
           const allElements = clonedDoc.querySelectorAll('*')
           allElements.forEach((el) => {
             const htmlEl = el as HTMLElement
 
-            // Make sure all content is visible
             htmlEl.style.overflow = 'visible'
             htmlEl.style.overflowX = 'visible'
             htmlEl.style.overflowY = 'visible'
@@ -116,13 +158,55 @@ export default function ShareScreenshot({
             }
           })
 
-          // Set minimum width for the main container
+          // Set minimum width for the main container and ensure full visibility
           const mainContainer = clonedDoc.querySelector('#bio-content') as HTMLElement
           if (mainContainer) {
             mainContainer.style.minWidth = '800px'
             mainContainer.style.width = '800px'
             mainContainer.style.maxWidth = 'none'
+            mainContainer.style.overflow = 'visible'
+            mainContainer.style.overflowY = 'visible'
+            mainContainer.style.maxHeight = 'none'
+            mainContainer.style.height = 'auto'
           }
+
+          // Also ensure the parent container is fully visible
+          const parentContainer = clonedDoc.querySelector(
+            '.flex-1.px-4.pt-8.pb-4.overflow-y-auto'
+          ) as HTMLElement
+          if (parentContainer) {
+            parentContainer.style.overflow = 'visible'
+            parentContainer.style.overflowY = 'visible'
+            parentContainer.style.maxHeight = 'none'
+            parentContainer.style.height = 'auto'
+          }
+
+          // Ensure all images are properly loaded in the cloned document
+          const clonedImages = clonedDoc.querySelectorAll('img')
+          clonedImages.forEach((img) => {
+            const imgElement = img as HTMLImageElement
+
+            // Make sure the image is visible
+            imgElement.style.display = 'block'
+            imgElement.style.visibility = 'visible'
+            imgElement.style.opacity = '1'
+            imgElement.style.maxWidth = 'none'
+            imgElement.style.maxHeight = 'none'
+
+            // Force reload if needed
+            if (imgElement.src) {
+              const newImg = new window.Image()
+              newImg.crossOrigin = 'anonymous'
+              newImg.onload = () => {
+                imgElement.src = newImg.src
+              }
+              newImg.onerror = () => {
+                // Keep original src if reload fails
+                console.warn('Failed to reload image in clone:', imgElement.src)
+              }
+              newImg.src = imgElement.src
+            }
+          })
         },
       })
 
@@ -135,6 +219,7 @@ export default function ShareScreenshot({
 
       // Restore original styles
       element.style.overflow = originalOverflow
+      element.style.overflowY = originalOverflowY
       element.style.maxHeight = originalMaxHeight
       element.style.height = originalHeight
 
@@ -259,14 +344,22 @@ export default function ShareScreenshot({
                   Screenshot Generated Successfully!
                 </h4>
                 <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50 max-h-[30rem] max-w-full flex items-center justify-center">
-                  <Image
-                    src={screenshot}
-                    alt="Bio Screenshot"
-                    width={800}
-                    height={610}
-                    className="w-full h-auto object-contain"
-                    quality={100}
-                  />
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Image
+                      src={screenshot}
+                      alt="Bio Screenshot"
+                      width={800}
+                      height={1200}
+                      className="w-full h-auto object-contain"
+                      quality={100}
+                      style={{
+                        transform: 'scale(0.6)',
+                        transformOrigin: 'center center',
+                        maxHeight: '100%',
+                        maxWidth: '100%',
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
 
