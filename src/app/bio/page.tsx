@@ -196,7 +196,7 @@ function BioContent() {
   })
 
   return (
-    <div className="flex flex-col w-full h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
+    <div className="flex flex-col justify-center items-center w-full min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
       {/* Main Content */}
       <div className="flex-1 px-4 pt-8 pb-4 overflow-y-auto">
         <div id="bio-content">

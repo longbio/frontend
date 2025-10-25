@@ -43,14 +43,27 @@ export default function ShareScreenshot({
 
       await new Promise((resolve) => setTimeout(resolve, 2000))
 
-      const images = element.querySelectorAll('img')
-      const imagePromises = Array.from(images).map((img) => {
+      // Store original image sources in localStorage for preservation
+      const bioImages = element.querySelectorAll('img')
+      const imagePromises = Array.from(bioImages).map((img, index) => {
         return new Promise<void>((resolve) => {
+          // Store the original src in localStorage for later retrieval
+          if (img.src && !img.src.includes('data:image/svg+xml')) {
+            localStorage.setItem(`bio-image-${index}`, img.src)
+          }
+
           if (img.complete) {
             resolve()
           } else {
             img.onload = () => resolve()
-            img.onerror = () => resolve()
+            img.onerror = () => {
+              // If image fails, try to get from localStorage
+              const storedSrc = localStorage.getItem(`bio-image-${index}`)
+              if (storedSrc && img.src !== storedSrc) {
+                img.src = storedSrc
+              }
+              resolve()
+            }
             setTimeout(() => resolve(), 3000)
           }
         })
@@ -146,6 +159,49 @@ export default function ShareScreenshot({
             bioContent.style.margin = '0 auto'
           }
 
+          // Restore original image sources from localStorage
+          const clonedImages = clonedDoc.querySelectorAll('img')
+          clonedImages.forEach((img, index) => {
+            const htmlImg = img as HTMLImageElement
+            const storedSrc = localStorage.getItem(`bio-image-${index}`)
+
+            if (storedSrc) {
+              // Use the exact original src from the bio page
+              htmlImg.src = storedSrc
+              console.log(`Restored image ${index} with src:`, storedSrc)
+            } else if (
+              !htmlImg.src ||
+              htmlImg.src.includes('placeholder') ||
+              htmlImg.src.includes('data:image/svg')
+            ) {
+              // Fallback to LongBio logo if no original src
+              htmlImg.src = '/assets/images/logo.svg'
+              htmlImg.alt = 'LongBio Logo'
+              console.log(`Using fallback logo for image ${index}`)
+            }
+
+            // Ensure proper image styling to match bio page
+            htmlImg.style.display = 'block'
+            htmlImg.style.maxWidth = '100%'
+            htmlImg.style.height = 'auto'
+            htmlImg.style.objectFit = 'cover'
+            htmlImg.style.borderRadius = '50%'
+            htmlImg.style.width = '100%'
+            htmlImg.style.aspectRatio = '1'
+
+            // Ensure parent container has proper dimensions
+            const parentContainer = htmlImg.parentElement
+            if (parentContainer) {
+              parentContainer.style.width = '6rem'
+              parentContainer.style.height = '6rem'
+              parentContainer.style.borderRadius = '50%'
+              parentContainer.style.overflow = 'hidden'
+              parentContainer.style.display = 'flex'
+              parentContainer.style.alignItems = 'center'
+              parentContainer.style.justifyContent = 'center'
+            }
+          })
+
           // Remove all height restrictions and make everything visible
           const allElements = clonedDoc.querySelectorAll('*')
           allElements.forEach((el) => {
@@ -229,6 +285,10 @@ export default function ShareScreenshot({
               display: block !important;
               max-width: 100% !important;
               height: auto !important;
+              object-fit: cover !important;
+              border-radius: 50% !important;
+              width: 100% !important;
+              aspect-ratio: 1 !important;
             }
             
             h1, h2, h3, h4, h5, h6 {
@@ -244,6 +304,22 @@ export default function ShareScreenshot({
             
             .rounded-full {
               border-radius: 50% !important;
+            }
+            
+            .w-24 {
+              width: 6rem !important;
+            }
+            
+            .h-24 {
+              height: 6rem !important;
+            }
+            
+            .w-16 {
+              width: 4rem !important;
+            }
+            
+            .h-16 {
+              height: 4rem !important;
             }
             
             .rounded-2xl {
@@ -498,7 +574,7 @@ export default function ShareScreenshot({
 
       console.log('Canvas generated:', canvas.width, 'x', canvas.height)
 
-      const dataURL = canvas.toDataURL('image/png', 1.0)
+      const dataURL = canvas.toDataURL('image/png', 2.0)
 
       if (!dataURL || dataURL === 'data:,') {
         throw new Error('Failed to generate valid image data')
@@ -506,6 +582,12 @@ export default function ShareScreenshot({
 
       console.log('Screenshot generated successfully')
       setScreenshot(dataURL)
+
+      // Clean up localStorage
+      const cleanupImages = element.querySelectorAll('img')
+      cleanupImages.forEach((_, index) => {
+        localStorage.removeItem(`bio-image-${index}`)
+      })
 
       if (onSuccess) {
         onSuccess()
@@ -634,7 +716,7 @@ export default function ShareScreenshot({
                     alt="Bio Screenshot"
                     width={600}
                     height={400}
-                    className="w-full scale-y-[55%] scale-x-[65%] h-auto object-cover max-h-full"
+                    className="w-full scale-y-[47%] scale-x-[65%] h-auto object-cover max-h-full"
                   />
                 </div>
               </div>
