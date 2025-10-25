@@ -39,18 +39,22 @@ export default function ShareModal({ isOpen, onClose, userData }: ShareModalProp
   const shareText = `Check out ${userData.fullName}'s bio on LongBio!`
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setHasNativeShare(typeof navigator !== 'undefined' && 'share' in navigator)
+    if (typeof window !== 'undefined' && typeof navigator !== 'undefined') {
+      setHasNativeShare('share' in navigator)
     }
   }, [])
 
   const handleCopyLink = async () => {
     try {
-      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      if (
+        typeof window !== 'undefined' &&
+        typeof navigator !== 'undefined' &&
+        navigator.clipboard
+      ) {
         await navigator.clipboard.writeText(shareUrl)
         setCopied(true)
         setTimeout(() => setCopied(false), 2000)
-      } else {
+      } else if (typeof document !== 'undefined') {
         // Fallback for older browsers
         const textArea = document.createElement('textarea')
         textArea.value = shareUrl
@@ -68,7 +72,7 @@ export default function ShareModal({ isOpen, onClose, userData }: ShareModalProp
 
   const handleNativeShare = async () => {
     try {
-      if (typeof navigator !== 'undefined' && navigator.share) {
+      if (typeof window !== 'undefined' && typeof navigator !== 'undefined' && navigator.share) {
         await navigator.share({
           title: shareTitle,
           text: shareText,
