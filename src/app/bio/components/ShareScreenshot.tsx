@@ -112,7 +112,7 @@ export default function ShareScreenshot({
 
       const canvas = await html2canvas(element, {
         backgroundColor: '#f9fafb',
-        scale: 2.0,
+        scale: 1.0,
         useCORS: true,
         allowTaint: true,
         logging: false,
@@ -141,6 +141,9 @@ export default function ShareScreenshot({
             bioContent.style.alignItems = 'center'
             bioContent.style.minHeight = '100vh'
             bioContent.style.padding = '2rem 0'
+            bioContent.style.width = '100%'
+            bioContent.style.maxWidth = '800px'
+            bioContent.style.margin = '0 auto'
           }
 
           // Remove all height restrictions and make everything visible
@@ -191,20 +194,23 @@ export default function ShareScreenshot({
               box-sizing: border-box !important;
             }
             
-            #bio-content {
-              height: auto !important;
-              max-height: none !important;
-              overflow: visible !important;
-              overflow-y: visible !important;
-              position: static !important;
-              transform: none !important;
-              display: flex !important;
-              flex-direction: column !important;
-              justify-content: center !important;
-              align-items: center !important;
-              min-height: 100vh !important;
-              padding: 2rem 0 !important;
-            }
+             #bio-content {
+               height: auto !important;
+               max-height: none !important;
+               overflow: visible !important;
+               overflow-y: visible !important;
+               position: static !important;
+               transform: none !important;
+               display: flex !important;
+               flex-direction: column !important;
+               justify-content: center !important;
+               align-items: center !important;
+               min-height: 100vh !important;
+               padding: 2rem 0 !important;
+               width: 100% !important;
+               max-width: 800px !important;
+               margin: 0 auto !important;
+             }
             
             #bio-content .flex-1 {
               height: auto !important;
@@ -622,13 +628,13 @@ export default function ShareScreenshot({
                 <h4 className="text-lg font-semibold text-gray-900 mb-3">
                   Screenshot Generated Successfully!
                 </h4>
-                <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50 max-h-[57vh] flex items-center justify-center">
+                <div className="border border-gray-200 rounded-lg overflow-hidden max-h-[57vh] flex items-center justify-center">
                   <Image
                     src={screenshot}
                     alt="Bio Screenshot"
                     width={600}
                     height={400}
-                    className="w-full scale-[55%] object-cover max-h-full"
+                    className="w-full scale-y-[55%] scale-x-[65%] h-auto object-cover max-h-full"
                   />
                 </div>
               </div>
