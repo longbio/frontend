@@ -54,18 +54,14 @@ export default function ShareScreenshot({
       await new Promise((resolve) => setTimeout(resolve, 2000))
 
       const images = element.querySelectorAll('img')
-      for (const img of images) {
-        const imgElement = img as HTMLImageElement
-
-        imgElement.style.display = 'block'
-        imgElement.style.visibility = 'visible'
-        imgElement.style.opacity = '1'
-
-        if (imgElement.src && !imgElement.complete) {
-          try {
-            await preloadImage(imgElement.src)
-          } catch {
-            console.warn('Failed to preload image:', imgElement.src)
+      const imagePromises = Array.from(images).map((img) => {
+        return new Promise<void>((resolve) => {
+          if (img.complete) {
+            resolve()
+          } else {
+            img.onload = () => resolve()
+            img.onerror = () => resolve()
+            setTimeout(() => resolve(), 3000)
           }
         })
       })
