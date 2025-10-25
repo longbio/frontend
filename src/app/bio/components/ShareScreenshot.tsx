@@ -38,12 +38,13 @@ export default function ShareScreenshot({
     setError(null)
 
     try {
-      let element = document.getElementById('bio-content')
-
-      if (!element) {
-        element = document.querySelector('.flex-1.px-4.pt-8.pb-4.overflow-y-auto') as HTMLElement
+      if (typeof window === 'undefined' || typeof document === 'undefined') {
+        setError('Browser environment not available')
+        setIsGenerating(false)
+        return
       }
 
+      const element = document.getElementById('bio-content')
       if (!element) {
         setError('Bio content element not found')
         setIsGenerating(false)
@@ -506,6 +507,11 @@ export default function ShareScreenshot({
       console.log('Canvas generated:', canvas.width, 'x', canvas.height)
 
       const dataURL = canvas.toDataURL('image/png', 1.0)
+
+      if (!dataURL || dataURL === 'data:,') {
+        throw new Error('Failed to generate valid image data')
+      }
+
       console.log('Screenshot generated successfully')
       setScreenshot(dataURL)
 
@@ -529,6 +535,8 @@ export default function ShareScreenshot({
   const downloadScreenshot = () => {
     if (!screenshot) return
 
+    if (typeof document === 'undefined') return
+
     const link = document.createElement('a')
     link.download = `${userData.fullName}-bio.png`
     link.href = screenshot
@@ -544,6 +552,7 @@ export default function ShareScreenshot({
       const file = new File([blob], `${userData.fullName}-bio.png`, { type: 'image/png' })
 
       if (
+        typeof window !== 'undefined' &&
         typeof navigator !== 'undefined' &&
         navigator.share &&
         navigator.canShare({ files: [file] })
