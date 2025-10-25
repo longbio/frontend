@@ -138,7 +138,7 @@ function BioContent() {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
-          <div className="text-gray-500 mb-4">
+          <div className="text-gray-500 ">
             <svg
               className="w-16 h-16 mx-auto"
               fill="none"
@@ -198,164 +198,14 @@ function BioContent() {
   return (
     <div className="flex flex-col w-full h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
       {/* Main Content */}
-      <div id="bio-content" className="flex-1 px-4 pt-8 pb-4 overflow-y-auto">
-        {/* Basic Info Section */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <User className="w-5 h-5 text-purple-600" />
-              <h2 className="text-lg font-bold text-gray-900">Basic Information</h2>
-            </div>
-            <button
-              onClick={() => handleEditSection('personal')}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <Edit3 className="w-4 h-4 text-gray-500" />
-            </button>
-          </div>
-
-          <div className="text-center mb-4">
-            {/* Profile Picture - Above Name */}
-            <div className="flex justify-center mb-4">
-              <div className="relative group">
-                <div className="w-24 h-24 border-4 border-purple-200 rounded-full overflow-hidden shadow-lg">
-                  {userData.profileImage ? (
-                    <Image
-                      src={userData.profileImage}
-                      alt="profile picture"
-                      width={96}
-                      height={96}
-                      className="w-full h-full object-cover"
-                      style={{ borderRadius: '50%' }}
-                    />
-                  ) : (
-                    <ImageUploader
-                      image={profileImage}
-                      setImage={setProfileImage}
-                      className="w-full h-full object-cover cursor-pointer rounded-full"
-                      isProfile={true}
-                    />
-                  )}
-                </div>
-                {/* Edit Button Overlay */}
-                <button
-                  onClick={() => handleEditSection('profile')}
-                  className="absolute -bottom-1 -right-1 w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center shadow-lg hover:bg-purple-700 transition-colors"
-                >
-                  <Edit3 className="w-4 h-4 text-white" />
-                </button>
-              </div>
-            </div>
-
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">{userData.fullName}</h3>
-            <div className="flex items-center justify-center gap-1 mb-2">
-              <p className="text-gray-600">{userData.username ? `@${userData.username}` : ''}</p>
-              {userData.isVerified === true && <CheckCircle className="w-5 h-5 text-blue-500" />}
-            </div>
-
-            <div className="flex justify-center gap-3 flex-wrap">
-              {age && (
-                <div className="flex items-center gap-1 bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-sm">
-                  <Calendar className="w-4 h-4" />
-                  <span>Age {age}</span>
-                </div>
-              )}
-              {(userData.height > 0 || userData.weight > 0) && (
-                <div className="flex items-center gap-1 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
-                  <Ruler className="w-4 h-4" />
-                  <span>
-                    {userData.height > 0 && userData.weight > 0
-                      ? `${userData.height}cm, ${userData.weight}kg`
-                      : userData.height > 0
-                      ? `${userData.height}cm`
-                      : `${userData.weight}kg`}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* Location Info */}
-            {((userData.bornPlace &&
-              typeof userData.bornPlace === 'string' &&
-              userData.bornPlace.trim() !== '') ||
-              (userData.livePlace &&
-                typeof userData.livePlace === 'string' &&
-                userData.livePlace.trim() !== '')) && (
-              <div className="mt-4 p-3 bg-gray-50 rounded-xl border border-gray-200">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <MapPin className="w-4 h-4 text-purple-600" />
-                  <span className="text-sm font-medium text-gray-700">Location</span>
-                </div>
-                <div className="text-center space-y-1">
-                  {userData.bornPlace &&
-                    typeof userData.bornPlace === 'string' &&
-                    userData.bornPlace.trim() !== '' && (
-                      <p className="text-sm text-gray-600">
-                        <span className="font-medium">Born:</span> {userData.bornPlace}
-                      </p>
-                    )}
-                  {userData.livePlace &&
-                    typeof userData.livePlace === 'string' &&
-                    userData.livePlace.trim() !== '' && (
-                      <p className="text-sm text-gray-600">
-                        <span className="font-medium">Live:</span> {userData.livePlace}
-                      </p>
-                    )}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="flex justify-center gap-6 text-sm text-gray-600">
-            {typeof userData.gender === 'string' && userData.gender.trim() !== '' && (
-              <span className="flex items-center gap-1">
-                {userData.gender.toLowerCase() === 'male' ||
-                userData.gender.toLowerCase() === 'مرد' ? (
-                  <Mars className="w-4 h-4" />
-                ) : userData.gender.toLowerCase() === 'female' ||
-                  userData.gender.toLowerCase() === 'زن' ? (
-                  <Venus className="w-4 h-4" />
-                ) : (
-                  <Users className="w-4 h-4" />
-                )}
-                {userData.gender}
-              </span>
-            )}
-            {typeof userData.maritalStatus === 'string' && userData.maritalStatus.trim() !== '' && (
-              <span className="flex items-center gap-1">
-                <Heart className="w-4 h-4" />
-                {userData.maritalStatus}
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Details  */}
-        {typeof userData.details === 'string' && userData.details.trim() !== '' && (
+      <div className="flex-1 px-4 pt-8 pb-4 overflow-y-auto">
+        <div id="bio-content">
+          {/* Basic Info Section */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <User className="w-5 h-5 text-purple-600" />
-                <h3 className="font-bold text-gray-900">About Me</h3>
-              </div>
-              <button
-                onClick={() => handleEditSection('details')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Edit3 className="w-4 h-4 text-gray-500" />
-              </button>
-            </div>
-            <p className="text-gray-700">{userData.details}</p>
-          </div>
-        )}
-
-        {/* Birth Date  */}
-        {userData.birthDate && (
-          <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-purple-600" />
-                <h3 className="font-bold text-gray-900">Birth Date</h3>
+                <h2 className="text-lg font-bold text-gray-900">Basic Information</h2>
               </div>
               <button
                 onClick={() => handleEditSection('personal')}
@@ -364,276 +214,430 @@ function BioContent() {
                 <Edit3 className="w-4 h-4 text-gray-500" />
               </button>
             </div>
-            <p className="text-gray-700">{dayjs(userData.birthDate).format('MMMM DD, YYYY')}</p>
-          </div>
-        )}
 
-        {/* Education  */}
-        {(userData.education?.university ||
-          userData.education?.topic ||
-          userData.education?.graduationYear ||
-          (userData.educationalStatus && userData.educationalStatus !== 'none')) && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <GraduationCap className="w-5 h-5 text-purple-600" />
-                <h3 className="font-bold text-gray-900">Education</h3>
+            <div className="text-center mb-4">
+              {/* Profile Picture - Above Name */}
+              <div className="flex justify-center mb-4">
+                <div className="relative group">
+                  <div className="w-24 h-24 border-4 border-purple-200 rounded-full overflow-hidden shadow-lg">
+                    {userData.profileImage ? (
+                      <Image
+                        src={userData.profileImage}
+                        alt="profile picture"
+                        width={96}
+                        height={96}
+                        className="w-full h-full object-cover"
+                        style={{ borderRadius: '50%' }}
+                      />
+                    ) : (
+                      <ImageUploader
+                        image={profileImage}
+                        setImage={setProfileImage}
+                        className="w-full h-full object-cover cursor-pointer rounded-full"
+                        isProfile={true}
+                      />
+                    )}
+                  </div>
+                  {/* Edit Button Overlay */}
+                  <button
+                    onClick={() => handleEditSection('profile')}
+                    className="absolute -bottom-1 -right-1 w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center shadow-lg hover:bg-purple-700 transition-colors"
+                  >
+                    <Edit3 className="w-4 h-4 text-white" />
+                  </button>
+                </div>
               </div>
-              <button
-                onClick={() => handleEditSection('education')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Edit3 className="w-4 h-4 text-gray-500" />
-              </button>
-            </div>
-            <div className="space-y-2">
-              {userData.educationalStatus && userData.educationalStatus !== 'none' && (
-                <div className="text-gray-700">
-                  <span className="font-medium">Status: </span>
-                  <span className="capitalize">{userData.educationalStatus}</span>
-                </div>
-              )}
-              {userData.education?.university && (
-                <div className="text-gray-700">
-                  <span className="font-medium">University: </span>
-                  {userData.education.university}
-                </div>
-              )}
-              {userData.education?.topic && (
-                <div className="text-gray-700">
-                  <span className="font-medium">Topic: </span>
-                  {userData.education.topic}
-                </div>
-              )}
-              {userData.education?.graduationYear && (
-                <div className="text-gray-700">
-                  <span className="font-medium">Graduation Year: </span>
-                  {userData.education.graduationYear}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
 
-        {/* Job  */}
-        {(userData.job?.position || userData.job?.company) && (
-          <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-purple-600" />
-                <h3 className="font-bold text-gray-900">Job</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">{userData.fullName}</h3>
+              <div className="flex items-center justify-center gap-1 mb-2">
+                <p className="text-gray-600">{userData.username ? `@${userData.username}` : ''}</p>
+                {userData.isVerified === true && <CheckCircle className="w-5 h-5 text-blue-500" />}
               </div>
-              <button
-                onClick={() => handleEditSection('job')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Edit3 className="w-4 h-4 text-gray-500" />
-              </button>
-            </div>
-            <div className="space-y-1">
-              {userData.job.position && <div>Position: {userData.job.position}</div>}
-              {userData.job.company && <div>Company: {userData.job.company}</div>}
-            </div>
-          </div>
-        )}
 
-        {/* Travel  */}
-        {(userData.travelStyle && userData.travelStyle.length > 0) ||
-        (userData.visitedCountries && userData.visitedCountries.length > 0) ? (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-purple-600" />
-                <h3 className="font-bold text-gray-900">Travel</h3>
+              <div className="flex justify-center gap-3 flex-wrap">
+                {age && (
+                  <div className="flex items-center gap-1 bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-sm">
+                    <Calendar className="w-4 h-4" />
+                    <span>Age {age}</span>
+                  </div>
+                )}
+                {(userData.height > 0 || userData.weight > 0) && (
+                  <div className="flex items-center gap-1 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+                    <Ruler className="w-4 h-4" />
+                    <span>
+                      {userData.height > 0 && userData.weight > 0
+                        ? `${userData.height}cm, ${userData.weight}kg`
+                        : userData.height > 0
+                        ? `${userData.height}cm`
+                        : `${userData.weight}kg`}
+                    </span>
+                  </div>
+                )}
               </div>
-              <button
-                onClick={() => handleEditSection('travel')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Edit3 className="w-4 h-4 text-gray-500" />
-              </button>
-            </div>
-            <div className="space-y-3">
-              {userData.travelStyle && userData.travelStyle.length > 0 && (
-                <div>
-                  <div className="font-medium text-gray-700 mb-2">Travel Styles:</div>
-                  <div className="flex flex-wrap gap-2">
-                    {userData.travelStyle.map((style, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-purple-200"
-                      >
-                        {style}
-                      </span>
-                    ))}
+
+              {/* Location Info */}
+              {((userData.bornPlace &&
+                typeof userData.bornPlace === 'string' &&
+                userData.bornPlace.trim() !== '') ||
+                (userData.livePlace &&
+                  typeof userData.livePlace === 'string' &&
+                  userData.livePlace.trim() !== '')) && (
+                <div className="mt-4 p-3 bg-gray-50 rounded-xl border border-gray-200">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <MapPin className="w-4 h-4 text-purple-600" />
+                    <span className="text-sm font-medium text-gray-700">Location</span>
+                  </div>
+                  <div className="text-center space-y-1">
+                    {userData.bornPlace &&
+                      typeof userData.bornPlace === 'string' &&
+                      userData.bornPlace.trim() !== '' && (
+                        <p className="text-sm text-gray-600">
+                          <span className="font-medium">Born:</span> {userData.bornPlace}
+                        </p>
+                      )}
+                    {userData.livePlace &&
+                      typeof userData.livePlace === 'string' &&
+                      userData.livePlace.trim() !== '' && (
+                        <p className="text-sm text-gray-600">
+                          <span className="font-medium">Live:</span> {userData.livePlace}
+                        </p>
+                      )}
                   </div>
                 </div>
               )}
-              {userData.visitedCountries && userData.visitedCountries.length > 0 && (
-                <div>
-                  <div className="font-medium text-gray-700 mb-2">Visited Countries:</div>
-                  <div className="flex flex-wrap gap-2">
-                    {userData.visitedCountries.map((country, index) => {
-                      // Find the country data to get the flag
-                      const countryData = countriesData?.find(
-                        (c) => c.name.toLowerCase() === country.toLowerCase()
-                      )
+            </div>
 
-                      return (
+            <div className="flex justify-center gap-6 text-sm text-gray-600">
+              {typeof userData.gender === 'string' && userData.gender.trim() !== '' && (
+                <span className="flex items-center gap-1">
+                  {userData.gender.toLowerCase() === 'male' ||
+                  userData.gender.toLowerCase() === 'مرد' ? (
+                    <Mars className="w-4 h-4" />
+                  ) : userData.gender.toLowerCase() === 'female' ||
+                    userData.gender.toLowerCase() === 'زن' ? (
+                    <Venus className="w-4 h-4" />
+                  ) : (
+                    <Users className="w-4 h-4" />
+                  )}
+                  {userData.gender}
+                </span>
+              )}
+              {typeof userData.maritalStatus === 'string' &&
+                userData.maritalStatus.trim() !== '' && (
+                  <span className="flex items-center gap-1">
+                    <Heart className="w-4 h-4" />
+                    {userData.maritalStatus}
+                  </span>
+                )}
+            </div>
+          </div>
+
+          {/* Details  */}
+          {typeof userData.details === 'string' && userData.details.trim() !== '' && (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <User className="w-5 h-5 text-purple-600" />
+                  <h3 className="font-bold text-gray-900">About Me</h3>
+                </div>
+                <button
+                  onClick={() => handleEditSection('details')}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <Edit3 className="w-4 h-4 text-gray-500" />
+                </button>
+              </div>
+              <p className="text-gray-700">{userData.details}</p>
+            </div>
+          )}
+
+          {/* Birth Date  */}
+          {userData.birthDate && (
+            <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-purple-600" />
+                  <h3 className="font-bold text-gray-900">Birth Date</h3>
+                </div>
+                <button
+                  onClick={() => handleEditSection('personal')}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <Edit3 className="w-4 h-4 text-gray-500" />
+                </button>
+              </div>
+              <p className="text-gray-700">{dayjs(userData.birthDate).format('MMMM DD, YYYY')}</p>
+            </div>
+          )}
+
+          {/* Education  */}
+          {(userData.education?.university ||
+            userData.education?.topic ||
+            userData.education?.graduationYear ||
+            (userData.educationalStatus && userData.educationalStatus !== 'none')) && (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <GraduationCap className="w-5 h-5 text-purple-600" />
+                  <h3 className="font-bold text-gray-900">Education</h3>
+                </div>
+                <button
+                  onClick={() => handleEditSection('education')}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <Edit3 className="w-4 h-4 text-gray-500" />
+                </button>
+              </div>
+              <div className="space-y-2">
+                {userData.educationalStatus && userData.educationalStatus !== 'none' && (
+                  <div className="text-gray-700">
+                    <span className="font-medium">Status: </span>
+                    <span className="capitalize">{userData.educationalStatus}</span>
+                  </div>
+                )}
+                {userData.education?.university && (
+                  <div className="text-gray-700">
+                    <span className="font-medium">University: </span>
+                    {userData.education.university}
+                  </div>
+                )}
+                {userData.education?.topic && (
+                  <div className="text-gray-700">
+                    <span className="font-medium">Topic: </span>
+                    {userData.education.topic}
+                  </div>
+                )}
+                {userData.education?.graduationYear && (
+                  <div className="text-gray-700">
+                    <span className="font-medium">Graduation Year: </span>
+                    {userData.education.graduationYear}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Job  */}
+          {(userData.job?.position || userData.job?.company) && (
+            <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-purple-600" />
+                  <h3 className="font-bold text-gray-900">Job</h3>
+                </div>
+                <button
+                  onClick={() => handleEditSection('job')}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <Edit3 className="w-4 h-4 text-gray-500" />
+                </button>
+              </div>
+              <div className="space-y-1">
+                {userData.job.position && <div>Position: {userData.job.position}</div>}
+                {userData.job.company && <div>Company: {userData.job.company}</div>}
+              </div>
+            </div>
+          )}
+
+          {/* Travel  */}
+          {(userData.travelStyle && userData.travelStyle.length > 0) ||
+          (userData.visitedCountries && userData.visitedCountries.length > 0) ? (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-purple-600" />
+                  <h3 className="font-bold text-gray-900">Travel</h3>
+                </div>
+                <button
+                  onClick={() => handleEditSection('travel')}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <Edit3 className="w-4 h-4 text-gray-500" />
+                </button>
+              </div>
+              <div className="space-y-3">
+                {userData.travelStyle && userData.travelStyle.length > 0 && (
+                  <div>
+                    <div className="font-medium text-gray-700 mb-2">Travel Styles:</div>
+                    <div className="flex flex-wrap gap-2">
+                      {userData.travelStyle.map((style, index) => (
                         <span
                           key={index}
-                          className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-purple-200"
+                          className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-purple-200"
                         >
-                          {countryData?.image ? (
-                            <Image
-                              src={countryData.image}
-                              alt={country}
-                              width={16}
-                              height={12}
-                              className="object-contain rounded-sm"
-                            />
-                          ) : (
-                            <span className="text-xs">{countryData?.emoji || '🏳️'}</span>
-                          )}
-                          {country}
+                          {style}
                         </span>
-                      )
-                    })}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          </div>
-        ) : null}
+                )}
+                {userData.visitedCountries && userData.visitedCountries.length > 0 && (
+                  <div>
+                    <div className="font-medium text-gray-700 mb-2">Visited Countries:</div>
+                    <div className="flex flex-wrap gap-2">
+                      {userData.visitedCountries.map((country, index) => {
+                        // Find the country data to get the flag
+                        const countryData = countriesData?.find(
+                          (c) => c.name.toLowerCase() === country.toLowerCase()
+                        )
 
-        {/* Interests  */}
-        {displayInterests && displayInterests.length > 0 && (
-          <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Star className="w-5 h-5 text-purple-600" />
-                <h3 className="font-bold text-gray-900">Interests</h3>
+                        return (
+                          <span
+                            key={index}
+                            className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-purple-200"
+                          >
+                            {countryData?.image ? (
+                              <Image
+                                src={countryData.image}
+                                alt={country}
+                                width={16}
+                                height={12}
+                                className="object-contain rounded-sm"
+                              />
+                            ) : (
+                              <span className="text-xs">{countryData?.emoji || '🏳️'}</span>
+                            )}
+                            {country}
+                          </span>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
-              <button
-                onClick={() => handleEditSection('interests')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Edit3 className="w-4 h-4 text-gray-500" />
-              </button>
             </div>
-            <div className="flex gap-2 overflow-x-auto interests-scroll pt-2 pb-3">
-              {displayInterests.map((interest, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-purple-200 whitespace-nowrap flex-shrink-0"
+          ) : null}
+
+          {/* Interests  */}
+          {displayInterests && displayInterests.length > 0 && (
+            <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Star className="w-5 h-5 text-purple-600" />
+                  <h3 className="font-bold text-gray-900">Interests</h3>
+                </div>
+                <button
+                  onClick={() => handleEditSection('interests')}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 >
-                  {interest}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Skills */}
-        {displaySkills && displaySkills.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-purple-600" />
-                <h3 className="font-bold text-gray-900">Skills</h3>
+                  <Edit3 className="w-4 h-4 text-gray-500" />
+                </button>
               </div>
-              <button
-                onClick={() => handleEditSection('skills')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Edit3 className="w-4 h-4 text-gray-500" />
-              </button>
+              <div className="flex gap-2 overflow-x-auto interests-scroll pt-2 pb-3">
+                {displayInterests.map((interest, index) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-purple-200 whitespace-nowrap flex-shrink-0"
+                  >
+                    {interest}
+                  </span>
+                ))}
+              </div>
             </div>
-            <div className="space-y-2">
-              {displaySkills.map((skill, index) => (
-                <div key={index} className="text-gray-700 text-sm">
-                  • {skill}
+          )}
+
+          {/* Skills */}
+          {displaySkills && displaySkills.length > 0 && (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-purple-600" />
+                  <h3 className="font-bold text-gray-900">Skills</h3>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Sports  */}
-        {(userData.favoriteSport && userData.favoriteSport.length > 0) ||
-        userData.doesExercise !== undefined ? (
-          <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Dumbbell className="w-5 h-5 text-purple-600" />
-                <h3 className="font-bold text-gray-900">Sports & Exercise</h3>
+                <button
+                  onClick={() => handleEditSection('skills')}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <Edit3 className="w-4 h-4 text-gray-500" />
+                </button>
               </div>
-              <button
-                onClick={() => handleEditSection('sports')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Edit3 className="w-4 h-4 text-gray-500" />
-              </button>
-            </div>
-            <div className="space-y-3">
-              {userData.favoriteSport && userData.favoriteSport.length > 0 && (
-                <div>
-                  <div className="font-medium text-gray-700 mb-2">Favorite Sports:</div>
-                  <div className="flex flex-wrap gap-2">
-                    {userData.favoriteSport.map((sport, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-purple-200"
-                      >
-                        {sport}
-                      </span>
-                    ))}
+              <div className="space-y-2">
+                {displaySkills.map((skill, index) => (
+                  <div key={index} className="text-gray-700 text-sm">
+                    • {skill}
                   </div>
-                </div>
-              )}
-              {userData.doesExercise !== undefined && (
-                <p className="text-gray-700">Exercise: {userData.doesExercise ? 'Yes' : 'No'}</p>
-              )}
+                ))}
+              </div>
             </div>
-          </div>
-        ) : null}
+          )}
 
-        {/* Pet Information  */}
-        {(userData.pet.name || userData.pet.breed) && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <PawPrint className="w-5 h-5 text-purple-600" />
-                <h3 className="font-bold text-gray-900">Pet Information</h3>
+          {/* Sports  */}
+          {(userData.favoriteSport && userData.favoriteSport.length > 0) ||
+          userData.doesExercise !== undefined ? (
+            <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Dumbbell className="w-5 h-5 text-purple-600" />
+                  <h3 className="font-bold text-gray-900">Sports & Exercise</h3>
+                </div>
+                <button
+                  onClick={() => handleEditSection('sports')}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <Edit3 className="w-4 h-4 text-gray-500" />
+                </button>
               </div>
-              <button
-                onClick={() => handleEditSection('pet')}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Edit3 className="w-4 h-4 text-gray-500" />
-              </button>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full overflow-hidden">
-                <Image
-                  src="/assets/images/pet.png"
-                  alt="pet picture"
-                  width={64}
-                  height={64}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div>
-                {userData.pet.name && (
-                  <h4 className="font-bold text-gray-900">{userData.pet.name}</h4>
+              <div className="space-y-3">
+                {userData.favoriteSport && userData.favoriteSport.length > 0 && (
+                  <div>
+                    <div className="font-medium text-gray-700 mb-2">Favorite Sports:</div>
+                    <div className="flex flex-wrap gap-2">
+                      {userData.favoriteSport.map((sport, index) => (
+                        <span
+                          key={index}
+                          className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-purple-200"
+                        >
+                          {sport}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 )}
-                {userData.pet.breed && (
-                  <p className="text-gray-600 text-sm">{userData.pet.breed}</p>
+                {userData.doesExercise !== undefined && (
+                  <p className="text-gray-700">Exercise: {userData.doesExercise ? 'Yes' : 'No'}</p>
                 )}
               </div>
             </div>
-          </div>
-        )}
+          ) : null}
+
+          {/* Pet Information  */}
+          {(userData.pet.name || userData.pet.breed) && (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <PawPrint className="w-5 h-5 text-purple-600" />
+                  <h3 className="font-bold text-gray-900">Pet Information</h3>
+                </div>
+                <button
+                  onClick={() => handleEditSection('pet')}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <Edit3 className="w-4 h-4 text-gray-500" />
+                </button>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-full overflow-hidden">
+                  <Image
+                    src="/assets/images/pet.png"
+                    alt="pet picture"
+                    width={64}
+                    height={64}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div>
+                  {userData.pet.name && (
+                    <h4 className="font-bold text-gray-900">{userData.pet.name}</h4>
+                  )}
+                  {userData.pet.breed && (
+                    <p className="text-gray-600 text-sm">{userData.pet.breed}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+        {/* End of Screenshot Content */}
 
         {/* Share with Friend Button  */}
         <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-6 mb-4">

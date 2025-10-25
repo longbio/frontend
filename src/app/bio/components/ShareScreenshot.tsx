@@ -23,6 +23,16 @@ export default function ShareScreenshot({
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
+  const preloadImage = (src: string): Promise<HTMLImageElement> => {
+    return new Promise((resolve, reject) => {
+      const img = new window.Image()
+      img.crossOrigin = 'anonymous'
+      img.onload = () => resolve(img)
+      img.onerror = () => reject(new Error(`Failed to load image: ${src}`))
+      img.src = src
+    })
+  }
+
   const generateScreenshot = async () => {
     setIsGenerating(true)
     setError(null)
@@ -41,19 +51,21 @@ export default function ShareScreenshot({
         return
       }
 
-      // Wait for any images to load
       await new Promise((resolve) => setTimeout(resolve, 2000))
 
-      // Ensure all images are loaded
       const images = element.querySelectorAll('img')
-      const imagePromises = Array.from(images).map((img) => {
-        return new Promise((resolve) => {
-          if (img.complete) {
-            resolve(true)
-          } else {
-            img.onload = () => resolve(true)
-            img.onerror = () => resolve(true)
-            setTimeout(() => resolve(true), 3000)
+      for (const img of images) {
+        const imgElement = img as HTMLImageElement
+
+        imgElement.style.display = 'block'
+        imgElement.style.visibility = 'visible'
+        imgElement.style.opacity = '1'
+
+        if (imgElement.src && !imgElement.complete) {
+          try {
+            await preloadImage(imgElement.src)
+          } catch {
+            console.warn('Failed to preload image:', imgElement.src)
           }
         })
       })
@@ -114,12 +126,12 @@ export default function ShareScreenshot({
 
       const canvas = await html2canvas(element, {
         backgroundColor: '#f9fafb',
-        scale: 1.0,
+        scale: 2.0,
         useCORS: true,
         allowTaint: true,
-        logging: true,
-        width: fullWidth,
-        height: fullHeight,
+        logging: false,
+        width: actualWidth,
+        height: actualHeight,
         scrollX: 0,
         scrollY: 0,
         windowWidth: fullWidth,
