@@ -16,8 +16,8 @@ interface ShareScreenshotProps {
 export default function ShareScreenshot({
   userData,
   onClose,
-  onSuccess,
   onError,
+  onSuccess,
 }: ShareScreenshotProps) {
   const [isGenerating, setIsGenerating] = useState(false)
   const [screenshot, setScreenshot] = useState<string | null>(null)
