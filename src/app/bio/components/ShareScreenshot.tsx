@@ -23,16 +23,6 @@ export default function ShareScreenshot({
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  const preloadImage = (src: string): Promise<HTMLImageElement> => {
-    return new Promise((resolve, reject) => {
-      const img = new window.Image()
-      img.crossOrigin = 'anonymous'
-      img.onload = () => resolve(img)
-      img.onerror = () => reject(new Error(`Failed to load image: ${src}`))
-      img.src = src
-    })
-  }
-
   const generateScreenshot = async () => {
     setIsGenerating(true)
     setError(null)
@@ -126,8 +116,8 @@ export default function ShareScreenshot({
         useCORS: true,
         allowTaint: true,
         logging: false,
-        width: actualWidth,
-        height: actualHeight,
+        width: fullWidth,
+        height: fullHeight,
         scrollX: 0,
         scrollY: 0,
         windowWidth: fullWidth,
