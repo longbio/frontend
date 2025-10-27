@@ -14,14 +14,15 @@ import {
   Venus,
   Mars,
   GraduationCap,
-  BookOpen,
   Star,
   MapPin,
   PawPrint,
   CheckCircle,
   Dumbbell,
+  Briefcase,
+  Globe,
+  Sparkles,
 } from 'lucide-react'
-
 interface UserData {
   id: number
   username: string
@@ -132,11 +133,9 @@ export default function ShareScreenshot({
       const canvas = await html2canvas(element, {
         backgroundColor: '#f8fafc',
         scale: 2,
-        useCORS: true,
-        allowTaint: true,
+        useCORS: false,
+        allowTaint: false,
         logging: false,
-        width: 360,
-        height: element.scrollHeight,
         imageTimeout: 15000,
         ignoreElements: () => false,
         onclone: (clonedDoc) => {
@@ -249,6 +248,38 @@ export default function ShareScreenshot({
           // Add completely custom safe stylesheet with NO oklch colors
           const style = clonedDoc.createElement('style')
           style.textContent = `
+            @font-face {
+              font-family: 'Gilroy';
+              src: url('./fonts/Gilroy-Regular.woff2') format('woff2');
+              font-weight: 400;
+              font-style: normal;
+              font-display: swap;
+            }
+            
+            @font-face {
+              font-family: 'Gilroy';
+              src: url('./fonts/Gilroy-SemiBold.woff2') format('woff2');
+              font-weight: 600;
+              font-style: normal;
+              font-display: swap;
+            }
+            
+            @font-face {
+              font-family: 'Gilroy';
+              src: url('./fonts/Gilroy-Bold.woff2') format('woff2');
+              font-weight: 700;
+              font-style: normal;
+              font-display: swap;
+            }
+            
+            @font-face {
+              font-family: 'Gilroy';
+              src: url('./fonts/Gilroy-ExtaBold.woff2') format('woff2');
+              font-weight: 800;
+              font-style: normal;
+              font-display: swap;
+            }
+
             * {
               box-sizing: border-box;
               margin: 0;
@@ -258,7 +289,7 @@ export default function ShareScreenshot({
             body {
               margin: 0;
               padding: 0;
-              font-family: system-ui, -apple-system, sans-serif;
+              font-family: 'Gilroy', system-ui, -apple-system, sans-serif;
               background-color: #f8fafc;
             }
 
@@ -279,8 +310,6 @@ export default function ShareScreenshot({
             .grid { display: grid; }
             .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-            [style*="font-size: 8px"] { font-size: 0.5rem !important; }
-            [style*="font-size: 7px"] { font-size: 0.4375rem !important; }
             .w-12 { width: 3rem; }
             .h-12 { height: 3rem; }
             .flex-shrink-0 { flex-shrink: 0; }
@@ -324,6 +353,12 @@ export default function ShareScreenshot({
             .pt-3 { padding-top: 0.75rem; }
             .pt-4 { padding-top: 1rem; }
             .pt-5 { padding-top: 1.25rem; }
+            .py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+            .pb-1\.5 { padding-bottom: 0.375rem; }
+            .pb-2 { padding-bottom: 0.5rem; }
+            .pb-3 { padding-bottom: 0.75rem; }
+            .pb-4 { padding-bottom: 1rem; }
+            .pb-5 { padding-bottom: 1.25rem; }
             .text-center { text-align: center; }
             .rounded-lg { border-radius: 0.5rem; }
             .rounded-xl { border-radius: 0.75rem; }
@@ -339,8 +374,39 @@ export default function ShareScreenshot({
             .text-xl { font-size: 1.25rem; }
             .font-bold { font-weight: 700; }
             .font-semibold { font-weight: 600; }
+            .font-medium { font-weight: 500; }
+            [style*="font-size: 11px"] { font-size: 0.6875rem !important; }
             [style*="font-size: 10px"] { font-size: 0.625rem !important; }
             [style*="font-size: 9px"] { font-size: 0.5625rem !important; }
+            [style*="font-size: 8px"] { font-size: 0.5rem !important; }
+            [style*="font-size: 7px"] { font-size: 0.4375rem !important; }
+            [style*="font-size: 6px"] { font-size: 0.375rem !important; }
+            [style*="font-size: 5px"] { font-size: 0.3125rem !important; }
+            [style*="font-size: 4px"] { font-size: 0.25rem !important; }
+            .overflow-hidden { overflow: hidden; }
+            .text-ellipsis { 
+              text-overflow: ellipsis; 
+              white-space: nowrap; 
+              overflow: hidden; 
+            }
+            .line-clamp-1 {
+              overflow: hidden;
+              display: -webkit-box;
+              -webkit-box-orient: vertical;
+              -webkit-line-clamp: 1;
+            }
+            .line-clamp-2 {
+              overflow: hidden;
+              display: -webkit-box;
+              -webkit-box-orient: vertical;
+              -webkit-line-clamp: 2;
+            }
+            .line-clamp-3 {
+              overflow: hidden;
+              display: -webkit-box;
+              -webkit-box-orient: vertical;
+              -webkit-line-clamp: 3;
+            }
             .w-2\.5 { width: 0.625rem; }
             .h-2\.5 { height: 0.625rem; }
             .w-3 { width: 0.75rem; }
@@ -501,21 +567,21 @@ export default function ShareScreenshot({
         ref={screenshotRef}
         className="ignore-screenshot fixed left-1/2 top-0 w-[360px] bg-gradient-to-br from-gray-50 to-gray-100"
         style={{
-          fontFamily: 'system-ui, -apple-system, sans-serif',
+          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
           width: '360px',
           minHeight: '600px',
           transform: 'translateX(-50%)',
           visibility: 'hidden',
         }}
       >
-        <div className="w-full px-2 py-4">
+        <div className="w-full px-2 pt-4 pb-5">
           {/* Header Text */}
-          <div className="text-center mb-2">
+          <div className="text-center">
             <p className="text-[10px] text-gray-600 font-medium">Create your longBio, share it!</p>
           </div>
 
           {/* Compact Header */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-3 mb-2">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-3 mt-3 mb-2">
             <div className="flex items-center justify-center gap-2 mb-1">
               {/* Profile Picture */}
               <div className="relative w-14 h-14 flex-shrink-0">
@@ -541,17 +607,17 @@ export default function ShareScreenshot({
                   <h3 className="text-base font-bold text-gray-900">{userData.fullName}</h3>
                   {userData.isVerified && <CheckCircle className="w-3.5 h-3.5 text-blue-500" />}
                 </div>
-                <div className="text-[11px] text-gray-600 mb-0.5">@{userData.username}</div>
+                <div className="text-[10px] text-gray-600 mb-0.5">@{userData.username}</div>
 
                 {/* Compact badges */}
-                <div className="flex flex-wrap gap-[1.5px] mt-1">
+                <div className="flex flex-wrap gap-1 mt-1">
                   {age && (
-                    <span className="bg-pink-100 text-pink-700 px-3 h-full rounded-full text-[5px] font-medium">
+                    <span className="flex items-center justify-center bg-pink-100 text-pink-700 px-3 h-6 rounded-full text-xs font-medium">
                       {age}yr
                     </span>
                   )}
                   {(userData.height > 0 || userData.weight > 0) && (
-                    <span className="bg-blue-100 text-blue-700 px-3 h-6 rounded-full text-[5px] font-medium">
+                    <span className="flex items-center justify-center bg-blue-100 text-blue-700 px-3 h-6 rounded-full text-xs font-medium">
                       {userData.height > 0 ? userData.height + 'cm' : ''}
                       {userData.height > 0 && userData.weight > 0 && '/'}
                       {userData.weight > 0 ? userData.weight + 'kg' : ''}
@@ -564,13 +630,13 @@ export default function ShareScreenshot({
             {/* Location & Status Row */}
             <div className="text-center">
               {(userData.bornPlace || userData.livePlace) && (
-                <div className="text-[10px] text-gray-600 mb-0.5">
+                <div className="text-xs text-gray-600 mb-0.5 line-clamp-1">
                   {userData.bornPlace && userData.livePlace
                     ? `${userData.bornPlace} → ${userData.livePlace}`
                     : userData.bornPlace || userData.livePlace}
                 </div>
               )}
-              <div className="flex justify-center gap-2 text-[10px] text-gray-600">
+              <div className="flex justify-center gap-2 text-xs text-gray-600">
                 {userData.gender && (
                   <span className="flex items-center gap-1">
                     {userData.gender.toLowerCase() === 'male' ? (
@@ -592,7 +658,7 @@ export default function ShareScreenshot({
           </div>
 
           {/* Compact Grid - 2 columns for better spacing */}
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             {/* Birth Date */}
             {userData.birthDate && (
               <div
@@ -600,11 +666,11 @@ export default function ShareScreenshot({
                   !(userData.education.university || userData.job.position) ? 'col-span-2' : ''
                 }`}
               >
-                <div className="flex items-center gap-1 mb-1">
+                <div className="flex items-center gap-1 mb-0.5">
                   <Calendar className="w-2.5 h-2.5 text-purple-600" />
-                  <h4 className="font-bold text-[9px] text-gray-900">Birth Date</h4>
+                  <h4 className="font-bold text-[8px] text-gray-900">Birth Date</h4>
                 </div>
-                <p className="text-[8px] text-gray-700">
+                <p className="text-xs text-gray-700 line-clamp-2">
                   {dayjs(userData.birthDate).format('MMM DD, YYYY')}
                 </p>
               </div>
@@ -612,12 +678,12 @@ export default function ShareScreenshot({
 
             {/* Education */}
             {userData.education.university && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-3">
-                <div className="flex items-center gap-1 mb-1">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2">
+                <div className="flex items-center gap-1 mb-0.5">
                   <GraduationCap className="w-2.5 h-2.5 text-purple-600" />
-                  <h4 className="font-bold text-[9px] text-gray-900">Education</h4>
+                  <h4 className="font-bold text-[8px] text-gray-900">Education</h4>
                 </div>
-                <div className="text-[8px] text-gray-700">
+                <div className="text-xs text-gray-700 line-clamp-2 overflow-hidden">
                   {userData.education.topic || userData.education.university}
                 </div>
               </div>
@@ -625,33 +691,35 @@ export default function ShareScreenshot({
 
             {/* Job */}
             {userData.job.position && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-3">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2">
                 <div className="flex items-center gap-1 mb-1">
-                  <BookOpen className="w-2.5 h-2.5 text-purple-600" />
-                  <h4 className="font-bold text-[9px] text-gray-900">Career</h4>
+                  <Briefcase className="w-2 h-2 text-purple-600" />
+                  <h4 className="font-bold text-[8px] text-gray-900">Career</h4>
                 </div>
-                <div className="text-[8px] text-gray-700">{userData.job.position}</div>
+                <div className="text-xs text-gray-700 line-clamp-2 overflow-hidden">
+                  {userData.job.position}
+                </div>
               </div>
             )}
 
             {/* Interests */}
             {displayInterests.length > 0 && (
               <div
-                className={`bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg shadow-sm border border-purple-200 p-3 ${
+                className={`bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg shadow-sm border border-purple-200 p-2 ${
                   !(userData.favoriteSport.length > 0 || displaySkills.length > 0)
                     ? 'col-span-2'
                     : ''
                 }`}
               >
                 <div className="flex items-center gap-1 mb-1">
-                  <Star className="w-2.5 h-2.5 text-purple-600" />
-                  <h4 className="font-bold text-[9px] text-gray-900">Interests</h4>
+                  <Star className="w-2 h-2 text-purple-600" />
+                  <h4 className="font-bold text-[8px] text-gray-900">Interests</h4>
                 </div>
                 <div className="flex flex-wrap gap-0.5">
                   {displayInterests.slice(0, 3).map((interest, index) => (
                     <span
                       key={index}
-                      className="px-1.5 py-0.5 border border-purple-300 text-purple-700 rounded-full text-[6px] whitespace-nowrap"
+                      className="px-1 py-0.5 border border-purple-300 text-purple-700 rounded-full text-xs whitespace-nowrap"
                     >
                       {interest}
                     </span>
@@ -663,19 +731,19 @@ export default function ShareScreenshot({
             {/* Sports */}
             {userData.favoriteSport.length > 0 && (
               <div
-                className={`bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg shadow-sm border border-purple-200 p-3 ${
+                className={`bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg shadow-sm border border-purple-200 p-2 ${
                   !(displayInterests.length > 0 || displaySkills.length > 0) ? 'col-span-2' : ''
                 }`}
               >
                 <div className="flex items-center gap-1 mb-1">
-                  <Dumbbell className="w-2.5 h-2.5 text-purple-600" />
-                  <h4 className="font-bold text-[9px] text-gray-900">Sports</h4>
+                  <Dumbbell className="w-2 h-2 text-purple-600" />
+                  <h4 className="font-bold text-[8px] text-gray-900">Sports</h4>
                 </div>
                 <div className="flex flex-wrap gap-0.5">
                   {userData.favoriteSport.slice(0, 3).map((sport, index) => (
                     <span
                       key={index}
-                      className="px-1.5 py-0.5 border border-purple-300 text-purple-700 rounded-full text-[6px]"
+                      className="px-1 py-0.5 border border-purple-300 text-purple-700 rounded-full text-xs"
                     >
                       {sport}
                     </span>
@@ -694,14 +762,14 @@ export default function ShareScreenshot({
                 }`}
               >
                 <div className="flex items-center gap-1 mb-1">
-                  <BookOpen className="w-2.5 h-2.5 text-purple-600" />
-                  <h4 className="font-bold text-[9px] text-gray-900">Skills</h4>
+                  <Sparkles className="w-2 h-2 text-purple-600" />
+                  <h4 className="font-bold text-[8px] text-gray-900">Skills</h4>
                 </div>
                 <div className="flex flex-wrap gap-0.5">
                   {displaySkills.slice(0, 3).map((skill, index) => (
                     <span
                       key={index}
-                      className="px-1.5 py-0.5 border border-blue-300 text-blue-700 rounded-full text-[6px]"
+                      className="px-1 py-0.5 border border-blue-300 text-blue-700 rounded-full text-xs"
                     >
                       {skill}
                     </span>
@@ -713,15 +781,15 @@ export default function ShareScreenshot({
             {/* Travel */}
             {userData.travelStyle && userData.travelStyle.length > 0 && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2">
-                <div className="flex items-center gap-1 mb-1">
+                <div className="flex items-center gap-1 mb-0.5">
                   <MapPin className="w-2.5 h-2.5 text-purple-600" />
-                  <h4 className="font-bold text-[9px] text-gray-900">Travel Style</h4>
+                  <h4 className="font-bold text-[8px] text-gray-900">Travel Style</h4>
                 </div>
                 <div className="flex flex-wrap gap-0.5">
                   {userData.travelStyle.slice(0, 2).map((style, index) => (
                     <span
                       key={index}
-                      className="px-1.5 py-0.5 border border-purple-300 text-purple-700 rounded-full text-[6px]"
+                      className="px-1 py-0.5 border border-purple-300 text-purple-700 rounded-full text-xs"
                     >
                       {style}
                     </span>
@@ -734,8 +802,8 @@ export default function ShareScreenshot({
             {userData.visitedCountries && userData.visitedCountries.length > 0 && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2">
                 <div className="flex items-center gap-1 mb-1">
-                  <MapPin className="w-2.5 h-2.5 text-purple-600" />
-                  <h4 className="font-bold text-[9px] text-gray-900">Countries</h4>
+                  <Globe className="w-2 h-2 text-purple-600" />
+                  <h4 className="font-bold text-[8px] text-gray-900">Countries</h4>
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {userData.visitedCountries.slice(0, 5).map((country, index) => {
@@ -786,7 +854,7 @@ export default function ShareScreenshot({
                       return flagMap[countryName.toLowerCase()] || '🏳️'
                     }
                     return (
-                      <span key={index} className="text-[10px]">
+                      <span key={index} className="text-[8px]">
                         {getCountryFlag(country)}
                       </span>
                     )
@@ -799,10 +867,10 @@ export default function ShareScreenshot({
             {(userData.pet.name || userData.pet.breed) && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2 col-span-4">
                 <div className="flex items-center gap-1 mb-1">
-                  <PawPrint className="w-2.5 h-2.5 text-purple-600" />
-                  <h4 className="font-bold text-[9px] text-gray-900">Pet</h4>
+                  <PawPrint className="w-2 h-2 text-purple-600" />
+                  <h4 className="font-bold text-[8px] text-gray-900">Pet</h4>
                 </div>
-                <div className="text-[8px] text-gray-700">
+                <div className="text-xs text-gray-700 line-clamp-2 overflow-hidden">
                   {userData.pet.name || userData.pet.breed}
                 </div>
               </div>
@@ -810,8 +878,8 @@ export default function ShareScreenshot({
           </div>
 
           {/* Footer */}
-          <div className="mt-2 pt-2 border-t border-gray-100 text-center">
-            <div className="text-[10px] font-bold text-gray-800 pb-3" style={{ color: '#1e2939' }}>
+          <div className="border-t border-gray-100 text-center pt-5">
+            <div className="text-sm font-bold text-gray-500 shadow" style={{ color: '#1e2939' }}>
               LongBio.me
             </div>
           </div>
@@ -820,7 +888,7 @@ export default function ShareScreenshot({
 
       {/* Modal UI */}
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[170vh] overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-2xl w-[24rem] max-h-[170vh] overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <h3 className="text-lg font-bold text-gray-900">Share Bio Screenshot</h3>
@@ -887,11 +955,7 @@ export default function ShareScreenshot({
                     className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50"
                     style={{ width: '360px', maxWidth: '360px' }}
                   >
-                    <img
-                      src={screenshot}
-                      alt="Bio Screenshot"
-                      style={{ width: '360px', height: 'auto', display: 'block' }}
-                    />
+                    <Image src={screenshot} alt="Bio Screenshot" width={360} height={600} />
                   </div>
                 </div>
 
@@ -908,7 +972,7 @@ export default function ShareScreenshot({
                     onClick={shareScreenshot}
                     className="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200"
                   >
-                    <Share2 className="w-4 h-4" />
+                    <Share2 className="size-4" />
                     Share
                   </button>
                 </div>
