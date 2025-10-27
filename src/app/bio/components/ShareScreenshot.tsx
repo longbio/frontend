@@ -350,7 +350,7 @@ export default function ShareScreenshot({
             .py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
             .pt-1\.5 { padding-top: 0.375rem; }
             .pt-2 { padding-top: 0.5rem; }
-            .pt-3 { padding-top: 0.75rem; }
+            .pt-3 { padding-top: 0.71rem; }
             .pt-4 { padding-top: 1rem; }
             .pt-5 { padding-top: 1.25rem; }
             .py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
@@ -369,8 +369,9 @@ export default function ShareScreenshot({
             .overflow-hidden { overflow: hidden; }
             .border { border-width: 1px; }
             .border-t { border-top-width: 1px; }
-            .text-xs { font-size: 0.6rem; line-height: 1rem; }
-            .text-sm { font-size: 0.7rem; }
+            .text-xs { font-size: 0.43rem; line-height: 1rem; }
+            .text-sm { font-size: 0.5rem; }
+            .text-base { font-size: 0.78rem; }
             .text-xl { font-size: 1.25rem; }
             .font-bold { font-weight: 700; }
             .font-semibold { font-weight: 600; }
@@ -584,8 +585,8 @@ export default function ShareScreenshot({
           </div>
 
           {/* Compact Header */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-3 mt-3 mb-2">
-            <div className="flex items-center justify-center gap-2 mb-1">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2 mt-3 mb-2">
+            <div className="flex items-center justify-center gap-1 mb-1">
               {/* Profile Picture */}
               <div className="relative w-14 h-14 flex-shrink-0">
                 {userData.profileImage ? (
@@ -661,7 +662,7 @@ export default function ShareScreenshot({
           </div>
 
           {/* Compact Grid - 2 columns for better spacing */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2">
             {/* Birth Date */}
             {userData.birthDate && (
               <div
@@ -881,7 +882,7 @@ export default function ShareScreenshot({
           </div>
 
           {/* Footer */}
-          <div className="border-t border-gray-100 text-center pt-5">
+          <div className="border-t border-gray-100 text-center pt-3">
             <div className="text-sm font-bold text-gray-500 shadow" style={{ color: '#1e2939' }}>
               LongBio.me
             </div>
@@ -893,7 +894,7 @@ export default function ShareScreenshot({
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
         <div className="bg-white rounded-2xl shadow-2xl w-[24rem] max-h-[170vh] overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200">
+          <div className="flex items-center justify-between px-4 py-1 border-b border-gray-200">
             <h3 className="text-lg font-bold text-gray-900">Share Bio Screenshot</h3>
             <button
               onClick={onClose}
