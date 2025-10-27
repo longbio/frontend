@@ -369,8 +369,8 @@ export default function ShareScreenshot({
             .overflow-hidden { overflow: hidden; }
             .border { border-width: 1px; }
             .border-t { border-top-width: 1px; }
-            .text-xs { font-size: 0.75rem; line-height: 1rem; }
-            .text-sm { font-size: 0.875rem; }
+            .text-xs { font-size: 0.6rem; line-height: 1rem; }
+            .text-sm { font-size: 0.7rem; }
             .text-xl { font-size: 1.25rem; }
             .font-bold { font-weight: 700; }
             .font-semibold { font-weight: 600; }
@@ -407,6 +407,8 @@ export default function ShareScreenshot({
               -webkit-box-orient: vertical;
               -webkit-line-clamp: 3;
             }
+            .w-1 { width: 0.55rem; }
+            .h-4 { height: 1rem; }
             .w-2\.5 { width: 0.625rem; }
             .h-2\.5 { height: 0.625rem; }
             .w-3 { width: 0.75rem; }
@@ -414,6 +416,7 @@ export default function ShareScreenshot({
             .w-3\.5 { width: 0.875rem; }
             .h-3\.5 { height: 0.875rem; }
             .w-4 { width: 1rem; }
+            .h-1 { height: 0.55rem; }
             .h-4 { height: 1rem; }
             .w-5 { width: 1.25rem; }
             .h-5 { height: 1.25rem; }
@@ -574,10 +577,10 @@ export default function ShareScreenshot({
           visibility: 'hidden',
         }}
       >
-        <div className="w-full px-2 pt-4 pb-5">
+        <div className="w-full px-2 pt-3 pb-2">
           {/* Header Text */}
           <div className="text-center">
-            <p className="text-[10px] text-gray-600 font-medium">Create your longBio, share it!</p>
+            <p className="text-sm text-gray-600 font-medium">Create your longBio, share it!</p>
           </div>
 
           {/* Compact Header */}
@@ -605,9 +608,9 @@ export default function ShareScreenshot({
               <div className="flex-1">
                 <div className="flex items-center gap-1 mb-0.5">
                   <h3 className="text-base font-bold text-gray-900">{userData.fullName}</h3>
-                  {userData.isVerified && <CheckCircle className="w-3.5 h-3.5 text-blue-500" />}
+                  {userData.isVerified && <CheckCircle className="w-3 h-3 text-blue-500" />}
                 </div>
-                <div className="text-[10px] text-gray-600 mb-0.5">@{userData.username}</div>
+                <div className="text-sm text-gray-600 mb-0.5">@{userData.username}</div>
 
                 {/* Compact badges */}
                 <div className="flex flex-wrap gap-1 mt-1">
@@ -667,8 +670,8 @@ export default function ShareScreenshot({
                 }`}
               >
                 <div className="flex items-center gap-1 mb-0.5">
-                  <Calendar className="w-2.5 h-2.5 text-purple-600" />
-                  <h4 className="font-bold text-[8px] text-gray-900">Birth Date</h4>
+                  <Calendar className="w-1 h-1 text-purple-600" />
+                  <h4 className="font-bold text-sm text-gray-900">Birth Date</h4>
                 </div>
                 <p className="text-xs text-gray-700 line-clamp-2">
                   {dayjs(userData.birthDate).format('MMM DD, YYYY')}
@@ -680,8 +683,8 @@ export default function ShareScreenshot({
             {userData.education.university && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2">
                 <div className="flex items-center gap-1 mb-0.5">
-                  <GraduationCap className="w-2.5 h-2.5 text-purple-600" />
-                  <h4 className="font-bold text-[8px] text-gray-900">Education</h4>
+                  <GraduationCap className="w-1 h-1 text-purple-600" />
+                  <h4 className="font-bold text-sm text-gray-900">Education</h4>
                 </div>
                 <div className="text-xs text-gray-700 line-clamp-2 overflow-hidden">
                   {userData.education.topic || userData.education.university}
@@ -693,8 +696,8 @@ export default function ShareScreenshot({
             {userData.job.position && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2">
                 <div className="flex items-center gap-1 mb-1">
-                  <Briefcase className="w-2 h-2 text-purple-600" />
-                  <h4 className="font-bold text-[8px] text-gray-900">Career</h4>
+                  <Briefcase className="w-1 h-1 text-purple-600" />
+                  <h4 className="font-bold text-sm text-gray-900">Career</h4>
                 </div>
                 <div className="text-xs text-gray-700 line-clamp-2 overflow-hidden">
                   {userData.job.position}
@@ -712,8 +715,8 @@ export default function ShareScreenshot({
                 }`}
               >
                 <div className="flex items-center gap-1 mb-1">
-                  <Star className="w-2 h-2 text-purple-600" />
-                  <h4 className="font-bold text-[8px] text-gray-900">Interests</h4>
+                  <Star className="w-1 h-1 text-purple-600" />
+                  <h4 className="font-bold text-sm text-gray-900">Interests</h4>
                 </div>
                 <div className="flex flex-wrap gap-0.5">
                   {displayInterests.slice(0, 3).map((interest, index) => (
@@ -736,8 +739,8 @@ export default function ShareScreenshot({
                 }`}
               >
                 <div className="flex items-center gap-1 mb-1">
-                  <Dumbbell className="w-2 h-2 text-purple-600" />
-                  <h4 className="font-bold text-[8px] text-gray-900">Sports</h4>
+                  <Dumbbell className="w-1 h-1 text-purple-600" />
+                  <h4 className="font-bold text-sm text-gray-900">Sports</h4>
                 </div>
                 <div className="flex flex-wrap gap-0.5">
                   {userData.favoriteSport.slice(0, 3).map((sport, index) => (
@@ -762,8 +765,8 @@ export default function ShareScreenshot({
                 }`}
               >
                 <div className="flex items-center gap-1 mb-1">
-                  <Sparkles className="w-2 h-2 text-purple-600" />
-                  <h4 className="font-bold text-[8px] text-gray-900">Skills</h4>
+                  <Sparkles className="w-1 h-1 text-purple-600" />
+                  <h4 className="font-bold text-sm text-gray-900">Skills</h4>
                 </div>
                 <div className="flex flex-wrap gap-0.5">
                   {displaySkills.slice(0, 3).map((skill, index) => (
@@ -782,8 +785,8 @@ export default function ShareScreenshot({
             {userData.travelStyle && userData.travelStyle.length > 0 && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2">
                 <div className="flex items-center gap-1 mb-0.5">
-                  <MapPin className="w-2.5 h-2.5 text-purple-600" />
-                  <h4 className="font-bold text-[8px] text-gray-900">Travel Style</h4>
+                  <MapPin className="w-1 h-1 text-purple-600" />
+                  <h4 className="font-bold text-sm text-gray-900">Travel Style</h4>
                 </div>
                 <div className="flex flex-wrap gap-0.5">
                   {userData.travelStyle.slice(0, 2).map((style, index) => (
@@ -802,8 +805,8 @@ export default function ShareScreenshot({
             {userData.visitedCountries && userData.visitedCountries.length > 0 && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2">
                 <div className="flex items-center gap-1 mb-1">
-                  <Globe className="w-2 h-2 text-purple-600" />
-                  <h4 className="font-bold text-[8px] text-gray-900">Countries</h4>
+                  <Globe className="w-1 h-1 text-purple-600" />
+                  <h4 className="font-bold text-sm text-gray-900">Countries</h4>
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {userData.visitedCountries.slice(0, 5).map((country, index) => {
@@ -854,7 +857,7 @@ export default function ShareScreenshot({
                       return flagMap[countryName.toLowerCase()] || '🏳️'
                     }
                     return (
-                      <span key={index} className="text-[8px]">
+                      <span key={index} className="text-sm">
                         {getCountryFlag(country)}
                       </span>
                     )
@@ -867,8 +870,8 @@ export default function ShareScreenshot({
             {(userData.pet.name || userData.pet.breed) && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2 col-span-4">
                 <div className="flex items-center gap-1 mb-1">
-                  <PawPrint className="w-2 h-2 text-purple-600" />
-                  <h4 className="font-bold text-[8px] text-gray-900">Pet</h4>
+                  <PawPrint className="w-1 h-1 text-purple-600" />
+                  <h4 className="font-bold text-sm text-gray-900">Pet</h4>
                 </div>
                 <div className="text-xs text-gray-700 line-clamp-2 overflow-hidden">
                   {userData.pet.name || userData.pet.breed}
@@ -965,15 +968,13 @@ export default function ShareScreenshot({
                     onClick={downloadScreenshot}
                     className="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-cyan-700 transition-all duration-200"
                   >
-                    <Download className="w-4 h-4" />
-                    Download
+                    <Download className="size-4" />
                   </button>
                   <button
                     onClick={shareScreenshot}
                     className="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200"
                   >
                     <Share2 className="size-4" />
-                    Share
                   </button>
                 </div>
               </div>
