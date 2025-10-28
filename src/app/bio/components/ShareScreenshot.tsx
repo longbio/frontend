@@ -22,6 +22,7 @@ import {
   Briefcase,
   Globe,
   Sparkles,
+  Ruler,
 } from 'lucide-react'
 interface UserData {
   id: number
@@ -171,6 +172,10 @@ export default function ShareScreenshot({
               iconColor = '#3b82f6'
             } else if (classList.includes('text-blue-600')) {
               iconColor = '#2563eb'
+            } else if (classList.includes('text-blue-700')) {
+              iconColor = '#1e40af'
+            } else if (classList.includes('text-pink-700')) {
+              iconColor = '#be185d'
             } else if (classList.includes('text-gray-600')) {
               iconColor = '#4b5563'
             }
@@ -301,9 +306,10 @@ export default function ShareScreenshot({
             .justify-center { justify-content: center; }
             .leading-5 {line-height:19px}
             .gap-0\.5 { gap: 0.125rem; }
-            .gap-1 { gap: 0.22rem; }
-            .gap-1\.5 { gap: 0.35rem; }
-            .gap-2 { gap: 0.5rem; }
+            .gap-1 { gap: 0.19rem; }
+            .gap-1\.5 { gap: 0.23rem; }
+            .gap-x-1 { gap-x-1: 0.13rem; }
+            .gap-2 { gap: 0.25rem; }
             .gap-3 { gap: 0.75rem; }
             .gap-4 { gap: 1rem; }
             .gap-5 { gap: 1.25rem; }
@@ -318,7 +324,7 @@ export default function ShareScreenshot({
             .space-y-1 > * + * { margin-top: 0.25rem; }
             .space-y-1\.5 > * + * { margin-top: 0.375rem; }
             .space-y-2 > * + * { margin-top: 0.5rem; }
-            .space-y-3 > * + * { margin-top: 0.75rem; }
+            .space-y-3 > * + * { margin-top: 0.65rem; }
             .space-y-4 > * + * { margin-top: 1rem; }
             .mb-0\.5 { margin-bottom: 0.125rem; }
             .mb-1 { margin-bottom: 0.25rem; }
@@ -335,7 +341,7 @@ export default function ShareScreenshot({
             .mx-1 { margin-left: 0.25rem; margin-right: 0.25rem; }
             .mx-2 { margin-left: 0.5rem; margin-right: 0.5rem; }
             .p-1\.5 { padding: 0.375rem; }
-            .p-2 { padding: 0.5rem; }
+            .p-2 { padding: 0.4rem; }
             .p-2\.5 { padding: 0.625rem; }
             .p-3 { padding: 0.75rem; }
             .p-4 { padding: 1rem; }
@@ -343,7 +349,7 @@ export default function ShareScreenshot({
             .p-6 { padding: 1.5rem; }
             .p-8 { padding: 2rem; }
             .px-1\.5 { padding-left: 0.375rem; padding-right: 0.375rem; }
-            .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
+            .px-2 { padding-left: 0.3rem; padding-right: 0.3rem; }
             .px-2\.5 { padding-left: 0.625rem; padding-right: 0.625rem; }
             .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
             .py-0\.5 { padding-top: 0.125rem; padding-bottom: 0.125rem; }
@@ -409,10 +415,14 @@ export default function ShareScreenshot({
               -webkit-box-orient: vertical;
               -webkit-line-clamp: 3;
             }
+            .w-0\.5 { width: 0.35rem; }
+            .h-0\.5 { width: 0.35rem; }
             .w-1 { width: 0.55rem; }
-            .h-4 { height: 0.8rem; }
-            .w-2\.5 { width: 0.625rem; }
-            .h-2\.5 { height: 0.625rem; }
+            .w-2 { width: 0.5rem; }
+            .h-2 { width: 0.5rem; }
+            .h-4 { height: 0.6rem; }
+            .w-2\.5 { width: 0.59rem; }
+            .h-2\.5 { height: 0.59rem; }
             .w-3 { width: 0.75rem; }
             .h-3 { height: 0.75rem; }
             .w-3\.5 { width: 0.875rem; }
@@ -579,14 +589,14 @@ export default function ShareScreenshot({
           visibility: 'hidden',
         }}
       >
-        <div className="w-full px-2 pt-3 pb-2">
+        <div className="w-full px-2 pt-1.5 pb-1.5">
           {/* Header Text */}
           <div className="text-center">
-            <p className="text-sm text-gray-600 font-medium">Create your longBio, share it!</p>
+            <p className="text-sm text-blue-700/80 font-medium">Longbio.me</p>
           </div>
 
           {/* Compact Header */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2 mt-3 mb-2">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2 mt-1 mb-1">
             <div className="flex items-center justify-center gap-1 mb-1">
               {/* Profile Picture */}
               <div className="relative w-12 h-12 flex-shrink-0">
@@ -617,12 +627,14 @@ export default function ShareScreenshot({
                 {/* Compact badges */}
                 <div className="flex flex-wrap gap-1 mt-1">
                   {age && (
-                    <span className="flex items-center justify-center bg-pink-100 text-pink-700 px-2 h-4 rounded-full text-xs font-medium">
-                      {age}yr
+                    <span className="flex items-center gap-1 bg-pink-100 text-pink-700 px-2 h-4 rounded-full text-xs font-medium">
+                      <Calendar className="w-1 h-1 text-pink-700" />
+                      {age}
                     </span>
                   )}
                   {(userData.height > 0 || userData.weight > 0) && (
-                    <span className="flex items-center justify-center bg-blue-100 text-blue-700 px-2 h-4 rounded-full text-xs font-medium">
+                    <span className="flex items-center gap-1 bg-blue-100 text-blue-700 px-2 h-4 rounded-full text-xs font-medium">
+                      <Ruler className="w-1 h-1 text-blue-700" />
                       {userData.height > 0 ? userData.height + 'cm' : ''}
                       {userData.height > 0 && userData.weight > 0 && '/'}
                       {userData.weight > 0 ? userData.weight + 'kg' : ''}
@@ -635,9 +647,9 @@ export default function ShareScreenshot({
             {/* Location & Status Row */}
             <div className="text-center">
               {(userData.bornPlace || userData.livePlace) && (
-                <div className="text-xs text-gray-600 mb-0.5 line-clamp-1">
+                <div className="text-xs text-gray-600 mb-1 line-clamp-1">
                   {userData.bornPlace && userData.livePlace
-                    ? `${userData.bornPlace} → ${userData.livePlace}`
+                    ? `${userData.bornPlace} - ${userData.livePlace}`
                     : userData.bornPlace || userData.livePlace}
                 </div>
               )}
@@ -684,8 +696,8 @@ export default function ShareScreenshot({
             {/* Education */}
             {userData.education.university && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2">
-                <div className="flex items-center gap-1 mb-0.5">
-                  <GraduationCap className="w-1 h-1 text-purple-600" />
+                <div className="flex items-center gap-1">
+                  <GraduationCap className="w-2 h-1 text-purple-600" />
                   <h4 className="font-bold text-sm text-gray-900">Education</h4>
                 </div>
                 <div className="text-xs text-gray-700 line-clamp-2 leading-5 overflow-hidden">
@@ -883,9 +895,9 @@ export default function ShareScreenshot({
           </div>
 
           {/* Footer */}
-          <div className="border-t border-gray-100 text-center pt-3">
-            <div className="text-sm font-bold text-gray-500 shadow" style={{ color: '#1e2939' }}>
-              LongBio.me
+          <div className="border-t border-gray-100 text-center pt-2">
+            <div className="text-sm font-bold text-purple-600 shadow" style={{ color: '#1e2939' }}>
+              Create your longBio, share it!
             </div>
           </div>
         </div>
@@ -953,14 +965,14 @@ export default function ShareScreenshot({
                 </button>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {/* Preview */}
                 <div className="flex justify-center">
                   <div
                     className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50"
-                    style={{ width: '355px', maxWidth: '355px' }}
+                    style={{ width: '350px', maxWidth: '350px' }}
                   >
-                    <Image src={screenshot} alt="Bio Screenshot" width={355} height={600} />
+                    <Image src={screenshot} alt="Bio Screenshot" width={350} height={600} />
                   </div>
                 </div>
 
