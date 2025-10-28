@@ -301,8 +301,8 @@ export default function ShareScreenshot({
             .justify-center { justify-content: center; }
             .leading-5 {line-height:19px}
             .gap-0\.5 { gap: 0.125rem; }
-            .gap-1 { gap: 0.25rem; }
-            .gap-1\.5 { gap: 0.375rem; }
+            .gap-1 { gap: 0.22rem; }
+            .gap-1\.5 { gap: 0.35rem; }
             .gap-2 { gap: 0.5rem; }
             .gap-3 { gap: 0.75rem; }
             .gap-4 { gap: 1rem; }
@@ -370,9 +370,9 @@ export default function ShareScreenshot({
             .overflow-hidden { overflow: hidden; }
             .border { border-width: 1px; }
             .border-t { border-top-width: 1px; }
-            .text-xs { font-size: 0.37rem; line-height: 1rem; }
-            .text-sm { font-size: 0.42rem; }
-            .text-base { font-size: 0.7rem; }
+            .text-xs { font-size: 0.32rem; line-height: 0.5rem; }
+            .text-sm { font-size: 0.4rem; }
+            .text-base { font-size: 0.6rem; }
             .text-xl { font-size: 1.25rem; }
             .font-bold { font-weight: 700; }
             .font-semibold { font-weight: 600; }
@@ -428,8 +428,8 @@ export default function ShareScreenshot({
             .h-7 { height: 1.75rem; }
             .w-8 { width: 2rem; }
             .h-8 { height: 2rem; }
-            .w-12 { width: 2.8rem; }
-            .h-12 { height: 2.8rem; }
+            .w-12 { width: 2rem; }
+            .h-12 { height: 2rem; }
             .w-14 { width: 3rem; }
             .h-14 { height: 3rem; }
             .w-16 { width: 4rem; }
@@ -589,14 +589,14 @@ export default function ShareScreenshot({
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2 mt-3 mb-2">
             <div className="flex items-center justify-center gap-1 mb-1">
               {/* Profile Picture */}
-              <div className="relative w-14 h-14 flex-shrink-0">
+              <div className="relative w-12 h-12 flex-shrink-0">
                 {userData.profileImage ? (
                   <div className="w-full h-full rounded-full overflow-hidden border-2 border-purple-200 shadow-sm">
                     <Image
                       src={userData.profileImage}
                       alt="profile"
-                      width={48}
-                      height={48}
+                      width={32}
+                      height={32}
                       className="w-full h-full object-cover rounded-full"
                     />
                   </div>
@@ -610,7 +610,7 @@ export default function ShareScreenshot({
               <div className="flex-1">
                 <div className="flex items-center gap-1 mb-0.5">
                   <h3 className="text-base font-bold text-gray-900">{userData.fullName}</h3>
-                  {userData.isVerified && <CheckCircle className="w-3 h-3 text-blue-500" />}
+                  {userData.isVerified && <CheckCircle className="w-1 h-1 text-blue-500" />}
                 </div>
                 <div className="text-sm text-gray-600 mb-0.5">@{userData.username}</div>
 
@@ -893,7 +893,7 @@ export default function ShareScreenshot({
 
       {/* Modal UI */}
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-2xl shadow-2xl w-[24rem] max-h-[170vh] overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-2xl max-w-[23rem] max-h-[170vh] overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-1 border-b border-gray-200">
             <h3 className="text-lg font-bold text-gray-900">Share Bio Screenshot</h3>
@@ -958,9 +958,9 @@ export default function ShareScreenshot({
                 <div className="flex justify-center">
                   <div
                     className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50"
-                    style={{ width: '360px', maxWidth: '360px' }}
+                    style={{ width: '355px', maxWidth: '355px' }}
                   >
-                    <Image src={screenshot} alt="Bio Screenshot" width={360} height={600} />
+                    <Image src={screenshot} alt="Bio Screenshot" width={355} height={600} />
                   </div>
                 </div>
 
