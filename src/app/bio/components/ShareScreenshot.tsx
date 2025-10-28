@@ -299,6 +299,7 @@ export default function ShareScreenshot({
             .items-center { align-items: center; }
             .items-start { align-items: flex-start; }
             .justify-center { justify-content: center; }
+            .leading-5 {line-height:19px}
             .gap-0\.5 { gap: 0.125rem; }
             .gap-1 { gap: 0.25rem; }
             .gap-1\.5 { gap: 0.375rem; }
@@ -369,9 +370,9 @@ export default function ShareScreenshot({
             .overflow-hidden { overflow: hidden; }
             .border { border-width: 1px; }
             .border-t { border-top-width: 1px; }
-            .text-xs { font-size: 0.43rem; line-height: 1rem; }
-            .text-sm { font-size: 0.5rem; }
-            .text-base { font-size: 0.78rem; }
+            .text-xs { font-size: 0.37rem; line-height: 1rem; }
+            .text-sm { font-size: 0.42rem; }
+            .text-base { font-size: 0.7rem; }
             .text-xl { font-size: 1.25rem; }
             .font-bold { font-weight: 700; }
             .font-semibold { font-weight: 600; }
@@ -409,7 +410,7 @@ export default function ShareScreenshot({
               -webkit-line-clamp: 3;
             }
             .w-1 { width: 0.55rem; }
-            .h-4 { height: 1rem; }
+            .h-4 { height: 0.8rem; }
             .w-2\.5 { width: 0.625rem; }
             .h-2\.5 { height: 0.625rem; }
             .w-3 { width: 0.75rem; }
@@ -427,16 +428,16 @@ export default function ShareScreenshot({
             .h-7 { height: 1.75rem; }
             .w-8 { width: 2rem; }
             .h-8 { height: 2rem; }
-            .w-12 { width: 3rem; }
-            .h-12 { height: 3rem; }
-            .w-14 { width: 3.5rem; }
-            .h-14 { height: 3.5rem; }
+            .w-12 { width: 2.8rem; }
+            .h-12 { height: 2.8rem; }
+            .w-14 { width: 3rem; }
+            .h-14 { height: 3rem; }
             .w-16 { width: 4rem; }
             .h-16 { height: 4rem; }
-            .w-20 { width: 5rem; }
-            .h-20 { height: 5rem; }
-            .w-24 { width: 6rem; }
-            .h-24 { height: 6rem; }
+            .w-20 { width: 4.5rem; }
+            .h-20 { height: 4.5rem; }
+            .w-24 { width: 4.8rem; }
+            .h-24 { height: 4.8rem; }
             .w-full { width: 100%; }
             .h-full { height: 100%; }
             .flex-shrink-0 { flex-shrink: 0; }
@@ -594,8 +595,8 @@ export default function ShareScreenshot({
                     <Image
                       src={userData.profileImage}
                       alt="profile"
-                      width={56}
-                      height={56}
+                      width={48}
+                      height={48}
                       className="w-full h-full object-cover rounded-full"
                     />
                   </div>
@@ -616,12 +617,12 @@ export default function ShareScreenshot({
                 {/* Compact badges */}
                 <div className="flex flex-wrap gap-1 mt-1">
                   {age && (
-                    <span className="flex items-center justify-center bg-pink-100 text-pink-700 px-3 h-6 rounded-full text-xs font-medium">
+                    <span className="flex items-center justify-center bg-pink-100 text-pink-700 px-2 h-4 rounded-full text-xs font-medium">
                       {age}yr
                     </span>
                   )}
                   {(userData.height > 0 || userData.weight > 0) && (
-                    <span className="flex items-center justify-center bg-blue-100 text-blue-700 px-3 h-6 rounded-full text-xs font-medium">
+                    <span className="flex items-center justify-center bg-blue-100 text-blue-700 px-2 h-4 rounded-full text-xs font-medium">
                       {userData.height > 0 ? userData.height + 'cm' : ''}
                       {userData.height > 0 && userData.weight > 0 && '/'}
                       {userData.weight > 0 ? userData.weight + 'kg' : ''}
@@ -644,16 +645,16 @@ export default function ShareScreenshot({
                 {userData.gender && (
                   <span className="flex items-center gap-1">
                     {userData.gender.toLowerCase() === 'male' ? (
-                      <Mars className="w-3 h-3 text-gray-600" />
+                      <Mars className="w-1 h-1 text-gray-600" />
                     ) : (
-                      <Venus className="w-3 h-3 text-gray-600" />
+                      <Venus className="w-1 h-1 text-gray-600" />
                     )}
                     {userData.gender}
                   </span>
                 )}
                 {userData.maritalStatus && (
                   <span className="flex items-center gap-1">
-                    <Heart className="w-3 h-3 text-gray-600" />
+                    <Heart className="w-1 h-1 text-gray-600" />
                     {userData.maritalStatus}
                   </span>
                 )}
@@ -687,7 +688,7 @@ export default function ShareScreenshot({
                   <GraduationCap className="w-1 h-1 text-purple-600" />
                   <h4 className="font-bold text-sm text-gray-900">Education</h4>
                 </div>
-                <div className="text-xs text-gray-700 line-clamp-2 overflow-hidden">
+                <div className="text-xs text-gray-700 line-clamp-2 leading-5 overflow-hidden">
                   {userData.education.topic || userData.education.university}
                 </div>
               </div>
@@ -700,7 +701,7 @@ export default function ShareScreenshot({
                   <Briefcase className="w-1 h-1 text-purple-600" />
                   <h4 className="font-bold text-sm text-gray-900">Career</h4>
                 </div>
-                <div className="text-xs text-gray-700 line-clamp-2 overflow-hidden">
+                <div className="text-xs text-gray-700 line-clamp-2 leading-5 overflow-hidden">
                   {userData.job.position}
                 </div>
               </div>
@@ -719,11 +720,11 @@ export default function ShareScreenshot({
                   <Star className="w-1 h-1 text-purple-600" />
                   <h4 className="font-bold text-sm text-gray-900">Interests</h4>
                 </div>
-                <div className="flex flex-wrap gap-0.5">
+                <div className="flex flex-wrap gap-0.5 leading-5">
                   {displayInterests.slice(0, 3).map((interest, index) => (
                     <span
                       key={index}
-                      className="px-1 py-0.5 border border-purple-300 text-purple-700 rounded-full text-xs whitespace-nowrap"
+                      className="px-1 py-0.5 border border-purple-300 text-purple-700 rounded-full text-xs whitespace-nowrap leading-5"
                     >
                       {interest}
                     </span>
@@ -747,7 +748,7 @@ export default function ShareScreenshot({
                   {userData.favoriteSport.slice(0, 3).map((sport, index) => (
                     <span
                       key={index}
-                      className="px-1 py-0.5 border border-purple-300 text-purple-700 rounded-full text-xs"
+                      className="px-1 py-0.5 border border-purple-300 text-purple-700 rounded-full text-xs leading-5"
                     >
                       {sport}
                     </span>
@@ -773,7 +774,7 @@ export default function ShareScreenshot({
                   {displaySkills.slice(0, 3).map((skill, index) => (
                     <span
                       key={index}
-                      className="px-1 py-0.5 border border-blue-300 text-blue-700 rounded-full text-xs"
+                      className="px-1 py-0.5 border border-blue-300 text-blue-700 rounded-full text-xs leading-5"
                     >
                       {skill}
                     </span>
@@ -793,7 +794,7 @@ export default function ShareScreenshot({
                   {userData.travelStyle.slice(0, 2).map((style, index) => (
                     <span
                       key={index}
-                      className="px-1 py-0.5 border border-purple-300 text-purple-700 rounded-full text-xs"
+                      className="px-1 py-0.5 border border-purple-300 text-purple-700 rounded-full text-xs leading-5"
                     >
                       {style}
                     </span>
@@ -874,7 +875,7 @@ export default function ShareScreenshot({
                   <PawPrint className="w-1 h-1 text-purple-600" />
                   <h4 className="font-bold text-sm text-gray-900">Pet</h4>
                 </div>
-                <div className="text-xs text-gray-700 line-clamp-2 overflow-hidden">
+                <div className="text-xs text-gray-700 line-clamp-2 leading-5 overflow-hidden">
                   {userData.pet.name || userData.pet.breed}
                 </div>
               </div>
