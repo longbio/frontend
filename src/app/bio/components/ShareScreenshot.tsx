@@ -328,8 +328,8 @@ export default function ShareScreenshot({
             .gap-1 { gap: 0.09rem; }
             .gap-1\.5 { gap: 0.23rem; }
             .gap-x-1 { gap-x-1: 0.13rem; }
-            .gap-2 { gap: 0.13rem; }
-            .gap-3 { gap: 0.2rem; }
+            .gap-2 { gap: 0.09rem; }
+            .gap-3 { gap: 0.12rem; }
             .gap-4 { gap: 4rem; }
             .gap-5 { gap: 5rem; }
             .gap-6 { gap: 6rem; }
@@ -359,10 +359,10 @@ export default function ShareScreenshot({
             .mt-6 { margin-top: 0.5rem; }
             .mx-1 { margin-left: 0.25rem; margin-right: 0.25rem; }
             .mx-2 { margin-left: 0.5rem; margin-right: 0.5rem; }
-            .p-1 { padding: 0.19rem; }
+            .p-1 { padding: 0.1rem; }
             .p-1\.5 { padding: 0.2rem; }
-            .p-2 { padding: 0.25rem; }
-            .p-2\.5 { padding: 0.29rem; }
+            .p-2 { padding: 0.19rem; }
+            .p-2\.5 { padding: 0.24rem; }
             .p-3 { padding: 0.3rem; }
             .p-4 { padding: 0.4rem; }
             .p-5 { padding: 0.5rem; }
@@ -396,10 +396,10 @@ export default function ShareScreenshot({
             .overflow-hidden { overflow: hidden; }
             .border { border-width: 1px; }
             .border-t { border-top-width: 1px; }
-            .text-xs { font-size: 0.15rem; line-height: 0.3rem; }
-            .text-sm { font-size: 0.2rem; }
-            .text-base { font-size: 0.3rem; }
-            .text-xl { font-size: 1.25rem; }
+            .text-xs { font-size: 0.1rem; line-height: 0.1rem; }
+            .text-sm { font-size: 0.14rem; }
+            .text-base { font-size: 0.25rem; }
+            .text-xl { font-size: 0.35rem; }
             .font-bold { font-weight: 700; }
             .font-semibold { font-weight: 600; }
             .font-medium { font-weight: 500; }
@@ -631,17 +631,14 @@ export default function ShareScreenshot({
           <div className="bg-gradient-to-br from-gray-50 to-white rounded-lg shadow-md border border-gray-100 p-2 mt-1 mb-1">
             <div className="flex items-center justify-center gap-1 mb-1">
               {/* Profile Picture */}
-              <div className="relative w-8 h-8 flex-shrink-0">
+              <div className="relative w-8 h-8 flex-shrink-0 overflow-hidden rounded-full">
                 {userData.profileImage ? (
-                  <div className="w-full h-full rounded-full overflow-hidden border-2 border-purple-200 shadow-sm">
-                    <Image
-                      src={userData.profileImage}
-                      alt="profile"
-                      width={32}
-                      height={32}
-                      className="w-full h-full object-cover rounded-full"
-                    />
-                  </div>
+                  <Image
+                    src={userData.profileImage}
+                    alt="profile"
+                    fill
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
                   <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center border-2 border-purple-200 shadow-sm">
                     <User className="w-7 h-7 text-purple-600" />
