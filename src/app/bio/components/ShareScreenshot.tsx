@@ -454,7 +454,7 @@ export default function ShareScreenshot({
             .h-3\.5 { height: 0.875rem; }
             .w-4 { width: 0.8rem; }
             .h-1 { height: 0.25rem; }
-            .w-5 { width: 1.25rem; }
+            .w-5 { width: 0.8rem; }
             .h-5 { height: 0.8rem; }
             .w-6 { width: 1.5rem; }
             .h-6 { height: 1.5rem; }
@@ -636,7 +636,7 @@ export default function ShareScreenshot({
           <div className="bg-gradient-to-br from-gray-50 to-white rounded-lg shadow-md border border-gray-100 p-2 mt-1 mb-1">
             <div className="flex items-center justify-center gap-1 mb-1">
               {/* Profile Picture */}
-              <div className="relative w-12 h-12 flex-shrink-0">
+              <div className="relative w-8 h-8 flex-shrink-0">
                 {userData.profileImage ? (
                   <div className="w-full h-full rounded-full overflow-hidden border-2 border-purple-200 shadow-sm">
                     <Image
