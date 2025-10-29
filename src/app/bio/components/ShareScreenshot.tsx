@@ -131,15 +131,23 @@ export default function ShareScreenshot({
         }
       })
 
+      // High-DPI scale for crisp output (cap to avoid OOM)
+      const deviceScale = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1
+      const scaleFactor = Math.min(4, Math.max(2, deviceScale * 2))
+
       const canvas = await html2canvas(element, {
         backgroundColor: '#f8fafc',
-        scale: 2,
-        useCORS: false,
+        scale: scaleFactor,
+        useCORS: true,
         allowTaint: false,
         logging: false,
         imageTimeout: 15000,
         ignoreElements: () => false,
         onclone: (clonedDoc) => {
+          // Ensure Google Fonts are available inside the cloned document for html2canvas
+          const fontsLink = clonedDoc.createElement('link')
+          fontsLink.setAttribute('rel', 'stylesheet')
+          clonedDoc.head.appendChild(fontsLink)
           const allStylesheets = clonedDoc.querySelectorAll('link[rel="stylesheet"], style')
           allStylesheets.forEach((sheet) => sheet.remove())
 
@@ -284,6 +292,22 @@ export default function ShareScreenshot({
               font-style: normal;
               font-display: swap;
             }
+            
+            @font-face {
+              font-family: 'Libre Baskerville';
+              src: url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap');
+              font-weight: 400 700;
+              font-style: normal;
+              font-display: swap;
+            }
+            
+            @font-face {
+              font-family: 'Lobster Two';
+              src: url('https://fonts.googleapis.com/css2?family=Lobster+Two:wght@400;700&display=swap');
+              font-weight: 400 700;
+              font-style: normal;
+              font-display: swap;
+            }
 
             * {
               box-sizing: border-box;
@@ -376,9 +400,9 @@ export default function ShareScreenshot({
             .overflow-hidden { overflow: hidden; }
             .border { border-width: 1px; }
             .border-t { border-top-width: 1px; }
-            .text-xs { font-size: 0.32rem; line-height: 0.5rem; }
-            .text-sm { font-size: 0.4rem; }
-            .text-base { font-size: 0.6rem; }
+            .text-xs { font-size: 0.15rem; line-height: 0.3rem; }
+            .text-sm { font-size: 0.2rem; }
+            .text-base { font-size: 0.3rem; }
             .text-xl { font-size: 1.25rem; }
             .font-bold { font-weight: 700; }
             .font-semibold { font-weight: 600; }
@@ -417,21 +441,20 @@ export default function ShareScreenshot({
             }
             .w-0\.5 { width: 0.35rem; }
             .h-0\.5 { width: 0.35rem; }
-            .w-1 { width: 0.55rem; }
-            .w-2 { width: 0.5rem; }
-            .h-2 { width: 0.5rem; }
-            .h-4 { height: 0.6rem; }
-            .w-2\.5 { width: 0.59rem; }
-            .h-2\.5 { height: 0.59rem; }
-            .w-3 { width: 0.75rem; }
-            .h-3 { height: 0.75rem; }
+            .w-1 { width: 0.25rem; }
+            .w-2 { width: 0.3rem; }
+            .h-2 { width: 0.3rem; }
+            .h-4 { height: 0.4rem; }
+            .w-2\.5 { width: 0.5rem; }
+            .h-2\.5 { height: 0.5rem; }
+            .w-3 { width: 0.6rem; }
+            .h-3 { height: 0.6rem; }
             .w-3\.5 { width: 0.875rem; }
             .h-3\.5 { height: 0.875rem; }
-            .w-4 { width: 1rem; }
-            .h-1 { height: 0.55rem; }
-            .h-4 { height: 1rem; }
+            .w-4 { width: 0.8rem; }
+            .h-1 { height: 0.25rem; }
             .w-5 { width: 1.25rem; }
-            .h-5 { height: 1.25rem; }
+            .h-5 { height: 0.8rem; }
             .w-6 { width: 1.5rem; }
             .h-6 { height: 1.5rem; }
             .w-7 { width: 1.75rem; }
@@ -482,6 +505,7 @@ export default function ShareScreenshot({
             [class*="from-purple-50"][class*="via-pink-50"][class*="to-purple-50"] { background: linear-gradient(to bottom right, #faf5ff, #fdf2f8, #faf5ff); }
             [class*="from-gray-50"][class*="to-white"] { background: linear-gradient(to bottom right, #f9fafb, #ffffff); }
             [class*="from-purple-100"][class*="to-pink-100"] { background: linear-gradient(to right, #f3e8ff, #fce7f3); }
+            [class*="from-blue-100"][class*="to-cyan-100"] { background: linear-gradient(to right, #dbeafe, #cffafe); }
             [class*="bg-gradient-to-br"] { background: linear-gradient(to bottom right, #f9fafb, #f3f4f6); }
             .mx-auto { margin-left: auto; margin-right: auto; }
             .max-w-4xl { max-width: 56rem; }
@@ -592,11 +616,23 @@ export default function ShareScreenshot({
         <div className="w-full px-2 pt-1.5 pb-1.5">
           {/* Header Text */}
           <div className="text-center">
-            <p className="text-sm text-blue-700/80 font-medium">Longbio.me</p>
+            <div
+              className="inline-flex items-center justify-center mx-auto rounded-full border-2 border-purple-300 bg-gradient-to-r from-purple-100 via-pink-100 to-purple-100 px-2 shadow-md"
+              style={{
+                fontFamily: 'Inter, system-ui, sans-serif',
+                height: '0.2rem',
+                lineHeight: '0.2rem',
+              }}
+            >
+              <Globe className="w-1 h-1 text-purple-700" />
+              <span className="text-sm font-bold text-purple-700 px-2 tracking-wide">
+                Longbio.me
+              </span>
+            </div>
           </div>
 
           {/* Compact Header */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2 mt-1 mb-1">
+          <div className="bg-gradient-to-br from-gray-50 to-white rounded-lg shadow-md border border-gray-100 p-2 mt-1 mb-1">
             <div className="flex items-center justify-center gap-1 mb-1">
               {/* Profile Picture */}
               <div className="relative w-12 h-12 flex-shrink-0">
@@ -695,7 +731,7 @@ export default function ShareScreenshot({
 
             {/* Education */}
             {userData.education.university && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2">
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-lg shadow-md border border-gray-100 p-2">
                 <div className="flex items-center gap-1">
                   <GraduationCap className="w-2 h-1 text-purple-600" />
                   <h4 className="font-bold text-sm text-gray-900">Education</h4>
@@ -708,7 +744,7 @@ export default function ShareScreenshot({
 
             {/* Job */}
             {userData.job.position && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2">
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-lg shadow-md border border-gray-100 p-2">
                 <div className="flex items-center gap-1 mb-1">
                   <Briefcase className="w-1 h-1 text-purple-600" />
                   <h4 className="font-bold text-sm text-gray-900">Career</h4>
@@ -895,9 +931,19 @@ export default function ShareScreenshot({
           </div>
 
           {/* Footer */}
-          <div className="border-t border-gray-100 text-center pt-2">
-            <div className="text-sm font-bold text-purple-600 shadow" style={{ color: '#1e2939' }}>
-              Create your longBio, share it!
+          <div className="text-center border-t border-gray-100 mt-2">
+            <div
+              className="inline-flex items-center justify-center rounded-full border-2 border-blue-300 bg-gradient-to-r from-blue-100 to-cyan-100 shadow-md"
+              style={{
+                fontFamily: 'Inter, system-ui, sans-serif',
+                height: '0.2rem',
+                lineHeight: '0.2rem',
+              }}
+            >
+              <Sparkles className="w-1 h-1 text-blue-700" />
+              <span className="text-sm font-bold px-2 text-blue-700 tracking-wide">
+                Create your longBio and share it!
+              </span>
             </div>
           </div>
         </div>
