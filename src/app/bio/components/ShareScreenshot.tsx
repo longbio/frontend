@@ -330,14 +330,14 @@ export default function ShareScreenshot({
             .justify-center { justify-content: center; }
             .leading-5 {line-height:19px}
             .gap-0\.5 { gap: 0.125rem; }
-            .gap-1 { gap: 0.19rem; }
+            .gap-1 { gap: 0.09rem; }
             .gap-1\.5 { gap: 0.23rem; }
             .gap-x-1 { gap-x-1: 0.13rem; }
-            .gap-2 { gap: 0.25rem; }
-            .gap-3 { gap: 0.75rem; }
-            .gap-4 { gap: 1rem; }
-            .gap-5 { gap: 1.25rem; }
-            .gap-6 { gap: 1.5rem; }
+            .gap-2 { gap: 0.13rem; }
+            .gap-3 { gap: 0.2rem; }
+            .gap-4 { gap: 4rem; }
+            .gap-5 { gap: 5rem; }
+            .gap-6 { gap: 6rem; }
             .grid { display: grid; }
             .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -356,45 +356,46 @@ export default function ShareScreenshot({
             .mb-3 { margin-bottom: 0.75rem; }
             .mb-4 { margin-bottom: 1rem; }
             .mb-6 { margin-bottom: 1.5rem; }
-            .mt-1 { margin-top: 0.25rem; }
+            .mt-1 { margin-top: 0.2rem; }
             .mt-1\.5 { margin-top: 0.375rem; }
-            .mt-2 { margin-top: 0.5rem; }
-            .mt-3 { margin-top: 0.75rem; }
-            .mt-4 { margin-top: 1rem; }
-            .mt-6 { margin-top: 1.5rem; }
+            .mt-2 { margin-top: 0.26rem; }
+            .mt-3 { margin-top: 0.3rem; }
+            .mt-4 { margin-top: 0.36rem; }
+            .mt-6 { margin-top: 0.5rem; }
             .mx-1 { margin-left: 0.25rem; margin-right: 0.25rem; }
             .mx-2 { margin-left: 0.5rem; margin-right: 0.5rem; }
-            .p-1\.5 { padding: 0.375rem; }
-            .p-2 { padding: 0.4rem; }
+            .p-1 { padding: 0.2rem; }
+            .p-1\.5 { padding: 0.2rem; }
+            .p-2 { padding: 0.28rem; }
             .p-2\.5 { padding: 0.625rem; }
-            .p-3 { padding: 0.75rem; }
-            .p-4 { padding: 1rem; }
-            .p-5 { padding: 1.25rem; }
-            .p-6 { padding: 1.5rem; }
-            .p-8 { padding: 2rem; }
-            .px-1\.5 { padding-left: 0.375rem; padding-right: 0.375rem; }
-            .px-2 { padding-left: 0.3rem; padding-right: 0.3rem; }
+            .p-3 { padding: 0.34rem; }
+            .p-4 { padding: 0.4rem; }
+            .p-5 { padding: 0.5rem; }
+            .p-6 { padding: 0.6rem; }
+            .p-8 { padding: 0.7rem; }
+            .px-1\.5 { padding-left: 0.2rem; padding-right: 0.2rem; }
+            .px-2 { padding-left: 0.25rem; padding-right: 0.25rem; }
             .px-2\.5 { padding-left: 0.625rem; padding-right: 0.625rem; }
-            .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+            .px-3 { padding-left: 0.3rem; padding-right: 0.3rem; }
             .py-0\.5 { padding-top: 0.125rem; padding-bottom: 0.125rem; }
-            .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+            .py-1 { padding-top: 0.2rem; padding-bottom: 0.2rem; }
             .py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
             .pt-1\.5 { padding-top: 0.375rem; }
-            .pt-2 { padding-top: 0.5rem; }
-            .pt-3 { padding-top: 0.71rem; }
+            .pt-2 { padding-top: 0.35rem; }
+            .pt-3 { padding-top: 0.38rem; }
             .pt-4 { padding-top: 1rem; }
             .pt-5 { padding-top: 1.25rem; }
             .py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
             .pb-1\.5 { padding-bottom: 0.375rem; }
-            .pb-2 { padding-bottom: 0.5rem; }
-            .pb-3 { padding-bottom: 0.75rem; }
-            .pb-4 { padding-bottom: 1rem; }
-            .pb-5 { padding-bottom: 1.25rem; }
+            .pb-2 { padding-bottom: 0.2rem; }
+            .pb-3 { padding-bottom: 0.27rem; }
+            .pb-4 { padding-bottom: 0.32rem; }
+            .pb-5 { padding-bottom: 0.4rem; }
             .text-center { text-align: center; }
-            .rounded-lg { border-radius: 0.5rem; }
-            .rounded-xl { border-radius: 0.75rem; }
-            .rounded-2xl { border-radius: 1rem; }
-            .rounded-3xl { border-radius: 1.5rem; }
+            .rounded-lg { border-radius: 0.3rem; }
+            .rounded-xl { border-radius: 0.45rem; }
+            .rounded-2xl { border-radius: 0.5rem; }
+            .rounded-3xl { border-radius: 0.6rem; }
             .rounded-full { border-radius: 9999px; }
             .whitespace-nowrap { white-space: nowrap; }
             .overflow-hidden { overflow: hidden; }
