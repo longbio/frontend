@@ -131,20 +131,15 @@ export default function ShareScreenshot({
         }
       })
 
-      // High-DPI scale for crisp output (cap to avoid OOM)
-      const deviceScale = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1
-      const scaleFactor = Math.min(4, Math.max(2, deviceScale * 2))
-
       const canvas = await html2canvas(element, {
         backgroundColor: '#f8fafc',
-        scale: scaleFactor,
+        scale: 10,
         useCORS: true,
-        allowTaint: false,
+        allowTaint: true,
         logging: false,
         imageTimeout: 15000,
         ignoreElements: () => false,
         onclone: (clonedDoc) => {
-          // Ensure Google Fonts are available inside the cloned document for html2canvas
           const fontsLink = clonedDoc.createElement('link')
           fontsLink.setAttribute('rel', 'stylesheet')
           clonedDoc.head.appendChild(fontsLink)
@@ -347,28 +342,28 @@ export default function ShareScreenshot({
             .space-y-0\.5 > * + * { margin-top: 0.125rem; }
             .space-y-1 > * + * { margin-top: 0.25rem; }
             .space-y-1\.5 > * + * { margin-top: 0.375rem; }
-            .space-y-2 > * + * { margin-top: 0.5rem; }
+            .space-y-2 > * + * { margin-top: 0.4rem; }
             .space-y-3 > * + * { margin-top: 0.65rem; }
             .space-y-4 > * + * { margin-top: 1rem; }
             .mb-0\.5 { margin-bottom: 0.125rem; }
             .mb-1 { margin-bottom: 0.25rem; }
-            .mb-2 { margin-bottom: 0.5rem; }
+            .mb-2 { margin-bottom: 0.2rem; }
             .mb-3 { margin-bottom: 0.75rem; }
             .mb-4 { margin-bottom: 1rem; }
             .mb-6 { margin-bottom: 1.5rem; }
             .mt-1 { margin-top: 0.2rem; }
             .mt-1\.5 { margin-top: 0.375rem; }
-            .mt-2 { margin-top: 0.26rem; }
+            .mt-2 { margin-top: 0.2rem; }
             .mt-3 { margin-top: 0.3rem; }
             .mt-4 { margin-top: 0.36rem; }
             .mt-6 { margin-top: 0.5rem; }
             .mx-1 { margin-left: 0.25rem; margin-right: 0.25rem; }
             .mx-2 { margin-left: 0.5rem; margin-right: 0.5rem; }
-            .p-1 { padding: 0.2rem; }
+            .p-1 { padding: 0.19rem; }
             .p-1\.5 { padding: 0.2rem; }
-            .p-2 { padding: 0.28rem; }
-            .p-2\.5 { padding: 0.625rem; }
-            .p-3 { padding: 0.34rem; }
+            .p-2 { padding: 0.25rem; }
+            .p-2\.5 { padding: 0.29rem; }
+            .p-3 { padding: 0.3rem; }
             .p-4 { padding: 0.4rem; }
             .p-5 { padding: 0.5rem; }
             .p-6 { padding: 0.6rem; }
@@ -379,17 +374,17 @@ export default function ShareScreenshot({
             .px-3 { padding-left: 0.3rem; padding-right: 0.3rem; }
             .py-0\.5 { padding-top: 0.125rem; padding-bottom: 0.125rem; }
             .py-1 { padding-top: 0.2rem; padding-bottom: 0.2rem; }
-            .py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
-            .pt-1\.5 { padding-top: 0.375rem; }
-            .pt-2 { padding-top: 0.35rem; }
+            .py-1\.5 { padding-top: 0.25rem; padding-bottom: 0.375rem; }
+            .pt-1\.5 { padding-top: 0.25rem; }
+            .pt-2 { padding-top: 0.3rem; }
             .pt-3 { padding-top: 0.38rem; }
             .pt-4 { padding-top: 1rem; }
             .pt-5 { padding-top: 1.25rem; }
             .py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
-            .pb-1\.5 { padding-bottom: 0.375rem; }
-            .pb-2 { padding-bottom: 0.2rem; }
-            .pb-3 { padding-bottom: 0.27rem; }
-            .pb-4 { padding-bottom: 0.32rem; }
+            .pb-1\.5 { padding-bottom: 0.26rem; }
+            .pb-2 { padding-bottom: 0.3rem; }
+            .pb-3 { padding-bottom: 0.32rem; }
+            .pb-4 { padding-bottom: 0.36rem; }
             .pb-5 { padding-bottom: 0.4rem; }
             .text-center { text-align: center; }
             .rounded-lg { border-radius: 0.3rem; }
@@ -618,7 +613,7 @@ export default function ShareScreenshot({
           {/* Header Text */}
           <div className="text-center">
             <div
-              className="inline-flex items-center justify-center mx-auto rounded-full border-2 border-purple-300 bg-gradient-to-r from-purple-100 via-pink-100 to-purple-100 px-2 shadow-md"
+              className="inline-flex items-center justify-center mx-auto rounded-lg border-2 border-purple-300 bg-gradient-to-r from-purple-100 via-pink-100 to-purple-100 px-2 shadow-md"
               style={{
                 fontFamily: 'Inter, system-ui, sans-serif',
                 height: '0.2rem',
@@ -930,19 +925,16 @@ export default function ShareScreenshot({
               </div>
             )}
           </div>
-
           {/* Footer */}
-          <div className="text-center border-t border-gray-100 mt-2">
+          <div className="relative text-center border-t border-gray-100 h-5 mt-1 mb-1">
             <div
-              className="inline-flex items-center justify-center rounded-full border-2 border-blue-300 bg-gradient-to-r from-blue-100 to-cyan-100 shadow-md"
+              className="absolute top-0 left-1/2 -translate-x-1/2 h-full rounded-lg border-2 border-blue-300 bg-gradient-to-r from-blue-100 to-cyan-100 px-2 shadow-md flex items-center justify-center gap-1"
               style={{
                 fontFamily: 'Inter, system-ui, sans-serif',
-                height: '0.2rem',
-                lineHeight: '0.2rem',
               }}
             >
               <Sparkles className="w-1 h-1 text-blue-700" />
-              <span className="text-sm font-bold px-2 text-blue-700 tracking-wide">
+              <span className="text-sm font-bold text-blue-700 px-2 tracking-wide">
                 Create your longBio and share it!
               </span>
             </div>
@@ -981,7 +973,7 @@ export default function ShareScreenshot({
             {!screenshot ? (
               <div className="text-center">
                 <div className="mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg flex items-center justify-center mx-auto mb-4">
                     <Share2 className="w-8 h-8 text-purple-600" />
                   </div>
                   <h4 className="text-lg font-semibold text-gray-900 mb-2">
@@ -1019,7 +1011,7 @@ export default function ShareScreenshot({
                     className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50"
                     style={{ width: '350px', maxWidth: '350px' }}
                   >
-                    <Image src={screenshot} alt="Bio Screenshot" width={350} height={600} />
+                    <Image src={screenshot} alt="Bio Screenshot" width={350} height={500} />
                   </div>
                 </div>
 
