@@ -181,6 +181,8 @@ export default function ShareScreenshot({
               iconColor = '#be185d'
             } else if (classList.includes('text-gray-600')) {
               iconColor = '#4b5563'
+            } else if (classList.includes('text-white')) {
+              iconColor = '#ffffff'
             }
 
             // Find all path, circle, rect elements inside this SVG
@@ -208,6 +210,8 @@ export default function ShareScreenshot({
               htmlEl.style.setProperty('background-color', '#f9fafb', 'important')
             if (classList.includes('bg-gray-100'))
               htmlEl.style.setProperty('background-color', '#f3f4f6', 'important')
+            if (classList.includes('bg-purple-600'))
+              htmlEl.style.setProperty('background-color', '#9333ea', 'important')
             if (classList.includes('bg-pink-50'))
               htmlEl.style.setProperty('background-color', '#fdf2f8', 'important')
             if (classList.includes('bg-pink-100'))
@@ -231,6 +235,8 @@ export default function ShareScreenshot({
               htmlEl.style.setProperty('color', '#4b5563', 'important')
             if (classList.includes('text-gray-500'))
               htmlEl.style.setProperty('color', '#6b7280', 'important')
+            if (classList.includes('text-white'))
+              htmlEl.style.setProperty('color', '#ffffff', 'important')
             if (classList.includes('text-pink-700'))
               htmlEl.style.setProperty('color', '#be185d', 'important')
             if (classList.includes('text-blue-600'))
@@ -325,10 +331,10 @@ export default function ShareScreenshot({
             .justify-center { justify-content: center; }
             .leading-5 {line-height:19px}
             .gap-0\.5 { gap: 0.125rem; }
-            .gap-1 { gap: 0.09rem; }
+            .gap-1 { gap: 0.06rem; }
             .gap-1\.5 { gap: 0.23rem; }
             .gap-x-1 { gap-x-1: 0.13rem; }
-            .gap-2 { gap: 0.09rem; }
+            .gap-2 { gap: 0.08rem; }
             .gap-3 { gap: 0.12rem; }
             .gap-4 { gap: 4rem; }
             .gap-5 { gap: 5rem; }
@@ -346,9 +352,9 @@ export default function ShareScreenshot({
             .space-y-3 > * + * { margin-top: 0.65rem; }
             .space-y-4 > * + * { margin-top: 1rem; }
             .mb-0\.5 { margin-bottom: 0.125rem; }
-            .mb-1 { margin-bottom: 0.25rem; }
-            .mb-2 { margin-bottom: 0.2rem; }
-            .mb-3 { margin-bottom: 0.75rem; }
+            .mb-1 { margin-bottom: 0.1rem; }
+            .mb-2 { margin-bottom: 0.15rem; }
+            .mb-3 { margin-bottom: 0.2rem; }
             .mb-4 { margin-bottom: 1rem; }
             .mb-6 { margin-bottom: 1.5rem; }
             .mt-1 { margin-top: 0.2rem; }
@@ -388,6 +394,8 @@ export default function ShareScreenshot({
             .pb-5 { padding-bottom: 0.4rem; }
             .text-center { text-align: center; }
             .rounded-lg { border-radius: 0.3rem; }
+            .rounded-t-lg { border-top-left-radius: 0.3rem; border-top-right-radius: 0.3rem; }
+            .rounded-b-lg { border-bottom-left-radius: 0.3rem; border-bottom-right-radius: 0.3rem; }
             .rounded-xl { border-radius: 0.45rem; }
             .rounded-2xl { border-radius: 0.5rem; }
             .rounded-3xl { border-radius: 0.6rem; }
@@ -435,16 +443,16 @@ export default function ShareScreenshot({
               -webkit-box-orient: vertical;
               -webkit-line-clamp: 3;
             }
-            .w-0\.5 { width: 0.35rem; }
-            .h-0\.5 { width: 0.35rem; }
+            .w-0\.5 { width: 0.1rem; }
+            .h-0\.5 { width: 0.1rem; }
             .w-1 { width: 0.25rem; }
             .w-2 { width: 0.3rem; }
             .h-2 { width: 0.3rem; }
             .h-4 { height: 0.4rem; }
             .w-2\.5 { width: 0.5rem; }
             .h-2\.5 { height: 0.5rem; }
-            .w-3 { width: 0.6rem; }
-            .h-3 { height: 0.6rem; }
+            .w-3 { width: 0.1rem; }
+            .h-3 { height: 0.1rem; }
             .w-3\.5 { width: 0.875rem; }
             .h-3\.5 { height: 0.875rem; }
             .w-4 { width: 0.8rem; }
@@ -491,6 +499,7 @@ export default function ShareScreenshot({
             [class*="bg-white"] { background-color: #ffffff; }
             [class*="bg-gray-50"] { background-color: #f9fafb; }
             [class*="bg-gray-100"] { background-color: #f3f4f6; }
+            [class*="bg-purple-600"] { background-color: #9333ea; }
             [class*="bg-pink-50"] { background-color: #fdf2f8; }
             [class*="bg-pink-100"] { background-color: #fce7f3; }
             [class*="bg-blue-100"] { background-color: #dbeafe; }
@@ -515,6 +524,7 @@ export default function ShareScreenshot({
             [class*="text-gray-700"] { color: #374151; }
             [class*="text-gray-600"] { color: #4b5563; }
             [class*="text-gray-500"] { color: #6b7280; }
+            [class*="text-white"] { color: #ffffff; }
             [class*="text-pink-700"] { color: #be185d; }
             [class*="text-blue-600"] { color: #2563eb; }
             [class*="text-blue-700"] { color: #1e40af; }
@@ -609,21 +619,17 @@ export default function ShareScreenshot({
           visibility: 'hidden',
         }}
       >
-        <div className="w-full px-2 pt-1.5 pb-1.5">
+        <div className="w-full px-2 pb-1.5">
           {/* Header Text */}
-          <div className="text-center">
+          <div className="text-center h-5">
             <div
-              className="inline-flex items-center justify-center mx-auto rounded-lg border-2 border-purple-300 bg-gradient-to-r from-purple-100 via-pink-100 to-purple-100 px-2 shadow-md"
+              className="flex items-center h-full justify-center rounded-b-lg bg-purple-600 shadow-md"
               style={{
                 fontFamily: 'Inter, system-ui, sans-serif',
-                height: '0.2rem',
-                lineHeight: '0.2rem',
               }}
             >
-              <Globe className="w-1 h-1 text-purple-700" />
-              <span className="text-sm font-bold text-purple-700 px-2 tracking-wide">
-                Longbio.me
-              </span>
+              <Globe className="w-1 h-1 text-white" />
+              <span className="text-sm font-bold text-white px-2 tracking-wide">Longbio.me</span>
             </div>
           </div>
 
@@ -631,7 +637,7 @@ export default function ShareScreenshot({
           <div className="bg-gradient-to-br from-gray-50 to-white rounded-lg shadow-md border border-gray-100 p-2 mt-1 mb-1">
             <div className="flex items-center justify-center gap-1 mb-1">
               {/* Profile Picture */}
-              <div className="relative w-8 h-8 flex-shrink-0 overflow-hidden rounded-full">
+              <div className="relative w-5 h-5 border-2 border-purple-50 flex-shrink-0 overflow-hidden rounded-full">
                 {userData.profileImage ? (
                   <Image
                     src={userData.profileImage}
@@ -657,13 +663,13 @@ export default function ShareScreenshot({
                 <div className="flex flex-wrap gap-1 mt-1">
                   {age && (
                     <span className="flex items-center gap-1 bg-pink-100 text-pink-700 px-2 h-4 rounded-full text-xs font-medium">
-                      <Calendar className="w-1 h-1 text-pink-700" />
+                      <Calendar className="w-3 h-3 text-pink-700" />
                       {age}
                     </span>
                   )}
                   {(userData.height > 0 || userData.weight > 0) && (
                     <span className="flex items-center gap-1 bg-blue-100 text-blue-700 px-2 h-4 rounded-full text-xs font-medium">
-                      <Ruler className="w-1 h-1 text-blue-700" />
+                      <Ruler className="w-3 h-3 text-blue-700" />
                       {userData.height > 0 ? userData.height + 'cm' : ''}
                       {userData.height > 0 && userData.weight > 0 && '/'}
                       {userData.weight > 0 ? userData.weight + 'kg' : ''}
@@ -785,7 +791,7 @@ export default function ShareScreenshot({
                   <Dumbbell className="w-1 h-1 text-purple-600" />
                   <h4 className="font-bold text-sm text-gray-900">Sports</h4>
                 </div>
-                <div className="flex flex-wrap gap-0.5">
+                <div className="flex flex-wrap gap-1">
                   {userData.favoriteSport.slice(0, 3).map((sport, index) => (
                     <span
                       key={index}
@@ -811,7 +817,7 @@ export default function ShareScreenshot({
                   <Sparkles className="w-1 h-1 text-purple-600" />
                   <h4 className="font-bold text-sm text-gray-900">Skills</h4>
                 </div>
-                <div className="flex flex-wrap gap-0.5">
+                <div className="flex flex-wrap gap-1">
                   {displaySkills.slice(0, 3).map((skill, index) => (
                     <span
                       key={index}
@@ -831,7 +837,7 @@ export default function ShareScreenshot({
                   <MapPin className="w-1 h-1 text-purple-600" />
                   <h4 className="font-bold text-sm text-gray-900">Travel Style</h4>
                 </div>
-                <div className="flex flex-wrap gap-0.5">
+                <div className="flex flex-wrap gap-1">
                   {userData.travelStyle.slice(0, 2).map((style, index) => (
                     <span
                       key={index}
@@ -923,15 +929,15 @@ export default function ShareScreenshot({
             )}
           </div>
           {/* Footer */}
-          <div className="relative text-center border-t border-gray-100 h-5 mt-1 mb-1">
+          <div className="relative bg-purple-600 text-center h-5 mt-1 mb-1 rounded-t-lg">
             <div
-              className="absolute top-0 left-1/2 -translate-x-1/2 h-full rounded-lg border-2 border-blue-300 bg-gradient-to-r from-blue-100 to-cyan-100 px-2 shadow-md flex items-center justify-center gap-1"
+              className="absolute top-0 left-1/2 -translate-x-1/2 h-full px-2 shadow-md flex items-center justify-center gap-1"
               style={{
                 fontFamily: 'Inter, system-ui, sans-serif',
               }}
             >
-              <Sparkles className="w-1 h-1 text-blue-700" />
-              <span className="text-sm font-bold text-blue-700 px-2 tracking-wide">
+              <Sparkles className="w-1 h-1 text-white" />
+              <span className="text-sm font-bold text-white px-2 tracking-wide">
                 Create your longBio and share it!
               </span>
             </div>
