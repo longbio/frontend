@@ -331,7 +331,7 @@ export default function ShareScreenshot({
             .justify-center { justify-content: center; }
             .leading-5 {line-height:19px}
             .gap-0\.5 { gap: 0.125rem; }
-            .gap-1 { gap: 0.06rem; }
+            .gap-1 { gap: 0.04rem; }
             .gap-1\.5 { gap: 0.23rem; }
             .gap-x-1 { gap-x-1: 0.13rem; }
             .gap-2 { gap: 0.08rem; }
@@ -367,14 +367,14 @@ export default function ShareScreenshot({
             .mx-2 { margin-left: 0.5rem; margin-right: 0.5rem; }
             .p-1 { padding: 0.1rem; }
             .p-1\.5 { padding: 0.2rem; }
-            .p-2 { padding: 0.19rem; }
+            .p-2 { padding: 0.145rem; }
             .p-2\.5 { padding: 0.24rem; }
             .p-3 { padding: 0.3rem; }
             .p-4 { padding: 0.4rem; }
             .p-5 { padding: 0.5rem; }
             .p-6 { padding: 0.6rem; }
             .p-8 { padding: 0.7rem; }
-            .px-1\.5 { padding-left: 0.2rem; padding-right: 0.2rem; }
+            .px-1 { padding-left: 0.04rem; padding-right: 0.04rem; }
             .px-2 { padding-left: 0.25rem; padding-right: 0.25rem; }
             .px-2\.5 { padding-left: 0.625rem; padding-right: 0.625rem; }
             .px-3 { padding-left: 0.3rem; padding-right: 0.3rem; }
@@ -382,7 +382,7 @@ export default function ShareScreenshot({
             .py-1 { padding-top: 0.2rem; padding-bottom: 0.2rem; }
             .py-1\.5 { padding-top: 0.25rem; padding-bottom: 0.375rem; }
             .pt-1\.5 { padding-top: 0.25rem; }
-            .pt-2 { padding-top: 0.3rem; }
+            .pt-2 { padding-top: 0.08rem; }
             .pt-3 { padding-top: 0.38rem; }
             .pt-4 { padding-top: 1rem; }
             .pt-5 { padding-top: 1.25rem; }
@@ -406,7 +406,7 @@ export default function ShareScreenshot({
             .border-t { border-top-width: 1px; }
             .text-xs { font-size: 0.1rem; line-height: 0.1rem; }
             .text-sm { font-size: 0.14rem; }
-            .text-base { font-size: 0.25rem; }
+            .text-base { font-size: 0.28rem; }
             .text-xl { font-size: 0.35rem; }
             .font-bold { font-weight: 700; }
             .font-semibold { font-weight: 600; }
@@ -445,22 +445,22 @@ export default function ShareScreenshot({
             }
             .w-0\.5 { width: 0.1rem; }
             .h-0\.5 { width: 0.1rem; }
-            .w-1 { width: 0.25rem; }
-            .w-2 { width: 0.3rem; }
-            .h-2 { width: 0.3rem; }
-            .h-4 { height: 0.4rem; }
+            .w-1 { width: 0.06rem; }
+            .w-2 { width: 0.08rem; }
+            .h-2 { height: 0.08rem; }
+            .w-4 { width: 0.2rem; }
+            .h-4 { height: 0.8rem; }
             .w-2\.5 { width: 0.5rem; }
             .h-2\.5 { height: 0.5rem; }
-            .w-3 { width: 0.1rem; }
-            .h-3 { height: 0.1rem; }
+            .w-3 { width: 0.12rem; }
+            .h-3 { height: 0.12rem; }
             .w-3\.5 { width: 0.875rem; }
             .h-3\.5 { height: 0.875rem; }
-            .w-4 { width: 0.8rem; }
-            .h-1 { height: 0.25rem; }
-            .w-5 { width: 0.8rem; }
-            .h-5 { height: 0.8rem; }
-            .w-6 { width: 1.5rem; }
-            .h-6 { height: 1.5rem; }
+            .h-1 { height: 0.06rem; }
+            .w-5 { width: 0.3rem; }
+            .h-5 { height: 0.3rem; }
+            .w-6 { width: 0.8rem; }
+            .h-6 { height: 0.8rem; }
             .w-7 { width: 1.75rem; }
             .h-7 { height: 1.75rem; }
             .w-8 { width: 2rem; }
@@ -484,7 +484,7 @@ export default function ShareScreenshot({
             .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
             .border-2 { border-width: 2px; }
             .border-3 { border-width: 3px; }
-            .border-4 { border-width: 4px; }
+            .border-4 { border-width: 6px; }
             .border-gray-200 { border-color: #e5e7eb; }
             .border-gray-300 { border-color: #d1d5db; }
             .border-purple-200 { border-color: #e9d5ff; }
@@ -619,17 +619,17 @@ export default function ShareScreenshot({
           visibility: 'hidden',
         }}
       >
-        <div className="w-full px-2 pb-1.5">
+        <div className="w-full px-2">
           {/* Header Text */}
-          <div className="text-center h-5">
+          <div className="text-center h-4">
             <div
-              className="flex items-center h-full justify-center rounded-b-lg bg-purple-600 shadow-md"
+              className="flex items-center h-full justify-center gap-1 rounded-b-lg bg-purple-600 shadow-md"
               style={{
                 fontFamily: 'Inter, system-ui, sans-serif',
               }}
             >
-              <Globe className="w-1 h-1 text-white" />
-              <span className="text-sm font-bold text-white px-2 tracking-wide">Longbio.me</span>
+              <Globe className="w-5 h-5 text-white" />
+              <span className="text-base font-bold text-white tracking-wide">Longbio.me</span>
             </div>
           </div>
 
@@ -637,43 +637,47 @@ export default function ShareScreenshot({
           <div className="bg-gradient-to-br from-gray-50 to-white rounded-lg shadow-md border border-gray-100 p-2 mt-1 mb-1">
             <div className="flex items-center justify-center gap-1 mb-1">
               {/* Profile Picture */}
-              <div className="relative w-5 h-5 border-2 border-purple-50 flex-shrink-0 overflow-hidden rounded-full">
-                {userData.profileImage ? (
-                  <Image
-                    src={userData.profileImage}
-                    alt="profile"
-                    fill
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center border-2 border-purple-200 shadow-sm">
-                    <User className="w-7 h-7 text-purple-600" />
-                  </div>
-                )}
+              <div className="border-4 border-purple-200">
+                <div className="relative w-6 h-6 flex-shrink-0 overflow-hidden rounded-full">
+                  {userData.profileImage ? (
+                    <Image
+                      src={userData.profileImage}
+                      alt="profile"
+                      fill
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center border-2 border-purple-200 shadow-sm">
+                      <User className="w-7 h-7 text-purple-600" />
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="flex-1">
                 <div className="flex items-center gap-1 mb-0.5">
-                  <h3 className="text-base font-bold text-gray-900">{userData.fullName}</h3>
+                  <h3 className="text-sm font-bold text-gray-900">{userData.fullName}</h3>
                   {userData.isVerified && <CheckCircle className="w-1 h-1 text-blue-500" />}
                 </div>
                 <div className="text-sm text-gray-600 mb-0.5">@{userData.username}</div>
 
                 {/* Compact badges */}
-                <div className="flex flex-wrap gap-1 mt-1">
+                <div className="flex flex-wrap gap-1 h-5 mt-1">
                   {age && (
-                    <span className="flex items-center gap-1 bg-pink-100 text-pink-700 px-2 h-4 rounded-full text-xs font-medium">
+                    <div className="flex items-center justify-center gap-1 bg-pink-100 text-pink-700 px-2 h-5 rounded-full text-xs font-medium">
                       <Calendar className="w-3 h-3 text-pink-700" />
-                      {age}
-                    </span>
+                      <span className="pt-2">{age}</span>
+                    </div>
                   )}
                   {(userData.height > 0 || userData.weight > 0) && (
-                    <span className="flex items-center gap-1 bg-blue-100 text-blue-700 px-2 h-4 rounded-full text-xs font-medium">
+                    <div className="flex h-full items-center justify-center bg-blue-100 text-blue-700 px-2 rounded-full text-xs font-medium gap-1">
                       <Ruler className="w-3 h-3 text-blue-700" />
-                      {userData.height > 0 ? userData.height + 'cm' : ''}
-                      {userData.height > 0 && userData.weight > 0 && '/'}
-                      {userData.weight > 0 ? userData.weight + 'kg' : ''}
-                    </span>
+                      <span className="pt-2">
+                        {userData.height > 0 ? userData.height + 'cm' : ''}
+                        {userData.height > 0 && userData.weight > 0 && '/'}
+                        {userData.weight > 0 ? userData.weight + 'kg' : ''}
+                      </span>
+                    </div>
                   )}
                 </div>
               </div>
@@ -692,16 +696,16 @@ export default function ShareScreenshot({
                 {userData.gender && (
                   <span className="flex items-center gap-1">
                     {userData.gender.toLowerCase() === 'male' ? (
-                      <Mars className="w-1 h-1 text-gray-600" />
+                      <Mars className="w-3 h-3 text-gray-600" />
                     ) : (
-                      <Venus className="w-1 h-1 text-gray-600" />
+                      <Venus className="w-3 h-3 text-gray-600" />
                     )}
                     {userData.gender}
                   </span>
                 )}
                 {userData.maritalStatus && (
                   <span className="flex items-center gap-1">
-                    <Heart className="w-1 h-1 text-gray-600" />
+                    <Heart className="w-3 h-3 text-gray-600" />
                     {userData.maritalStatus}
                   </span>
                 )}
@@ -718,11 +722,11 @@ export default function ShareScreenshot({
                   !(userData.education.university || userData.job.position) ? 'col-span-2' : ''
                 }`}
               >
-                <div className="flex items-center gap-1 mb-0.5">
-                  <Calendar className="w-1 h-1 text-purple-600" />
-                  <h4 className="font-bold text-sm text-gray-900">Birth Date</h4>
+                <div className="flex items-center gap-1">
+                  <Calendar className="w-3 h-3 text-purple-600" />
+                  <h4 className="font-bold text-xs text-gray-900">Birth Date</h4>
                 </div>
-                <p className="text-xs text-gray-700 line-clamp-2">
+                <p className="text-xs text-gray-700 line-clamp-2 pt-2">
                   {dayjs(userData.birthDate).format('MMM DD, YYYY')}
                 </p>
               </div>
@@ -732,10 +736,10 @@ export default function ShareScreenshot({
             {userData.education.university && (
               <div className="bg-gradient-to-br from-gray-50 to-white rounded-lg shadow-md border border-gray-100 p-2">
                 <div className="flex items-center gap-1">
-                  <GraduationCap className="w-2 h-1 text-purple-600" />
-                  <h4 className="font-bold text-sm text-gray-900">Education</h4>
+                  <GraduationCap className="w-3 h-3 text-purple-600" />
+                  <h4 className="font-bold text-xs text-gray-900">Education</h4>
                 </div>
-                <div className="text-xs text-gray-700 line-clamp-2 leading-5 overflow-hidden">
+                <div className="text-xs text-gray-700 line-clamp-2 leading-5 pt-2 overflow-hidden">
                   {userData.education.topic || userData.education.university}
                 </div>
               </div>
@@ -745,8 +749,8 @@ export default function ShareScreenshot({
             {userData.job.position && (
               <div className="bg-gradient-to-br from-gray-50 to-white rounded-lg shadow-md border border-gray-100 p-2">
                 <div className="flex items-center gap-1 mb-1">
-                  <Briefcase className="w-1 h-1 text-purple-600" />
-                  <h4 className="font-bold text-sm text-gray-900">Career</h4>
+                  <Briefcase className="w-3 h-3 text-purple-600" />
+                  <h4 className="font-bold text-xs text-gray-900">Career</h4>
                 </div>
                 <div className="text-xs text-gray-700 line-clamp-2 leading-5 overflow-hidden">
                   {userData.job.position}
@@ -763,15 +767,15 @@ export default function ShareScreenshot({
                     : ''
                 }`}
               >
-                <div className="flex items-center gap-1 mb-1">
-                  <Star className="w-1 h-1 text-purple-600" />
-                  <h4 className="font-bold text-sm text-gray-900">Interests</h4>
+                <div className="flex items-center gap-1">
+                  <Star className="w-3 h-3 text-purple-600" />
+                  <h4 className="font-bold text-xs text-gray-900">Interests</h4>
                 </div>
-                <div className="flex flex-wrap gap-0.5 leading-5">
+                <div className="flex flex-wrap gap-1 leading-5">
                   {displayInterests.slice(0, 3).map((interest, index) => (
                     <span
                       key={index}
-                      className="px-1 py-0.5 border border-purple-300 text-purple-700 rounded-full text-xs whitespace-nowrap leading-5"
+                      className="px-1 pt-2 border border-purple-300 text-purple-700 rounded-full text-xs whitespace-nowrap leading-5"
                     >
                       {interest}
                     </span>
@@ -788,8 +792,8 @@ export default function ShareScreenshot({
                 }`}
               >
                 <div className="flex items-center gap-1 mb-1">
-                  <Dumbbell className="w-1 h-1 text-purple-600" />
-                  <h4 className="font-bold text-sm text-gray-900">Sports</h4>
+                  <Dumbbell className="w-3 h-3 text-purple-600" />
+                  <h4 className="font-bold text-xs text-gray-900">Sports</h4>
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {userData.favoriteSport.slice(0, 3).map((sport, index) => (
@@ -814,8 +818,8 @@ export default function ShareScreenshot({
                 }`}
               >
                 <div className="flex items-center gap-1 mb-1">
-                  <Sparkles className="w-1 h-1 text-purple-600" />
-                  <h4 className="font-bold text-sm text-gray-900">Skills</h4>
+                  <Sparkles className="w-3 h-3 text-purple-600" />
+                  <h4 className="font-bold text-xs text-gray-900">Skills</h4>
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {displaySkills.slice(0, 3).map((skill, index) => (
@@ -834,14 +838,14 @@ export default function ShareScreenshot({
             {userData.travelStyle && userData.travelStyle.length > 0 && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2">
                 <div className="flex items-center gap-1 mb-0.5">
-                  <MapPin className="w-1 h-1 text-purple-600" />
-                  <h4 className="font-bold text-sm text-gray-900">Travel Style</h4>
+                  <MapPin className="w-3 h-3 text-purple-600" />
+                  <h4 className="font-bold text-xs text-gray-900">Travel Style</h4>
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {userData.travelStyle.slice(0, 2).map((style, index) => (
                     <span
                       key={index}
-                      className="px-1 py-0.5 border border-purple-300 text-purple-700 rounded-full text-xs leading-5"
+                      className="px-1 pt-2 border border-purple-300 text-purple-700 rounded-full text-xs leading-5"
                     >
                       {style}
                     </span>
@@ -854,8 +858,8 @@ export default function ShareScreenshot({
             {userData.visitedCountries && userData.visitedCountries.length > 0 && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2">
                 <div className="flex items-center gap-1 mb-1">
-                  <Globe className="w-1 h-1 text-purple-600" />
-                  <h4 className="font-bold text-sm text-gray-900">Countries</h4>
+                  <Globe className="w-3 h-3 text-purple-600" />
+                  <h4 className="font-bold text-xs text-gray-900">Countries</h4>
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {userData.visitedCountries.slice(0, 5).map((country, index) => {
@@ -919,8 +923,8 @@ export default function ShareScreenshot({
             {(userData.pet.name || userData.pet.breed) && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2 col-span-4">
                 <div className="flex items-center gap-1 mb-1">
-                  <PawPrint className="w-1 h-1 text-purple-600" />
-                  <h4 className="font-bold text-sm text-gray-900">Pet</h4>
+                  <PawPrint className="w-3 h-3 text-purple-600" />
+                  <h4 className="font-bold text-xs text-gray-900">Pet</h4>
                 </div>
                 <div className="text-xs text-gray-700 line-clamp-2 leading-5 overflow-hidden">
                   {userData.pet.name || userData.pet.breed}
@@ -929,15 +933,15 @@ export default function ShareScreenshot({
             )}
           </div>
           {/* Footer */}
-          <div className="relative bg-purple-600 text-center h-5 mt-1 mb-1 rounded-t-lg">
+          <div className="relative bg-purple-600 text-center h-4 mt-1 rounded-t-lg">
             <div
               className="absolute top-0 left-1/2 -translate-x-1/2 h-full px-2 shadow-md flex items-center justify-center gap-1"
               style={{
                 fontFamily: 'Inter, system-ui, sans-serif',
               }}
             >
-              <Sparkles className="w-1 h-1 text-white" />
-              <span className="text-sm font-bold text-white px-2 tracking-wide">
+              <Sparkles className="w-5 h-5 text-white" />
+              <span className="text-base font-bold text-white tracking-wide">
                 Create your longBio and share it!
               </span>
             </div>
@@ -955,7 +959,7 @@ export default function ShareScreenshot({
               onClick={onClose}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
             >
-              <X className="w-5 h-5 text-gray-500" />
+              <X className="w-4 h-4 text-gray-500" />
             </button>
           </div>
 
