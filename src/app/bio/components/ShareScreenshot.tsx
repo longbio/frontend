@@ -393,7 +393,7 @@ export default function ShareScreenshot({
             .pb-4 { padding-bottom: 0.36rem; }
             .pb-5 { padding-bottom: 0.4rem; }
             .text-center { text-align: center; }
-            .rounded-lg { border-radius: 0.3rem; }
+            .rounded-lg { border-radius: 0.15rem; }
             .rounded-t-lg { border-top-left-radius: 0.3rem; border-top-right-radius: 0.3rem; }
             .rounded-b-lg { border-bottom-left-radius: 0.3rem; border-bottom-right-radius: 0.3rem; }
             .rounded-xl { border-radius: 0.45rem; }
@@ -518,7 +518,7 @@ export default function ShareScreenshot({
             .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
             .space-y-2 > * + * { margin-top: 0.5rem; }
             .text-2xl { font-size: 1.5rem; }
-            .text-lg { font-size: 1.125rem; }
+            .text-lg { font-size: 0.45rem; }
             
             [class*="text-gray-900"] { color: #111827; }
             [class*="text-gray-700"] { color: #374151; }
@@ -684,9 +684,9 @@ export default function ShareScreenshot({
             </div>
 
             {/* Location & Status Row */}
-            <div className="text-center">
+            <div className="text-center pt-2">
               {(userData.bornPlace || userData.livePlace) && (
-                <div className="text-xs text-gray-600 mb-1 line-clamp-1">
+                <div className="text-xs text-gray-600 line-clamp-1">
                   {userData.bornPlace && userData.livePlace
                     ? `${userData.bornPlace} - ${userData.livePlace}`
                     : userData.bornPlace || userData.livePlace}
