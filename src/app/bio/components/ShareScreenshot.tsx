@@ -2,8 +2,9 @@
 
 import dayjs from 'dayjs'
 import Image from 'next/image'
-import { useState, useRef } from 'react'
+import { useState, useRef, useMemo } from 'react'
 import html2canvas from '@html2canvas/html2canvas'
+import { useFlagCountries } from '@/service/countries'
 import {
   Download,
   Share2,
@@ -65,6 +66,7 @@ interface ShareScreenshotProps {
   onClose: () => void
   onSuccess?: () => void
   onError?: (error: string) => void
+  onScreenshotReady?: (screenshot: string) => void
 }
 
 export default function ShareScreenshot({
@@ -72,15 +74,22 @@ export default function ShareScreenshot({
   onClose,
   onError,
   onSuccess,
+  onScreenshotReady,
 }: ShareScreenshotProps) {
   const [isGenerating, setIsGenerating] = useState(false)
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false)
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const screenshotRef = useRef<HTMLDivElement>(null)
-
-  const age = userData.birthDate
-    ? new Date().getFullYear() - new Date(userData.birthDate).getFullYear()
-    : null
+  const { data: flagCountries, loading: flagLoading } = useFlagCountries()
+  const flagEmojiMap = useMemo(() => {
+    const map = new Map<string, string>()
+    flagCountries?.forEach((item) => {
+      const normalizedName = item.name.trim().toLowerCase()
+      map.set(normalizedName, item.emoji || '')
+    })
+    return map
+  }, [flagCountries])
 
   const skillMapping: { [key: string]: string } = {
     '1': 'Sports',
@@ -96,14 +105,72 @@ export default function ShareScreenshot({
     '11': 'Eco-Tourism',
   }
 
-  const displaySkills = userData.skills?.map((skill) => skillMapping[skill] || skill) || []
-  const displayInterests = userData.interests || []
+  const fullName = userData?.fullName?.trim() || 'LongBio User'
+  const username = userData?.username?.trim() || 'user'
+  const profileImage = userData?.profileImage?.trim() || null
+  const isVerified = Boolean(userData?.isVerified)
+
+  const rawSkills = Array.isArray(userData?.skills)
+    ? userData.skills.filter((skill): skill is string => Boolean(skill && String(skill).trim()))
+    : []
+  const displaySkills = rawSkills
+    .map((skill) => skillMapping[skill] || skill)
+    .filter((skill): skill is string => Boolean(skill && String(skill).trim()))
+
+  const displayInterests = Array.isArray(userData?.interests)
+    ? userData.interests.filter((interest): interest is string =>
+        Boolean(interest && interest.trim())
+      )
+    : []
+
+  const favoriteSports = Array.isArray(userData?.favoriteSport)
+    ? userData.favoriteSport.filter((sport): sport is string => Boolean(sport && sport.trim()))
+    : []
+
+  const travelStyles = Array.isArray(userData?.travelStyle)
+    ? userData.travelStyle.filter((style): style is string => Boolean(style && style.trim()))
+    : []
+
+  const visitedCountries = Array.isArray(userData?.visitedCountries)
+    ? userData.visitedCountries.filter((country): country is string =>
+        Boolean(country && country.trim())
+      )
+    : []
+
+  const education = userData?.education ?? { topic: '', university: '', graduationYear: '' }
+  const educationTopic = education?.topic?.trim() || ''
+  const educationUniversity = education?.university?.trim() || ''
+  const educationGraduationYear = education?.graduationYear?.trim() || ''
+  const job = userData?.job ?? { company: '', position: '' }
+  const jobPosition = job?.position?.trim() || ''
+  const pet = userData?.pet ?? { name: '', breed: '' }
+  const petName = pet?.name?.trim() || ''
+  const petBreed = pet?.breed?.trim() || ''
+  const bornPlace = userData?.bornPlace?.trim() || ''
+  const livePlace = userData?.livePlace?.trim() || ''
+  const gender = userData?.gender?.trim() || ''
+  const genderLower = gender.toLowerCase()
+  const maritalStatus = userData?.maritalStatus?.trim() || ''
+  const heightValue =
+    typeof userData?.height === 'number' && userData.height > 0 ? userData.height : null
+  const weightValue =
+    typeof userData?.weight === 'number' && userData.weight > 0 ? userData.weight : null
+  const birthDateValue =
+    userData?.birthDate && dayjs(userData.birthDate).isValid() ? dayjs(userData.birthDate) : null
+  const age = birthDateValue ? dayjs().diff(birthDateValue, 'year') : null
 
   const generateScreenshot = async () => {
     setIsGenerating(true)
+    setIsPreviewLoading(false)
+    setScreenshot(null)
     setError(null)
 
     try {
+      if (flagLoading) {
+        setError('Please wait until country flags finish loading.')
+        setIsGenerating(false)
+        return
+      }
       if (typeof window === 'undefined' || typeof document === 'undefined') {
         setError('Browser environment not available')
         setIsGenerating(false)
@@ -120,438 +187,28 @@ export default function ShareScreenshot({
       // Wait for images to load
       await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      // Pre-process the element to remove any oklch references from inline styles
-      const allOriginalElements = element.querySelectorAll('*')
-      allOriginalElements.forEach((el) => {
-        const htmlEl = el as HTMLElement
-        const style = htmlEl.getAttribute('style')
-        if (style && style.includes('oklch')) {
-          // Remove the style attribute if it contains oklch
-          htmlEl.removeAttribute('style')
-        }
-      })
-
       const canvas = await html2canvas(element, {
-        backgroundColor: '#f8fafc',
-        scale: 10,
+        backgroundColor: '#ffffff',
+        scale: 5,
         useCORS: true,
         allowTaint: true,
         logging: false,
         imageTimeout: 15000,
-        ignoreElements: () => false,
-        onclone: (clonedDoc) => {
-          const fontsLink = clonedDoc.createElement('link')
-          fontsLink.setAttribute('rel', 'stylesheet')
-          clonedDoc.head.appendChild(fontsLink)
-          const allStylesheets = clonedDoc.querySelectorAll('link[rel="stylesheet"], style')
-          allStylesheets.forEach((sheet) => sheet.remove())
-
-          const allElementsWithStyles = clonedDoc.querySelectorAll('*')
-          allElementsWithStyles.forEach((el) => {
-            const htmlEl = el as HTMLElement
-            htmlEl.removeAttribute('style')
-          })
-
-          // Process images
-          const clonedImages = clonedDoc.querySelectorAll('img')
-          clonedImages.forEach((img) => {
-            const htmlImg = img as HTMLImageElement
-            htmlImg.style.display = 'block'
-            htmlImg.style.objectFit = 'cover'
-            htmlImg.style.borderRadius = '50%'
-          })
-
-          // Process SVG icons to preserve colors
-          const allSvgs = clonedDoc.querySelectorAll('svg')
-          allSvgs.forEach((svg) => {
-            const htmlSvg = svg as unknown as HTMLElement
-            const classList = htmlSvg.getAttribute('class') || ''
-
-            // Determine color based on Tailwind classes
-            let iconColor = '#6b7280' // default gray
-            if (classList.includes('text-purple-600')) {
-              iconColor = '#9333ea'
-            } else if (classList.includes('text-blue-500')) {
-              iconColor = '#3b82f6'
-            } else if (classList.includes('text-blue-600')) {
-              iconColor = '#2563eb'
-            } else if (classList.includes('text-blue-700')) {
-              iconColor = '#1e40af'
-            } else if (classList.includes('text-pink-700')) {
-              iconColor = '#be185d'
-            } else if (classList.includes('text-gray-600')) {
-              iconColor = '#4b5563'
-            } else if (classList.includes('text-white')) {
-              iconColor = '#ffffff'
-            }
-
-            // Find all path, circle, rect elements inside this SVG
-            const paths = svg.querySelectorAll('path, circle, rect, polygon')
-            paths.forEach((path) => {
-              const pathEl = path as HTMLElement
-              // Apply fill for solid icons, keep stroke for outline icons
-              pathEl.style.setProperty('stroke', iconColor, 'important')
-              pathEl.style.setProperty('fill', 'none', 'important')
-            })
-          })
-
-          // Force-set inline styles for all elements to override any computed oklch colors
-          const allElements = clonedDoc.querySelectorAll('*')
-          allElements.forEach((el) => {
-            const htmlEl = el as HTMLElement
-
-            // Map common Tailwind classes to safe colors via inline styles
-            const classList = String(htmlEl.className || '')
-
-            // Apply Tailwind class-based overrides to force safe hex colors
-            if (classList.includes('bg-white'))
-              htmlEl.style.setProperty('background-color', '#ffffff', 'important')
-            if (classList.includes('bg-gray-50'))
-              htmlEl.style.setProperty('background-color', '#f9fafb', 'important')
-            if (classList.includes('bg-gray-100'))
-              htmlEl.style.setProperty('background-color', '#f3f4f6', 'important')
-            if (classList.includes('bg-purple-600'))
-              htmlEl.style.setProperty('background-color', '#9333ea', 'important')
-            if (classList.includes('bg-pink-50'))
-              htmlEl.style.setProperty('background-color', '#fdf2f8', 'important')
-            if (classList.includes('bg-pink-100'))
-              htmlEl.style.setProperty('background-color', '#fce7f3', 'important')
-            if (classList.includes('bg-blue-100'))
-              htmlEl.style.setProperty('background-color', '#dbeafe', 'important')
-            if (classList.includes('bg-purple-100'))
-              htmlEl.style.setProperty('background-color', '#f3e8ff', 'important')
-            if (classList.includes('bg-purple-50'))
-              htmlEl.style.setProperty('background-color', '#faf5ff', 'important')
-            if (classList.includes('bg-red-100'))
-              htmlEl.style.setProperty('background-color', '#fee2e2', 'important')
-            if (classList.includes('bg-green-100'))
-              htmlEl.style.setProperty('background-color', '#dcfce7', 'important')
-
-            if (classList.includes('text-gray-900'))
-              htmlEl.style.setProperty('color', '#111827', 'important')
-            if (classList.includes('text-gray-700'))
-              htmlEl.style.setProperty('color', '#374151', 'important')
-            if (classList.includes('text-gray-600'))
-              htmlEl.style.setProperty('color', '#4b5563', 'important')
-            if (classList.includes('text-gray-500'))
-              htmlEl.style.setProperty('color', '#6b7280', 'important')
-            if (classList.includes('text-white'))
-              htmlEl.style.setProperty('color', '#ffffff', 'important')
-            if (classList.includes('text-pink-700'))
-              htmlEl.style.setProperty('color', '#be185d', 'important')
-            if (classList.includes('text-blue-600'))
-              htmlEl.style.setProperty('color', '#2563eb', 'important')
-            if (classList.includes('text-blue-700'))
-              htmlEl.style.setProperty('color', '#1e40af', 'important')
-            if (classList.includes('text-purple-600'))
-              htmlEl.style.setProperty('color', '#9333ea', 'important')
-            if (classList.includes('text-red-700'))
-              htmlEl.style.setProperty('color', '#b91c1c', 'important')
-            if (classList.includes('text-green-700'))
-              htmlEl.style.setProperty('color', '#15803d', 'important')
-            if (classList.includes('border-purple-200'))
-              htmlEl.style.setProperty('border-color', '#e9d5ff', 'important')
-            if (classList.includes('border-purple-100'))
-              htmlEl.style.setProperty('border-color', '#f3e8ff', 'important')
-            if (classList.includes('border-gray-200'))
-              htmlEl.style.setProperty('border-color', '#e5e7eb', 'important')
-            if (classList.includes('border-gray-100'))
-              htmlEl.style.setProperty('border-color', '#f3f4f6', 'important')
-          })
-
-          // Add completely custom safe stylesheet with NO oklch colors
-          const style = clonedDoc.createElement('style')
-          style.textContent = `
-            @font-face {
-              font-family: 'Gilroy';
-              src: url('./fonts/Gilroy-Regular.woff2') format('woff2');
-              font-weight: 400;
-              font-style: normal;
-              font-display: swap;
-            }
-            
-            @font-face {
-              font-family: 'Gilroy';
-              src: url('./fonts/Gilroy-SemiBold.woff2') format('woff2');
-              font-weight: 600;
-              font-style: normal;
-              font-display: swap;
-            }
-            
-            @font-face {
-              font-family: 'Gilroy';
-              src: url('./fonts/Gilroy-Bold.woff2') format('woff2');
-              font-weight: 700;
-              font-style: normal;
-              font-display: swap;
-            }
-            
-            @font-face {
-              font-family: 'Gilroy';
-              src: url('./fonts/Gilroy-ExtaBold.woff2') format('woff2');
-              font-weight: 800;
-              font-style: normal;
-              font-display: swap;
-            }
-            
-            @font-face {
-              font-family: 'Libre Baskerville';
-              src: url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap');
-              font-weight: 400 700;
-              font-style: normal;
-              font-display: swap;
-            }
-            
-            @font-face {
-              font-family: 'Lobster Two';
-              src: url('https://fonts.googleapis.com/css2?family=Lobster+Two:wght@400;700&display=swap');
-              font-weight: 400 700;
-              font-style: normal;
-              font-display: swap;
-            }
-
-            * {
-              box-sizing: border-box;
-              margin: 0;
-              padding: 0;
-            }
-
-            body {
-              margin: 0;
-              padding: 0;
-              font-family: 'Gilroy', system-ui, -apple-system, sans-serif;
-              background-color: #f8fafc;
-            }
-
-            /* Layout utilities */
-            .flex { display: flex; }
-            .flex-wrap { flex-wrap: wrap; }
-            .items-center { align-items: center; }
-            .items-start { align-items: flex-start; }
-            .justify-center { justify-content: center; }
-            .leading-5 {line-height:19px}
-            .gap-0\.5 { gap: 0.125rem; }
-            .gap-1 { gap: 0.04rem; }
-            .gap-1\.5 { gap: 0.23rem; }
-            .gap-x-1 { gap-x-1: 0.13rem; }
-            .gap-2 { gap: 0.08rem; }
-            .gap-3 { gap: 0.12rem; }
-            .gap-4 { gap: 4rem; }
-            .gap-5 { gap: 5rem; }
-            .gap-6 { gap: 6rem; }
-            .grid { display: grid; }
-            .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-            .w-12 { width: 3rem; }
-            .h-12 { height: 3rem; }
-            .flex-shrink-0 { flex-shrink: 0; }
-            .space-y-0\.5 > * + * { margin-top: 0.125rem; }
-            .space-y-1 > * + * { margin-top: 0.25rem; }
-            .space-y-1\.5 > * + * { margin-top: 0.375rem; }
-            .space-y-2 > * + * { margin-top: 0.4rem; }
-            .space-y-3 > * + * { margin-top: 0.65rem; }
-            .space-y-4 > * + * { margin-top: 1rem; }
-            .mb-0\.5 { margin-bottom: 0.125rem; }
-            .mb-1 { margin-bottom: 0.1rem; }
-            .mb-2 { margin-bottom: 0.15rem; }
-            .mb-3 { margin-bottom: 0.2rem; }
-            .mb-4 { margin-bottom: 1rem; }
-            .mb-6 { margin-bottom: 1.5rem; }
-            .mt-1 { margin-top: 0.2rem; }
-            .mt-1\.5 { margin-top: 0.375rem; }
-            .mt-2 { margin-top: 0.2rem; }
-            .mt-3 { margin-top: 0.3rem; }
-            .mt-4 { margin-top: 0.36rem; }
-            .mt-6 { margin-top: 0.5rem; }
-            .mx-1 { margin-left: 0.25rem; margin-right: 0.25rem; }
-            .mx-2 { margin-left: 0.5rem; margin-right: 0.5rem; }
-            .p-1 { padding: 0.1rem; }
-            .p-1\.5 { padding: 0.2rem; }
-            .p-2 { padding: 0.145rem; }
-            .p-2\.5 { padding: 0.24rem; }
-            .p-3 { padding: 0.3rem; }
-            .p-4 { padding: 0.4rem; }
-            .p-5 { padding: 0.5rem; }
-            .p-6 { padding: 0.6rem; }
-            .p-8 { padding: 0.7rem; }
-            .px-1 { padding-left: 0.04rem; padding-right: 0.04rem; }
-            .px-2 { padding-left: 0.25rem; padding-right: 0.25rem; }
-            .px-2\.5 { padding-left: 0.625rem; padding-right: 0.625rem; }
-            .px-3 { padding-left: 0.3rem; padding-right: 0.3rem; }
-            .py-0\.5 { padding-top: 0.125rem; padding-bottom: 0.125rem; }
-            .py-1 { padding-top: 0.2rem; padding-bottom: 0.2rem; }
-            .py-1\.5 { padding-top: 0.25rem; padding-bottom: 0.375rem; }
-            .pt-1\.5 { padding-top: 0.25rem; }
-            .pt-2 { padding-top: 0.08rem; }
-            .pt-3 { padding-top: 0.38rem; }
-            .pt-4 { padding-top: 1rem; }
-            .pt-5 { padding-top: 1.25rem; }
-            .py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
-            .pb-1\.5 { padding-bottom: 0.26rem; }
-            .pb-2 { padding-bottom: 0.3rem; }
-            .pb-3 { padding-bottom: 0.32rem; }
-            .pb-4 { padding-bottom: 0.36rem; }
-            .pb-5 { padding-bottom: 0.4rem; }
-            .text-center { text-align: center; }
-            .rounded-lg { border-radius: 0.15rem; }
-            .rounded-t-lg { border-top-left-radius: 0.3rem; border-top-right-radius: 0.3rem; }
-            .rounded-b-lg { border-bottom-left-radius: 0.3rem; border-bottom-right-radius: 0.3rem; }
-            .rounded-xl { border-radius: 0.45rem; }
-            .rounded-2xl { border-radius: 0.5rem; }
-            .rounded-3xl { border-radius: 0.6rem; }
-            .rounded-full { border-radius: 9999px; }
-            .whitespace-nowrap { white-space: nowrap; }
-            .overflow-hidden { overflow: hidden; }
-            .border { border-width: 1px; }
-            .border-t { border-top-width: 1px; }
-            .text-xs { font-size: 0.1rem; line-height: 0.1rem; }
-            .text-sm { font-size: 0.14rem; }
-            .text-base { font-size: 0.28rem; }
-            .text-xl { font-size: 0.35rem; }
-            .font-bold { font-weight: 700; }
-            .font-semibold { font-weight: 600; }
-            .font-medium { font-weight: 500; }
-            [style*="font-size: 11px"] { font-size: 0.6875rem !important; }
-            [style*="font-size: 10px"] { font-size: 0.625rem !important; }
-            [style*="font-size: 9px"] { font-size: 0.5625rem !important; }
-            [style*="font-size: 8px"] { font-size: 0.5rem !important; }
-            [style*="font-size: 7px"] { font-size: 0.4375rem !important; }
-            [style*="font-size: 6px"] { font-size: 0.375rem !important; }
-            [style*="font-size: 5px"] { font-size: 0.3125rem !important; }
-            [style*="font-size: 4px"] { font-size: 0.25rem !important; }
-            .overflow-hidden { overflow: hidden; }
-            .text-ellipsis { 
-              text-overflow: ellipsis; 
-              white-space: nowrap; 
-              overflow: hidden; 
-            }
-            .line-clamp-1 {
-              overflow: hidden;
-              display: -webkit-box;
-              -webkit-box-orient: vertical;
-              -webkit-line-clamp: 1;
-            }
-            .line-clamp-2 {
-              overflow: hidden;
-              display: -webkit-box;
-              -webkit-box-orient: vertical;
-              -webkit-line-clamp: 2;
-            }
-            .line-clamp-3 {
-              overflow: hidden;
-              display: -webkit-box;
-              -webkit-box-orient: vertical;
-              -webkit-line-clamp: 3;
-            }
-            .w-0\.5 { width: 0.1rem; }
-            .h-0\.5 { width: 0.1rem; }
-            .w-1 { width: 0.06rem; }
-            .w-2 { width: 0.08rem; }
-            .h-2 { height: 0.08rem; }
-            .w-4 { width: 0.2rem; }
-            .h-4 { height: 0.8rem; }
-            .w-2\.5 { width: 0.5rem; }
-            .h-2\.5 { height: 0.5rem; }
-            .w-3 { width: 0.12rem; }
-            .h-3 { height: 0.12rem; }
-            .w-3\.5 { width: 0.875rem; }
-            .h-3\.5 { height: 0.875rem; }
-            .h-1 { height: 0.06rem; }
-            .w-5 { width: 0.3rem; }
-            .h-5 { height: 0.3rem; }
-            .w-6 { width: 0.8rem; }
-            .h-6 { height: 0.8rem; }
-            .w-7 { width: 1.75rem; }
-            .h-7 { height: 1.75rem; }
-            .w-8 { width: 2rem; }
-            .h-8 { height: 2rem; }
-            .w-12 { width: 2rem; }
-            .h-12 { height: 2rem; }
-            .w-14 { width: 3rem; }
-            .h-14 { height: 3rem; }
-            .w-16 { width: 4rem; }
-            .h-16 { height: 4rem; }
-            .w-20 { width: 4.5rem; }
-            .h-20 { height: 4.5rem; }
-            .w-24 { width: 4.8rem; }
-            .h-24 { height: 4.8rem; }
-            .w-full { width: 100%; }
-            .h-full { height: 100%; }
-            .flex-shrink-0 { flex-shrink: 0; }
-            .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
-            .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-            .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-            .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
-            .border-2 { border-width: 2px; }
-            .border-3 { border-width: 3px; }
-            .border-4 { border-width: 6px; }
-            .border-gray-200 { border-color: #e5e7eb; }
-            .border-gray-300 { border-color: #d1d5db; }
-            .border-purple-200 { border-color: #e9d5ff; }
-            .font-medium { font-weight: 500; }
-            .object-cover { object-fit: cover; }
-            .leading-relaxed { line-height: 1.625; }
-            .border-purple-100 { border-color: #f3e8ff; }
-            [class*="via-purple-50"] { background-color: #faf5ff; }
-            [class*="via-pink-50"] { background-color: #fdf2f8; }
-
-            /* Colors - Safe hex colors only */
-            [class*="bg-white"] { background-color: #ffffff; }
-            [class*="bg-gray-50"] { background-color: #f9fafb; }
-            [class*="bg-gray-100"] { background-color: #f3f4f6; }
-            [class*="bg-purple-600"] { background-color: #9333ea; }
-            [class*="bg-pink-50"] { background-color: #fdf2f8; }
-            [class*="bg-pink-100"] { background-color: #fce7f3; }
-            [class*="bg-blue-100"] { background-color: #dbeafe; }
-            [class*="bg-purple-100"] { background-color: #f3e8ff; }
-            [class*="bg-purple-50"] { background-color: #faf5ff; }
-            [class*="bg-red-100"] { background-color: #fee2e2; }
-            [class*="bg-green-100"] { background-color: #dcfce7; }
-            [class*="from-purple-50"][class*="via-pink-50"][class*="to-purple-50"] { background: linear-gradient(to bottom right, #faf5ff, #fdf2f8, #faf5ff); }
-            [class*="from-gray-50"][class*="to-white"] { background: linear-gradient(to bottom right, #f9fafb, #ffffff); }
-            [class*="from-purple-100"][class*="to-pink-100"] { background: linear-gradient(to right, #f3e8ff, #fce7f3); }
-            [class*="from-blue-100"][class*="to-cyan-100"] { background: linear-gradient(to right, #dbeafe, #cffafe); }
-            [class*="bg-gradient-to-br"] { background: linear-gradient(to bottom right, #f9fafb, #f3f4f6); }
-            .mx-auto { margin-left: auto; margin-right: auto; }
-            .max-w-4xl { max-width: 56rem; }
-            .px-4 { padding-left: 1rem; padding-right: 1rem; }
-            .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
-            .space-y-2 > * + * { margin-top: 0.5rem; }
-            .text-2xl { font-size: 1.5rem; }
-            .text-lg { font-size: 0.45rem; }
-            
-            [class*="text-gray-900"] { color: #111827; }
-            [class*="text-gray-700"] { color: #374151; }
-            [class*="text-gray-600"] { color: #4b5563; }
-            [class*="text-gray-500"] { color: #6b7280; }
-            [class*="text-white"] { color: #ffffff; }
-            [class*="text-pink-700"] { color: #be185d; }
-            [class*="text-blue-600"] { color: #2563eb; }
-            [class*="text-blue-700"] { color: #1e40af; }
-            [class*="text-purple-600"] { color: #9333ea; }
-            [class*="text-red-700"] { color: #b91c1c; }
-            [class*="text-green-700"] { color: #15803d; }
-            
-            [class*="border-purple-200"] { border-color: #e9d5ff; }
-            [class*="border-purple-100"] { border-color: #f3e8ff; }
-            [class*="border-gray-200"] { border-color: #e5e7eb; }
-            [class*="border-gray-100"] { border-color: #f3f4f6; }
-
-            img {
-              display: block;
-              max-width: 100%;
-              height: auto;
-            }
-          `
-          clonedDoc.head.appendChild(style)
-        },
+        width: 360,
+        height: 600,
+        windowWidth: 360,
+        windowHeight: 600,
       })
 
       const dataURL = canvas.toDataURL('image/png', 1.0)
       setScreenshot(dataURL)
+      setIsPreviewLoading(true)
 
       if (onSuccess) {
         onSuccess()
+      }
+      if (onScreenshotReady) {
+        onScreenshotReady(dataURL)
       }
     } catch (error) {
       const errorMessage = `Failed to generate screenshot: ${
@@ -562,9 +219,13 @@ export default function ShareScreenshot({
       if (onError) {
         onError(errorMessage)
       }
-    } finally {
       setIsGenerating(false)
     }
+  }
+
+  const handlePreviewLoaded = () => {
+    setIsPreviewLoading(false)
+    setIsGenerating(false)
   }
 
   const downloadScreenshot = () => {
@@ -572,7 +233,7 @@ export default function ShareScreenshot({
     if (typeof document === 'undefined') return
 
     const link = document.createElement('a')
-    link.download = `${userData.username}-bio.png`
+    link.download = `${username}-bio.png`
     link.href = screenshot
     link.click()
   }
@@ -583,7 +244,7 @@ export default function ShareScreenshot({
     try {
       const response = await fetch(screenshot)
       const blob = await response.blob()
-      const file = new File([blob], `${userData.username}-bio.png`, { type: 'image/png' })
+      const file = new File([blob], `${username}-bio.png`, { type: 'image/png' })
 
       if (
         typeof window !== 'undefined' &&
@@ -592,8 +253,8 @@ export default function ShareScreenshot({
         navigator.canShare({ files: [file] })
       ) {
         await navigator.share({
-          title: `${userData.fullName}'s Bio`,
-          text: `Check out ${userData.fullName}'s bio on LongBio!`,
+          title: `${fullName}'s Bio`,
+          text: `Check out ${fullName}'s bio on LongBio!`,
           files: [file],
         })
       } else {
@@ -610,150 +271,553 @@ export default function ShareScreenshot({
       {/* Hidden screenshot content */}
       <div
         ref={screenshotRef}
-        className="ignore-screenshot fixed left-1/2 top-0 w-[360px] bg-gradient-to-br from-gray-50 to-gray-100"
         style={{
-          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+          position: 'fixed',
+          left: '-9999px',
+          top: 0,
           width: '360px',
-          minHeight: '600px',
-          transform: 'translateX(-50%)',
-          visibility: 'hidden',
+          height: '600px',
+          overflow: 'hidden',
+          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+          backgroundColor: '#ffffff',
+          display: 'flex',
+          flexDirection: 'column',
+          border: '1px solid #9333ea',
+          borderRadius: '0.625rem',
         }}
       >
-        <div className="w-full px-2">
-          {/* Header Text */}
-          <div className="text-center h-4">
-            <div
-              className="flex items-center h-full justify-center gap-1 rounded-b-lg bg-purple-600 shadow-md"
+        {/* Header - Gradient badge */}
+        <div
+          style={{
+            background: 'linear-gradient(140deg, #8b5cf6 0%, #ec4899 55%, #facc15 110%)',
+            width: 'fit-content',
+            paddingTop: '0.55rem',
+            paddingBottom: '0.55rem',
+            paddingLeft: '0.85rem',
+            paddingRight: '0.85rem',
+            borderBottomLeftRadius: '1rem',
+            borderBottomRightRadius: '1rem',
+            boxShadow: '0 12px 25px -12px rgba(112, 26, 117, 0.55)',
+            border: '1px solid rgba(255, 255, 255, 0.32)',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.45rem',
+              fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+            }}
+          >
+            <span
               style={{
-                fontFamily: 'Inter, system-ui, sans-serif',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '1.35rem',
+                height: '1.35rem',
+                borderRadius: '9999px',
+                backgroundColor: 'rgba(255, 255, 255, 0.22)',
+                boxShadow: '0 8px 16px -10px rgba(59, 130, 246, 0.45)',
               }}
             >
-              <Globe className="w-5 h-5 text-white" />
-              <span className="text-base font-bold text-white tracking-wide">Longbio.me</span>
-            </div>
+              <Globe style={{ width: '0.8rem', height: '0.8rem', color: '#ffffff' }} />
+            </span>
+            <span
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                gap: '0.15rem',
+              }}
+            >
+              <span
+                style={{
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  color: '#FDF4FF',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Longbio.me
+              </span>
+            </span>
           </div>
+        </div>
 
+        <div
+          style={{
+            width: '100%',
+            paddingLeft: '0.5rem',
+            paddingRight: '0.5rem',
+            flex: 1,
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            boxSizing: 'border-box',
+          }}
+        >
           {/* Compact Header */}
-          <div className="bg-gradient-to-br from-gray-50 to-white rounded-lg shadow-md border border-gray-100 p-2 mt-1 mb-1">
-            <div className="flex items-center justify-center gap-1 mb-1">
-              {/* Profile Picture */}
-              <div className="border-4 border-purple-200">
-                <div className="relative w-6 h-6 flex-shrink-0 overflow-hidden rounded-full">
-                  {userData.profileImage ? (
-                    <Image
-                      src={userData.profileImage}
-                      alt="profile"
-                      fill
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center border-2 border-purple-200 shadow-sm">
-                      <User className="w-7 h-7 text-purple-600" />
-                    </div>
-                  )}
+          <div
+            style={{
+              backgroundColor: '#ffffff',
+              borderTopLeftRadius: '0.625rem',
+              padding: '0.75rem',
+              marginBottom: '0.275rem',
+              textAlign: 'center',
+            }}
+          >
+            {/* Profile Picture and Info in two columns */}
+            <div
+              style={{
+                display: 'inline-flex',
+                gap: '0.75rem',
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+              }}
+            >
+              {/* Left Column - Profile Picture */}
+              <div style={{ flexShrink: 0 }}>
+                <div
+                  style={{
+                    width: '4.5rem',
+                    height: '4.5rem',
+                    border: '3px solid #e9d5ff',
+                    borderRadius: '50%',
+                    padding: '0.125rem',
+                    background: '#ffffff',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: '50%',
+                      overflow: 'hidden',
+                      border: '2px solid #e9d5ff',
+                    }}
+                  >
+                    {profileImage ? (
+                      <Image
+                        src={profileImage}
+                        alt="profile"
+                        width={72}
+                        height={72}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          borderRadius: '50%',
+                          background: 'linear-gradient(to bottom right, #f3e8ff, #fce7f3)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <User style={{ width: '2.25rem', height: '2.25rem', color: '#9333ea' }} />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              <div className="flex-1">
-                <div className="flex items-center gap-1 mb-0.5">
-                  <h3 className="text-sm font-bold text-gray-900">{userData.fullName}</h3>
-                  {userData.isVerified && <CheckCircle className="w-1 h-1 text-blue-500" />}
+              {/* Right Column - Name and Info */}
+              <div style={{ flexShrink: 0 }}>
+                <h3
+                  style={{
+                    fontSize: '0.9375rem',
+                    fontWeight: '700',
+                    color: '#111827',
+                    marginBottom: '0.375rem',
+                    fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                  }}
+                >
+                  {fullName}
+                </h3>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'left',
+                    gap: '0.25rem',
+                    marginBottom: '0.375rem',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '0.75rem',
+                      color: '#6b7280',
+                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                    }}
+                  >
+                    @{username}
+                  </span>
+                  {isVerified && (
+                    <CheckCircle
+                      style={{ width: '0.75rem', height: '0.75rem', color: '#3b82f6' }}
+                    />
+                  )}
                 </div>
-                <div className="text-sm text-gray-600 mb-0.5">@{userData.username}</div>
 
                 {/* Compact badges */}
-                <div className="flex flex-wrap gap-1 h-5 mt-1">
-                  {age && (
-                    <div className="flex items-center justify-center gap-1 bg-pink-100 text-pink-700 px-2 h-5 rounded-full text-xs font-medium">
-                      <Calendar className="w-3 h-3 text-pink-700" />
-                      <span className="pt-2">{age}</span>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    justifyContent: 'center',
+                    gap: '0.25rem',
+                    marginBottom: '0.375rem',
+                  }}
+                >
+                  {age !== null && (
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.25rem',
+                        backgroundColor: '#fce7f3',
+                        color: '#be185d',
+                        paddingLeft: '0.5rem',
+                        paddingRight: '0.5rem',
+                        paddingTop: '0.25rem',
+                        paddingBottom: '0.25rem',
+                        borderRadius: '9999px',
+                        fontSize: '0.625rem',
+                        fontWeight: '500',
+                        fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                        border: '1px solid #fbcfe8',
+                      }}
+                    >
+                      <Calendar style={{ width: '0.75rem', height: '0.75rem', color: '#be185d' }} />
+                      <span>{age}</span>
                     </div>
                   )}
-                  {(userData.height > 0 || userData.weight > 0) && (
-                    <div className="flex h-full items-center justify-center bg-blue-100 text-blue-700 px-2 rounded-full text-xs font-medium gap-1">
-                      <Ruler className="w-3 h-3 text-blue-700" />
-                      <span className="pt-2">
-                        {userData.height > 0 ? userData.height + 'cm' : ''}
-                        {userData.height > 0 && userData.weight > 0 && '/'}
-                        {userData.weight > 0 ? userData.weight + 'kg' : ''}
+                  {(heightValue || weightValue) && (
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: '#dbeafe',
+                        color: '#1e40af',
+                        paddingLeft: '0.5rem',
+                        paddingRight: '0.5rem',
+                        paddingTop: '0.25rem',
+                        paddingBottom: '0.25rem',
+                        borderRadius: '9999px',
+                        fontSize: '0.625rem',
+                        fontWeight: '500',
+                        gap: '0.25rem',
+                        fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                      }}
+                    >
+                      <Ruler style={{ width: '0.75rem', height: '0.75rem', color: '#1e40af' }} />
+                      <span>
+                        {heightValue ? `${heightValue}cm` : ''}
+                        {heightValue && weightValue && '/'}
+                        {weightValue ? `${weightValue}kg` : ''}
                       </span>
                     </div>
                   )}
                 </div>
-              </div>
-            </div>
 
-            {/* Location & Status Row */}
-            <div className="text-center pt-2">
-              {(userData.bornPlace || userData.livePlace) && (
-                <div className="text-xs text-gray-600 line-clamp-1">
-                  {userData.bornPlace && userData.livePlace
-                    ? `${userData.bornPlace} - ${userData.livePlace}`
-                    : userData.bornPlace || userData.livePlace}
+                {/* Gender and Marital Status */}
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'left',
+                    gap: '0.5rem',
+                    fontSize: '0.6875rem',
+                    color: '#6b7280',
+                    fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                  }}
+                >
+                  {gender && (
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      {genderLower === 'male' || genderLower === 'مرد' ? (
+                        <Mars style={{ width: '0.75rem', height: '0.75rem', color: '#6b7280' }} />
+                      ) : (
+                        <Venus style={{ width: '0.75rem', height: '0.75rem', color: '#6b7280' }} />
+                      )}
+                      {gender}
+                    </span>
+                  )}
+                  {maritalStatus && (
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <Heart style={{ width: '0.75rem', height: '0.75rem', color: '#6b7280' }} />
+                      {maritalStatus}
+                    </span>
+                  )}
                 </div>
-              )}
-              <div className="flex justify-center gap-2 text-xs text-gray-600">
-                {userData.gender && (
-                  <span className="flex items-center gap-1">
-                    {userData.gender.toLowerCase() === 'male' ? (
-                      <Mars className="w-3 h-3 text-gray-600" />
-                    ) : (
-                      <Venus className="w-3 h-3 text-gray-600" />
-                    )}
-                    {userData.gender}
-                  </span>
-                )}
-                {userData.maritalStatus && (
-                  <span className="flex items-center gap-1">
-                    <Heart className="w-3 h-3 text-gray-600" />
-                    {userData.maritalStatus}
-                  </span>
-                )}
               </div>
             </div>
           </div>
 
-          {/* Compact Grid - 2 columns for better spacing */}
-          <div className="grid grid-cols-2 gap-2">
-            {/* Birth Date */}
-            {userData.birthDate && (
+          {/* Location Card */}
+          {(bornPlace || livePlace) && (
+            <div
+              style={{
+                backgroundColor: '#f9fafb',
+                borderRadius: '0.625rem',
+                border: '1px solid #e5e7eb',
+                padding: '0.5rem',
+                marginBottom: '0.375rem',
+                textAlign: 'center',
+                width: '100%',
+                boxSizing: 'border-box',
+              }}
+            >
               <div
-                className={`bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg shadow-sm border border-purple-200 p-2 ${
-                  !(userData.education.university || userData.job.position) ? 'col-span-2' : ''
-                }`}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.25rem',
+                  marginBottom: '0.25rem',
+                }}
               >
-                <div className="flex items-center gap-1">
-                  <Calendar className="w-3 h-3 text-purple-600" />
-                  <h4 className="font-bold text-xs text-gray-900">Birth Date</h4>
+                <MapPin style={{ width: '0.875rem', height: '0.875rem', color: '#9333ea' }} />
+                <h4
+                  style={{
+                    fontWeight: '700',
+                    fontSize: '0.75rem',
+                    color: '#111827',
+                    fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                    lineHeight: '1',
+                    margin: 0,
+                    padding: 0,
+                  }}
+                >
+                  Location
+                </h4>
+              </div>
+              {bornPlace && (
+                <div
+                  style={{
+                    fontSize: '0.625rem',
+                    color: '#374151',
+                    marginBottom: '0.18rem',
+                    fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                  }}
+                >
+                  Born: {bornPlace}
                 </div>
-                <p className="text-xs text-gray-700 line-clamp-2 pt-2">
-                  {dayjs(userData.birthDate).format('MMM DD, YYYY')}
+              )}
+              {livePlace && (
+                <div
+                  style={{
+                    fontSize: '0.625rem',
+                    color: '#374151',
+                    fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                  }}
+                >
+                  Live: {livePlace}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Compact Grid - 2 columns for better spacing */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: '0.375rem',
+              marginBottom: '0.375rem',
+              marginLeft: '0',
+              marginRight: '0',
+              boxSizing: 'border-box',
+              overflow: 'auto',
+              width: '100%',
+              minWidth: 0,
+            }}
+          >
+            {/* Birth Date */}
+            {birthDateValue && (
+              <div
+                style={{
+                  background: 'linear-gradient(to right, #f3e8ff, #fce7f3)',
+                  borderTopLeftRadius: '0.625rem',
+                  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
+                  border: '1px solid #e9d5ff',
+                  padding: '0.375rem',
+                  boxSizing: 'border-box',
+                  gridColumn: !(educationUniversity || jobPosition) ? '1 / -1' : 'auto',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                    marginBottom: '0.375rem',
+                  }}
+                >
+                  <Calendar style={{ width: '0.875rem', height: '0.875rem', color: '#9333ea' }} />
+                  <h4
+                    style={{
+                      fontWeight: '700',
+                      fontSize: '0.75rem',
+                      color: '#111827',
+                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                      lineHeight: '1',
+                      margin: 0,
+                      padding: 0,
+                    }}
+                  >
+                    Birth Date
+                  </h4>
+                </div>
+                <p
+                  style={{
+                    fontSize: '0.625rem',
+                    color: '#374151',
+                    overflow: 'hidden',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                    lineHeight: '1rem',
+                  }}
+                >
+                  {birthDateValue.format('MMM DD, YYYY')}
                 </p>
               </div>
             )}
 
             {/* Education */}
-            {userData.education.university && (
-              <div className="bg-gradient-to-br from-gray-50 to-white rounded-lg shadow-md border border-gray-100 p-2">
-                <div className="flex items-center gap-1">
-                  <GraduationCap className="w-3 h-3 text-purple-600" />
-                  <h4 className="font-bold text-xs text-gray-900">Education</h4>
+            {educationUniversity && (
+              <div
+                style={{
+                  backgroundColor: '#ffffff',
+                  borderTopLeftRadius: '0.625rem',
+                  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
+                  border: '1px solid #f3f4f6',
+                  padding: '0.375rem',
+                  boxSizing: 'border-box',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                    marginBottom: '0.375rem',
+                  }}
+                >
+                  <GraduationCap
+                    style={{ width: '0.875rem', height: '0.875rem', color: '#9333ea' }}
+                  />
+                  <h4
+                    style={{
+                      fontWeight: '700',
+                      fontSize: '0.75rem',
+                      color: '#111827',
+                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                      lineHeight: '1',
+                      margin: 0,
+                      padding: 0,
+                    }}
+                  >
+                    Education
+                  </h4>
                 </div>
-                <div className="text-xs text-gray-700 line-clamp-2 leading-5 pt-2 overflow-hidden">
-                  {userData.education.topic || userData.education.university}
-                </div>
+                {educationUniversity && (
+                  <div
+                    style={{
+                      fontSize: '0.625rem',
+                      color: '#374151',
+                      marginBottom: '0.125rem',
+                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                    }}
+                  >
+                    University: {educationUniversity}
+                  </div>
+                )}
+                {educationTopic && (
+                  <div
+                    style={{
+                      fontSize: '0.625rem',
+                      color: '#374151',
+                      marginBottom: '0.125rem',
+                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                    }}
+                  >
+                    Topic: {educationTopic}
+                  </div>
+                )}
+                {educationGraduationYear && (
+                  <div
+                    style={{
+                      fontSize: '0.625rem',
+                      color: '#374151',
+                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                    }}
+                  >
+                    Graduation Year: {educationGraduationYear}
+                  </div>
+                )}
               </div>
             )}
 
             {/* Job */}
-            {userData.job.position && (
-              <div className="bg-gradient-to-br from-gray-50 to-white rounded-lg shadow-md border border-gray-100 p-2">
-                <div className="flex items-center gap-1 mb-1">
-                  <Briefcase className="w-3 h-3 text-purple-600" />
-                  <h4 className="font-bold text-xs text-gray-900">Career</h4>
+            {jobPosition && (
+              <div
+                style={{
+                  backgroundColor: '#ffffff',
+                  borderTopLeftRadius: '0.625rem',
+                  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
+                  border: '1px solid #f3f4f6',
+                  padding: '0.375rem',
+                  boxSizing: 'border-box',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                    marginBottom: '0.375rem',
+                  }}
+                >
+                  <Briefcase style={{ width: '0.875rem', height: '0.875rem', color: '#9333ea' }} />
+                  <h4
+                    style={{
+                      fontWeight: '700',
+                      fontSize: '0.75rem',
+                      color: '#111827',
+                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                      lineHeight: '1',
+                      margin: 0,
+                      padding: 0,
+                    }}
+                  >
+                    Career
+                  </h4>
                 </div>
-                <div className="text-xs text-gray-700 line-clamp-2 leading-5 overflow-hidden">
-                  {userData.job.position}
+                <div
+                  style={{
+                    fontSize: '0.625rem',
+                    color: '#374151',
+                    overflow: 'hidden',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                    lineHeight: '1rem',
+                  }}
+                >
+                  {jobPosition}
                 </div>
               </div>
             )}
@@ -761,21 +825,65 @@ export default function ShareScreenshot({
             {/* Interests */}
             {displayInterests.length > 0 && (
               <div
-                className={`bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg shadow-sm border border-purple-200 p-2 ${
-                  !(userData.favoriteSport.length > 0 || displaySkills.length > 0)
-                    ? 'col-span-2'
-                    : ''
-                }`}
+                style={{
+                  background: 'linear-gradient(to right, #f3e8ff, #fce7f3)',
+                  borderTopLeftRadius: '0.625rem',
+                  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
+                  border: '1px solid #e9d5ff',
+                  padding: '0.375rem',
+                  boxSizing: 'border-box',
+                  gridColumn: !(favoriteSports.length > 0 || displaySkills.length > 0)
+                    ? '1 / -1'
+                    : 'auto',
+                }}
               >
-                <div className="flex items-center gap-1">
-                  <Star className="w-3 h-3 text-purple-600" />
-                  <h4 className="font-bold text-xs text-gray-900">Interests</h4>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                    marginBottom: '0.375rem',
+                  }}
+                >
+                  <Star style={{ width: '0.875rem', height: '0.875rem', color: '#9333ea' }} />
+                  <h4
+                    style={{
+                      fontWeight: '700',
+                      fontSize: '0.75rem',
+                      color: '#111827',
+                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                      lineHeight: '1',
+                      margin: 0,
+                      padding: 0,
+                    }}
+                  >
+                    Interests
+                  </h4>
                 </div>
-                <div className="flex flex-wrap gap-1 leading-5">
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '0.125rem',
+                    lineHeight: '1rem',
+                  }}
+                >
                   {displayInterests.slice(0, 3).map((interest, index) => (
                     <span
                       key={index}
-                      className="px-1 pt-2 border border-purple-300 text-purple-700 rounded-full text-xs whitespace-nowrap leading-5"
+                      style={{
+                        paddingLeft: '0.375rem',
+                        paddingRight: '0.375rem',
+                        paddingTop: '0.125rem',
+                        paddingBottom: '0.125rem',
+                        border: '1px solid #c084fc',
+                        color: '#7e22ce',
+                        borderRadius: '0.5rem',
+                        fontSize: '0.625rem',
+                        whiteSpace: 'nowrap',
+                        lineHeight: '1rem',
+                        fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                      }}
                     >
                       {interest}
                     </span>
@@ -785,21 +893,59 @@ export default function ShareScreenshot({
             )}
 
             {/* Sports */}
-            {userData.favoriteSport.length > 0 && (
+            {favoriteSports.length > 0 && (
               <div
-                className={`bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg shadow-sm border border-purple-200 p-2 ${
-                  !(displayInterests.length > 0 || displaySkills.length > 0) ? 'col-span-2' : ''
-                }`}
+                style={{
+                  background: 'linear-gradient(to right, #f3e8ff, #fce7f3)',
+                  borderTopLeftRadius: '0.625rem',
+                  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
+                  border: '1px solid #e9d5ff',
+                  padding: '0.375rem',
+                  boxSizing: 'border-box',
+                  gridColumn: !(displayInterests.length > 0 || displaySkills.length > 0)
+                    ? '1 / -1'
+                    : 'auto',
+                }}
               >
-                <div className="flex items-center gap-1 mb-1">
-                  <Dumbbell className="w-3 h-3 text-purple-600" />
-                  <h4 className="font-bold text-xs text-gray-900">Sports</h4>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                    marginBottom: '0.375rem',
+                  }}
+                >
+                  <Dumbbell style={{ width: '0.875rem', height: '0.875rem', color: '#9333ea' }} />
+                  <h4
+                    style={{
+                      fontWeight: '700',
+                      fontSize: '0.75rem',
+                      color: '#111827',
+                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                      lineHeight: '1',
+                      margin: 0,
+                      padding: 0,
+                    }}
+                  >
+                    Sports
+                  </h4>
                 </div>
-                <div className="flex flex-wrap gap-1">
-                  {userData.favoriteSport.slice(0, 3).map((sport, index) => (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.125rem' }}>
+                  {favoriteSports.slice(0, 3).map((sport, index) => (
                     <span
                       key={index}
-                      className="px-1 py-0.5 border border-purple-300 text-purple-700 rounded-full text-xs leading-5"
+                      style={{
+                        paddingLeft: '0.375rem',
+                        paddingRight: '0.375rem',
+                        paddingTop: '0.125rem',
+                        paddingBottom: '0.125rem',
+                        border: '1px solid #c084fc',
+                        color: '#7e22ce',
+                        borderRadius: '0.5rem',
+                        fontSize: '0.625rem',
+                        lineHeight: '1rem',
+                        fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                      }}
                     >
                       {sport}
                     </span>
@@ -811,21 +957,57 @@ export default function ShareScreenshot({
             {/* Skills */}
             {displaySkills.length > 0 && (
               <div
-                className={`bg-white rounded-lg shadow-sm border border-gray-100 p-2 ${
-                  !(displayInterests.length > 0 || userData.favoriteSport.length > 0)
-                    ? 'col-span-2'
-                    : ''
-                }`}
+                style={{
+                  backgroundColor: '#ffffff',
+                  borderTopLeftRadius: '0.625rem',
+                  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
+                  border: '1px solid #f3f4f6',
+                  padding: '0.375rem',
+                  boxSizing: 'border-box',
+                  gridColumn: !(displayInterests.length > 0 || favoriteSports.length > 0)
+                    ? '1 / -1'
+                    : 'auto',
+                }}
               >
-                <div className="flex items-center gap-1 mb-1">
-                  <Sparkles className="w-3 h-3 text-purple-600" />
-                  <h4 className="font-bold text-xs text-gray-900">Skills</h4>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                    marginBottom: '0.375rem',
+                  }}
+                >
+                  <Sparkles style={{ width: '0.875rem', height: '0.875rem', color: '#9333ea' }} />
+                  <h4
+                    style={{
+                      fontWeight: '700',
+                      fontSize: '0.75rem',
+                      color: '#111827',
+                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                      lineHeight: '1',
+                      margin: 0,
+                      padding: 0,
+                    }}
+                  >
+                    Skills
+                  </h4>
                 </div>
-                <div className="flex flex-wrap gap-1">
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.125rem' }}>
                   {displaySkills.slice(0, 3).map((skill, index) => (
                     <span
                       key={index}
-                      className="px-1 py-0.5 border border-blue-300 text-blue-700 rounded-full text-xs leading-5"
+                      style={{
+                        paddingLeft: '0.375rem',
+                        paddingRight: '0.375rem',
+                        paddingTop: '0.125rem',
+                        paddingBottom: '0.125rem',
+                        border: '1px solid #93c5fd',
+                        color: '#1e40af',
+                        borderRadius: '0.5rem',
+                        fontSize: '0.625rem',
+                        lineHeight: '1rem',
+                        fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                      }}
                     >
                       {skill}
                     </span>
@@ -835,17 +1017,56 @@ export default function ShareScreenshot({
             )}
 
             {/* Travel */}
-            {userData.travelStyle && userData.travelStyle.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2">
-                <div className="flex items-center gap-1 mb-0.5">
-                  <MapPin className="w-3 h-3 text-purple-600" />
-                  <h4 className="font-bold text-xs text-gray-900">Travel Style</h4>
+            {travelStyles.length > 0 && (
+              <div
+                style={{
+                  backgroundColor: '#ffffff',
+                  borderTopLeftRadius: '0.625rem',
+                  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
+                  border: '1px solid #f3f4f6',
+                  padding: '0.375rem',
+                  boxSizing: 'border-box',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                    marginBottom: '0.375rem',
+                  }}
+                >
+                  <MapPin style={{ width: '0.875rem', height: '0.875rem', color: '#9333ea' }} />
+                  <h4
+                    style={{
+                      fontWeight: '700',
+                      fontSize: '0.75rem',
+                      color: '#111827',
+                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                      lineHeight: '1',
+                      margin: 0,
+                      padding: 0,
+                    }}
+                  >
+                    Travel Style
+                  </h4>
                 </div>
-                <div className="flex flex-wrap gap-1">
-                  {userData.travelStyle.slice(0, 2).map((style, index) => (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.125rem' }}>
+                  {travelStyles.slice(0, 2).map((style, index) => (
                     <span
                       key={index}
-                      className="px-1 pt-2 border border-purple-300 text-purple-700 rounded-full text-xs leading-5"
+                      style={{
+                        paddingLeft: '0.375rem',
+                        paddingRight: '0.375rem',
+                        paddingTop: '0.125rem',
+                        paddingBottom: '0.125rem',
+                        border: '1px solid #c084fc',
+                        color: '#7e22ce',
+                        borderRadius: '0.5rem',
+                        fontSize: '0.625rem',
+                        lineHeight: '1rem',
+                        fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                      }}
                     >
                       {style}
                     </span>
@@ -855,25 +1076,64 @@ export default function ShareScreenshot({
             )}
 
             {/* Visited Countries */}
-            {userData.visitedCountries && userData.visitedCountries.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2">
-                <div className="flex items-center gap-1 mb-1">
-                  <Globe className="w-3 h-3 text-purple-600" />
-                  <h4 className="font-bold text-xs text-gray-900">Countries</h4>
+            {visitedCountries.length > 0 && (
+              <div
+                style={{
+                  backgroundColor: '#ffffff',
+                  borderTopLeftRadius: '0.625rem',
+                  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
+                  border: '1px solid #f3f4f6',
+                  padding: '0.375rem',
+                  boxSizing: 'border-box',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                    marginBottom: '0.375rem',
+                  }}
+                >
+                  <Globe style={{ width: '0.875rem', height: '0.875rem', color: '#9333ea' }} />
+                  <h4
+                    style={{
+                      fontWeight: '700',
+                      fontSize: '0.75rem',
+                      color: '#111827',
+                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                      lineHeight: '1',
+                      margin: 0,
+                      padding: 0,
+                    }}
+                  >
+                    Countries
+                  </h4>
                 </div>
-                <div className="flex flex-wrap gap-1">
-                  {userData.visitedCountries.slice(0, 5).map((country, index) => {
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
+                  {visitedCountries.slice(0, 5).map((country, index) => {
                     // Get country flag emoji (basic mapping for common countries)
                     const getCountryFlag = (countryName: string) => {
+                      const normalizedName = countryName.trim().toLowerCase()
+                      if (!normalizedName) return '🏳️'
+
+                      const directMatch = flagEmojiMap.get(normalizedName)
+                      if (directMatch) return directMatch
+
                       const flagMap: { [key: string]: string } = {
                         ایران: '🇮🇷',
+                        'جمهوری اسلامی ایران': '🇮🇷',
                         iran: '🇮🇷',
+                        'islamic republic of iran': '🇮🇷',
                         ترکیه: '🇹🇷',
                         turkey: '🇹🇷',
                         دبی: '🇦🇪',
                         dubai: '🇦🇪',
                         امارات: '🇦🇪',
+                        'امارات متحده عربی': '🇦🇪',
                         uae: '🇦🇪',
+                        'united arab emirates': '🇦🇪',
+                        'united arab em': '🇦🇪',
                         مالزی: '🇲🇾',
                         malaysia: '🇲🇾',
                         تایلند: '🇹🇭',
@@ -883,7 +1143,9 @@ export default function ShareScreenshot({
                         ژاپن: '🇯🇵',
                         japan: '🇯🇵',
                         کره: '🇰🇷',
+                        'کره جنوبی': '🇰🇷',
                         korea: '🇰🇷',
+                        'south korea': '🇰🇷',
                         چین: '🇨🇳',
                         china: '🇨🇳',
                         هند: '🇮🇳',
@@ -899,18 +1161,56 @@ export default function ShareScreenshot({
                         اسپانیا: '🇪🇸',
                         spain: '🇪🇸',
                         انگلستان: '🇬🇧',
+                        بریتانیا: '🇬🇧',
                         uk: '🇬🇧',
+                        'united kingdom': '🇬🇧',
                         کانادا: '🇨🇦',
                         canada: '🇨🇦',
                         آمریکا: '🇺🇸',
                         usa: '🇺🇸',
+                        'united states': '🇺🇸',
                         استرالیا: '🇦🇺',
                         australia: '🇦🇺',
+                        قطر: '🇶🇦',
+                        qatar: '🇶🇦',
+                        عمان: '🇴🇲',
+                        oman: '🇴🇲',
+                        بحرین: '🇧🇭',
+                        bahrain: '🇧🇭',
+                        کویت: '🇰🇼',
+                        kuwait: '🇰🇼',
+                        عربستان: '🇸🇦',
+                        'عربستان سعودی': '🇸🇦',
+                        'saudi arabia': '🇸🇦',
                       }
-                      return flagMap[countryName.toLowerCase()] || '🏳️'
+
+                      if (flagMap[normalizedName]) return flagMap[normalizedName]
+
+                      // Try to match by removing punctuation (eg. `Congo (DRC)`)
+                      const simplified = normalizedName
+                        .replace(/[^\p{L}\s]/gu, '')
+                        .replace(/\s+/g, ' ')
+                        .trim()
+                      for (const [name, emoji] of flagEmojiMap) {
+                        const simplifiedMapName = name
+                          .replace(/[^\p{L}\s]/gu, '')
+                          .replace(/\s+/g, ' ')
+                          .trim()
+                        if (simplified && simplified === simplifiedMapName) {
+                          return emoji
+                        }
+                      }
+
+                      return '🏳️'
                     }
                     return (
-                      <span key={index} className="text-sm">
+                      <span
+                        key={index}
+                        style={{
+                          fontSize: '1.25rem',
+                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                        }}
+                      >
                         {getCountryFlag(country)}
                       </span>
                     )
@@ -920,31 +1220,120 @@ export default function ShareScreenshot({
             )}
 
             {/* Pet */}
-            {(userData.pet.name || userData.pet.breed) && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-2 col-span-4">
-                <div className="flex items-center gap-1 mb-1">
-                  <PawPrint className="w-3 h-3 text-purple-600" />
-                  <h4 className="font-bold text-xs text-gray-900">Pet</h4>
+            {(petName || petBreed) && (
+              <div
+                style={{
+                  backgroundColor: '#ffffff',
+                  borderTopLeftRadius: '0.625rem',
+                  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
+                  border: '1px solid #f3f4f6',
+                  padding: '0.375rem',
+                  boxSizing: 'border-box',
+                  gridColumn: '1 / -1',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                    marginBottom: '0.375rem',
+                  }}
+                >
+                  <PawPrint style={{ width: '0.875rem', height: '0.875rem', color: '#9333ea' }} />
+                  <h4
+                    style={{
+                      fontWeight: '700',
+                      fontSize: '0.75rem',
+                      color: '#111827',
+                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                      lineHeight: '1',
+                      margin: 0,
+                      padding: 0,
+                    }}
+                  >
+                    Pet
+                  </h4>
                 </div>
-                <div className="text-xs text-gray-700 line-clamp-2 leading-5 overflow-hidden">
-                  {userData.pet.name || userData.pet.breed}
+                <div
+                  style={{
+                    fontSize: '0.625rem',
+                    color: '#374151',
+                    overflow: 'hidden',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    lineHeight: '1rem',
+                    fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                  }}
+                >
+                  {petName || petBreed}
                 </div>
               </div>
             )}
           </div>
-          {/* Footer */}
-          <div className="relative bg-purple-600 text-center h-4 mt-1 rounded-t-lg">
-            <div
-              className="absolute top-0 left-1/2 -translate-x-1/2 h-full px-2 shadow-md flex items-center justify-center gap-1"
+        </div>
+        {/* Footer */}
+        <div
+          style={{
+            background: 'linear-gradient(145deg, #6366f1, #ec4899)',
+            textAlign: 'center',
+            width: 'fit-content',
+            paddingTop: '0.6rem',
+            paddingBottom: '0.6rem',
+            paddingLeft: '0.9rem',
+            paddingRight: '0.9rem',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            borderTopLeftRadius: '1rem',
+            borderTopRightRadius: '1rem',
+            boxShadow: '0 16px 32px -14px rgba(99, 102, 241, 0.6)',
+            border: '1px solid rgba(255, 255, 255, 0.24)',
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.45rem',
+              fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+            }}
+          >
+            <span
               style={{
-                fontFamily: 'Inter, system-ui, sans-serif',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '1.3rem',
+                height: '1.3rem',
+                borderRadius: '9999px',
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 10px 20px -12px rgba(244, 114, 182, 0.55)',
               }}
             >
-              <Sparkles className="w-5 h-5 text-white" />
-              <span className="text-base font-bold text-white tracking-wide">
+              <Sparkles style={{ width: '0.75rem', height: '0.75rem', color: '#ffffff' }} />
+            </span>
+            <span
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+              }}
+            >
+              <span
+                style={{
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  color: '#FDF4FF',
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase',
+                }}
+              >
                 Create your longBio and share it!
               </span>
-            </div>
+            </span>
           </div>
         </div>
       </div>
@@ -987,20 +1376,24 @@ export default function ShareScreenshot({
                     Create Beautiful Screenshot
                   </h4>
                   <p className="text-gray-600 text-sm">
-                    Generate a stunning screenshot of {userData.fullName}&apos;s bio to share with
-                    friends
+                    Generate a stunning screenshot of {fullName}&apos;s bio to share with friends
                   </p>
                 </div>
 
                 <button
                   onClick={generateScreenshot}
-                  disabled={isGenerating}
+                  disabled={isGenerating || flagLoading}
                   className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isGenerating ? (
                     <>
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                       Generating...
+                    </>
+                  ) : flagLoading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      Preparing...
                     </>
                   ) : (
                     <>
@@ -1018,7 +1411,20 @@ export default function ShareScreenshot({
                     className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50"
                     style={{ width: '350px', maxWidth: '350px' }}
                   >
-                    <Image src={screenshot} alt="Bio Screenshot" width={350} height={500} />
+                    <div className="relative">
+                      <Image
+                        src={screenshot || ''}
+                        alt="Bio Screenshot"
+                        width={350}
+                        height={600}
+                        onLoadingComplete={handlePreviewLoaded}
+                      />
+                      {(isGenerating || isPreviewLoading) && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-white" />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
