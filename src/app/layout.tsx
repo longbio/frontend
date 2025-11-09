@@ -1,10 +1,11 @@
 import './globals.css'
 import Script from 'next/script'
+import { type Viewport } from 'next'
 import localFont from 'next/font/local'
 import Providers from '../../providers'
 import { GA_TRACKING_ID } from '../lib/gtag'
-import type { Metadata, Viewport } from 'next'
 import { ViewTransitions } from 'next-view-transitions'
+export { metadata } from '@/lib/configs/metadata'
 
 const gilroy = localFont({
   src: [
@@ -32,18 +33,6 @@ const gilroy = localFont({
   variable: '--font-gilroy',
 })
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://longbio.me'),
-  description: "Longbio is a social bio platform that helps people showcase who they really are — beyond the limits of a short Instagram bio. In just two minutes, users can create a complete, beautifully designed profile that includes all the details others might want to know about them. The profile can then be shared anywhere — from an Instagram bio to any social link — helping friends, followers, and communities get to know them better.",
-  title: {
-    default: "Long Bio - The bio that says it all",
-    template: "%s = Long Bio"
-  },
-  icons: {
-    icon: '/assets/images/logo.svg',
-  },
-}
-
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -62,6 +51,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${gilroy.variable}`}>
+        {/* TODO: Replace these with @next/third-parties package */}
         {/* Google Analytics */}
         {GA_TRACKING_ID && (
           <>
