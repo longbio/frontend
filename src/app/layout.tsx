@@ -34,7 +34,11 @@ const gilroy = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://longbio.me'),
-  title: 'Long Bio',
+  description: "Longbio is a social bio platform that helps people showcase who they really are — beyond the limits of a short Instagram bio. In just two minutes, users can create a complete, beautifully designed profile that includes all the details others might want to know about them. The profile can then be shared anywhere — from an Instagram bio to any social link — helping friends, followers, and communities get to know them better.",
+  title: {
+    default: "Long Bio - The bio that says it all",
+    template: "%s = Long Bio"
+  },
   icons: {
     icon: '/assets/images/logo.svg',
   },
