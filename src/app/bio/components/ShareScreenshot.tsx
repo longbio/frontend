@@ -2,8 +2,9 @@
 
 import dayjs from 'dayjs'
 import Image from 'next/image'
-import { useState, useRef } from 'react'
+import { useState, useRef, useMemo } from 'react'
 import html2canvas from '@html2canvas/html2canvas'
+import { useFlagCountries } from '@/service/countries'
 import {
   Download,
   Share2,
@@ -65,6 +66,7 @@ interface ShareScreenshotProps {
   onClose: () => void
   onSuccess?: () => void
   onError?: (error: string) => void
+  onScreenshotReady?: (screenshot: string) => void
 }
 
 export default function ShareScreenshot({
@@ -72,15 +74,22 @@ export default function ShareScreenshot({
   onClose,
   onError,
   onSuccess,
+  onScreenshotReady,
 }: ShareScreenshotProps) {
   const [isGenerating, setIsGenerating] = useState(false)
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false)
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const screenshotRef = useRef<HTMLDivElement>(null)
-
-  const age = userData.birthDate
-    ? new Date().getFullYear() - new Date(userData.birthDate).getFullYear()
-    : null
+  const { data: flagCountries, loading: flagLoading } = useFlagCountries()
+  const flagEmojiMap = useMemo(() => {
+    const map = new Map<string, string>()
+    flagCountries?.forEach((item) => {
+      const normalizedName = item.name.trim().toLowerCase()
+      map.set(normalizedName, item.emoji || '')
+    })
+    return map
+  }, [flagCountries])
 
   const skillMapping: { [key: string]: string } = {
     '1': 'Sports',
@@ -96,14 +105,72 @@ export default function ShareScreenshot({
     '11': 'Eco-Tourism',
   }
 
-  const displaySkills = userData.skills?.map((skill) => skillMapping[skill] || skill) || []
-  const displayInterests = userData.interests || []
+  const fullName = userData?.fullName?.trim() || 'LongBio User'
+  const username = userData?.username?.trim() || 'user'
+  const profileImage = userData?.profileImage?.trim() || null
+  const isVerified = Boolean(userData?.isVerified)
+
+  const rawSkills = Array.isArray(userData?.skills)
+    ? userData.skills.filter((skill): skill is string => Boolean(skill && String(skill).trim()))
+    : []
+  const displaySkills = rawSkills
+    .map((skill) => skillMapping[skill] || skill)
+    .filter((skill): skill is string => Boolean(skill && String(skill).trim()))
+
+  const displayInterests = Array.isArray(userData?.interests)
+    ? userData.interests.filter((interest): interest is string =>
+        Boolean(interest && interest.trim())
+      )
+    : []
+
+  const favoriteSports = Array.isArray(userData?.favoriteSport)
+    ? userData.favoriteSport.filter((sport): sport is string => Boolean(sport && sport.trim()))
+    : []
+
+  const travelStyles = Array.isArray(userData?.travelStyle)
+    ? userData.travelStyle.filter((style): style is string => Boolean(style && style.trim()))
+    : []
+
+  const visitedCountries = Array.isArray(userData?.visitedCountries)
+    ? userData.visitedCountries.filter((country): country is string =>
+        Boolean(country && country.trim())
+      )
+    : []
+
+  const education = userData?.education ?? { topic: '', university: '', graduationYear: '' }
+  const educationTopic = education?.topic?.trim() || ''
+  const educationUniversity = education?.university?.trim() || ''
+  const educationGraduationYear = education?.graduationYear?.trim() || ''
+  const job = userData?.job ?? { company: '', position: '' }
+  const jobPosition = job?.position?.trim() || ''
+  const pet = userData?.pet ?? { name: '', breed: '' }
+  const petName = pet?.name?.trim() || ''
+  const petBreed = pet?.breed?.trim() || ''
+  const bornPlace = userData?.bornPlace?.trim() || ''
+  const livePlace = userData?.livePlace?.trim() || ''
+  const gender = userData?.gender?.trim() || ''
+  const genderLower = gender.toLowerCase()
+  const maritalStatus = userData?.maritalStatus?.trim() || ''
+  const heightValue =
+    typeof userData?.height === 'number' && userData.height > 0 ? userData.height : null
+  const weightValue =
+    typeof userData?.weight === 'number' && userData.weight > 0 ? userData.weight : null
+  const birthDateValue =
+    userData?.birthDate && dayjs(userData.birthDate).isValid() ? dayjs(userData.birthDate) : null
+  const age = birthDateValue ? dayjs().diff(birthDateValue, 'year') : null
 
   const generateScreenshot = async () => {
     setIsGenerating(true)
+    setIsPreviewLoading(false)
+    setScreenshot(null)
     setError(null)
 
     try {
+      if (flagLoading) {
+        setError('Please wait until country flags finish loading.')
+        setIsGenerating(false)
+        return
+      }
       if (typeof window === 'undefined' || typeof document === 'undefined') {
         setError('Browser environment not available')
         setIsGenerating(false)
@@ -135,9 +202,13 @@ export default function ShareScreenshot({
 
       const dataURL = canvas.toDataURL('image/png', 1.0)
       setScreenshot(dataURL)
+      setIsPreviewLoading(true)
 
       if (onSuccess) {
         onSuccess()
+      }
+      if (onScreenshotReady) {
+        onScreenshotReady(dataURL)
       }
     } catch (error) {
       const errorMessage = `Failed to generate screenshot: ${
@@ -148,9 +219,13 @@ export default function ShareScreenshot({
       if (onError) {
         onError(errorMessage)
       }
-    } finally {
       setIsGenerating(false)
     }
+  }
+
+  const handlePreviewLoaded = () => {
+    setIsPreviewLoading(false)
+    setIsGenerating(false)
   }
 
   const downloadScreenshot = () => {
@@ -158,7 +233,7 @@ export default function ShareScreenshot({
     if (typeof document === 'undefined') return
 
     const link = document.createElement('a')
-    link.download = `${userData.username}-bio.png`
+    link.download = `${username}-bio.png`
     link.href = screenshot
     link.click()
   }
@@ -169,7 +244,7 @@ export default function ShareScreenshot({
     try {
       const response = await fetch(screenshot)
       const blob = await response.blob()
-      const file = new File([blob], `${userData.username}-bio.png`, { type: 'image/png' })
+      const file = new File([blob], `${username}-bio.png`, { type: 'image/png' })
 
       if (
         typeof window !== 'undefined' &&
@@ -178,8 +253,8 @@ export default function ShareScreenshot({
         navigator.canShare({ files: [file] })
       ) {
         await navigator.share({
-          title: `${userData.fullName}'s Bio`,
-          text: `Check out ${userData.fullName}'s bio on LongBio!`,
+          title: `${fullName}'s Bio`,
+          text: `Check out ${fullName}'s bio on LongBio!`,
           files: [file],
         })
       } else {
@@ -211,42 +286,67 @@ export default function ShareScreenshot({
           borderRadius: '0.625rem',
         }}
       >
-        {/* Header - Full width purple bar */}
+        {/* Header - Gradient badge */}
         <div
           style={{
-            backgroundColor: '#9333ea',
+            background: 'linear-gradient(140deg, #8b5cf6 0%, #ec4899 55%, #facc15 110%)',
             width: 'fit-content',
-            paddingTop: '0.5rem',
-            paddingBottom: '0.5rem',
-            paddingLeft: '0.7rem',
-            paddingRight: '0.7rem',
-            borderBottomLeftRadius: '0.75rem',
-            borderBottomRightRadius: '0.75rem',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+            paddingTop: '0.55rem',
+            paddingBottom: '0.55rem',
+            paddingLeft: '0.85rem',
+            paddingRight: '0.85rem',
+            borderBottomLeftRadius: '1rem',
+            borderBottomRightRadius: '1rem',
+            boxShadow: '0 12px 25px -12px rgba(112, 26, 117, 0.55)',
+            border: '1px solid rgba(255, 255, 255, 0.32)',
             marginLeft: 'auto',
             marginRight: 'auto',
             display: 'flex',
             justifyContent: 'center',
+            alignItems: 'center',
           }}
         >
           <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '0.375rem',
+              gap: '0.45rem',
               fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
             }}
           >
-            <Globe style={{ width: '0.875rem', height: '0.875rem', color: '#ffffff' }} />
             <span
               style={{
-                fontSize: '0.8125rem',
-                fontWeight: '700',
-                color: '#ffffff',
-                letterSpacing: '0.025em',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '1.35rem',
+                height: '1.35rem',
+                borderRadius: '9999px',
+                backgroundColor: 'rgba(255, 255, 255, 0.22)',
+                boxShadow: '0 8px 16px -10px rgba(59, 130, 246, 0.45)',
               }}
             >
-              Longbio.me
+              <Globe style={{ width: '0.8rem', height: '0.8rem', color: '#ffffff' }} />
+            </span>
+            <span
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                gap: '0.15rem',
+              }}
+            >
+              <span
+                style={{
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  color: '#FDF4FF',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Longbio.me
+              </span>
             </span>
           </div>
         </div>
@@ -269,7 +369,7 @@ export default function ShareScreenshot({
               backgroundColor: '#ffffff',
               borderTopLeftRadius: '0.625rem',
               padding: '0.75rem',
-              marginBottom: '0.375rem',
+              marginBottom: '0.275rem',
               textAlign: 'center',
             }}
           >
@@ -303,9 +403,9 @@ export default function ShareScreenshot({
                       border: '2px solid #e9d5ff',
                     }}
                   >
-                    {userData.profileImage ? (
+                    {profileImage ? (
                       <Image
-                        src={userData.profileImage}
+                        src={profileImage}
                         alt="profile"
                         width={72}
                         height={72}
@@ -341,13 +441,13 @@ export default function ShareScreenshot({
                     fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                   }}
                 >
-                  {userData.fullName}
+                  {fullName}
                 </h3>
                 <div
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
+                    justifyContent: 'left',
                     gap: '0.25rem',
                     marginBottom: '0.375rem',
                   }}
@@ -359,9 +459,9 @@ export default function ShareScreenshot({
                       fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                     }}
                   >
-                    @{userData.username}
+                    @{username}
                   </span>
-                  {userData.isVerified && (
+                  {isVerified && (
                     <CheckCircle
                       style={{ width: '0.75rem', height: '0.75rem', color: '#3b82f6' }}
                     />
@@ -378,7 +478,7 @@ export default function ShareScreenshot({
                     marginBottom: '0.375rem',
                   }}
                 >
-                  {age && (
+                  {age !== null && (
                     <div
                       style={{
                         display: 'flex',
@@ -402,7 +502,7 @@ export default function ShareScreenshot({
                       <span>{age}</span>
                     </div>
                   )}
-                  {(userData.height > 0 || userData.weight > 0) && (
+                  {(heightValue || weightValue) && (
                     <div
                       style={{
                         display: 'flex',
@@ -423,9 +523,9 @@ export default function ShareScreenshot({
                     >
                       <Ruler style={{ width: '0.75rem', height: '0.75rem', color: '#1e40af' }} />
                       <span>
-                        {userData.height > 0 ? userData.height + 'cm' : ''}
-                        {userData.height > 0 && userData.weight > 0 && '/'}
-                        {userData.weight > 0 ? userData.weight + 'kg' : ''}
+                        {heightValue ? `${heightValue}cm` : ''}
+                        {heightValue && weightValue && '/'}
+                        {weightValue ? `${weightValue}kg` : ''}
                       </span>
                     </div>
                   )}
@@ -435,27 +535,27 @@ export default function ShareScreenshot({
                 <div
                   style={{
                     display: 'flex',
-                    justifyContent: 'center',
+                    justifyContent: 'left',
                     gap: '0.5rem',
                     fontSize: '0.6875rem',
                     color: '#6b7280',
                     fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                   }}
                 >
-                  {userData.gender && (
+                  {gender && (
                     <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                      {userData.gender.toLowerCase() === 'male' ? (
+                      {genderLower === 'male' || genderLower === 'مرد' ? (
                         <Mars style={{ width: '0.75rem', height: '0.75rem', color: '#6b7280' }} />
                       ) : (
                         <Venus style={{ width: '0.75rem', height: '0.75rem', color: '#6b7280' }} />
                       )}
-                      {userData.gender}
+                      {gender}
                     </span>
                   )}
-                  {userData.maritalStatus && (
+                  {maritalStatus && (
                     <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                       <Heart style={{ width: '0.75rem', height: '0.75rem', color: '#6b7280' }} />
-                      {userData.maritalStatus}
+                      {maritalStatus}
                     </span>
                   )}
                 </div>
@@ -464,7 +564,7 @@ export default function ShareScreenshot({
           </div>
 
           {/* Location Card */}
-          {(userData.bornPlace || userData.livePlace) && (
+          {(bornPlace || livePlace) && (
             <div
               style={{
                 backgroundColor: '#f9fafb',
@@ -501,7 +601,7 @@ export default function ShareScreenshot({
                   Location
                 </h4>
               </div>
-              {userData.bornPlace && (
+              {bornPlace && (
                 <div
                   style={{
                     fontSize: '0.625rem',
@@ -510,10 +610,10 @@ export default function ShareScreenshot({
                     fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                   }}
                 >
-                  Born: {userData.bornPlace}
+                  Born: {bornPlace}
                 </div>
               )}
-              {userData.livePlace && (
+              {livePlace && (
                 <div
                   style={{
                     fontSize: '0.625rem',
@@ -521,7 +621,7 @@ export default function ShareScreenshot({
                     fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                   }}
                 >
-                  Live: {userData.livePlace}
+                  Live: {livePlace}
                 </div>
               )}
             </div>
@@ -543,7 +643,7 @@ export default function ShareScreenshot({
             }}
           >
             {/* Birth Date */}
-            {userData.birthDate && (
+            {birthDateValue && (
               <div
                 style={{
                   background: 'linear-gradient(to right, #f3e8ff, #fce7f3)',
@@ -552,9 +652,7 @@ export default function ShareScreenshot({
                   border: '1px solid #e9d5ff',
                   padding: '0.375rem',
                   boxSizing: 'border-box',
-                  gridColumn: !(userData.education.university || userData.job.position)
-                    ? '1 / -1'
-                    : 'auto',
+                  gridColumn: !(educationUniversity || jobPosition) ? '1 / -1' : 'auto',
                 }}
               >
                 <div
@@ -592,13 +690,13 @@ export default function ShareScreenshot({
                     lineHeight: '1rem',
                   }}
                 >
-                  {dayjs(userData.birthDate).format('MMM DD, YYYY')}
+                  {birthDateValue.format('MMM DD, YYYY')}
                 </p>
               </div>
             )}
 
             {/* Education */}
-            {userData.education.university && (
+            {educationUniversity && (
               <div
                 style={{
                   backgroundColor: '#ffffff',
@@ -634,7 +732,7 @@ export default function ShareScreenshot({
                     Education
                   </h4>
                 </div>
-                {userData.education.university && (
+                {educationUniversity && (
                   <div
                     style={{
                       fontSize: '0.625rem',
@@ -643,10 +741,10 @@ export default function ShareScreenshot({
                       fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                     }}
                   >
-                    University: {userData.education.university}
+                    University: {educationUniversity}
                   </div>
                 )}
-                {userData.education.topic && (
+                {educationTopic && (
                   <div
                     style={{
                       fontSize: '0.625rem',
@@ -655,10 +753,10 @@ export default function ShareScreenshot({
                       fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                     }}
                   >
-                    Topic: {userData.education.topic}
+                    Topic: {educationTopic}
                   </div>
                 )}
-                {userData.education.graduationYear && (
+                {educationGraduationYear && (
                   <div
                     style={{
                       fontSize: '0.625rem',
@@ -666,14 +764,14 @@ export default function ShareScreenshot({
                       fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                     }}
                   >
-                    Graduation Year: {userData.education.graduationYear}
+                    Graduation Year: {educationGraduationYear}
                   </div>
                 )}
               </div>
             )}
 
             {/* Job */}
-            {userData.job.position && (
+            {jobPosition && (
               <div
                 style={{
                   backgroundColor: '#ffffff',
@@ -719,7 +817,7 @@ export default function ShareScreenshot({
                     lineHeight: '1rem',
                   }}
                 >
-                  {userData.job.position}
+                  {jobPosition}
                 </div>
               </div>
             )}
@@ -734,7 +832,7 @@ export default function ShareScreenshot({
                   border: '1px solid #e9d5ff',
                   padding: '0.375rem',
                   boxSizing: 'border-box',
-                  gridColumn: !(userData.favoriteSport.length > 0 || displaySkills.length > 0)
+                  gridColumn: !(favoriteSports.length > 0 || displaySkills.length > 0)
                     ? '1 / -1'
                     : 'auto',
                 }}
@@ -795,7 +893,7 @@ export default function ShareScreenshot({
             )}
 
             {/* Sports */}
-            {userData.favoriteSport.length > 0 && (
+            {favoriteSports.length > 0 && (
               <div
                 style={{
                   background: 'linear-gradient(to right, #f3e8ff, #fce7f3)',
@@ -833,7 +931,7 @@ export default function ShareScreenshot({
                   </h4>
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.125rem' }}>
-                  {userData.favoriteSport.slice(0, 3).map((sport, index) => (
+                  {favoriteSports.slice(0, 3).map((sport, index) => (
                     <span
                       key={index}
                       style={{
@@ -866,7 +964,7 @@ export default function ShareScreenshot({
                   border: '1px solid #f3f4f6',
                   padding: '0.375rem',
                   boxSizing: 'border-box',
-                  gridColumn: !(displayInterests.length > 0 || userData.favoriteSport.length > 0)
+                  gridColumn: !(displayInterests.length > 0 || favoriteSports.length > 0)
                     ? '1 / -1'
                     : 'auto',
                 }}
@@ -919,7 +1017,7 @@ export default function ShareScreenshot({
             )}
 
             {/* Travel */}
-            {userData.travelStyle && userData.travelStyle.length > 0 && (
+            {travelStyles.length > 0 && (
               <div
                 style={{
                   backgroundColor: '#ffffff',
@@ -954,7 +1052,7 @@ export default function ShareScreenshot({
                   </h4>
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.125rem' }}>
-                  {userData.travelStyle.slice(0, 2).map((style, index) => (
+                  {travelStyles.slice(0, 2).map((style, index) => (
                     <span
                       key={index}
                       style={{
@@ -978,7 +1076,7 @@ export default function ShareScreenshot({
             )}
 
             {/* Visited Countries */}
-            {userData.visitedCountries && userData.visitedCountries.length > 0 && (
+            {visitedCountries.length > 0 && (
               <div
                 style={{
                   backgroundColor: '#ffffff',
@@ -1013,18 +1111,29 @@ export default function ShareScreenshot({
                   </h4>
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
-                  {userData.visitedCountries.slice(0, 5).map((country, index) => {
+                  {visitedCountries.slice(0, 5).map((country, index) => {
                     // Get country flag emoji (basic mapping for common countries)
                     const getCountryFlag = (countryName: string) => {
+                      const normalizedName = countryName.trim().toLowerCase()
+                      if (!normalizedName) return '🏳️'
+
+                      const directMatch = flagEmojiMap.get(normalizedName)
+                      if (directMatch) return directMatch
+
                       const flagMap: { [key: string]: string } = {
                         ایران: '🇮🇷',
+                        'جمهوری اسلامی ایران': '🇮🇷',
                         iran: '🇮🇷',
+                        'islamic republic of iran': '🇮🇷',
                         ترکیه: '🇹🇷',
                         turkey: '🇹🇷',
                         دبی: '🇦🇪',
                         dubai: '🇦🇪',
                         امارات: '🇦🇪',
+                        'امارات متحده عربی': '🇦🇪',
                         uae: '🇦🇪',
+                        'united arab emirates': '🇦🇪',
+                        'united arab em': '🇦🇪',
                         مالزی: '🇲🇾',
                         malaysia: '🇲🇾',
                         تایلند: '🇹🇭',
@@ -1034,7 +1143,9 @@ export default function ShareScreenshot({
                         ژاپن: '🇯🇵',
                         japan: '🇯🇵',
                         کره: '🇰🇷',
+                        'کره جنوبی': '🇰🇷',
                         korea: '🇰🇷',
+                        'south korea': '🇰🇷',
                         چین: '🇨🇳',
                         china: '🇨🇳',
                         هند: '🇮🇳',
@@ -1050,15 +1161,47 @@ export default function ShareScreenshot({
                         اسپانیا: '🇪🇸',
                         spain: '🇪🇸',
                         انگلستان: '🇬🇧',
+                        بریتانیا: '🇬🇧',
                         uk: '🇬🇧',
+                        'united kingdom': '🇬🇧',
                         کانادا: '🇨🇦',
                         canada: '🇨🇦',
                         آمریکا: '🇺🇸',
                         usa: '🇺🇸',
+                        'united states': '🇺🇸',
                         استرالیا: '🇦🇺',
                         australia: '🇦🇺',
+                        قطر: '🇶🇦',
+                        qatar: '🇶🇦',
+                        عمان: '🇴🇲',
+                        oman: '🇴🇲',
+                        بحرین: '🇧🇭',
+                        bahrain: '🇧🇭',
+                        کویت: '🇰🇼',
+                        kuwait: '🇰🇼',
+                        عربستان: '🇸🇦',
+                        'عربستان سعودی': '🇸🇦',
+                        'saudi arabia': '🇸🇦',
                       }
-                      return flagMap[countryName.toLowerCase()] || '🏳️'
+
+                      if (flagMap[normalizedName]) return flagMap[normalizedName]
+
+                      // Try to match by removing punctuation (eg. `Congo (DRC)`)
+                      const simplified = normalizedName
+                        .replace(/[^\p{L}\s]/gu, '')
+                        .replace(/\s+/g, ' ')
+                        .trim()
+                      for (const [name, emoji] of flagEmojiMap) {
+                        const simplifiedMapName = name
+                          .replace(/[^\p{L}\s]/gu, '')
+                          .replace(/\s+/g, ' ')
+                          .trim()
+                        if (simplified && simplified === simplifiedMapName) {
+                          return emoji
+                        }
+                      }
+
+                      return '🏳️'
                     }
                     return (
                       <span
@@ -1077,7 +1220,7 @@ export default function ShareScreenshot({
             )}
 
             {/* Pet */}
-            {(userData.pet.name || userData.pet.breed) && (
+            {(petName || petBreed) && (
               <div
                 style={{
                   backgroundColor: '#ffffff',
@@ -1124,7 +1267,7 @@ export default function ShareScreenshot({
                     fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                   }}
                 >
-                  {userData.pet.name || userData.pet.breed}
+                  {petName || petBreed}
                 </div>
               </div>
             )}
@@ -1133,18 +1276,19 @@ export default function ShareScreenshot({
         {/* Footer */}
         <div
           style={{
-            backgroundColor: '#9333ea',
+            background: 'linear-gradient(145deg, #6366f1, #ec4899)',
             textAlign: 'center',
             width: 'fit-content',
-            paddingTop: '0.5rem',
-            paddingBottom: '0.5rem',
-            paddingLeft: '0.7rem',
-            paddingRight: '0.7rem',
+            paddingTop: '0.6rem',
+            paddingBottom: '0.6rem',
+            paddingLeft: '0.9rem',
+            paddingRight: '0.9rem',
             marginLeft: 'auto',
             marginRight: 'auto',
-            borderTopLeftRadius: '0.625rem',
-            borderTopRightRadius: '0.625rem',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+            borderTopLeftRadius: '1rem',
+            borderTopRightRadius: '1rem',
+            boxShadow: '0 16px 32px -14px rgba(99, 102, 241, 0.6)',
+            border: '1px solid rgba(255, 255, 255, 0.24)',
             display: 'flex',
             justifyContent: 'center',
           }}
@@ -1153,20 +1297,42 @@ export default function ShareScreenshot({
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '0.375rem',
+              gap: '0.45rem',
               fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
             }}
           >
-            <Sparkles style={{ width: '0.875rem', height: '0.875rem', color: '#ffffff' }} />
             <span
               style={{
-                fontSize: '0.8125rem',
-                fontWeight: '700',
-                color: '#ffffff',
-                letterSpacing: '0.025em',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '1.3rem',
+                height: '1.3rem',
+                borderRadius: '9999px',
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 10px 20px -12px rgba(244, 114, 182, 0.55)',
               }}
             >
-              Create your longBio and share it!
+              <Sparkles style={{ width: '0.75rem', height: '0.75rem', color: '#ffffff' }} />
+            </span>
+            <span
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+              }}
+            >
+              <span
+                style={{
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  color: '#FDF4FF',
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Create your longBio and share it!
+              </span>
             </span>
           </div>
         </div>
@@ -1210,20 +1376,24 @@ export default function ShareScreenshot({
                     Create Beautiful Screenshot
                   </h4>
                   <p className="text-gray-600 text-sm">
-                    Generate a stunning screenshot of {userData.fullName}&apos;s bio to share with
-                    friends
+                    Generate a stunning screenshot of {fullName}&apos;s bio to share with friends
                   </p>
                 </div>
 
                 <button
                   onClick={generateScreenshot}
-                  disabled={isGenerating}
+                  disabled={isGenerating || flagLoading}
                   className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isGenerating ? (
                     <>
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                       Generating...
+                    </>
+                  ) : flagLoading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      Preparing...
                     </>
                   ) : (
                     <>
@@ -1241,7 +1411,20 @@ export default function ShareScreenshot({
                     className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50"
                     style={{ width: '350px', maxWidth: '350px' }}
                   >
-                    <Image src={screenshot} alt="Bio Screenshot" width={350} height={600} />
+                    <div className="relative">
+                      <Image
+                        src={screenshot || ''}
+                        alt="Bio Screenshot"
+                        width={350}
+                        height={600}
+                        onLoadingComplete={handlePreviewLoaded}
+                      />
+                      {(isGenerating || isPreviewLoading) && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-white" />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
