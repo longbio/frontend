@@ -535,7 +535,7 @@ export default function ShareScreenshot({
                 <div
                   style={{
                     display: 'flex',
-                    justifyContent: 'center',
+                    justifyContent: 'left',
                     gap: '0.5rem',
                     fontSize: '0.6875rem',
                     color: '#6b7280',
