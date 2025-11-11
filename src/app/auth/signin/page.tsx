@@ -17,7 +17,7 @@ const signInSchema = z.object({
 type FormData = z.infer<typeof signInSchema>
 
 export default function SignIn() {
-  const { mutateAsync } = useSendOTPEmail({ mode: 'signin' })
+  const { mutateAsync, isPending } = useSendOTPEmail({ mode: 'signin' })
 
   const {
     watch,
@@ -76,9 +76,11 @@ export default function SignIn() {
           </div>
           <Button
             type="submit"
-            className="sticky bottom-0 w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl"
+            disabled={isPending}
+            aria-busy={isPending}
+            className="sticky bottom-0 w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            Get Verification code
+            {isPending ? 'Sending...' : 'Get Verification code'}
           </Button>
         </form>
       </div>

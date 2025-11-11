@@ -21,7 +21,7 @@ type FormData = z.infer<typeof signUpSchema>
 
 export default function SignUp() {
   const router = useRouter()
-  const { mutateAsync } = useSendOTPEmail({ mode: 'signup' })
+  const { mutateAsync, isPending } = useSendOTPEmail({ mode: 'signup' })
 
   const {
     watch,
@@ -95,9 +95,11 @@ export default function SignUp() {
           </div>
           <Button
             type="submit"
-            className="sticky bottom-0 w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl"
+            disabled={isPending}
+            aria-busy={isPending}
+            className="sticky bottom-0 w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            Get Verification code
+            {isPending ? 'Sending...' : 'Get Verification code'}
           </Button>
         </form>
       </div>
