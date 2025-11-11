@@ -7,5 +7,5 @@ interface congratsProps {
 }
 
 export default function Congrats({ className = '' }: congratsProps) {
-  return <Lottie animationData={congrats} loop className={clsx('size-96 px-5', className)} />
+  return <Lottie animationData={congrats} loop className={clsx('size-80', className)} />
 }
