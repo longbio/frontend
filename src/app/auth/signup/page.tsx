@@ -74,7 +74,11 @@ export default function SignUp() {
             </Link>
           </h3>
         </div>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col justify-between h-full"
+          autoComplete="off"
+        >
           <div className="space-y-6">
             <FormInput
               id="name"
@@ -82,6 +86,7 @@ export default function SignUp() {
               label="Full Name"
               placeholder="Exp: Jessica"
               error={!!errors.name}
+              autoComplete="off"
               {...register('name')}
             />
             <FormInput
@@ -90,6 +95,7 @@ export default function SignUp() {
               label="Email"
               placeholder="Exp: Jessica@gmail.com"
               error={!!errors.email}
+              autoComplete="off"
               {...register('email')}
             />
           </div>
