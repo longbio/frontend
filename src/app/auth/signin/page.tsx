@@ -63,7 +63,11 @@ export default function SignIn() {
           </h3>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col justify-between h-full"
+          autoComplete="off"
+        >
           <div className="space-y-6">
             <FormInput
               id="email"
@@ -71,6 +75,7 @@ export default function SignIn() {
               label="Email"
               placeholder="Exp: Jessica@gmail.com"
               error={!!errors.email}
+              autoComplete="off"
               {...register('email')}
             />
           </div>
