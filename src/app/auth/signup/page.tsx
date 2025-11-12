@@ -2,14 +2,14 @@
 
 import clsx from 'clsx'
 import { z } from 'zod'
-import React from 'react'
 import Link from 'next/link'
+import React, { useEffect } from 'react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
+import { setCookie } from '@/utils/cookie'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { useSendOTPEmail } from '@/service/auth/hook'
-import { setCookie, getCookie } from '@/utils/cookie'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FormInput } from '@/app/auth/components/FormInput'
 
@@ -30,23 +30,13 @@ export default function SignUp() {
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(signUpSchema),
-    defaultValues: (() => {
-      if (typeof window !== 'undefined') {
-        const cookie = getCookie('auth_signup')
-        if (cookie) {
-          try {
-            return JSON.parse(decodeURIComponent(cookie))
-          } catch {}
-        }
-      }
-      return { name: '', email: '' }
-    })(),
+    defaultValues: { name: '', email: '' },
   })
 
   const name = watch('name')
   const email = watch('email')
 
-  React.useEffect(() => {
+  useEffect(() => {
     setCookie('auth_signup', JSON.stringify({ name, email }))
   }, [name, email])
 

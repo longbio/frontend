@@ -1,13 +1,13 @@
 'use client'
 
 import { z } from 'zod'
-import React from 'react'
 import Link from 'next/link'
+import React, { useEffect } from 'react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
+import { setCookie } from '@/utils/cookie'
 import { Button } from '@/components/ui/button'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { setCookie, getCookie } from '@/utils/cookie'
 import { useSendOTPEmail } from '@/service/auth/hook'
 import { FormInput } from '@/app/auth/components/FormInput'
 
@@ -26,22 +26,12 @@ export default function SignIn() {
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(signInSchema),
-    defaultValues: (() => {
-      if (typeof window !== 'undefined') {
-        const cookie = getCookie('auth_signin')
-        if (cookie) {
-          try {
-            return JSON.parse(decodeURIComponent(cookie))
-          } catch {}
-        }
-      }
-      return { email: '' }
-    })(),
+    defaultValues: { email: '' },
   })
 
   const email = watch('email')
 
-  React.useEffect(() => {
+  useEffect(() => {
     setCookie('auth_signin', JSON.stringify({ email }))
   }, [email])
 
