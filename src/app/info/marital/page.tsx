@@ -54,16 +54,17 @@ function MaritalContent() {
     if (selectedMarital) {
       try {
         await mutation.mutateAsync({ maritalStatus: selectedMarital })
+
+        // If in edit mode, return to bio page, otherwise continue to next step
+        if (isEditMode) {
+          router.push('/bio')
+        } else {
+          router.push(`/info/education?name=${name}`)
+        }
       } catch (err) {
         console.error('Failed to update marital', err)
+        // Don't navigate on error
       }
-    }
-
-    // If in edit mode, return to bio page, otherwise continue to next step
-    if (isEditMode) {
-      router.push('/bio')
-    } else {
-      router.push(`/info/education?name=${name}`)
     }
   }
 
@@ -150,6 +151,7 @@ function MaritalContent() {
               router.push(`/info/education?name=${name}`)
             }
           }}
+          loading={mutation.isPending}
         />
       </form>
     </div>

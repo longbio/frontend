@@ -28,7 +28,7 @@ const range = (start: number, end: number, descending = false) =>
 function BirthdayContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { mutateAsync: updateUser } = useUpdateUser()
+  const mutation = useUpdateUser()
   const [name, setName] = useState(searchParams.get('name') || '')
   const isEditMode = searchParams.get('edit') === 'true'
 
@@ -108,17 +108,22 @@ function BirthdayContent() {
 
   const onSubmit = async (data: BirthdayFormData) => {
     if (isAllFieldsSelected) {
-      const birthDate = data.birthday.toISOString()
-      await updateUser({
-        fullName: name,
-        birthDate,
-      })
+      try {
+        const birthDate = data.birthday.toISOString()
+        await mutation.mutateAsync({
+          fullName: name,
+          birthDate,
+        })
 
-      // If in edit mode, return to bio page, otherwise continue to next step
-      if (isEditMode) {
-        router.push('/bio')
-      } else {
-        router.push(`/info/gender?name=${encodeURIComponent(name)}`)
+        // If in edit mode, return to bio page, otherwise continue to next step
+        if (isEditMode) {
+          router.push('/bio')
+        } else {
+          router.push(`/info/gender?name=${encodeURIComponent(name)}`)
+        }
+      } catch (err) {
+        console.error('Failed to update birthday info', err)
+        // Don't navigate on error
       }
     }
   }
@@ -166,6 +171,7 @@ function BirthdayContent() {
               router.push(`/info/gender?name=${name}`)
             }
           }}
+          loading={mutation.isPending}
         />
       </form>
     </div>

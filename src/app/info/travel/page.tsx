@@ -57,7 +57,7 @@ function TravelContent() {
 
   const styles = watch('styles')
   const country = watch('country')
-  const { mutateAsync: updateUser } = useUpdateUser()
+  const mutation = useUpdateUser()
 
   // Load cookie values on client side only
   useEffect(() => {
@@ -110,19 +110,20 @@ function TravelContent() {
 
   const onSubmit = async () => {
     try {
-      await updateUser({
+      await mutation.mutateAsync({
         travelStyle: styles && styles.length > 0 ? styles : [],
         visitedCountries: selectedCountries.map((country: CountryItem) => country.name),
       })
+
+      // If in edit mode, return to bio page, otherwise continue to next step
+      if (isEditMode) {
+        router.push('/bio')
+      } else {
+        router.push(`/info/physical?name=${name}`)
+      }
     } catch (err) {
       console.error('Failed to update travel info', err)
-    }
-
-    // If in edit mode, return to bio page, otherwise continue to next step
-    if (isEditMode) {
-      router.push('/bio')
-    } else {
-      router.push(`/info/physical?name=${name}`)
+      // Don't navigate on error
     }
   }
 
@@ -237,6 +238,7 @@ function TravelContent() {
               router.push(`/info/physical?name=${name}`)
             }
           }}
+          loading={mutation.isPending}
         />
       </form>
     </div>

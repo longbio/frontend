@@ -54,16 +54,17 @@ function GenderContent() {
     if (selectedGender) {
       try {
         await mutation.mutateAsync({ gender: selectedGender })
+
+        // If in edit mode, return to bio page, otherwise continue to next step
+        if (isEditMode) {
+          router.push('/bio')
+        } else {
+          router.push(`/info/marital?name=${name}`)
+        }
       } catch (err) {
         console.error('Failed to update gender', err)
+        // Don't navigate on error
       }
-    }
-
-    // If in edit mode, return to bio page, otherwise continue to next step
-    if (isEditMode) {
-      router.push('/bio')
-    } else {
-      router.push(`/info/marital?name=${name}`)
     }
   }
 
@@ -128,6 +129,7 @@ function GenderContent() {
               router.push(`/info/marital?name=${name}`)
             }
           }}
+          loading={mutation.isPending}
         />
       </form>
     </div>

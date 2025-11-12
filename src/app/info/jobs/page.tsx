@@ -135,15 +135,16 @@ function JobContent() {
 
         await jobMutation.mutateAsync(jobData)
       }
+
+      // If in edit mode, return to bio page, otherwise continue to next step
+      if (isEditMode) {
+        router.push('/bio')
+      } else {
+        router.push(`/info/set-profile?name=${name}`)
+      }
     } catch (err) {
       console.error('Failed to update job info', err)
-    }
-
-    // If in edit mode, return to bio page, otherwise continue to next step
-    if (isEditMode) {
-      router.push('/bio')
-    } else {
-      router.push(`/info/set-profile?name=${name}`)
+      // Don't navigate on error
     }
   }
 
@@ -233,6 +234,7 @@ function JobContent() {
             }
           }}
           className="mt-8"
+          loading={jobMutation.isPending}
         />
       </form>
     </div>

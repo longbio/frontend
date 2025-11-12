@@ -107,15 +107,16 @@ function PetContent() {
 
         await petMutation.mutateAsync(petData)
       }
+
+      // If in edit mode, return to bio page, otherwise continue to next step
+      if (isEditMode) {
+        router.push('/bio')
+      } else {
+        router.push(`/info/sport?name=${name}`)
+      }
     } catch (err) {
       console.error('Failed to update pet info', err)
-    }
-
-    // If in edit mode, return to bio page, otherwise continue to next step
-    if (isEditMode) {
-      router.push('/bio')
-    } else {
-      router.push(`/info/sport?name=${name}`)
+      // Don't navigate on error
     }
   }
 
@@ -181,6 +182,7 @@ function PetContent() {
               router.push(`/info/sport?name=${name}`)
             }
           }}
+          loading={mutation.isPending || petMutation.isPending}
         />
       </form>
     </div>

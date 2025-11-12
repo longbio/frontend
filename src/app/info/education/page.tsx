@@ -119,15 +119,16 @@ function EducationContent() {
 
         await educationMutation.mutateAsync(educationData)
       }
+
+      // If in edit mode, return to bio page, otherwise continue to next step
+      if (isEditMode) {
+        router.push('/bio')
+      } else {
+        router.push(`/info/jobs?name=${name}`)
+      }
     } catch (err) {
       console.error('Failed to update education', err)
-    }
-
-    // If in edit mode, return to bio page, otherwise continue to next step
-    if (isEditMode) {
-      router.push('/bio')
-    } else {
-      router.push(`/info/jobs?name=${name}`)
+      // Don't navigate on error
     }
   }
 
@@ -264,6 +265,7 @@ function EducationContent() {
             }
           }}
           className="mt-8"
+          loading={mutation.isPending || educationMutation.isPending}
         />
       </form>
     </div>

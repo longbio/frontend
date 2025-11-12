@@ -92,15 +92,16 @@ function InterestContent() {
       await mutation.mutateAsync({
         interests: selected,
       })
+
+      // If in edit mode, return to bio page, otherwise continue to next step
+      if (isEditMode) {
+        router.push('/bio')
+      } else {
+        router.push(`/info/more-detail?name=${name}`)
+      }
     } catch (err) {
       console.error('Failed to update interests info', err)
-    }
-
-    // If in edit mode, return to bio page, otherwise continue to next step
-    if (isEditMode) {
-      router.push('/bio')
-    } else {
-      router.push(`/info/more-detail?name=${name}`)
+      // Don't navigate on error
     }
   }
 
@@ -152,6 +153,7 @@ function InterestContent() {
             }
           }}
           className="mt-8"
+          loading={mutation.isPending}
         />
       </form>
     </div>
