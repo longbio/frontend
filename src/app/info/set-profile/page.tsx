@@ -69,15 +69,16 @@ function SetProfileContent() {
     try {
       const response = await mutation.mutateAsync(file)
       setCookie('info_set_profile', JSON.stringify({ preview: response.data.url }))
+
+      // If in edit mode, return to bio page, otherwise continue to next step
+      if (isEditMode) {
+        router.push('/bio')
+      } else {
+        router.push(`/info/travel?name=${name}`)
+      }
     } catch (err) {
       console.error('Failed to upload profile image', err)
-    }
-
-    // If in edit mode, return to bio page, otherwise continue to next step
-    if (isEditMode) {
-      router.push('/bio')
-    } else {
-      router.push(`/info/travel?name=${name}`)
+      // Don't navigate on error
     }
   }
   // For preview
@@ -212,6 +213,7 @@ function SetProfileContent() {
               router.push(`/info/travel?name=${name}`)
             }
           }}
+          loading={mutation.isPending}
         />
       </form>
     </div>

@@ -90,15 +90,16 @@ function SkillContent() {
       await mutation.mutateAsync({
         skill: selected,
       })
+
+      // If in edit mode, return to bio page, otherwise continue to next step
+      if (isEditMode) {
+        router.push('/bio')
+      } else {
+        router.push(`/info/interest?name=${name}`)
+      }
     } catch (err) {
       console.error('Failed to update skill info', err)
-    }
-
-    // If in edit mode, return to bio page, otherwise continue to next step
-    if (isEditMode) {
-      router.push('/bio')
-    } else {
-      router.push(`/info/interest?name=${name}`)
+      // Don't navigate on error
     }
   }
 
@@ -148,6 +149,7 @@ function SkillContent() {
             }
           }}
           className="mt-8"
+          loading={mutation.isPending}
         />
       </form>
     </div>

@@ -20,7 +20,7 @@ type PhysicalFormData = z.infer<typeof physicalSchema>
 
 function PhysicalContent() {
   const router = useRouter()
-  const { mutateAsync: updateUser } = useUpdateUser()
+  const mutation = useUpdateUser()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
   const isEditMode = searchParams.get('edit') === 'true'
@@ -62,7 +62,7 @@ function PhysicalContent() {
     if (!isValid) return
 
     try {
-      await updateUser({
+      await mutation.mutateAsync({
         height:
           selected.height && !selected.height.startsWith('Exp:')
             ? Number(selected.height.replace(/\D/g, ''))
@@ -81,6 +81,7 @@ function PhysicalContent() {
       }
     } catch (err) {
       console.error('Failed to update physical info', err)
+      // Don't navigate on error
     }
   }
 
@@ -126,6 +127,7 @@ function PhysicalContent() {
               router.push(`/info/born?name=${name}`)
             }
           }}
+          loading={mutation.isPending}
         />
       </form>
     </div>

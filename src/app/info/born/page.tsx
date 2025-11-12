@@ -28,7 +28,7 @@ type BornFormData = z.infer<typeof bornSchema>
 
 function BornContent() {
   const router = useRouter()
-  const { mutateAsync: updateUser } = useUpdateUser()
+  const mutation = useUpdateUser()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
   const isEditMode = searchParams.get('edit') === 'true'
@@ -81,7 +81,7 @@ function BornContent() {
         updateData.livePlace = data.livePlace
       }
 
-      await updateUser(updateData)
+      await mutation.mutateAsync(updateData)
 
       // If in edit mode, return to bio page, otherwise continue to next step
       if (isEditMode) {
@@ -91,6 +91,7 @@ function BornContent() {
       }
     } catch (err) {
       console.error('Failed to update country info', err)
+      // Don't navigate on error
     }
   }
 
@@ -155,6 +156,7 @@ function BornContent() {
               router.push(`/info/pets?name=${name}`)
             }
           }}
+          loading={mutation.isPending}
         />
       </form>
     </div>

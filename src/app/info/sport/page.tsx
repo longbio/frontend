@@ -35,7 +35,7 @@ type SportFormType = z.infer<typeof sportSchema>
 
 function SportContent() {
   const router = useRouter()
-  const { mutateAsync: updateUser } = useUpdateUser()
+  const mutation = useUpdateUser()
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
   const isEditMode = searchParams.get('edit') === 'true'
@@ -90,19 +90,20 @@ function SportContent() {
   const onSubmit = async () => {
     try {
       if (selected.length > 0) {
-        await updateUser({
+        await mutation.mutateAsync({
           favoriteSport: selected,
         })
       }
+
+      // If in edit mode, return to bio page, otherwise continue to next step
+      if (isEditMode) {
+        router.push('/bio')
+      } else {
+        router.push(`/info/skill?name=${name}`)
+      }
     } catch (err) {
       console.error('Failed to update sport info', err)
-    }
-
-    // If in edit mode, return to bio page, otherwise continue to next step
-    if (isEditMode) {
-      router.push('/bio')
-    } else {
-      router.push(`/info/skill?name=${name}`)
+      // Don't navigate on error
     }
   }
 
@@ -152,6 +153,7 @@ function SportContent() {
             }
           }}
           className="mt-10"
+          loading={mutation.isPending}
         />
       </form>
     </div>

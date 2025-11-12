@@ -51,20 +51,21 @@ function MoreDetailContent() {
     setCookie('info_more_detail', JSON.stringify({ detail }))
   }, [detail])
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     try {
-      mutation.mutate({
+      await mutation.mutateAsync({
         details: detail || '',
       })
+
+      // If in edit mode, return to bio page, otherwise continue to next step
+      if (isEditMode) {
+        router.push('/bio')
+      } else {
+        router.push(`/info/congrats?name=${name}`)
+      }
     } catch (err) {
       console.error('Failed to update more details', err)
-    }
-
-    // If in edit mode, return to bio page, otherwise continue to next step
-    if (isEditMode) {
-      router.push('/bio')
-    } else {
-      router.push(`/info/congrats?name=${name}`)
+      // Don't navigate on error
     }
   }
 
@@ -103,6 +104,7 @@ function MoreDetailContent() {
               router.push(`/info/congrats?name=${name}`)
             }
           }}
+          loading={mutation.isPending}
         />
       </form>
     </div>
