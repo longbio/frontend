@@ -172,19 +172,6 @@ function EducationContent() {
                     disabled={topics.length === 0}
                     selectedTopics={topics}
                   />
-                  <AddMoreBox
-                    options={[]}
-                    setOptions={(newOptions) => {
-                      const newUniversities = newOptions.filter(
-                        (option) => !universities.includes(option)
-                      )
-                      if (newUniversities.length > 0) {
-                        setUniversities([...universities, ...newUniversities])
-                      }
-                    }}
-                    placeholder="Other university..."
-                    buttonLabel="Other University"
-                  />
                   <GraduationYearBox
                     graduationYear={graduationYear}
                     setGraduationYear={setGraduationYear}
@@ -215,19 +202,6 @@ function EducationContent() {
                     placeholder="Add university..."
                     disabled={topics.length === 0}
                     selectedTopics={topics}
-                  />
-                  <AddMoreBox
-                    options={[]}
-                    setOptions={(newOptions) => {
-                      const newUniversities = newOptions.filter(
-                        (option) => !universities.includes(option)
-                      )
-                      if (newUniversities.length > 0) {
-                        setUniversities([...universities, ...newUniversities])
-                      }
-                    }}
-                    placeholder="Other university..."
-                    buttonLabel="Other University"
                   />
                   <GraduationYearBox
                     graduationYear={graduationYear}
