@@ -2,9 +2,9 @@
 
 import dayjs from 'dayjs'
 import Image from 'next/image'
-import { useState, useRef, useMemo } from 'react'
 import html2canvas from '@html2canvas/html2canvas'
 import { useFlagCountries } from '@/service/countries'
+import { useState, useRef, useMemo, ReactNode, CSSProperties } from 'react'
 import {
   Download,
   Share2,
@@ -25,6 +25,7 @@ import {
   Sparkles,
   Ruler,
 } from 'lucide-react'
+
 interface UserData {
   id: number
   username: string
@@ -143,6 +144,7 @@ export default function ShareScreenshot({
   const educationGraduationYear = education?.graduationYear?.trim() || ''
   const job = userData?.job ?? { company: '', position: '' }
   const jobPosition = job?.position?.trim() || ''
+  const jobCompany = job?.company?.trim() || ''
   const pet = userData?.pet ?? { name: '', breed: '' }
   const petName = pet?.name?.trim() || ''
   const petBreed = pet?.breed?.trim() || ''
@@ -151,6 +153,9 @@ export default function ShareScreenshot({
   const gender = userData?.gender?.trim() || ''
   const genderLower = gender.toLowerCase()
   const maritalStatus = userData?.maritalStatus?.trim() || ''
+  const educationalStatus = userData?.educationalStatus?.trim() || ''
+  const doesExercise =
+    typeof userData?.doesExercise === 'boolean' ? Boolean(userData.doesExercise) : null
   const heightValue =
     typeof userData?.height === 'number' && userData.height > 0 ? userData.height : null
   const weightValue =
@@ -158,6 +163,18 @@ export default function ShareScreenshot({
   const birthDateValue =
     userData?.birthDate && dayjs(userData.birthDate).isValid() ? dayjs(userData.birthDate) : null
   const age = birthDateValue ? dayjs().diff(birthDateValue, 'year') : null
+  const clampTwoLineTextStyle: CSSProperties = {
+    fontSize: '0.5rem',
+    color: '#374151',
+    lineHeight: '0.75rem',
+    fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    display: '-webkit-box',
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: 'vertical',
+    wordBreak: 'break-word',
+  }
 
   const generateScreenshot = async () => {
     setIsGenerating(true)
@@ -194,9 +211,9 @@ export default function ShareScreenshot({
         allowTaint: true,
         logging: false,
         imageTimeout: 15000,
-        width: 360,
+        width: 355,
         height: 600,
-        windowWidth: 360,
+        windowWidth: 355,
         windowHeight: 600,
       })
 
@@ -275,7 +292,7 @@ export default function ShareScreenshot({
           position: 'fixed',
           left: '-9999px',
           top: 0,
-          width: '360px',
+          width: '355px',
           height: '600px',
           overflow: 'hidden',
           fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
@@ -289,16 +306,16 @@ export default function ShareScreenshot({
         {/* Header - Gradient badge */}
         <div
           style={{
-            background: 'linear-gradient(140deg, #8b5cf6 0%, #ec4899 55%, #facc15 110%)',
+            background: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 55%, #c4b5fd 100%)',
             width: 'fit-content',
-            paddingTop: '0.55rem',
-            paddingBottom: '0.55rem',
+            paddingTop: '0.5rem',
+            paddingBottom: '0.5rem',
             paddingLeft: '0.85rem',
             paddingRight: '0.85rem',
-            borderBottomLeftRadius: '1rem',
-            borderBottomRightRadius: '1rem',
-            boxShadow: '0 12px 25px -12px rgba(112, 26, 117, 0.55)',
-            border: '1px solid rgba(255, 255, 255, 0.32)',
+            borderBottomLeftRadius: '1.1rem',
+            borderBottomRightRadius: '1.1rem',
+            boxShadow: '0 14px 28px -16px rgba(124, 58, 237, 0.55)',
+            border: '1px solid rgba(255, 255, 255, 0.28)',
             marginLeft: 'auto',
             marginRight: 'auto',
             display: 'flex',
@@ -326,7 +343,7 @@ export default function ShareScreenshot({
                 boxShadow: '0 8px 16px -10px rgba(59, 130, 246, 0.45)',
               }}
             >
-              <Globe style={{ width: '0.8rem', height: '0.8rem', color: '#ffffff' }} />
+              <Globe style={{ width: '0.8rem', height: '0.8rem', color: '#f5f3ff' }} />
             </span>
             <span
               style={{
@@ -340,12 +357,12 @@ export default function ShareScreenshot({
                 style={{
                   fontSize: '0.8rem',
                   fontWeight: 700,
-                  color: '#FDF4FF',
+                  color: '#f5f3ff',
                   letterSpacing: '0.08em',
                   textTransform: 'uppercase',
                 }}
               >
-                Longbio.me
+                LongBio.me
               </span>
             </span>
           </div>
@@ -475,7 +492,7 @@ export default function ShareScreenshot({
                     flexWrap: 'wrap',
                     justifyContent: 'center',
                     gap: '0.25rem',
-                    marginBottom: '0.375rem',
+                    marginBottom: '0.32rem',
                   }}
                 >
                   {age !== null && (
@@ -627,668 +644,627 @@ export default function ShareScreenshot({
             </div>
           )}
 
-          {/* Compact Grid - 2 columns for better spacing */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '0.375rem',
-              marginBottom: '0.375rem',
-              marginLeft: '0',
-              marginRight: '0',
-              boxSizing: 'border-box',
-              overflow: 'auto',
-              width: '100%',
-              minWidth: 0,
-            }}
-          >
-            {/* Birth Date */}
-            {birthDateValue && (
-              <div
-                style={{
-                  background: 'linear-gradient(to right, #f3e8ff, #fce7f3)',
-                  borderTopLeftRadius: '0.625rem',
-                  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
-                  border: '1px solid #e9d5ff',
-                  padding: '0.375rem',
-                  boxSizing: 'border-box',
-                  gridColumn: !(educationUniversity || jobPosition) ? '1 / -1' : 'auto',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.25rem',
-                    marginBottom: '0.375rem',
-                  }}
-                >
-                  <Calendar style={{ width: '0.875rem', height: '0.875rem', color: '#9333ea' }} />
-                  <h4
-                    style={{
-                      fontWeight: '700',
-                      fontSize: '0.75rem',
-                      color: '#111827',
-                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                      lineHeight: '1',
-                      margin: 0,
-                      padding: 0,
-                    }}
-                  >
-                    Birth Date
-                  </h4>
-                </div>
-                <p
-                  style={{
-                    fontSize: '0.625rem',
-                    color: '#374151',
-                    overflow: 'hidden',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                    fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                    lineHeight: '1rem',
-                  }}
-                >
-                  {birthDateValue.format('MMM DD, YYYY')}
-                </p>
-              </div>
-            )}
+          {(() => {
+            const cardBlocks: { key: string; content: ReactNode }[] = []
 
-            {/* Education */}
-            {educationUniversity && (
-              <div
-                style={{
-                  backgroundColor: '#ffffff',
-                  borderTopLeftRadius: '0.625rem',
-                  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
-                  border: '1px solid #f3f4f6',
-                  padding: '0.375rem',
-                  boxSizing: 'border-box',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.25rem',
-                    marginBottom: '0.375rem',
-                  }}
-                >
-                  <GraduationCap
-                    style={{ width: '0.875rem', height: '0.875rem', color: '#9333ea' }}
-                  />
-                  <h4
-                    style={{
-                      fontWeight: '700',
-                      fontSize: '0.75rem',
-                      color: '#111827',
-                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                      lineHeight: '1',
-                      margin: 0,
-                      padding: 0,
-                    }}
-                  >
-                    Education
-                  </h4>
-                </div>
-                {educationUniversity && (
-                  <div
-                    style={{
-                      fontSize: '0.625rem',
-                      color: '#374151',
-                      marginBottom: '0.125rem',
-                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                    }}
-                  >
-                    University: {educationUniversity}
-                  </div>
-                )}
-                {educationTopic && (
-                  <div
-                    style={{
-                      fontSize: '0.625rem',
-                      color: '#374151',
-                      marginBottom: '0.125rem',
-                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                    }}
-                  >
-                    Topic: {educationTopic}
-                  </div>
-                )}
-                {educationGraduationYear && (
-                  <div
-                    style={{
-                      fontSize: '0.625rem',
-                      color: '#374151',
-                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                    }}
-                  >
-                    Graduation Year: {educationGraduationYear}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Job */}
-            {jobPosition && (
-              <div
-                style={{
-                  backgroundColor: '#ffffff',
-                  borderTopLeftRadius: '0.625rem',
-                  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
-                  border: '1px solid #f3f4f6',
-                  padding: '0.375rem',
-                  boxSizing: 'border-box',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.25rem',
-                    marginBottom: '0.375rem',
-                  }}
-                >
-                  <Briefcase style={{ width: '0.875rem', height: '0.875rem', color: '#9333ea' }} />
-                  <h4
-                    style={{
-                      fontWeight: '700',
-                      fontSize: '0.75rem',
-                      color: '#111827',
-                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                      lineHeight: '1',
-                      margin: 0,
-                      padding: 0,
-                    }}
-                  >
-                    Career
-                  </h4>
-                </div>
-                <div
-                  style={{
-                    fontSize: '0.625rem',
-                    color: '#374151',
-                    overflow: 'hidden',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                    fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                    lineHeight: '1rem',
-                  }}
-                >
-                  {jobPosition}
-                </div>
-              </div>
-            )}
-
-            {/* Interests */}
-            {displayInterests.length > 0 && (
-              <div
-                style={{
-                  background: 'linear-gradient(to right, #f3e8ff, #fce7f3)',
-                  borderTopLeftRadius: '0.625rem',
-                  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
-                  border: '1px solid #e9d5ff',
-                  padding: '0.375rem',
-                  boxSizing: 'border-box',
-                  gridColumn: !(favoriteSports.length > 0 || displaySkills.length > 0)
-                    ? '1 / -1'
-                    : 'auto',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.25rem',
-                    marginBottom: '0.375rem',
-                  }}
-                >
-                  <Star style={{ width: '0.875rem', height: '0.875rem', color: '#9333ea' }} />
-                  <h4
-                    style={{
-                      fontWeight: '700',
-                      fontSize: '0.75rem',
-                      color: '#111827',
-                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                      lineHeight: '1',
-                      margin: 0,
-                      padding: 0,
-                    }}
-                  >
-                    Interests
-                  </h4>
-                </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: '0.125rem',
-                    lineHeight: '1rem',
-                  }}
-                >
-                  {displayInterests.slice(0, 3).map((interest, index) => (
-                    <span
-                      key={index}
+            if (birthDateValue) {
+              cardBlocks.push({
+                key: 'birth',
+                content: (
+                  <>
+                    <div
                       style={{
-                        paddingLeft: '0.375rem',
-                        paddingRight: '0.375rem',
-                        paddingTop: '0.125rem',
-                        paddingBottom: '0.125rem',
-                        border: '1px solid #c084fc',
-                        color: '#7e22ce',
-                        borderRadius: '0.5rem',
-                        fontSize: '0.625rem',
-                        whiteSpace: 'nowrap',
-                        lineHeight: '1rem',
-                        fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.2rem',
+                        marginBottom: '0.275rem',
                       }}
                     >
-                      {interest}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Sports */}
-            {favoriteSports.length > 0 && (
-              <div
-                style={{
-                  background: 'linear-gradient(to right, #f3e8ff, #fce7f3)',
-                  borderTopLeftRadius: '0.625rem',
-                  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
-                  border: '1px solid #e9d5ff',
-                  padding: '0.375rem',
-                  boxSizing: 'border-box',
-                  gridColumn: !(displayInterests.length > 0 || displaySkills.length > 0)
-                    ? '1 / -1'
-                    : 'auto',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.25rem',
-                    marginBottom: '0.375rem',
-                  }}
-                >
-                  <Dumbbell style={{ width: '0.875rem', height: '0.875rem', color: '#9333ea' }} />
-                  <h4
-                    style={{
-                      fontWeight: '700',
-                      fontSize: '0.75rem',
-                      color: '#111827',
-                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                      lineHeight: '1',
-                      margin: 0,
-                      padding: 0,
-                    }}
-                  >
-                    Sports
-                  </h4>
-                </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.125rem' }}>
-                  {favoriteSports.slice(0, 3).map((sport, index) => (
-                    <span
-                      key={index}
-                      style={{
-                        paddingLeft: '0.375rem',
-                        paddingRight: '0.375rem',
-                        paddingTop: '0.125rem',
-                        paddingBottom: '0.125rem',
-                        border: '1px solid #c084fc',
-                        color: '#7e22ce',
-                        borderRadius: '0.5rem',
-                        fontSize: '0.625rem',
-                        lineHeight: '1rem',
-                        fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                      }}
-                    >
-                      {sport}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Skills */}
-            {displaySkills.length > 0 && (
-              <div
-                style={{
-                  backgroundColor: '#ffffff',
-                  borderTopLeftRadius: '0.625rem',
-                  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
-                  border: '1px solid #f3f4f6',
-                  padding: '0.375rem',
-                  boxSizing: 'border-box',
-                  gridColumn: !(displayInterests.length > 0 || favoriteSports.length > 0)
-                    ? '1 / -1'
-                    : 'auto',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.25rem',
-                    marginBottom: '0.375rem',
-                  }}
-                >
-                  <Sparkles style={{ width: '0.875rem', height: '0.875rem', color: '#9333ea' }} />
-                  <h4
-                    style={{
-                      fontWeight: '700',
-                      fontSize: '0.75rem',
-                      color: '#111827',
-                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                      lineHeight: '1',
-                      margin: 0,
-                      padding: 0,
-                    }}
-                  >
-                    Skills
-                  </h4>
-                </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.125rem' }}>
-                  {displaySkills.slice(0, 3).map((skill, index) => (
-                    <span
-                      key={index}
-                      style={{
-                        paddingLeft: '0.375rem',
-                        paddingRight: '0.375rem',
-                        paddingTop: '0.125rem',
-                        paddingBottom: '0.125rem',
-                        border: '1px solid #93c5fd',
-                        color: '#1e40af',
-                        borderRadius: '0.5rem',
-                        fontSize: '0.625rem',
-                        lineHeight: '1rem',
-                        fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                      }}
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Travel */}
-            {travelStyles.length > 0 && (
-              <div
-                style={{
-                  backgroundColor: '#ffffff',
-                  borderTopLeftRadius: '0.625rem',
-                  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
-                  border: '1px solid #f3f4f6',
-                  padding: '0.375rem',
-                  boxSizing: 'border-box',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.25rem',
-                    marginBottom: '0.375rem',
-                  }}
-                >
-                  <MapPin style={{ width: '0.875rem', height: '0.875rem', color: '#9333ea' }} />
-                  <h4
-                    style={{
-                      fontWeight: '700',
-                      fontSize: '0.75rem',
-                      color: '#111827',
-                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                      lineHeight: '1',
-                      margin: 0,
-                      padding: 0,
-                    }}
-                  >
-                    Travel Style
-                  </h4>
-                </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.125rem' }}>
-                  {travelStyles.slice(0, 2).map((style, index) => (
-                    <span
-                      key={index}
-                      style={{
-                        paddingLeft: '0.375rem',
-                        paddingRight: '0.375rem',
-                        paddingTop: '0.125rem',
-                        paddingBottom: '0.125rem',
-                        border: '1px solid #c084fc',
-                        color: '#7e22ce',
-                        borderRadius: '0.5rem',
-                        fontSize: '0.625rem',
-                        lineHeight: '1rem',
-                        fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                      }}
-                    >
-                      {style}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Visited Countries */}
-            {visitedCountries.length > 0 && (
-              <div
-                style={{
-                  backgroundColor: '#ffffff',
-                  borderTopLeftRadius: '0.625rem',
-                  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
-                  border: '1px solid #f3f4f6',
-                  padding: '0.375rem',
-                  boxSizing: 'border-box',
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.25rem',
-                    marginBottom: '0.375rem',
-                  }}
-                >
-                  <Globe style={{ width: '0.875rem', height: '0.875rem', color: '#9333ea' }} />
-                  <h4
-                    style={{
-                      fontWeight: '700',
-                      fontSize: '0.75rem',
-                      color: '#111827',
-                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                      lineHeight: '1',
-                      margin: 0,
-                      padding: 0,
-                    }}
-                  >
-                    Countries
-                  </h4>
-                </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
-                  {visitedCountries.slice(0, 5).map((country, index) => {
-                    // Get country flag emoji (basic mapping for common countries)
-                    const getCountryFlag = (countryName: string) => {
-                      const normalizedName = countryName.trim().toLowerCase()
-                      if (!normalizedName) return '🏳️'
-
-                      const directMatch = flagEmojiMap.get(normalizedName)
-                      if (directMatch) return directMatch
-
-                      const flagMap: { [key: string]: string } = {
-                        ایران: '🇮🇷',
-                        'جمهوری اسلامی ایران': '🇮🇷',
-                        iran: '🇮🇷',
-                        'islamic republic of iran': '🇮🇷',
-                        ترکیه: '🇹🇷',
-                        turkey: '🇹🇷',
-                        دبی: '🇦🇪',
-                        dubai: '🇦🇪',
-                        امارات: '🇦🇪',
-                        'امارات متحده عربی': '🇦🇪',
-                        uae: '🇦🇪',
-                        'united arab emirates': '🇦🇪',
-                        'united arab em': '🇦🇪',
-                        مالزی: '🇲🇾',
-                        malaysia: '🇲🇾',
-                        تایلند: '🇹🇭',
-                        thailand: '🇹🇭',
-                        سنگاپور: '🇸🇬',
-                        singapore: '🇸🇬',
-                        ژاپن: '🇯🇵',
-                        japan: '🇯🇵',
-                        کره: '🇰🇷',
-                        'کره جنوبی': '🇰🇷',
-                        korea: '🇰🇷',
-                        'south korea': '🇰🇷',
-                        چین: '🇨🇳',
-                        china: '🇨🇳',
-                        هند: '🇮🇳',
-                        india: '🇮🇳',
-                        روسیه: '🇷🇺',
-                        russia: '🇷🇺',
-                        آلمان: '🇩🇪',
-                        germany: '🇩🇪',
-                        فرانسه: '🇫🇷',
-                        france: '🇫🇷',
-                        ایتالیا: '🇮🇹',
-                        italy: '🇮🇹',
-                        اسپانیا: '🇪🇸',
-                        spain: '🇪🇸',
-                        انگلستان: '🇬🇧',
-                        بریتانیا: '🇬🇧',
-                        uk: '🇬🇧',
-                        'united kingdom': '🇬🇧',
-                        کانادا: '🇨🇦',
-                        canada: '🇨🇦',
-                        آمریکا: '🇺🇸',
-                        usa: '🇺🇸',
-                        'united states': '🇺🇸',
-                        استرالیا: '🇦🇺',
-                        australia: '🇦🇺',
-                        قطر: '🇶🇦',
-                        qatar: '🇶🇦',
-                        عمان: '🇴🇲',
-                        oman: '🇴🇲',
-                        بحرین: '🇧🇭',
-                        bahrain: '🇧🇭',
-                        کویت: '🇰🇼',
-                        kuwait: '🇰🇼',
-                        عربستان: '🇸🇦',
-                        'عربستان سعودی': '🇸🇦',
-                        'saudi arabia': '🇸🇦',
-                      }
-
-                      if (flagMap[normalizedName]) return flagMap[normalizedName]
-
-                      // Try to match by removing punctuation (eg. `Congo (DRC)`)
-                      const simplified = normalizedName
-                        .replace(/[^\p{L}\s]/gu, '')
-                        .replace(/\s+/g, ' ')
-                        .trim()
-                      for (const [name, emoji] of flagEmojiMap) {
-                        const simplifiedMapName = name
-                          .replace(/[^\p{L}\s]/gu, '')
-                          .replace(/\s+/g, ' ')
-                          .trim()
-                        if (simplified && simplified === simplifiedMapName) {
-                          return emoji
-                        }
-                      }
-
-                      return '🏳️'
-                    }
-                    return (
-                      <span
-                        key={index}
+                      <Calendar style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
+                      <h4
                         style={{
-                          fontSize: '1.25rem',
+                          fontWeight: '700',
+                          fontSize: '0.5rem',
+                          color: '#111827',
+                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                          lineHeight: '0.6',
+                          margin: 0,
+                          padding: 0,
+                        }}
+                      >
+                        Birth Date
+                      </h4>
+                    </div>
+                    <p style={clampTwoLineTextStyle}>{birthDateValue.format('MMM DD, YYYY')}</p>
+                  </>
+                ),
+              })
+            }
+
+            if (educationUniversity) {
+              cardBlocks.push({
+                key: 'education',
+                content: (
+                  <>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.2rem',
+                        marginBottom: '0.275rem',
+                      }}
+                    >
+                      <GraduationCap
+                        style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }}
+                      />
+                      <h4
+                        style={{
+                          fontWeight: '700',
+                          fontSize: '0.6875rem',
+                          color: '#111827',
+                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                          lineHeight: '1',
+                          margin: 0,
+                          padding: 0,
+                        }}
+                      >
+                        Education
+                      </h4>
+                    </div>
+                    {educationalStatus && (
+                      <div
+                        style={{
+                          ...clampTwoLineTextStyle,
+                          marginBottom:
+                            educationUniversity || educationTopic || educationGraduationYear
+                              ? '0.08rem'
+                              : 0,
+                        }}
+                      >
+                        Status:{' '}
+                        <span style={{ textTransform: 'capitalize' }}>{educationalStatus}</span>
+                      </div>
+                    )}
+                    {educationUniversity && (
+                      <div
+                        style={{
+                          ...clampTwoLineTextStyle,
+                          marginBottom: educationTopic ? '0.08rem' : 0,
+                        }}
+                      >
+                        University: {educationUniversity}
+                      </div>
+                    )}
+                    {educationTopic && (
+                      <div
+                        style={{
+                          ...clampTwoLineTextStyle,
+                          marginBottom: educationGraduationYear ? '0.08rem' : 0,
+                        }}
+                      >
+                        Topic: {educationTopic}
+                      </div>
+                    )}
+                    {educationGraduationYear && (
+                      <div style={clampTwoLineTextStyle}>
+                        Graduation Year: {educationGraduationYear}
+                      </div>
+                    )}
+                  </>
+                ),
+              })
+            }
+
+            if (jobPosition) {
+              cardBlocks.push({
+                key: 'career',
+                content: (
+                  <>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.2rem',
+                        marginBottom: '0.275rem',
+                      }}
+                    >
+                      <Briefcase
+                        style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }}
+                      />
+                      <h4
+                        style={{
+                          fontWeight: '700',
+                          fontSize: '0.6875rem',
+                          color: '#111827',
+                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                          lineHeight: '1',
+                          margin: 0,
+                          padding: 0,
+                        }}
+                      >
+                        Career
+                      </h4>
+                    </div>
+                    <div style={clampTwoLineTextStyle}>{jobPosition}</div>
+                    {jobCompany && (
+                      <div
+                        style={{
+                          ...clampTwoLineTextStyle,
+                          marginTop: '0.1rem',
+                        }}
+                      >
+                        Company: {jobCompany}
+                      </div>
+                    )}
+                  </>
+                ),
+              })
+            }
+
+            if (displayInterests.length > 0) {
+              cardBlocks.push({
+                key: 'interests',
+                content: (
+                  <>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.2rem',
+                        marginBottom: '0.275rem',
+                      }}
+                    >
+                      <Star style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
+                      <h4
+                        style={{
+                          fontWeight: '700',
+                          fontSize: '0.6875rem',
+                          color: '#111827',
+                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                          lineHeight: '1',
+                          margin: 0,
+                          padding: 0,
+                        }}
+                      >
+                        Interests
+                      </h4>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: '0.08rem',
+                        lineHeight: '0.75rem',
+                      }}
+                    >
+                      {displayInterests.map((interest, index) => (
+                        <span
+                          key={index}
+                          style={{
+                            padding: '0.08rem 0.25rem',
+                            border: '1px solid #c084fc',
+                            color: '#7e22ce',
+                            borderRadius: '0.4rem',
+                            fontSize: '0.5rem',
+                            whiteSpace: 'nowrap',
+                            lineHeight: '0.75rem',
+                            fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                          }}
+                        >
+                          {interest}
+                        </span>
+                      ))}
+                    </div>
+                  </>
+                ),
+              })
+            }
+
+            if (favoriteSports.length > 0) {
+              cardBlocks.push({
+                key: 'sports',
+                content: (
+                  <>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.2rem',
+                        marginBottom: '0.275rem',
+                      }}
+                    >
+                      <Dumbbell style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
+                      <h4
+                        style={{
+                          fontWeight: '700',
+                          fontSize: '0.6875rem',
+                          color: '#111827',
+                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                          lineHeight: '1',
+                          margin: 0,
+                          padding: 0,
+                        }}
+                      >
+                        Sports
+                      </h4>
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.08rem' }}>
+                      {favoriteSports.map((sport, index) => (
+                        <span
+                          key={index}
+                          style={{
+                            padding: '0.08rem 0.25rem',
+                            border: '1px solid #c084fc',
+                            color: '#7e22ce',
+                            borderRadius: '0.4rem',
+                            fontSize: '0.5rem',
+                            lineHeight: '0.75rem',
+                            fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                          }}
+                        >
+                          {sport}
+                        </span>
+                      ))}
+                    </div>
+                    {doesExercise !== null && (
+                      <div
+                        style={{
+                          fontSize: '0.5rem',
+                          color: '#374151',
+                          marginTop: favoriteSports.length ? '0.15rem' : 0,
                           fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                         }}
                       >
-                        {getCountryFlag(country)}
-                      </span>
-                    )
-                  })}
-                </div>
-              </div>
-            )}
+                        Exercise: {doesExercise ? 'Yes' : 'No'}
+                      </div>
+                    )}
+                  </>
+                ),
+              })
+            }
 
-            {/* Pet */}
-            {(petName || petBreed) && (
+            if (displaySkills.length > 0) {
+              cardBlocks.push({
+                key: 'skills',
+                content: (
+                  <>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.2rem',
+                        marginBottom: '0.275rem',
+                      }}
+                    >
+                      <Sparkles style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
+                      <h4
+                        style={{
+                          fontWeight: '700',
+                          fontSize: '0.6875rem',
+                          color: '#111827',
+                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                          lineHeight: '1',
+                          margin: 0,
+                          padding: 0,
+                        }}
+                      >
+                        Skills
+                      </h4>
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.08rem' }}>
+                      {displaySkills.map((skill, index) => (
+                        <span
+                          key={index}
+                          style={{
+                            padding: '0.08rem 0.25rem',
+                            border: '1px solid #93c5fd',
+                            color: '#1e40af',
+                            borderRadius: '0.4rem',
+                            fontSize: '0.5rem',
+                            lineHeight: '0.75rem',
+                            fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                          }}
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </>
+                ),
+              })
+            }
+
+            if (travelStyles.length > 0) {
+              cardBlocks.push({
+                key: 'travel',
+                content: (
+                  <>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.2rem',
+                        marginBottom: '0.275rem',
+                      }}
+                    >
+                      <MapPin style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
+                      <h4
+                        style={{
+                          fontWeight: '700',
+                          fontSize: '0.6875rem',
+                          color: '#111827',
+                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                          lineHeight: '1',
+                          margin: 0,
+                          padding: 0,
+                        }}
+                      >
+                        Travel Style
+                      </h4>
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.08rem' }}>
+                      {travelStyles.map((style, index) => (
+                        <span
+                          key={index}
+                          style={{
+                            padding: '0.08rem 0.25rem',
+                            border: '1px solid #c084fc',
+                            color: '#7e22ce',
+                            borderRadius: '0.4rem',
+                            fontSize: '0.5rem',
+                            lineHeight: '0.75rem',
+                            fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                          }}
+                        >
+                          {style}
+                        </span>
+                      ))}
+                    </div>
+                  </>
+                ),
+              })
+            }
+
+            if (visitedCountries.length > 0) {
+              cardBlocks.push({
+                key: 'countries',
+                content: (
+                  <>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.2rem',
+                        marginBottom: '0.275rem',
+                      }}
+                    >
+                      <Globe style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
+                      <h4
+                        style={{
+                          fontWeight: '700',
+                          fontSize: '0.6875rem',
+                          color: '#111827',
+                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                          lineHeight: '1',
+                          margin: 0,
+                          padding: 0,
+                        }}
+                      >
+                        Countries
+                      </h4>
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.2rem' }}>
+                      {visitedCountries.map((country, index) => {
+                        const getCountryFlag = (countryName: string) => {
+                          const normalizedName = countryName.trim().toLowerCase()
+                          if (!normalizedName) return '🏳️'
+
+                          const directMatch = flagEmojiMap.get(normalizedName)
+                          if (directMatch) return directMatch
+
+                          const flagMap: { [key: string]: string } = {
+                            ایران: '🇮🇷',
+                            'جمهوری اسلامی ایران': '🇮🇷',
+                            iran: '🇮🇷',
+                            'islamic republic of iran': '🇮🇷',
+                            ترکیه: '🇹🇷',
+                            turkey: '🇹🇷',
+                            دبی: '🇦🇪',
+                            dubai: '🇦🇪',
+                            امارات: '🇦🇪',
+                            'امارات متحده عربی': '🇦🇪',
+                            uae: '🇦🇪',
+                            'united arab emirates': '🇦🇪',
+                            'united arab em': '🇦🇪',
+                            مالزی: '🇲🇾',
+                            malaysia: '🇲🇾',
+                            تایلند: '🇹🇭',
+                            thailand: '🇹🇭',
+                            سنگاپور: '🇸🇬',
+                            singapore: '🇸🇬',
+                            ژاپن: '🇯🇵',
+                            japan: '🇯🇵',
+                            کره: '🇰🇷',
+                            'کره جنوبی': '🇰🇷',
+                            korea: '🇰🇷',
+                            'south korea': '🇰🇷',
+                            چین: '🇨🇳',
+                            china: '🇨🇳',
+                            هند: '🇮🇳',
+                            india: '🇮🇳',
+                            روسیه: '🇷🇺',
+                            russia: '🇷🇺',
+                            آلمان: '🇩🇪',
+                            germany: '🇩🇪',
+                            فرانسه: '🇫🇷',
+                            france: '🇫🇷',
+                            ایتالیا: '🇮🇹',
+                            italy: '🇮🇹',
+                            اسپانیا: '🇪🇸',
+                            spain: '🇪🇸',
+                            انگلستان: '🇬🇧',
+                            بریتانیا: '🇬🇧',
+                            uk: '🇬🇧',
+                            'united kingdom': '🇬🇧',
+                            کانادا: '🇨🇦',
+                            canada: '🇨🇦',
+                            آمریکا: '🇺🇸',
+                            usa: '🇺🇸',
+                            'united states': '🇺🇸',
+                            استرالیا: '🇦🇺',
+                            australia: '🇦🇺',
+                            قطر: '🇶🇦',
+                            qatar: '🇶🇦',
+                            عمان: '🇴🇲',
+                            oman: '🇴🇲',
+                            بحرین: '🇧🇭',
+                            bahrain: '🇧🇭',
+                            کویت: '🇰🇼',
+                            kuwait: '🇰🇼',
+                            عربستان: '🇸🇦',
+                            'عربستان سعودی': '🇸🇦',
+                            'saudi arabia': '🇸🇦',
+                          }
+
+                          if (flagMap[normalizedName]) return flagMap[normalizedName]
+
+                          const simplified = normalizedName
+                            .replace(/[^\p{L}\s]/gu, '')
+                            .replace(/\s+/g, ' ')
+                            .trim()
+                          for (const [name, emoji] of flagEmojiMap) {
+                            const simplifiedMapName = name
+                              .replace(/[^\p{L}\s]/gu, '')
+                              .replace(/\s+/g, ' ')
+                              .trim()
+                            if (simplified && simplified === simplifiedMapName) {
+                              return emoji
+                            }
+                          }
+
+                          return '🏳️'
+                        }
+                        return (
+                          <span
+                            key={index}
+                            style={{
+                              fontSize: '1.1rem',
+                              fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                            }}
+                          >
+                            {getCountryFlag(country)}
+                          </span>
+                        )
+                      })}
+                    </div>
+                  </>
+                ),
+              })
+            }
+
+            if (petName || petBreed) {
+              cardBlocks.push({
+                key: 'pet',
+                content: (
+                  <>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.2rem',
+                        marginBottom: '0.275rem',
+                      }}
+                    >
+                      <PawPrint style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
+                      <h4
+                        style={{
+                          fontWeight: '700',
+                          fontSize: '0.6875rem',
+                          color: '#111827',
+                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                          lineHeight: '1',
+                          margin: 0,
+                          padding: 0,
+                        }}
+                      >
+                        Pet
+                      </h4>
+                    </div>
+                    <div style={clampTwoLineTextStyle}>{petName || petBreed}</div>
+                  </>
+                ),
+              })
+            }
+
+            if (!cardBlocks.length) {
+              return null
+            }
+
+            const gradientThemes = [
+              {
+                background: 'linear-gradient(120deg, #f3e8ff 0%, #fce7f3 100%)',
+                border: '#e9d5ff',
+              },
+              {
+                background: '#ffffff',
+                border: '#e5e7eb',
+              },
+            ]
+
+            return (
               <div
                 style={{
-                  backgroundColor: '#ffffff',
-                  borderTopLeftRadius: '0.625rem',
-                  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)',
-                  border: '1px solid #f3f4f6',
-                  padding: '0.375rem',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+                  gridAutoRows: 'minmax(0, 1fr)',
+                  gridAutoFlow: 'row dense',
+                  gap: '0.2rem',
+                  marginBottom: '0.3rem',
+                  marginLeft: '0',
+                  marginRight: '0',
                   boxSizing: 'border-box',
-                  gridColumn: '1 / -1',
+                  overflow: 'auto',
+                  width: '100%',
+                  minWidth: 0,
                 }}
               >
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.25rem',
-                    marginBottom: '0.375rem',
-                  }}
-                >
-                  <PawPrint style={{ width: '0.875rem', height: '0.875rem', color: '#9333ea' }} />
-                  <h4
+                {cardBlocks.map((card, index) => (
+                  <div
+                    key={`${card.key}-${index}`}
                     style={{
-                      fontWeight: '700',
-                      fontSize: '0.75rem',
-                      color: '#111827',
-                      fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                      lineHeight: '1',
-                      margin: 0,
-                      padding: 0,
+                      background: gradientThemes[index % gradientThemes.length].background,
+                      border: `1px solid ${gradientThemes[index % gradientThemes.length].border}`,
+                      borderRadius: '0.5rem',
+                      padding: '0.3rem',
+                      boxSizing: 'border-box',
+                      boxShadow: '0 1px 4px rgba(0, 0, 0, 0.05)',
+                      gridColumn: 'span 1',
+                      minHeight: 0,
                     }}
                   >
-                    Pet
-                  </h4>
-                </div>
-                <div
-                  style={{
-                    fontSize: '0.625rem',
-                    color: '#374151',
-                    overflow: 'hidden',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                    lineHeight: '1rem',
-                    fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                  }}
-                >
-                  {petName || petBreed}
-                </div>
+                    {card.content}
+                  </div>
+                ))}
               </div>
-            )}
-          </div>
+            )
+          })()}
         </div>
         {/* Footer */}
         <div
           style={{
-            background: 'linear-gradient(145deg, #6366f1, #ec4899)',
+            background: 'linear-gradient(145deg, #6d28d9 0%, #8b5cf6 45%, #c4b5fd 100%)',
             textAlign: 'center',
             width: 'fit-content',
             paddingTop: '0.6rem',
             paddingBottom: '0.6rem',
-            paddingLeft: '0.9rem',
-            paddingRight: '0.9rem',
+            paddingLeft: '0.95rem',
+            paddingRight: '0.95rem',
             marginLeft: 'auto',
             marginRight: 'auto',
-            borderTopLeftRadius: '1rem',
-            borderTopRightRadius: '1rem',
-            boxShadow: '0 16px 32px -14px rgba(99, 102, 241, 0.6)',
-            border: '1px solid rgba(255, 255, 255, 0.24)',
+            borderTopLeftRadius: '1.1rem',
+            borderTopRightRadius: '1.1rem',
+            boxShadow: '0 18px 34px -16px rgba(109, 40, 217, 0.45)',
+            border: '1px solid rgba(255, 255, 255, 0.22)',
             display: 'flex',
             justifyContent: 'center',
           }}
