@@ -304,25 +304,24 @@ export default function ShareScreenshot({
         }}
       >
         {/* Header - Gradient badge */}
-        <div
-          style={{
-            background: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 55%, #c4b5fd 100%)',
-            width: 'fit-content',
-            paddingTop: '0.5rem',
-            paddingBottom: '0.5rem',
-            paddingLeft: '0.85rem',
-            paddingRight: '0.85rem',
-            borderBottomLeftRadius: '1.1rem',
-            borderBottomRightRadius: '1.1rem',
-            boxShadow: '0 14px 28px -16px rgba(124, 58, 237, 0.55)',
-            border: '1px solid rgba(255, 255, 255, 0.28)',
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
+          <div
+            style={{
+              background: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 55%, #c4b5fd 100%)',
+              width: 'fit-content',
+              paddingTop: '0.65rem',
+              paddingBottom: '0.65rem',
+              paddingLeft: '1.35rem',
+              paddingRight: '1.35rem',
+              borderRadius: '1.9rem',
+              boxShadow: '0 14px 28px -16px rgba(124, 58, 237, 0.55)',
+              border: '1px solid rgba(255, 255, 255, 0.28)',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
           <div
             style={{
               display: 'inline-flex',
@@ -1250,25 +1249,24 @@ export default function ShareScreenshot({
           })()}
         </div>
         {/* Footer */}
-        <div
-          style={{
-            background: 'linear-gradient(145deg, #6d28d9 0%, #8b5cf6 45%, #c4b5fd 100%)',
-            textAlign: 'center',
-            width: 'fit-content',
-            paddingTop: '0.6rem',
-            paddingBottom: '0.6rem',
-            paddingLeft: '0.95rem',
-            paddingRight: '0.95rem',
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            borderTopLeftRadius: '1.1rem',
-            borderTopRightRadius: '1.1rem',
-            boxShadow: '0 18px 34px -16px rgba(109, 40, 217, 0.45)',
-            border: '1px solid rgba(255, 255, 255, 0.22)',
-            display: 'flex',
-            justifyContent: 'center',
-          }}
-        >
+          <div
+            style={{
+              background: 'linear-gradient(145deg, #6d28d9 0%, #8b5cf6 45%, #c4b5fd 100%)',
+              textAlign: 'center',
+              width: 'fit-content',
+              paddingTop: '0.75rem',
+              paddingBottom: '0.75rem',
+              paddingLeft: '1.4rem',
+              paddingRight: '1.4rem',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              borderRadius: '1.9rem',
+              boxShadow: '0 18px 34px -16px rgba(109, 40, 217, 0.45)',
+              border: '1px solid rgba(255, 255, 255, 0.22)',
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+          >
           <div
             style={{
               display: 'inline-flex',
