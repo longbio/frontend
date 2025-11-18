@@ -1,8 +1,6 @@
 export interface RequestOptions extends Omit<RequestInit, 'body'> {
-  // eslint-disable-next-line
-  body?: any
-  // eslint-disable-next-line
-  params?: Record<string, any>
+  body?: BodyInit | object | null
+  params?: Record<string, string | number | boolean | undefined>
   throwError?: boolean
   auth?: boolean
 }

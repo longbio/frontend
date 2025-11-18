@@ -1,4 +1,4 @@
-import Cropper from 'react-easy-crop'
+import Cropper, { type Area } from 'react-easy-crop'
 import {
   Dialog,
   DialogContent,
@@ -12,8 +12,7 @@ type CropperDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   image: string | null
-  // eslint-disable-next-line
-  onCropComplete: (croppedArea: any, croppedAreaPixels: any) => void
+  onCropComplete: (croppedArea: Area, croppedAreaPixels: Area) => void
   onConfirm: () => void
   crop: { x: number; y: number }
   setCrop: (crop: { x: number; y: number }) => void

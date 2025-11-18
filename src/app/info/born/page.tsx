@@ -70,8 +70,7 @@ function BornContent() {
 
   const onSubmit = async (data: BornFormData) => {
     try {
-      // eslint-disable-next-line
-      const updateData: any = {}
+      const updateData: Record<string, string> = {}
 
       if (data.birthPlace) {
         updateData.bornPlace = data.birthPlace
