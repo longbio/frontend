@@ -140,7 +140,7 @@ export default function AddMoreBox({
                 onClick={(e) => {
                   e.stopPropagation()
                   // Toggle dropdown when clicking on input
-                  if (availableOptions && availableOptions.length > 0) {
+                  if (dropdownOptions && dropdownOptions.length > 0) {
                     setShowDropdown(!showDropdown)
                   }
                 }}
