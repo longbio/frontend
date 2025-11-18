@@ -15,6 +15,7 @@ import GraduationYearBox from './components/GraduationYearBox'
 import AddMoreBox from '@/app/info/education/components/AddMoreBox'
 import SelectableOption from '@/app/info/components/SelectableOption'
 import { useUpdateUser, useUpdateEducation } from '@/service/user/hook'
+import { useTopics } from '@/service/topics'
 
 const educationSchema = z.object({
   education: z.string({
@@ -54,6 +55,7 @@ function EducationContent() {
   const [validationError, setValidationError] = useState<string>('')
   const mutation = useUpdateUser()
   const educationMutation = useUpdateEducation()
+  const { topics: allTopics } = useTopics()
 
   useEffect(() => {
     if (selectedEducation)
@@ -111,9 +113,16 @@ function EducationContent() {
 
       // Send education details to the new API if user is student or graduated
       if (selectedEducation === 'student' || selectedEducation === 'graduated') {
+        // Convert topic IDs to names
+        const topicNames = topics.map((topicId) => {
+          const topic = allTopics.find((t) => t.id === topicId)
+          // If topic is found, use its name; otherwise, use the ID (for custom topics)
+          return topic ? topic.name : topicId
+        })
+
         const educationData = {
           university: universities.length > 0 ? universities.join(', ') : '',
-          topic: topics.length > 0 ? topics.join(', ') : '',
+          topic: topicNames.length > 0 ? topicNames.join(', ') : '',
           graduationYear: graduationYear || '',
         }
 
