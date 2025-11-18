@@ -23,25 +23,54 @@ export default function AddMoreBox({
   const [inputValue, setInputValue] = useState('')
   const { topics } = useTopics()
 
+  type DropdownOption = {
+    value: string
+    label: string
+  }
+
+  const dropdownOptions = useMemo<DropdownOption[]>(() => {
+    if (staticOptions) {
+      return staticOptions.map((option) => ({ value: option, label: option }))
+    }
+
+    if (buttonLabel?.toLowerCase().includes('topic')) {
+      return topics.map((topic) => ({ value: topic.id, label: topic.name }))
+    }
+
+    return []
+  }, [staticOptions, buttonLabel, topics])
+
+  const optionLabelMap = useMemo(() => {
+    const map = new Map<string, string>()
+    dropdownOptions.forEach(({ value, label }) => {
+      map.set(value, label)
+    })
+    return map
+  }, [dropdownOptions])
+
+  const addOptionValue = (value: string) => {
+    if (!value) return
+    if (!options.includes(value)) {
+      setOptions([...options, value])
+    }
+    setInputValue('')
+    setShowInput(false)
+  }
+
   const handleAdd = () => {
-    if (inputValue.trim() && !options.includes(inputValue.trim())) {
-      setOptions([...options, inputValue.trim()])
-      setInputValue('')
-      setShowInput(false)
-    }
+    const trimmed = inputValue.trim()
+    if (!trimmed) return
+
+    const matchedOption = dropdownOptions.find(
+      (option) => option.label.toLowerCase() === trimmed.toLowerCase()
+    )
+
+    addOptionValue(matchedOption ? matchedOption.value : trimmed)
   }
 
-  const handleStaticClick = (item: string) => {
-    if (!options.includes(item)) {
-      setOptions([...options, item])
-      setShowInput(false)
-    }
+  const handleStaticClick = (value: string) => {
+    addOptionValue(value)
   }
-
-  const availableOptions = useMemo(
-    () => staticOptions || (buttonLabel?.includes('Topic') ? topics.map((t) => t.id) : []),
-    [staticOptions, buttonLabel, topics]
-  )
 
   useEffect(() => {
     if (!showInput) return
@@ -63,7 +92,7 @@ export default function AddMoreBox({
   useEffect(() => {
     if (showInput) {
       // Show dropdown by default when input opens
-      if (availableOptions && availableOptions.length > 0) {
+      if (dropdownOptions && dropdownOptions.length > 0) {
         setShowDropdown(true)
       }
 
@@ -77,7 +106,7 @@ export default function AddMoreBox({
         }
       })
     }
-  }, [showInput, availableOptions])
+  }, [showInput, dropdownOptions])
 
   return (
     <>
@@ -117,18 +146,18 @@ export default function AddMoreBox({
                 }}
                 autoFocus
               />
-              {availableOptions && availableOptions.length > 0 && showDropdown && (
+              {dropdownOptions && dropdownOptions.length > 0 && showDropdown && (
                 <ul className="absolute top-full left-0 right-0 bg-white border rounded shadow mt-1 max-h-40 overflow-y-auto z-10">
-                  {availableOptions
-                    .filter((opt) => !options.includes(opt))
-                    .filter((opt) => opt.toLowerCase().includes(inputValue.toLowerCase()))
+                  {dropdownOptions
+                    .filter((opt) => !options.includes(opt.value))
+                    .filter((opt) => opt.label.toLowerCase().includes(inputValue.toLowerCase()))
                     .map((opt) => (
                       <li
-                        key={opt}
+                        key={opt.value}
                         className="px-3 py-1 hover:bg-purple-100 cursor-pointer text-sm"
-                        onClick={() => handleStaticClick(opt)}
+                        onClick={() => handleStaticClick(opt.value)}
                       >
-                        {opt}
+                        {opt.label}
                       </li>
                     ))}
                 </ul>
@@ -143,7 +172,7 @@ export default function AddMoreBox({
             key={option}
             className="flex items-center border-2 border-purple-blaze rounded-full px-3 py-1 text-sm font-light bg-white text-black"
           >
-            {option}
+            {optionLabelMap.get(option) ?? option}
             <button
               type="button"
               className="ml-2 p-0.5 rounded-full hover:bg-purple-100"
