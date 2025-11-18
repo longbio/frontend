@@ -1747,537 +1747,2044 @@ export const universitiesData: University[] = [
     name: 'University of Islamic Sects',
   },
 ]
+// Helper function to create slug-like ID from English title
+function createTopicId(titleEn: string): string {
+  return titleEn
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
+    .replace(/\s+/g, '_') // Replace spaces with underscores
+    .replace(/-/g, '_') // Replace hyphens with underscores
+    .replace(/_+/g, '_') // Replace multiple underscores with single underscore
+    .replace(/^_|_$/g, '') // Remove leading/trailing underscores
+}
+
 export const topicsData: Topic[] = [
   {
-    id: 'medicine',
+    id: createTopicId('Rural development'),
     universities: universitiesData,
   },
   {
-    id: 'dentistry',
+    id: createTopicId('Energy architecture'),
     universities: universitiesData,
   },
   {
-    id: 'pharmacy',
+    id: createTopicId('Urban planning'),
     universities: universitiesData,
   },
   {
-    id: 'radiology',
+    id: createTopicId('Urban design'),
     universities: universitiesData,
   },
   {
-    id: 'medical_laboratory_sciences',
+    id: createTopicId('Architecture technology'),
     universities: universitiesData,
   },
   {
-    id: 'nutrition_and_dietetics',
+    id: createTopicId('Urban management'),
     universities: universitiesData,
   },
   {
-    id: 'public_health',
+    id: createTopicId('Iranian architectural studies'),
     universities: universitiesData,
   },
   {
-    id: 'epidemiology',
+    id: createTopicId('Interior design'),
     universities: universitiesData,
   },
   {
-    id: 'biomedical_engineering',
+    id: createTopicId('Architecture'),
     universities: universitiesData,
   },
   {
-    id: 'anatomy',
+    id: createTopicId('Islamic architecture'),
     universities: universitiesData,
   },
   {
-    id: 'physiology',
+    id: createTopicId('Urban engineering'),
     universities: universitiesData,
   },
   {
-    id: 'pathology',
+    id: createTopicId('Landscape engineering'),
     universities: universitiesData,
   },
   {
-    id: 'immunology',
+    id: createTopicId('Technology engineering & rural development'),
     universities: universitiesData,
   },
   {
-    id: 'toxicology',
+    id: createTopicId('Restoration of monuments'),
     universities: universitiesData,
   },
   {
-    id: 'oncology',
+    id: createTopicId('Landscape architecture'),
     universities: universitiesData,
   },
   {
-    id: 'cardiology',
+    id: createTopicId('Make-up'),
     universities: universitiesData,
   },
   {
-    id: 'dermatology',
+    id: createTopicId('Computer Arts'),
     universities: universitiesData,
   },
   {
-    id: 'anesthesiology',
+    id: createTopicId('Multimedia'),
     universities: universitiesData,
   },
   {
-    id: 'biology',
+    id: createTopicId('Printing and Publishing'),
     universities: universitiesData,
   },
   {
-    id: 'microbiology',
+    id: createTopicId('Jewelry Design'),
     universities: universitiesData,
   },
   {
-    id: 'molecular_biology',
+    id: createTopicId('Puppet Theatre'),
     universities: universitiesData,
   },
   {
-    id: 'physics',
+    id: createTopicId('Stage Design'),
     universities: universitiesData,
   },
   {
-    id: 'astrophysics',
+    id: createTopicId('Composition'),
     universities: universitiesData,
   },
   {
-    id: 'environmental_science',
+    id: createTopicId('Television and digital arts'),
     universities: universitiesData,
   },
   {
-    id: 'earth_science',
+    id: createTopicId('Textile design and printing'),
     universities: universitiesData,
   },
   {
-    id: 'geology',
+    id: createTopicId('Handmade rug'),
     universities: universitiesData,
   },
   {
-    id: 'geography',
+    id: createTopicId('Graphics'),
     universities: universitiesData,
   },
   {
-    id: 'oceanography',
+    id: createTopicId('Animation'),
     universities: universitiesData,
   },
   {
-    id: 'mathematics',
+    id: createTopicId('Cloth design'),
     universities: universitiesData,
   },
   {
-    id: 'applied_mathematics',
+    id: createTopicId('Pottery'),
     universities: universitiesData,
   },
   {
-    id: 'statistics',
+    id: createTopicId('Traditional art'),
     universities: universitiesData,
   },
   {
-    id: 'ecology',
+    id: createTopicId('Sculpture'),
     universities: universitiesData,
   },
   {
-    id: 'marine_biology',
+    id: createTopicId('Iranian painting'),
     universities: universitiesData,
   },
   {
-    id: 'environmental_chemistry',
+    id: createTopicId('Playing Iranian music'),
     universities: universitiesData,
   },
   {
-    id: 'hydrology',
+    id: createTopicId('Playing world music'),
     universities: universitiesData,
   },
   {
-    id: 'computer_engineering',
+    id: createTopicId('Apparel and textile design'),
     universities: universitiesData,
   },
   {
-    id: 'software_engineering',
+    id: createTopicId('Carpet'),
     universities: universitiesData,
   },
   {
-    id: 'civil_engineering',
+    id: createTopicId('Dramatic literature'),
     universities: universitiesData,
   },
   {
-    id: 'architecture',
+    id: createTopicId('Music'),
     universities: universitiesData,
   },
   {
-    id: 'structural_engineering',
+    id: createTopicId('Acting'),
     universities: universitiesData,
   },
   {
-    id: 'mining_engineering',
+    id: createTopicId('Art research'),
     universities: universitiesData,
   },
   {
-    id: 'aerospace_engineering',
+    id: createTopicId('Animation'),
     universities: universitiesData,
   },
   {
-    id: 'mechatronics_engineering',
+    id: createTopicId('Illustration'),
     universities: universitiesData,
   },
   {
-    id: 'robotics_engineering',
+    id: createTopicId('Film production'),
     universities: universitiesData,
   },
   {
-    id: 'textile_engineering',
+    id: createTopicId('Radio'),
     universities: universitiesData,
   },
   {
-    id: 'materials_engineering',
+    id: createTopicId('Cinema'),
     universities: universitiesData,
   },
   {
-    id: 'nuclear_engineering',
+    id: createTopicId('Handicrafts'),
     universities: universitiesData,
   },
   {
-    id: 'telecommunications_engineering',
+    id: createTopicId('Industrial design'),
     universities: universitiesData,
   },
   {
-    id: 'information_technology',
+    id: createTopicId('Photography'),
     universities: universitiesData,
   },
   {
-    id: 'information_systems',
+    id: createTopicId('aesthetics/philosophy of art'),
     universities: universitiesData,
   },
   {
-    id: 'cybersecurity',
+    id: createTopicId('Film directing'),
     universities: universitiesData,
   },
   {
-    id: 'artificial_intelligence',
+    id: createTopicId('Painting'),
     universities: universitiesData,
   },
   {
-    id: 'machine_learning',
+    id: createTopicId('Islamic art'),
     universities: universitiesData,
   },
   {
-    id: 'data_engineering',
+    id: createTopicId('Industrial design'),
     universities: universitiesData,
   },
   {
-    id: 'cloud_computing',
+    id: createTopicId('Microbiology'),
     universities: universitiesData,
   },
   {
-    id: 'web_development',
+    id: createTopicId('Biology'),
     universities: universitiesData,
   },
   {
-    id: 'blockchain_technology',
+    id: createTopicId('Biology - Molecular Genetics'),
     universities: universitiesData,
   },
   {
-    id: 'human_computer_interaction',
+    id: createTopicId('Cell and molecular biology'),
     universities: universitiesData,
   },
   {
-    id: 'computer_graphics',
+    id: createTopicId('Biology-animal science'),
     universities: universitiesData,
   },
   {
-    id: 'software_architecture',
+    id: createTopicId('Biology-plant sciences'),
     universities: universitiesData,
   },
   {
-    id: 'marketing',
+    id: createTopicId('Marine biology'),
     universities: universitiesData,
   },
   {
-    id: 'finance',
+    id: createTopicId('Genetics'),
     universities: universitiesData,
   },
   {
-    id: 'accounting',
+    id: createTopicId('Biology - Plant Physiology'),
     universities: universitiesData,
   },
   {
-    id: 'banking',
+    id: createTopicId('Laboratory sciences'),
     universities: universitiesData,
   },
   {
-    id: 'supply_chain_management',
+    id: createTopicId('Cellular and molecular sciences'),
     universities: universitiesData,
   },
   {
-    id: 'logistics',
+    id: createTopicId('Sericulture'),
     universities: universitiesData,
   },
   {
-    id: 'e_commerce',
+    id: createTopicId('Horse breeding'),
     universities: universitiesData,
   },
   {
-    id: 'human_resource_management',
+    id: createTopicId('Health'),
     universities: universitiesData,
   },
   {
-    id: 'project_management',
+    id: createTopicId('Vector Biology and Control of Diseases'),
     universities: universitiesData,
   },
   {
-    id: 'hospitality_management',
+    id: createTopicId('Imunology'),
     universities: universitiesData,
   },
   {
-    id: 'tourism_management',
+    id: createTopicId('Medical Nanotechnology'),
     universities: universitiesData,
   },
   {
-    id: 'investment_management',
+    id: createTopicId('Commercial Advertisement Management'),
     universities: universitiesData,
   },
   {
-    id: 'business_analytics',
+    id: createTopicId('International Business'),
     universities: universitiesData,
   },
   {
-    id: 'sociology',
+    id: createTopicId('Health Care Management'),
     universities: universitiesData,
   },
   {
-    id: 'psychology',
+    id: createTopicId('Public affairs'),
     universities: universitiesData,
   },
   {
-    id: 'political_science',
+    id: createTopicId('Occupation'),
     universities: universitiesData,
   },
   {
-    id: 'international_relations',
+    id: createTopicId('Strategic management'),
     universities: universitiesData,
   },
   {
-    id: 'education',
+    id: createTopicId('Custom management'),
     universities: universitiesData,
   },
   {
-    id: 'gender_studies',
+    id: createTopicId('Work relations'),
     universities: universitiesData,
   },
   {
-    id: 'development_studies',
+    id: createTopicId('Communication and Information management'),
     universities: universitiesData,
   },
   {
-    id: 'communication_studies',
+    id: createTopicId('Cultural and artistic management'),
     universities: universitiesData,
   },
   {
-    id: 'linguistics',
+    id: createTopicId('Marine management and commerce'),
     universities: universitiesData,
   },
   {
-    id: 'languages',
+    id: createTopicId('Information management'),
     universities: universitiesData,
   },
   {
-    id: 'translation_and_interpretation',
+    id: createTopicId('Media management'),
     universities: universitiesData,
   },
   {
-    id: 'theology',
+    id: createTopicId('Social services management'),
     universities: universitiesData,
   },
   {
-    id: 'ethics',
+    id: createTopicId('Management & planning in higher education'),
     universities: universitiesData,
   },
   {
-    id: 'classical_studies',
+    id: createTopicId('Management of law enforcement force'),
     universities: universitiesData,
   },
   {
-    id: 'fine_arts',
+    id: createTopicId('Entrepreneurship'),
     universities: universitiesData,
   },
   {
-    id: 'graphic_design',
+    id: createTopicId('Executive management'),
     universities: universitiesData,
   },
   {
-    id: 'architectural_design',
+    id: createTopicId('Defence management'),
     universities: universitiesData,
   },
   {
-    id: 'photography',
+    id: createTopicId('Management of urban affairs'),
     universities: universitiesData,
   },
   {
-    id: 'film_studies',
+    id: createTopicId('Education management'),
     universities: universitiesData,
   },
   {
-    id: 'cinematography',
+    id: createTopicId('Business management'),
     universities: universitiesData,
   },
   {
-    id: 'music',
+    id: createTopicId('Crisis management'),
     universities: universitiesData,
   },
   {
-    id: 'performing_arts',
+    id: createTopicId('Project and construction management'),
     universities: universitiesData,
   },
   {
-    id: 'theater',
+    id: createTopicId('Technology management'),
     universities: universitiesData,
   },
   {
-    id: 'visual_communication',
+    id: createTopicId('Public administration'),
     universities: universitiesData,
   },
   {
-    id: 'media_studies',
+    id: createTopicId('Industrial management'),
     universities: universitiesData,
   },
   {
-    id: 'journalism',
+    id: createTopicId('It management'),
     universities: universitiesData,
   },
   {
-    id: 'advertising',
+    id: createTopicId('Business management'),
     universities: universitiesData,
   },
   {
-    id: 'art_history',
+    id: createTopicId('Financial management'),
     universities: universitiesData,
   },
   {
-    id: 'law',
+    id: createTopicId('Human resources management'),
     universities: universitiesData,
   },
   {
-    id: 'international_law',
+    id: createTopicId('Management'),
     universities: universitiesData,
   },
   {
-    id: 'criminal_law',
+    id: createTopicId('Banking management'),
     universities: universitiesData,
   },
   {
-    id: 'environmental_law',
+    id: createTopicId('Marketing management'),
     universities: universitiesData,
   },
   {
-    id: 'intellectual_property_law',
+    id: createTopicId('Insurance management'),
     universities: universitiesData,
   },
   {
-    id: 'commercial_law',
+    id: createTopicId('International oil and gas contract management'),
     universities: universitiesData,
   },
   {
-    id: 'tax_law',
+    id: createTopicId('Small business management'),
     universities: universitiesData,
   },
   {
-    id: 'family_law',
+    id: createTopicId('Customs management'),
     universities: universitiesData,
   },
   {
-    id: 'agriculture',
+    id: createTopicId('Innovation and technology management'),
     universities: universitiesData,
   },
   {
-    id: 'horticulture',
+    id: createTopicId('MBA'),
     universities: universitiesData,
   },
   {
-    id: 'plant_protection',
+    id: createTopicId('Development administration'),
     universities: universitiesData,
   },
   {
-    id: 'animal_science',
+    id: createTopicId('Information Security'),
     universities: universitiesData,
   },
   {
-    id: 'food_science_and_technology',
+    id: createTopicId('Computer science'),
     universities: universitiesData,
   },
   {
-    id: 'forestry',
+    id: createTopicId('Computer systems architecture'),
     universities: universitiesData,
   },
   {
-    id: 'fisheries',
+    id: createTopicId('Information technology'),
     universities: universitiesData,
   },
   {
-    id: 'environmental_management',
+    id: createTopicId('Computer engineering'),
     universities: universitiesData,
   },
   {
-    id: 'emergency_medicine',
+    id: createTopicId('Software engineering'),
     universities: universitiesData,
   },
   {
-    id: 'medical_imaging',
+    id: createTopicId('Hardware engineering'),
     universities: universitiesData,
   },
   {
-    id: 'dental_hygiene',
+    id: createTopicId('Algorithms and computation'),
     universities: universitiesData,
   },
   {
-    id: 'optometry',
+    id: createTopicId('Artificial intelligence and robotics'),
     universities: universitiesData,
   },
   {
-    id: 'rehabilitation_sciences',
+    id: createTopicId('Software'),
     universities: universitiesData,
   },
   {
-    id: 'health_informatics',
+    id: createTopicId('Hardware'),
     universities: universitiesData,
   },
   {
-    id: 'aviation',
+    id: createTopicId('ICT'),
     universities: universitiesData,
   },
   {
-    id: 'maritime_studies',
+    id: createTopicId('Visual Communication'),
     universities: universitiesData,
   },
   {
-    id: 'logistics_and_transportation',
+    id: createTopicId('Security technical science'),
     universities: universitiesData,
   },
   {
-    id: 'military_science',
+    id: createTopicId('Health information technology'),
     universities: universitiesData,
   },
   {
-    id: 'fire_safety_engineering',
+    id: createTopicId('Econphysics'),
     universities: universitiesData,
   },
   {
-    id: 'urban_planning',
+    id: createTopicId('Economic security'),
     universities: universitiesData,
   },
   {
-    id: 'sports_science',
+    id: createTopicId('Labor economics'),
     universities: universitiesData,
   },
   {
-    id: 'physical_education',
+    id: createTopicId('Economics'),
     universities: universitiesData,
   },
   {
-    id: 'public_safety',
+    id: createTopicId('Cognitive sciences'),
     universities: universitiesData,
   },
   {
-    id: 'security_studies',
+    id: createTopicId('Adult education'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Social welfare planning'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Curriculum planning'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Social sciences research'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('History and philosophy of education'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Educational research'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Educational technology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Sociology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Pupulation studies'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Development of preschool children'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Psychology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Clinical psychology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Educational psychology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Industrial and organizational psychology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Psychology and education of exceptional children'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Psychometrics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Social sciences'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Social communication sciences'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Educational sciences'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Social sciences philosophy'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Social work'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Anthropology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Consultation'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Leisure studies'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Youth studies'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Family studies'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Women studies'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Education services'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Elementary education'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Quran teacher training'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Social planning and cooperation'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Social policy'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Security researcher'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Training and Human Resource Develpment'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Communication studies'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Chemical engineering-thermodynamics, kinetics & catalyst'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Chemical engineering-separation processes'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Polymer engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Chemical engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Transport phenomena'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Modeling, simulation and control'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Railway engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Civil engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Hydraulic engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Passive defense'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Construction management'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Transportation management'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Transportation and highway engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Structural engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Surveying engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Earthquake engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Railway operation engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Rail transport engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Line and railway structures engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Railway machine engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Civil Engineering - Water Resources'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Construction Management'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Railway'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Building technician'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Civil technician'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Telecommunication'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Marine Electronic and Telecommunications'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Electrical engineering - Digital Electronic Systems'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Electrical engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Electrical Engineering - Electronics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Electrical engineering - Power'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Electrical Engineering - Control'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Electrical Engineering - Telecommunications (System)'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Electrical Engineering - Telecommunications (Field)'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Artifical intelligence and robotics engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Nanotechnology-nanoelectronics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Management of dryland and desert areas'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Marine ecology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Environmental design engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Environmental engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Safety engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Natural resources engineering - forestry'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Natural resources engineering - fisheries'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Natural resources engineering - wood and paper'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Natural resources engineering - environmental'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Natural resources engineering - rangeland and watershed'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Natural resources engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Environmental Health Engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('HSE'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('ergonomics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Land affairs'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Occupational health and safety'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Industrial safety technician'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Forestry technology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Wood technology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Fishery technology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Rangeland and watershed technology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Environment technology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Watering technology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Safety and technical inspection engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Financial engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Engineering Management'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Industrial Engineering - Productivity'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('System optimization'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Industrial engineering-socio-economic systems'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Project management'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Industrial engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Supply chain management'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Process design'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Futurology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Shipping and port management'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Marine transportation'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Coasts, ports and marine structures'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Marine electronics & communications'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Marine engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Naval architecture engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Shipbuilding engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Maritime engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Marine machinery engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Metal Industry'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Materials and metallurgical engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Nanotechnology-nanomaterials'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Material technician'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Mechanical engineering-industrial drawing and design'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Combustion Engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Mechatronics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Mechanical engineering -biosystems'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Automotive engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Mechanical engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Mechanical engineering-energy transformation'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Mechanical engineering-applied mechanics(dynamic, control, vibration)'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Mechanical engineering-manufacturing & production'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Mechanical engineering _body &structure'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Mechanical engineering _automotive dynamical systems design'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Mechanical engineering-solid mechanics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Chemical engineering – gas processing and transmission'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Petrochemical engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Petroleum engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Energy engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Nuclear engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Refinement'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Energy optimization'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Petrochemical technician'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Mining technician'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Mineral processing'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Geology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Geotechnics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Seismology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Earth sciences'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Mining engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Mining engineering-exploitation'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Mining engineering-exploration'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Mining engineering-mineral processing'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Mining engineering-rock mechanics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Geoelectric'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Geomagnetics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Geomorphology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Geophysics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Gravimetry'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Radiology technology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Radiation therapy technology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Nuclear medicine technology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Biomedical engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Tissue Engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Biomedical Engineering- Biomaterial'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Biomedical Engineering- Bioelectric'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Biomedical Engineering- Biomechanic'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Actuary'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Financial and tax affairs'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Banking affairs'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Insurance affairs'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Accounting'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Auditing'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Finance'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Tourism planning'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Religious tourism'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Tourism management'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Hotel management'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Tourism services'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Tourism industry'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Tourism'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Hotel management'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Spanish language and literature'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Azari language and literature'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('English language Education'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Spanish'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('English language and literature'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Ancient iranian languages'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Fiction literature'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Japanese language and literature'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('English language and literature'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Italian language and literature'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('German language and literature'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Chinese language and literature'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Russian language and literature'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Linguistics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Arabic language and literature'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('French language and literature'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Urdu language and literature'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Persian language and literature'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Turkish language and literature'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Kurdish language and literature'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('English translation'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('German translation'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Arabic translation'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Law'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Communications law'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Contract law'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Economic law'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Human rights'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('International law'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Medical law'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('E-commerce law'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('International commercial law'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Criminal law'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Family law'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Private law'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Public law'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Intellectual property law'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Environmental law'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Oil and gas law'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Justice and law'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Islamic law and jurisprudence'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Islamic and economic law'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('jurisprudence and criminal law'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('jurisprudence and private law'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Jurisprudence and islamic religious law'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId("Shafi'i jurisprudence"),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Imami jurisprudence and law'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Writing and painting'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('librarianship'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Information science and knowledge studies'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Public relations'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Journalism'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Multimedia studies'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Ict research'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Mathemtics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Applied mathematics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Statistics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Appraisal'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Mathematics Education'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Pharmaceutical Quality Assurance'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Medicinal Chemistry'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Pharmacy'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Religious studies'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Islamic studies'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Quran and hadith sciences'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Philosophy'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Philosophy of religion'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Philosophy of science'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Islamic philosophy'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Islamic philosophy and mysticism'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Religions and mysticism'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Islamic philosophy and theology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Belief coach'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Restoration of monuments'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Restoration of historical monuments'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('History of Islam'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('History and civilization of Islamic nations'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Iranian studies/ iranology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Archeology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('History of science'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('History'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Geography and rural planning'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Remote sensing and gis'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Geography'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Historic preservation and conservation'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Global studies'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Museum studies'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Meteorology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Atmospheric sciences'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Oceanography'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Cartography'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Maintenance engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Aerospace engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Flight dynamics and control'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Space engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Aerodynamics engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Aircraft structural integrity program'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Plane maintanance'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Plane electronics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Flight security'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Plane telecommunication'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Aircraft maintenance engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Avionics engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Aviation telecommunications engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Aeronautical and flight maintenance engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Medical documents'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Medical emergency'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Dental prosthesis'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Operating room technology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Medical Physics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Food and Nutrition Policy'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Epidemiology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Medical Informatics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Operating room'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Prosthetics and orthotics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Optometry'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Nursing'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Medicine'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Veterinary medicine'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Dentistry'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Biomedicine'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Audiology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Veterinary laboratory science'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Nutrition science'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Physiotherapy'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Occupational therapy'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Public health'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Midwifery'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Health engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Anesthesiology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Speech pathology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Food safety & health'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Food sciences and technology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Agricultural engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Plant production engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Agricultural engineering - agricultural economics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Agricultural engineering - agricultural education & extension'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Agriculture engineering - agronomy'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Agriculture engineering - biotechnology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Agriculture engineering - horticultural sciences'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Agriculture engineering - animal sciences'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Agricultural engineering - plant pathology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Food machinery engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Water science and engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Soil sciences'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Chemical Engineering - Food Science and Technology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Irrigation engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Meat health and inspection'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Farming affairs'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Medicinal plants production'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Agricultural machineries'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Agricultural mechanization'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Date production'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Trap production technology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Plant production technology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Food techology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Agricultural mechanization engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('food industry machines engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Textile engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('International security'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('training of political promoters'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Political geography'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Political science - International Relations'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Political science'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Strategic defence studies'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Sport science and physical education'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Sports engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Biotechnology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Nanobiotechnology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('bioinformatics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Microbial biotechnology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Biophysics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Biotechnology'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Chemistry'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Organic chemistry'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Analytical chemistry'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Chemical physics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Applied chemistry'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Inorganic chemistry'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Biochemistry'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Nanochemistry'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Pure Chemistry'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Lab chemistry'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Solid state physics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Elementary particle physics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Photonics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Physics-thin film materials research'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Optical engineering'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Engineering sciences'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Fundamental physics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Astrophysics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Physics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Engineering physics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Atomic, molecular & optical physics'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Electrical technician'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Industrial technician'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Mechanical technician'),
+    universities: universitiesData,
+  },
+  {
+    id: createTopicId('Facility Management'),
     universities: universitiesData,
   },
 ]
