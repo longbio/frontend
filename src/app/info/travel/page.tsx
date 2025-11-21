@@ -140,35 +140,6 @@ function TravelContent() {
             <span className="text-sm font-normal">Pick your travel style.</span>
           </div>
 
-          <div className="space-y-4 mt-16">
-            <h2 className="text-xl font-bold">What&apos;s your travel style?</h2>
-            <Controller
-              name="styles"
-              control={control}
-              render={({ field }) => (
-                <div className="flex flex-wrap justify-center-safe md:justify-stretch gap-1.5 md:gap-2">
-                  {travelStyles.map((style) => (
-                    <Toggle
-                      key={style}
-                      pressed={field.value?.includes(style)}
-                      onPressedChange={(pressed) => {
-                        if (pressed) {
-                          field.onChange([...(field.value || []), style])
-                        } else {
-                          field.onChange((field.value || []).filter((s: string) => s !== style))
-                        }
-                      }}
-                      variant="outline"
-                      className="data-[state=on]:border-purple-blaze data-[state=on]:text-purple-blaze border-black px-2 xl:px-4 text-xs xl:text-sm font-normal transition rounded-full"
-                    >
-                      {style}
-                    </Toggle>
-                  ))}
-                </div>
-              )}
-            />
-          </div>
-
           <div className="my-16">
             <h2 className="text-xl font-bold">Which countries are on your bucket list?</h2>
             <div className="relative">
@@ -226,6 +197,35 @@ function TravelContent() {
               <Info className="size-4" />
               <span>You can always update this later</span>
             </div>
+          </div>
+          
+          <div className="space-y-4 mt-16">
+            <h2 className="text-xl font-bold">What&apos;s your travel style?</h2>
+            <Controller
+              name="styles"
+              control={control}
+              render={({ field }) => (
+                <div className="flex flex-wrap justify-center-safe md:justify-stretch gap-1.5 md:gap-2">
+                  {travelStyles.map((style) => (
+                    <Toggle
+                      key={style}
+                      pressed={field.value?.includes(style)}
+                      onPressedChange={(pressed) => {
+                        if (pressed) {
+                          field.onChange([...(field.value || []), style])
+                        } else {
+                          field.onChange((field.value || []).filter((s: string) => s !== style))
+                        }
+                      }}
+                      variant="outline"
+                      className="data-[state=on]:border-purple-blaze data-[state=on]:text-purple-blaze border-black px-2 xl:px-4 text-xs xl:text-sm font-normal transition rounded-full"
+                    >
+                      {style}
+                    </Toggle>
+                  ))}
+                </div>
+              )}
+            />
           </div>
         </div>
 

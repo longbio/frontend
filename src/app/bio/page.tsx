@@ -456,21 +456,6 @@ function BioContent() {
                 </button>
               </div>
               <div className="space-y-3">
-                {userData.travelStyle && userData.travelStyle.length > 0 && (
-                  <div>
-                    <div className="font-medium text-gray-700 mb-2">Travel Styles:</div>
-                    <div className="flex flex-wrap gap-2">
-                      {userData.travelStyle.map((style, index) => (
-                        <span
-                          key={index}
-                          className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-purple-200"
-                        >
-                          {style}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
                 {userData.visitedCountries && userData.visitedCountries.length > 0 && (
                   <div>
                     <div className="font-medium text-gray-700 mb-2">Visited Countries:</div>
@@ -480,19 +465,19 @@ function BioContent() {
                         const countryData = countriesData?.find(
                           (c) => c.name.toLowerCase() === country.toLowerCase()
                         )
-
+                        
                         return (
                           <span
-                            key={index}
-                            className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-purple-200"
+                          key={index}
+                          className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-purple-200"
                           >
                             {countryData?.image ? (
                               <Image
-                                src={countryData.image}
-                                alt={country}
-                                width={16}
-                                height={12}
-                                className="object-contain rounded-sm"
+                              src={countryData.image}
+                              alt={country}
+                              width={16}
+                              height={12}
+                              className="object-contain rounded-sm"
                               />
                             ) : (
                               <span className="text-xs">{countryData?.emoji || '🏳️'}</span>
@@ -502,6 +487,21 @@ function BioContent() {
                         )
                       })}
                     </div>
+                    {userData.travelStyle && userData.travelStyle.length > 0 && (
+                      <div>
+                        <div className="font-medium text-gray-700 mb-2">Travel Styles:</div>
+                        <div className="flex flex-wrap gap-2">
+                          {userData.travelStyle.map((style, index) => (
+                            <span
+                              key={index}
+                              className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-purple-200"
+                            >
+                              {style}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
