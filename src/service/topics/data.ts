@@ -86,9 +86,6 @@ export const universitiesData: University[] = [
     name: 'Gorgan University of Medical Sciences',
   },
   {
-    name: 'Gilan University of Medical Sciences',
-  },
-  {
     name: 'Hadith Science College, Tehran',
   },
   {
@@ -168,9 +165,6 @@ export const universitiesData: University[] = [
   },
   {
     name: 'Islamic Azad University, Bonab',
-  },
-  {
-    name: 'Islamic Azad University, Bushehr',
   },
   {
     name: 'Islamic Azad University, Central Tehran Branch',
@@ -353,9 +347,6 @@ export const universitiesData: University[] = [
     name: 'Jahad Daneshgahi Academic Institute of Ahvaz',
   },
   {
-    name: 'K.N. Toosi University of Technology',
-  },
-  {
     name: 'Kashan University of Medical Sciences',
   },
   {
@@ -466,7 +457,6 @@ export const universitiesData: University[] = [
   {
     name: 'Sabzevar School of Medical Sciences, Sabzevar',
   },
-
   {
     name: 'Sadjad Institute of Higher Education, Mashhad',
   },
@@ -540,9 +530,6 @@ export const universitiesData: University[] = [
     name: 'Shariaty Technical College, Tehran',
   },
   {
-    name: 'Sharif University of Technology, Tehran',
-  },
-  {
     name: 'Sharif University of Technology, International Campus – Kish',
   },
   {
@@ -568,9 +555,6 @@ export const universitiesData: University[] = [
   },
   {
     name: 'Tafresh University, Tafresh',
-  },
-  {
-    name: 'Tarbiat Moallem University (of Arak)',
   },
   {
     name: 'Tarbiat Moallem University of Sabzevar, Sabzevar',
@@ -711,9 +695,6 @@ export const universitiesData: University[] = [
     name: 'Azarbaijan University of Tarbiat Moallem',
   },
   {
-    name: 'Islamic Azad University, Tabriz Branch',
-  },
-  {
     name: 'Sahand University of Technology',
   },
   {
@@ -723,16 +704,10 @@ export const universitiesData: University[] = [
     name: 'Tabriz Islamic Art University',
   },
   {
-    name: 'Tabriz University of Medical Sciences',
-  },
-  {
     name: 'University College of Mizan',
   },
   {
     name: 'University College of Nabi Akram',
-  },
-  {
-    name: 'Sahand University of Technology',
   },
   {
     name: 'Sarab University of Medical Sciences [1]',
@@ -747,40 +722,19 @@ export const universitiesData: University[] = [
     name: 'Islamic Azad University, Ilkhchi Branch',
   },
   {
-    name: 'Islamic Azad University, Maragheh Branch Branch',
-  },
-  {
     name: 'Islamic Azad University, Marand Branch Branch',
-  },
-  {
-    name: 'Islamic Azad University, Miyaneh Branch',
   },
   {
     name: 'Islamic Azad University, Osku Branch',
   },
   {
-    name: 'Islamic Azad University, Shabestar Branch',
-  },
-  {
     name: 'Islamic Azad University, Sofian Branch',
-  },
-  {
-    name: 'Islamic Azad University, Tabriz Branch',
   },
   {
     name: 'Payam-e-Nour University of Tabriz',
   },
   {
-    name: 'Tabriz College of Technology',
-  },
-  {
     name: 'Tabriz Islamic Arts University',
-  },
-  {
-    name: 'Tabriz University of Medical Sciences',
-  },
-  {
-    name: 'Islamic Azad University, Maku Branch',
   },
   {
     name: 'Islamic Azad University, Miandoab Branch',
@@ -789,25 +743,7 @@ export const universitiesData: University[] = [
     name: 'Islamic Azad University, Khoy Branch[permanent dead link]',
   },
   {
-    name: 'Islamic Azad University, Mahabad Branch',
-  },
-  {
-    name: 'Islamic Azad University, Urmia Branch',
-  },
-  {
     name: 'Payame Noor University, Maku',
-  },
-  {
-    name: 'Payame Noor University, Urmia',
-  },
-  {
-    name: 'Urmia University',
-  },
-  {
-    name: 'Urmia University of Medical Sciences',
-  },
-  {
-    name: 'Urmia University of Technology',
   },
   {
     name: 'Islamic Azad University, Salmas Branch',
@@ -825,12 +761,6 @@ export const universitiesData: University[] = [
     name: 'Islamic Azad University, Khark Branch',
   },
   {
-    name: 'Persian Gulf University',
-  },
-  {
-    name: 'Farhangian University',
-  },
-  {
     name: 'Chahar Mahaal va Bakhtiari',
   },
   {
@@ -843,9 +773,6 @@ export const universitiesData: University[] = [
     name: 'Islamic Azad University, Shahrekord Branch',
   },
   {
-    name: 'Shahrekord University',
-  },
-  {
     name: 'Shiraz University',
   },
   {
@@ -855,16 +782,10 @@ export const universitiesData: University[] = [
     name: 'Shiraz University of Technology',
   },
   {
-    name: 'Islamic Azad University, Shiraz Branch',
-  },
-  {
     name: 'Salman Farsi University of Kazerun',
   },
   {
     name: 'Islamic Azad University, Jahrom Branch',
-  },
-  {
-    name: 'Fasa University',
   },
   {
     name: 'Fasa University of Medical Sciences',
@@ -882,12 +803,6 @@ export const universitiesData: University[] = [
     name: 'Islamic Azad University, Arsanjan Branch',
   },
   {
-    name: 'Islamic Azad University, Estahban Branch',
-  },
-  {
-    name: 'Islamic Azad University, Eghlid Branch',
-  },
-  {
     name: 'Islamic Azad University, Fasa Branch',
   },
   {
@@ -895,15 +810,6 @@ export const universitiesData: University[] = [
   },
   {
     name: 'Islamic Azad University, Kazerun Branch',
-  },
-  {
-    name: 'Islamic Azad University, Larestan Branch',
-  },
-  {
-    name: 'Islamic Azad University, Marvdasht Branch',
-  },
-  {
-    name: 'Islamic Azad University, Sepidan Branch',
   },
   {
     name: 'Pasargad Institute of Higher Education',
@@ -954,9 +860,6 @@ export const universitiesData: University[] = [
     name: 'Golestan University of Medical Sciences, Gorgan',
   },
   {
-    name: 'Lamei Gorgani Institute of Higher Education',
-  },
-  {
     name: 'Islamic Azad University, Gorgan Branch',
   },
   {
@@ -964,9 +867,6 @@ export const universitiesData: University[] = [
   },
   {
     name: 'Electrical Engineering University',
-  },
-  {
-    name: 'Hamedan University of Technology',
   },
   {
     name: 'Islamic Azad University, Malayer Branch',
@@ -999,13 +899,6 @@ export const universitiesData: University[] = [
     name: 'Islamic Azad University, Ilam Branch',
   },
   {
-    name: 'Medical University of Ilam',
-  },
-  {
-    name: 'Safir Danesh University of Ilam',
-  },
-
-  {
     name: 'Jihad Daneshgahi Institute of Higher Education (ACECR)',
   },
   {
@@ -1024,9 +917,6 @@ export const universitiesData: University[] = [
     name: 'Isfahan University of Art',
   },
   {
-    name: 'Isfahan University of Medical Sciences',
-  },
-  {
     name: 'Isfahan University of Social Welfare and Rehabilitation Sciences[permanent dead link]',
   },
   {
@@ -1036,25 +926,13 @@ export const universitiesData: University[] = [
     name: 'Mohajer Technical University of Isfahan (MTU) (دانشکده فنی مهاجر اصفهان)',
   },
   {
-    name: 'Islamic Azad University, Najafabad Branch (دانشگاه آزاد اسلامی واحد نجف‌آباد)',
-  },
-  {
     name: 'Islamic Azad University, Felavarjan Branch',
   },
   {
     name: 'Islamic Azad University, Golpayegan Branch',
   },
   {
-    name: 'Islamic Azad University, Isfahan (Khorasgan) Branch(دانشگاه آزاد اسلامی واحد اصفهان خوراسگان)',
-  },
-  {
     name: 'Islamic Azad University, Kashan Branch (دانشگاه آزاد اسلامی واحد كاشان)',
-  },
-  {
-    name: 'Islamic Azad University, Khomeyni Shahr Branch',
-  },
-  {
-    name: 'Islamic Azad University, Majlesi Branch',
   },
   {
     name: 'Islamic Azad University, Maymeh Branch',
@@ -1075,12 +953,6 @@ export const universitiesData: University[] = [
     name: 'Kashan Shahid Rajaee Technical College of T.V.U',
   },
   {
-    name: 'Kashan University of Medical Sciences',
-  },
-  {
-    name: 'Malek-Ashtar University of Technology',
-  },
-  {
     name: 'Shahreza Higher Education Center (مرکز آموزش عالی شهرضا)',
   },
   {
@@ -1089,10 +961,6 @@ export const universitiesData: University[] = [
   {
     name: 'University of Defence Sciences and Technologies',
   },
-  {
-    name: 'University of Isfahan (دانشگاه اصفهان)',
-  },
-
   {
     name: 'Besat Institute of Higher Education of Kerman',
   },
@@ -1121,16 +989,7 @@ export const universitiesData: University[] = [
     name: 'Islamic Azad University, Shahr Babak Branch',
   },
   {
-    name: 'Islamic Azad University, Zarand Branch',
-  },
-  {
     name: 'Jiroft University',
-  },
-  {
-    name: 'Kerman University of Medical Sciences',
-  },
-  {
-    name: 'Rafsanjan University of Medical Sciences',
   },
   {
     name: 'Rafsanjan University of Vali Asr',
@@ -1139,19 +998,10 @@ export const universitiesData: University[] = [
     name: 'Sirjan University of Technology',
   },
   {
-    name: 'Shahid Bahonar University of Kerman',
-  },
-  {
     name: 'Islamic Azad University, Kermanshah Branch',
   },
   {
-    name: 'Kermanshah University of Medical Sciences',
-  },
-  {
     name: 'Kermanshah University of Technology',
-  },
-  {
-    name: 'Razi University',
   },
   {
     name: 'Jahad Daneshgahi of Kermanshah',
@@ -1164,9 +1014,6 @@ export const universitiesData: University[] = [
   },
   {
     name: 'Esfarayen University of Technology',
-  },
-  {
-    name: 'Islamic Azad University, Bojnourd Branch',
   },
   {
     name: 'Islamic Azad University, Shiravan Branch',
@@ -1190,31 +1037,16 @@ export const universitiesData: University[] = [
     name: 'Iranian Academic Center for Education, Culture and Research, Mashhad Branch (Jahad Daneshgahi of Mashhad)',
   },
   {
-    name: 'Islamic Azad University, Gonabad Branch',
-  },
-  {
     name: 'Islamic Azad University, Mashhad Branch',
   },
   {
     name: 'Islamic Azad University, Neishabur Branch',
   },
   {
-    name: 'Islamic Azad University, Quchan Branch',
-  },
-  {
-    name: 'Islamic Azad University, Sabzevar Branch',
-  },
-  {
     name: 'Islamic Azad University, Torbat e Jam',
   },
   {
     name: 'Islamic Azad University, Torbat Heidariyeh Branch',
-  },
-  {
-    name: 'Mashhad University of Medical Sciences',
-  },
-  {
-    name: 'Montazeri Technical College of Mashhad',
   },
   {
     name: 'Quchan University of Advanced Technologies Engineering',
@@ -1227,9 +1059,6 @@ export const universitiesData: University[] = [
   },
   {
     name: 'Salman Institute of Higher Education',
-  },
-  {
-    name: 'Torbat Heydarieh University of Medical Sciences',
   },
   {
     name: 'University of Torbat Heydarieh',
@@ -1247,12 +1076,6 @@ export const universitiesData: University[] = [
     name: 'University of Birjand',
   },
   {
-    name: 'Abadan University of Medical Sciences',
-  },
-  {
-    name: 'Ahvaz Jundishapur University of Medical Sciences',
-  },
-  {
     name: 'Ahvaz Payam Noor University',
   },
   {
@@ -1262,19 +1085,10 @@ export const universitiesData: University[] = [
     name: 'Islamic Azad University, Behbahan Branch',
   },
   {
-    name: 'Islamic Azad University, Dezful Branch',
-  },
-  {
     name: 'Islamic Azad University, Izeh Branch',
   },
   {
-    name: 'Islamic Azad University, Masjed Soleyman Branch',
-  },
-  {
     name: 'Islamic Azad University, Omidieh Branch',
-  },
-  {
-    name: 'Islamic Azad University, Shoushtar Branch',
   },
   {
     name: 'Islamic Azad University – Science & Research Branch, Khuzestan',
@@ -1292,12 +1106,6 @@ export const universitiesData: University[] = [
     name: 'Persian Gulf International Education Center',
   },
   {
-    name: 'Petroleum University of Technology',
-  },
-  {
-    name: 'Shahid Chamran University of Ahvaz',
-  },
-  {
     name: 'Rahnama Institute of Higher Education',
   },
   {
@@ -1307,19 +1115,10 @@ export const universitiesData: University[] = [
     name: 'Amiralmoemenin University',
   },
   {
-    name: 'Islamic Azad University, Gachsaran Branch',
-  },
-  {
     name: 'University of Yasuj',
   },
   {
-    name: 'Yasuj University of Medical Sciences',
-  },
-  {
     name: 'Farhangian University of Sanandaj',
-  },
-  {
-    name: 'Islamic Azad University, Sanandaj Branch',
   },
   {
     name: 'Kurdistan University of Medical Sciences',
@@ -1373,15 +1172,6 @@ export const universitiesData: University[] = [
     name: 'Islamic Azad University, Khomein Branch',
   },
   {
-    name: 'Islamic Azad University, Saveh Branch',
-  },
-  {
-    name: 'Islamic Azad University, Tafresh Branch',
-  },
-  {
-    name: 'Tafresh University, Tafresh',
-  },
-  {
     name: 'Tarbiat Moallem University of Arak',
   },
   {
@@ -1409,33 +1199,14 @@ export const universitiesData: University[] = [
     name: 'Islamic Azad University, Nour Branch (دانشگاه آزاد اسلامي واحد نور)',
   },
   {
-    name: 'Islamic Azad University, Sari Branch (دانشگاه آزاد ساری)',
-  },
-  {
     name: 'Islamic Azad University, Tonekabon Branch',
   },
   {
     name: 'Khazar University (دانشگاه خزر)',
   },
   {
-    name: 'Mazandaran University of Science and Technology (دانشگاه علوم و فنون مازندران)',
-  },
-  {
     name: 'Maziar University (دانشگاه مازیار – نور)',
   },
-  {
-    name: 'Shomal University (دانشگاه شمال – آمل)',
-  },
-  {
-    name: 'Sari Agricultural Sciences and Natural Resources University',
-  },
-  {
-    name: 'Tabarestan University (Tabarestan Higher Education Institution) (دانشگاه طبرستان)',
-  },
-  {
-    name: 'University of Mazandaran (دانشگاه مازندران)',
-  },
-
   {
     name: 'Alvand Payam Noor University[permanent dead link]',
   },
@@ -1455,12 +1226,6 @@ export const universitiesData: University[] = [
     name: 'Islamic Kar University',
   },
   {
-    name: 'Qazvin Islamic Azad University',
-  },
-  {
-    name: 'Qazvin University of Medical Sciences',
-  },
-  {
     name: 'Raja University, Qazvin[19]',
   },
   {
@@ -1468,10 +1233,6 @@ export const universitiesData: University[] = [
   },
   {
     name: 'Sohrevardi Institute of Higher Education (مؤسسه آموزش عالی سهروردی قزوین)',
-  },
-
-  {
-    name: 'Al-Mustafa International University',
   },
   {
     name: 'Hekmat Private University',
@@ -1488,24 +1249,14 @@ export const universitiesData: University[] = [
   {
     name: 'Mofid University',
   },
-
   {
     name: 'Shahab Danesh Institute of higher education (مؤسسه آموزش عالی شهاب دانش)',
-  },
-  {
-    name: 'Taali Institute of Higher Education, Qom (مؤسسه آموزش عالی تعالی)',
   },
   {
     name: 'University of Religions and Denominations',
   },
   {
-    name: "Qom Boy's Technical College",
-  },
-  {
     name: 'Qom University of Technology',
-  },
-  {
-    name: 'The Research Institute of Hawzeh va Daneshgah',
   },
   {
     name: 'Damghan University',
@@ -1514,25 +1265,10 @@ export const universitiesData: University[] = [
     name: 'Eyvanekey University',
   },
   {
-    name: 'Garmsar University',
-  },
-  {
-    name: 'Islamic Azad University, Garmsar Branch',
-  },
-  {
     name: 'Islamic Azad University, Semnan Branch',
   },
   {
-    name: 'Semnan University',
-  },
-  {
     name: 'Semnan University of Medical Sciences',
-  },
-  {
-    name: 'Shahroud University of Medical Sciences',
-  },
-  {
-    name: 'Shahrood University of Technology',
   },
   {
     name: 'Sistan And Baluchistan',
@@ -1552,7 +1288,6 @@ export const universitiesData: University[] = [
   {
     name: '[Velayat University, in Iranshahr]',
   },
-
   {
     name: 'Enghelab-e Eslami Technical College',
   },
@@ -1593,9 +1328,6 @@ export const universitiesData: University[] = [
     name: 'DPI College (ex IBM college)',
   },
   {
-    name: 'Farabi Institute of Virtual Higher Education',
-  },
-  {
     name: 'Hadith College of Tehran',
   },
   {
@@ -1614,22 +1346,13 @@ export const universitiesData: University[] = [
     name: 'International University of Iran',
   },
   {
-    name: 'Institute for Studies in Theoretical Physics and Mathematics (IPM)',
-  },
-  {
     name: 'Iran Broadcasting University',
   },
   {
     name: 'Iran College of Tele-communications',
   },
   {
-    name: 'Iran Polymer and Petrochemical Institute',
-  },
-  {
     name: 'Iran University Science and Culture University',
-  },
-  {
-    name: 'Iran University of Medical Sciences',
   },
   {
     name: 'Iran University of Science and Technology',
@@ -1644,37 +1367,16 @@ export const universitiesData: University[] = [
     name: 'Islamic Azad University, Roodehen Branch',
   },
   {
-    name: 'Islamic Azad University, Shahr-e-Qods Branch',
-  },
-  {
-    name: 'Islamic Azad University, Central Tehran Branch',
-  },
-  {
     name: 'Islamic Azad University, Tehran Dental Branch',
   },
   {
     name: 'Islamic Azad University, East Tehran Branch',
   },
   {
-    name: 'Islamic Azad University, West Tehran Branch',
-  },
-  {
     name: 'Islamic Azad University, Tehran Medical Branch',
   },
   {
-    name: 'Islamic Azad University, North Tehran Branch',
-  },
-  {
-    name: 'Islamic Azad University, Region one',
-  },
-  {
     name: 'Islamic Azad University, Shahr-e-Rey Branch',
-  },
-  {
-    name: 'Islamic Azad University, South Tehran Branch',
-  },
-  {
-    name: 'Islamic Azad University, Varamin Branch',
   },
   {
     name: 'Islamic Azad University Science and Research Branch',
@@ -1687,9 +1389,6 @@ export const universitiesData: University[] = [
   },
   {
     name: 'K.N.Toosi University of Technology',
-  },
-  {
-    name: 'Nooretouba Virtual University, Tehran',
   },
   {
     name: 'Payame Noor University',
@@ -1705,9 +1404,6 @@ export const universitiesData: University[] = [
   },
   {
     name: 'Shahid Beheshti University',
-  },
-  {
-    name: 'Shahid Beheshti University of Medical Sciences',
   },
   {
     name: 'Shahid Rajaee Teacher Training University',
@@ -1726,9 +1422,6 @@ export const universitiesData: University[] = [
   },
   {
     name: 'Tehran College of Environment',
-  },
-  {
-    name: 'Tehran University of Medical Sciences',
   },
   {
     name: 'Tehran University of Medical Sciences, International Campus',
