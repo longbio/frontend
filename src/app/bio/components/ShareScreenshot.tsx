@@ -644,42 +644,42 @@ export default function ShareScreenshot({
             </div>
           )}
 
-          {/* {(() => {
+         {(() => {
             const cardBlocks: { key: string; content: ReactNode }[] = []
 
-            if (birthDateValue) {
-              cardBlocks.push({
-                key: 'birth',
-                content: (
-                  <>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.2rem',
-                        marginBottom: '0.275rem',
-                      }}
-                    >
-                      <Calendar style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
-                      <h4
-                        style={{
-                          fontWeight: '700',
-                          fontSize: '0.5rem',
-                          color: '#111827',
-                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                          lineHeight: '0.6',
-                          margin: 0,
-                          padding: 0,
-                        }}
-                      >
-                        Birth Date
-                      </h4>
-                    </div>
-                    <p style={clampTwoLineTextStyle}>{birthDateValue.format('MMM DD, YYYY')}</p>
-                  </>
-                ),
-              })
-            } */}
+            // if (birthDateValue) {
+            //   cardBlocks.push({
+            //     key: 'birth',
+            //     content: (
+            //       <>
+            //         <div
+            //           style={{
+            //             display: 'flex',
+            //             alignItems: 'center',
+            //             gap: '0.2rem',
+            //             marginBottom: '0.275rem',
+            //           }}
+            //         >
+            //           <Calendar style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
+            //           <h4
+            //             style={{
+            //               fontWeight: '700',
+            //               fontSize: '0.5rem',
+            //               color: '#111827',
+            //               fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+            //               lineHeight: '0.6',
+            //               margin: 0,
+            //               padding: 0,
+            //             }}
+            //           >
+            //             Birth Date
+            //           </h4>
+            //         </div>
+            //         <p style={clampTwoLineTextStyle}>{birthDateValue.format('MMM DD, YYYY')}</p>
+            //       </>
+            //     ),
+            //   })
+            // }
 
             if (educationUniversity) {
               cardBlocks.push({
