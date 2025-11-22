@@ -818,9 +818,6 @@ export const universitiesData: University[] = [
     name: 'Zand Institute of Higher Education',
   },
   {
-    name: 'Gilan',
-  },
-  {
     name: 'Deylaman Institute of Higher Education',
   },
   {
