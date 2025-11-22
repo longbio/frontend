@@ -2,7 +2,6 @@
 
 import { z } from 'zod'
 import Header from '@/components/Header'
-import React, { useEffect, Suspense } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { useUpdateUser } from '@/service/user/hook'
@@ -10,6 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { setCookie, getCookie } from '@/utils/cookie'
 import { FormInput } from '@/app/auth/components/FormInput'
 import { useRouter, useSearchParams } from 'next/navigation'
+import React, { useEffect, Suspense, useState } from 'react'
 
 const usernameSchema = z.object({
   username: z
@@ -25,6 +25,7 @@ function UsernamePageContent() {
   const searchParams = useSearchParams()
   const name = searchParams.get('name') || ''
   const { mutateAsync, isPending } = useUpdateUser()
+  const [apiError, setApiError] = useState<string | null>(null)
 
   const {
     watch,
@@ -50,14 +51,41 @@ function UsernamePageContent() {
 
   useEffect(() => {
     setCookie('auth_username', JSON.stringify({ username }))
+    // Clear API error when username changes
+    setApiError(null)
   }, [username])
 
   const onSubmit = async (data: FormData) => {
     try {
+      setApiError(null)
       await mutateAsync({ username: data.username })
-      router.push(`/info/birthday?name=${encodeURIComponent(name)}`)
+      const nextUrl =
+        name && name.trim()
+          ? `/info/birthday?name=${encodeURIComponent(name.trim())}`
+          : '/info/birthday'
+      router.push(nextUrl)
     } catch (error) {
       console.error('Failed to update username:', error)
+      const apiError = error as Error & { status?: number; data?: { message?: string } }
+      const status = apiError?.status
+
+      if (status === 409) {
+        setApiError('This username is already taken. Please choose another one.')
+      } else if (status === 400) {
+        setApiError(apiError?.data?.message || 'Invalid username format. Please check your input.')
+      } else if (status === 401 || status === 403) {
+        setApiError('You are not authorized. Please log in again.')
+      } else if (status === 422) {
+        setApiError(apiError?.data?.message || 'Invalid data. Please check your input.')
+      } else if (status === 500) {
+        setApiError('Server error. Please try again later.')
+      } else {
+        setApiError(
+          apiError?.message ||
+            apiError?.data?.message ||
+            'Failed to update username. Please try again.'
+        )
+      }
     }
   }
 
@@ -79,11 +107,14 @@ function UsernamePageContent() {
               type="text"
               label="Username"
               placeholder="Enter your username"
-              error={!!errors.username}
+              error={!!errors.username || !!apiError}
               {...register('username')}
             />
             {errors.username && (
               <p className="text-red-500 text-sm mt-1">{errors.username.message}</p>
+            )}
+            {apiError && !errors.username && (
+              <p className="text-red-500 text-sm mt-1">{apiError}</p>
             )}
           </div>
           <Button
