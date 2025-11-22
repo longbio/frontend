@@ -23,7 +23,14 @@ export async function updateUserServerAction(params: UpdateUserParams) {
 
   if (!res.ok) {
     const data = await res.json().catch(() => null)
-    throw new Error(data?.message || 'Failed to update user')
+    const error = new Error(data?.message || 'Failed to update user') as Error & {
+      status?: number
+      // eslint-disable-next-line
+      data?: any
+    }
+    error.status = res.status
+    error.data = data
+    throw error
   }
 
   const json = await res.json()
