@@ -8,33 +8,54 @@ import type {
 } from '@/service/user/type'
 
 export async function updateUserServerAction(params: UpdateUserParams) {
-  const { accessToken } = await getAuthTokens()
+  try {
+    const { accessToken } = await getAuthTokens()
 
-  if (!accessToken) throw new Error('Unauthorized')
-
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/users/me`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: JSON.stringify(params),
-  })
-
-  if (!res.ok) {
-    const data = await res.json().catch(() => null)
-    const error = new Error(data?.message || 'Failed to update user') as Error & {
-      status?: number
-      // eslint-disable-next-line
-      data?: any
+    if (!accessToken) {
+      const error = new Error('Unauthorized') as Error & { status?: number }
+      error.status = 401
+      throw error
     }
-    error.status = res.status
-    error.data = data
-    throw error
-  }
 
-  const json = await res.json()
-  return json
+    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL
+    if (!apiUrl) {
+      throw new Error('API base URL is not configured')
+    }
+
+    const res = await fetch(`${apiUrl}/v1/users/me`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(params),
+    })
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => null)
+      const error = new Error(data?.message || 'Failed to update user') as Error & {
+        status?: number
+        data?: { message?: string }
+      }
+      error.status = res.status
+      error.data = data
+      throw error
+    }
+
+    const json = await res.json()
+    return json
+  } catch (error) {
+    // Re-throw if it's already an error with status
+    if (error instanceof Error && 'status' in error) {
+      throw error
+    }
+    // Wrap unexpected errors
+    const wrappedError = new Error(
+      error instanceof Error ? error.message : 'An unexpected error occurred'
+    ) as Error & { status?: number }
+    wrappedError.status = 500
+    throw wrappedError
+  }
 }
 
 export async function uploadProfileImageServerAction(file: File) {
