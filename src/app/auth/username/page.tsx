@@ -20,10 +20,8 @@ const usernameSchema = z.object({
 
 type FormData = z.infer<typeof usernameSchema>
 
-function UsernamePageContent() {
+function UsernameForm({ name }: { name: string }) {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const name = searchParams.get('name') || ''
   const { mutateAsync, isPending } = useUpdateUser()
   const [apiError, setApiError] = useState<string | null>(null)
 
@@ -66,23 +64,25 @@ function UsernamePageContent() {
       router.push(nextUrl)
     } catch (error) {
       console.error('Failed to update username:', error)
-      const apiError = error as Error & { status?: number; data?: { message?: string } }
-      const status = apiError?.status
+      const apiErrorObj = error as Error & { status?: number; data?: { message?: string } }
+      const status = apiErrorObj?.status
 
       if (status === 409) {
         setApiError('This username is already taken. Please choose another one.')
       } else if (status === 400) {
-        setApiError(apiError?.data?.message || 'Invalid username format. Please check your input.')
+        setApiError(
+          apiErrorObj?.data?.message || 'Invalid username format. Please check your input.'
+        )
       } else if (status === 401 || status === 403) {
         setApiError('You are not authorized. Please log in again.')
       } else if (status === 422) {
-        setApiError(apiError?.data?.message || 'Invalid data. Please check your input.')
+        setApiError(apiErrorObj?.data?.message || 'Invalid data. Please check your input.')
       } else if (status === 500) {
         setApiError('Server error. Please try again later.')
       } else {
         setApiError(
-          apiError?.message ||
-            apiError?.data?.message ||
+          apiErrorObj?.message ||
+            apiErrorObj?.data?.message ||
             'Failed to update username. Please try again.'
         )
       }
@@ -128,6 +128,13 @@ function UsernamePageContent() {
       </div>
     </div>
   )
+}
+
+function UsernamePageContent() {
+  const searchParams = useSearchParams()
+  const name = searchParams.get('name') || ''
+
+  return <UsernameForm name={name} />
 }
 
 export default function UsernamePage() {
