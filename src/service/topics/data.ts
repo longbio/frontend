@@ -1283,7 +1283,7 @@ export const universitiesData: University[] = [
     name: 'Zahedan University of Medical Sciences',
   },
   {
-    name: '[Velayat University, in Iranshahr]',
+    name: 'Velayat University',
   },
   {
     name: 'Enghelab-e Eslami Technical College',
