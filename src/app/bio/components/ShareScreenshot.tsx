@@ -164,7 +164,7 @@ export default function ShareScreenshot({
     userData?.birthDate && dayjs(userData.birthDate).isValid() ? dayjs(userData.birthDate) : null
   const age = birthDateValue ? dayjs().diff(birthDateValue, 'year') : null
   const clampTwoLineTextStyle: CSSProperties = {
-    fontSize: '0.5rem',
+    fontSize: '0.35rem',
     color: '#374151',
     lineHeight: '0.75rem',
     fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
@@ -206,7 +206,7 @@ export default function ShareScreenshot({
 
       const canvas = await html2canvas(element, {
         backgroundColor: '#ffffff',
-        scale: 5,
+        scale: 8,
         useCORS: true,
         allowTaint: true,
         logging: false,
@@ -307,13 +307,13 @@ export default function ShareScreenshot({
         <div
           style={{
             background: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 55%, #c4b5fd 100%)',
-            width: 'fit-content',
-            paddingTop: '0.5rem',
-            paddingBottom: '0.5rem',
-            paddingLeft: '0.85rem',
-            paddingRight: '0.85rem',
-            borderBottomLeftRadius: '1.1rem',
-            borderBottomRightRadius: '1.1rem',
+            width: '14.2rem',
+            paddingTop: '0.35rem',
+            paddingBottom: '0.35rem',
+            paddingLeft: '0.595rem',
+            paddingRight: '0.595rem',
+            borderBottomLeftRadius: '0.77rem',
+            borderBottomRightRadius: '0.77rem',
             boxShadow: '0 14px 28px -16px rgba(124, 58, 237, 0.55)',
             border: '1px solid rgba(255, 255, 255, 0.28)',
             marginLeft: 'auto',
@@ -327,7 +327,7 @@ export default function ShareScreenshot({
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '0.45rem',
+              gap: '0.315rem',
               fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
             }}
           >
@@ -336,26 +336,26 @@ export default function ShareScreenshot({
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '1.35rem',
-                height: '1.35rem',
+                width: '0.945rem',
+                height: '0.945rem',
                 borderRadius: '9999px',
                 backgroundColor: 'rgba(255, 255, 255, 0.22)',
                 boxShadow: '0 8px 16px -10px rgba(59, 130, 246, 0.45)',
               }}
             >
-              <Globe style={{ width: '0.8rem', height: '0.8rem', color: '#f5f3ff' }} />
+              <Globe style={{ width: '0.56rem', height: '0.56rem', color: '#f5f3ff' }} />
             </span>
             <span
               style={{
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'flex-start',
-                gap: '0.15rem',
+                gap: '0.105rem',
               }}
             >
               <span
                 style={{
-                  fontSize: '0.8rem',
+                  fontSize: '0.56rem',
                   fontWeight: 700,
                   color: '#f5f3ff',
                   letterSpacing: '0.08em',
@@ -385,8 +385,8 @@ export default function ShareScreenshot({
             style={{
               backgroundColor: '#ffffff',
               borderTopLeftRadius: '0.625rem',
-              padding: '0.75rem',
-              marginBottom: '0.275rem',
+              padding: '0.525rem',
+              marginBottom: '0.1925rem',
               textAlign: 'center',
             }}
           >
@@ -400,7 +400,7 @@ export default function ShareScreenshot({
               }}
             >
               {/* Left Column - Profile Picture */}
-              <div style={{ flexShrink: 0 }}>
+              <div style={{ flexShrink: 0, marginLeft: '0.5rem', marginRight: '0.5rem' }}>
                 <div
                   style={{
                     width: '4.5rem',
@@ -448,13 +448,13 @@ export default function ShareScreenshot({
               </div>
 
               {/* Right Column - Name and Info */}
-              <div style={{ flexShrink: 0 }}>
+              <div style={{ flexShrink: 0, marginLeft: '0.5rem', marginRight: '0.5rem' }}>
                 <h3
                   style={{
-                    fontSize: '0.9375rem',
+                    fontSize: '0.65625rem',
                     fontWeight: '700',
                     color: '#111827',
-                    marginBottom: '0.375rem',
+                    marginBottom: '0.2625rem',
                     fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                   }}
                 >
@@ -465,13 +465,13 @@ export default function ShareScreenshot({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'left',
-                    gap: '0.25rem',
-                    marginBottom: '0.375rem',
+                    gap: '0.175rem',
+                    marginBottom: '0.2625rem',
                   }}
                 >
                   <span
                     style={{
-                      fontSize: '0.75rem',
+                      fontSize: '0.525rem',
                       color: '#6b7280',
                       fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                     }}
@@ -480,7 +480,7 @@ export default function ShareScreenshot({
                   </span>
                   {isVerified && (
                     <CheckCircle
-                      style={{ width: '0.75rem', height: '0.75rem', color: '#3b82f6' }}
+                      style={{ width: '0.525rem', height: '0.525rem', color: '#3b82f6' }}
                     />
                   )}
                 </div>
@@ -491,8 +491,8 @@ export default function ShareScreenshot({
                     display: 'flex',
                     flexWrap: 'wrap',
                     justifyContent: 'center',
-                    gap: '0.25rem',
-                    marginBottom: '0.32rem',
+                    gap: '0.175rem',
+                    marginBottom: '0.224rem',
                   }}
                 >
                   {age !== null && (
@@ -501,21 +501,21 @@ export default function ShareScreenshot({
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '0.25rem',
+                        gap: '0.175rem',
                         backgroundColor: '#fce7f3',
                         color: '#be185d',
-                        paddingLeft: '0.5rem',
-                        paddingRight: '0.5rem',
-                        paddingTop: '0.25rem',
-                        paddingBottom: '0.25rem',
+                        paddingLeft: '0.35rem',
+                        paddingRight: '0.35rem',
+                        paddingTop: '0.175rem',
+                        paddingBottom: '0.175rem',
                         borderRadius: '9999px',
-                        fontSize: '0.625rem',
+                        fontSize: '0.4375rem',
                         fontWeight: '500',
                         fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                         border: '1px solid #fbcfe8',
                       }}
                     >
-                      <Calendar style={{ width: '0.75rem', height: '0.75rem', color: '#be185d' }} />
+                      <Calendar style={{ width: '0.525rem', height: '0.525rem', color: '#be185d' }} />
                       <span>{age}</span>
                     </div>
                   )}
@@ -527,18 +527,18 @@ export default function ShareScreenshot({
                         justifyContent: 'center',
                         backgroundColor: '#dbeafe',
                         color: '#1e40af',
-                        paddingLeft: '0.5rem',
-                        paddingRight: '0.5rem',
-                        paddingTop: '0.25rem',
-                        paddingBottom: '0.25rem',
+                        paddingLeft: '0.35rem',
+                        paddingRight: '0.35rem',
+                        paddingTop: '0.175rem',
+                        paddingBottom: '0.175rem',
                         borderRadius: '9999px',
-                        fontSize: '0.625rem',
+                        fontSize: '0.4375rem',
                         fontWeight: '500',
-                        gap: '0.25rem',
+                        gap: '0.175rem',
                         fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                       }}
                     >
-                      <Ruler style={{ width: '0.75rem', height: '0.75rem', color: '#1e40af' }} />
+                      <Ruler style={{ width: '0.525rem', height: '0.525rem', color: '#1e40af' }} />
                       <span>
                         {heightValue ? `${heightValue}cm` : ''}
                         {heightValue && weightValue && '/'}
@@ -553,25 +553,25 @@ export default function ShareScreenshot({
                   style={{
                     display: 'flex',
                     justifyContent: 'left',
-                    gap: '0.5rem',
-                    fontSize: '0.6875rem',
+                    gap: '0.35rem',
+                    fontSize: '0.48125rem',
                     color: '#6b7280',
                     fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                   }}
                 >
                   {gender && (
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.175rem' }}>
                       {genderLower === 'male' || genderLower === 'مرد' ? (
-                        <Mars style={{ width: '0.75rem', height: '0.75rem', color: '#6b7280' }} />
+                        <Mars style={{ width: '0.525rem', height: '0.525rem', color: '#6b7280' }} />
                       ) : (
-                        <Venus style={{ width: '0.75rem', height: '0.75rem', color: '#6b7280' }} />
+                        <Venus style={{ width: '0.525rem', height: '0.525rem', color: '#6b7280' }} />
                       )}
                       {gender}
                     </span>
                   )}
                   {maritalStatus && (
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                      <Heart style={{ width: '0.75rem', height: '0.75rem', color: '#6b7280' }} />
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.175rem' }}>
+                      <Heart style={{ width: '0.525rem', height: '0.525rem', color: '#6b7280' }} />
                       {maritalStatus}
                     </span>
                   )}
@@ -585,10 +585,10 @@ export default function ShareScreenshot({
             <div
               style={{
                 backgroundColor: '#f9fafb',
-                borderRadius: '0.625rem',
+                borderRadius: '0.4375rem',
                 border: '1px solid #e5e7eb',
-                padding: '0.5rem',
-                marginBottom: '0.375rem',
+                padding: '0.35rem',
+                marginBottom: '0.2625rem',
                 textAlign: 'center',
                 width: '100%',
                 boxSizing: 'border-box',
@@ -599,15 +599,15 @@ export default function ShareScreenshot({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '0.25rem',
-                  marginBottom: '0.25rem',
+                  gap: '0.175rem',
+                  marginBottom: '0.175rem',
                 }}
               >
-                <MapPin style={{ width: '0.875rem', height: '0.875rem', color: '#9333ea' }} />
+                <MapPin style={{ width: '0.6125rem', height: '0.6125rem', color: '#9333ea' }} />
                 <h4
                   style={{
                     fontWeight: '700',
-                    fontSize: '0.75rem',
+                    fontSize: '0.525rem',
                     color: '#111827',
                     fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                     lineHeight: '1',
@@ -621,9 +621,9 @@ export default function ShareScreenshot({
               {bornPlace && (
                 <div
                   style={{
-                    fontSize: '0.625rem',
+                    fontSize: '0.4375rem',
                     color: '#374151',
-                    marginBottom: '0.18rem',
+                    marginBottom: '0.126rem',
                     fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                   }}
                 >
@@ -633,7 +633,7 @@ export default function ShareScreenshot({
               {livePlace && (
                 <div
                   style={{
-                    fontSize: '0.625rem',
+                    fontSize: '0.4375rem',
                     color: '#374151',
                     fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                   }}
@@ -664,7 +664,7 @@ export default function ShareScreenshot({
             //           <h4
             //             style={{
             //               fontWeight: '700',
-            //               fontSize: '0.5rem',
+            //               fontSize: '0.35rem',
             //               color: '#111827',
             //               fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
             //               lineHeight: '0.6',
@@ -700,7 +700,7 @@ export default function ShareScreenshot({
                       <h4
                         style={{
                           fontWeight: '700',
-                          fontSize: '0.6875rem',
+                          fontSize: '0.48125rem',
                           color: '#111827',
                           fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                           lineHeight: '1',
@@ -774,7 +774,7 @@ export default function ShareScreenshot({
                       <h4
                         style={{
                           fontWeight: '700',
-                          fontSize: '0.6875rem',
+                          fontSize: '0.48125rem',
                           color: '#111827',
                           fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                           lineHeight: '1',
@@ -818,7 +818,7 @@ export default function ShareScreenshot({
                       <h4
                         style={{
                           fontWeight: '700',
-                          fontSize: '0.6875rem',
+                          fontSize: '0.48125rem',
                           color: '#111827',
                           fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                           lineHeight: '1',
@@ -845,7 +845,7 @@ export default function ShareScreenshot({
                             border: '1px solid #c084fc',
                             color: '#7e22ce',
                             borderRadius: '0.4rem',
-                            fontSize: '0.5rem',
+                            fontSize: '0.35rem',
                             whiteSpace: 'nowrap',
                             lineHeight: '0.75rem',
                             fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
@@ -877,7 +877,7 @@ export default function ShareScreenshot({
                       <h4
                         style={{
                           fontWeight: '700',
-                          fontSize: '0.6875rem',
+                          fontSize: '0.48125rem',
                           color: '#111827',
                           fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                           lineHeight: '1',
@@ -897,7 +897,7 @@ export default function ShareScreenshot({
                             border: '1px solid #c084fc',
                             color: '#7e22ce',
                             borderRadius: '0.4rem',
-                            fontSize: '0.5rem',
+                            fontSize: '0.35rem',
                             lineHeight: '0.75rem',
                             fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                           }}
@@ -909,7 +909,7 @@ export default function ShareScreenshot({
                     {doesExercise !== null && (
                       <div
                         style={{
-                          fontSize: '0.5rem',
+                          fontSize: '0.35rem',
                           color: '#374151',
                           marginTop: favoriteSports.length ? '0.15rem' : 0,
                           fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
@@ -940,7 +940,7 @@ export default function ShareScreenshot({
                       <h4
                         style={{
                           fontWeight: '700',
-                          fontSize: '0.6875rem',
+                          fontSize: '0.48125rem',
                           color: '#111827',
                           fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                           lineHeight: '1',
@@ -960,7 +960,7 @@ export default function ShareScreenshot({
                             border: '1px solid #93c5fd',
                             color: '#1e40af',
                             borderRadius: '0.4rem',
-                            fontSize: '0.5rem',
+                            fontSize: '0.35rem',
                             lineHeight: '0.75rem',
                             fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                           }}
@@ -991,7 +991,7 @@ export default function ShareScreenshot({
                       <h4
                         style={{
                           fontWeight: '700',
-                          fontSize: '0.6875rem',
+                          fontSize: '0.48125rem',
                           color: '#111827',
                           fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                           lineHeight: '1',
@@ -1011,7 +1011,7 @@ export default function ShareScreenshot({
                             border: '1px solid #c084fc',
                             color: '#7e22ce',
                             borderRadius: '0.4rem',
-                            fontSize: '0.5rem',
+                            fontSize: '0.35rem',
                             lineHeight: '0.75rem',
                             fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                           }}
@@ -1042,7 +1042,7 @@ export default function ShareScreenshot({
                       <h4
                         style={{
                           fontWeight: '700',
-                          fontSize: '0.6875rem',
+                          fontSize: '0.48125rem',
                           color: '#111827',
                           fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                           lineHeight: '1',
@@ -1179,7 +1179,7 @@ export default function ShareScreenshot({
                       <h4
                         style={{
                           fontWeight: '700',
-                          fontSize: '0.6875rem',
+                          fontSize: '0.48125rem',
                           color: '#111827',
                           fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                           lineHeight: '1',
@@ -1215,7 +1215,7 @@ export default function ShareScreenshot({
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+                  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
                   gridAutoRows: 'minmax(0, 1fr)',
                   gridAutoFlow: 'row dense',
                   gap: '0.2rem',
@@ -1225,7 +1225,6 @@ export default function ShareScreenshot({
                   boxSizing: 'border-box',
                   overflow: 'auto',
                   width: '100%',
-                  minWidth: 0,
                 }}
               >
                 {cardBlocks.map((card, index) => (
@@ -1252,28 +1251,28 @@ export default function ShareScreenshot({
         {/* Footer */}
         <div
           style={{
-            background: 'linear-gradient(145deg, #6d28d9 0%, #8b5cf6 45%, #c4b5fd 100%)',
-            textAlign: 'center',
+            background: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 55%, #c4b5fd 100%)',
             width: 'fit-content',
-            paddingTop: '0.6rem',
-            paddingBottom: '0.6rem',
-            paddingLeft: '0.95rem',
-            paddingRight: '0.95rem',
+            paddingTop: '0.35rem',
+            paddingBottom: '0.35rem',
+            paddingLeft: '0.595rem',
+            paddingRight: '0.595rem',
+            borderTopLeftRadius: '0.77rem',
+            borderTopRightRadius: '0.77rem',
+            boxShadow: '0 14px 28px -16px rgba(124, 58, 237, 0.55)',
+            border: '1px solid rgba(255, 255, 255, 0.28)',
             marginLeft: 'auto',
             marginRight: 'auto',
-            borderTopLeftRadius: '1.1rem',
-            borderTopRightRadius: '1.1rem',
-            boxShadow: '0 18px 34px -16px rgba(109, 40, 217, 0.45)',
-            border: '1px solid rgba(255, 255, 255, 0.22)',
             display: 'flex',
             justifyContent: 'center',
+            alignItems: 'center',
           }}
         >
           <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '0.45rem',
+              gap: '0.315rem',
               fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
             }}
           >
@@ -1282,28 +1281,29 @@ export default function ShareScreenshot({
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '1.3rem',
-                height: '1.3rem',
+                width: '0.945rem',
+                height: '0.945rem',
                 borderRadius: '9999px',
-                backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                boxShadow: '0 10px 20px -12px rgba(244, 114, 182, 0.55)',
+                backgroundColor: 'rgba(255, 255, 255, 0.22)',
+                boxShadow: '0 8px 16px -10px rgba(59, 130, 246, 0.45)',
               }}
             >
-              <Sparkles style={{ width: '0.75rem', height: '0.75rem', color: '#ffffff' }} />
+              <Sparkles style={{ width: '0.56rem', height: '0.56rem', color: '#f5f3ff' }} />
             </span>
             <span
               style={{
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'flex-start',
+                gap: '0.105rem',
               }}
             >
               <span
                 style={{
-                  fontSize: '0.78rem',
+                  fontSize: '0.56rem',
                   fontWeight: 700,
-                  color: '#FDF4FF',
-                  letterSpacing: '0.06em',
+                  color: '#f5f3ff',
+                  letterSpacing: '0.08em',
                   textTransform: 'uppercase',
                 }}
               >
