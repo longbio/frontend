@@ -802,6 +802,9 @@ export default function ShareScreenshot({
             }
 
             if (displayInterests.length > 0) {
+              const maxInterests = 7
+              const displayedInterests = displayInterests.slice(0, maxInterests)
+              const remainingCount = displayInterests.length - maxInterests
               cardBlocks.push({
                 key: 'interests',
                 content: (
@@ -828,6 +831,16 @@ export default function ShareScreenshot({
                       >
                         Interests
                       </h4>
+                      <span
+                        style={{
+                          fontSize: '0.35rem',
+                          color: '#6b7280',
+                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                          marginLeft: '0.1rem',
+                        }}
+                      >
+                        ({displayInterests.length})
+                      </span>
                     </div>
                     <div
                       style={{
@@ -837,7 +850,7 @@ export default function ShareScreenshot({
                         lineHeight: '0.75rem',
                       }}
                     >
-                      {displayInterests.map((interest, index) => (
+                      {displayedInterests.map((interest, index) => (
                         <span
                           key={index}
                           style={{
@@ -854,6 +867,23 @@ export default function ShareScreenshot({
                           {interest}
                         </span>
                       ))}
+                      {remainingCount > 0 && (
+                        <span
+                          style={{
+                            padding: '0.08rem 0.25rem',
+                            border: '1px solid #c084fc',
+                            color: '#7e22ce',
+                            borderRadius: '0.4rem',
+                            fontSize: '0.35rem',
+                            whiteSpace: 'nowrap',
+                            lineHeight: '0.75rem',
+                            fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                            opacity: 0.7,
+                          }}
+                        >
+                          +{remainingCount} more
+                        </span>
+                      )}
                     </div>
                   </>
                 ),
@@ -861,6 +891,9 @@ export default function ShareScreenshot({
             }
 
             if (favoriteSports.length > 0) {
+              const maxSports = 8
+              const displayedSports = favoriteSports.slice(0, maxSports)
+              const remainingCount = favoriteSports.length - maxSports
               cardBlocks.push({
                 key: 'sports',
                 content: (
@@ -887,9 +920,19 @@ export default function ShareScreenshot({
                       >
                         Sports
                       </h4>
+                      <span
+                        style={{
+                          fontSize: '0.35rem',
+                          color: '#6b7280',
+                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                          marginLeft: '0.1rem',
+                        }}
+                      >
+                        ({favoriteSports.length})
+                      </span>
                     </div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.08rem' }}>
-                      {favoriteSports.map((sport, index) => (
+                      {displayedSports.map((sport, index) => (
                         <span
                           key={index}
                           style={{
@@ -905,13 +948,29 @@ export default function ShareScreenshot({
                           {sport}
                         </span>
                       ))}
+                      {remainingCount > 0 && (
+                        <span
+                          style={{
+                            padding: '0.08rem 0.25rem',
+                            border: '1px solid #c084fc',
+                            color: '#7e22ce',
+                            borderRadius: '0.4rem',
+                            fontSize: '0.35rem',
+                            lineHeight: '0.75rem',
+                            fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                            opacity: 0.7,
+                          }}
+                        >
+                          +{remainingCount} more
+                        </span>
+                      )}
                     </div>
                     {doesExercise !== null && (
                       <div
                         style={{
                           fontSize: '0.35rem',
                           color: '#374151',
-                          marginTop: favoriteSports.length ? '0.15rem' : 0,
+                          marginTop: displayedSports.length ? '0.15rem' : 0,
                           fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                         }}
                       >
@@ -924,6 +983,9 @@ export default function ShareScreenshot({
             }
 
             if (displaySkills.length > 0) {
+              const maxSkills = 10
+              const displayedSkills = displaySkills.slice(0, maxSkills)
+              const remainingCount = displaySkills.length - maxSkills
               cardBlocks.push({
                 key: 'skills',
                 content: (
@@ -950,9 +1012,19 @@ export default function ShareScreenshot({
                       >
                         Skills
                       </h4>
+                      <span
+                        style={{
+                          fontSize: '0.35rem',
+                          color: '#6b7280',
+                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                          marginLeft: '0.1rem',
+                        }}
+                      >
+                        ({displaySkills.length})
+                      </span>
                     </div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.08rem' }}>
-                      {displaySkills.map((skill, index) => (
+                      {displayedSkills.map((skill, index) => (
                         <span
                           key={index}
                           style={{
@@ -968,6 +1040,22 @@ export default function ShareScreenshot({
                           {skill}
                         </span>
                       ))}
+                      {remainingCount > 0 && (
+                        <span
+                          style={{
+                            padding: '0.08rem 0.25rem',
+                            border: '1px solid #93c5fd',
+                            color: '#1e40af',
+                            borderRadius: '0.4rem',
+                            fontSize: '0.35rem',
+                            lineHeight: '0.75rem',
+                            fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                            opacity: 0.7,
+                          }}
+                        >
+                          +{remainingCount} more
+                        </span>
+                      )}
                     </div>
                   </>
                 ),
@@ -975,6 +1063,9 @@ export default function ShareScreenshot({
             }
 
             if (travelStyles.length > 0) {
+              const maxTravelStyles = 7
+              const displayedTravelStyles = travelStyles.slice(0, maxTravelStyles)
+              const remainingCount = travelStyles.length - maxTravelStyles
               cardBlocks.push({
                 key: 'travel',
                 content: (
@@ -1001,9 +1092,19 @@ export default function ShareScreenshot({
                       >
                         Travel Style
                       </h4>
+                      <span
+                        style={{
+                          fontSize: '0.35rem',
+                          color: '#6b7280',
+                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                          marginLeft: '0.1rem',
+                        }}
+                      >
+                        ({travelStyles.length})
+                      </span>
                     </div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.08rem' }}>
-                      {travelStyles.map((style, index) => (
+                      {displayedTravelStyles.map((style, index) => (
                         <span
                           key={index}
                           style={{
@@ -1019,6 +1120,22 @@ export default function ShareScreenshot({
                           {style}
                         </span>
                       ))}
+                      {remainingCount > 0 && (
+                        <span
+                          style={{
+                            padding: '0.08rem 0.25rem',
+                            border: '1px solid #c084fc',
+                            color: '#7e22ce',
+                            borderRadius: '0.4rem',
+                            fontSize: '0.35rem',
+                            lineHeight: '0.75rem',
+                            fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                            opacity: 0.7,
+                          }}
+                        >
+                          +{remainingCount} more
+                        </span>
+                      )}
                     </div>
                   </>
                 ),
@@ -1026,6 +1143,9 @@ export default function ShareScreenshot({
             }
 
             if (visitedCountries.length > 0) {
+              const maxCountries = 8
+              const displayedCountries = visitedCountries.slice(0, maxCountries)
+              const remainingCount = visitedCountries.length - maxCountries
               cardBlocks.push({
                 key: 'countries',
                 content: (
@@ -1052,9 +1172,19 @@ export default function ShareScreenshot({
                       >
                         Countries
                       </h4>
+                      <span
+                        style={{
+                          fontSize: '0.35rem',
+                          color: '#6b7280',
+                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                          marginLeft: '0.1rem',
+                        }}
+                      >
+                        ({visitedCountries.length})
+                      </span>
                     </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.2rem' }}>
-                      {visitedCountries.map((country, index) => {
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.2rem', alignItems: 'center' }}>
+                      {displayedCountries.map((country, index) => {
                         const getCountryFlag = (countryName: string) => {
                           const normalizedName = countryName.trim().toLowerCase()
                           if (!normalizedName) return '🏳️'
@@ -1156,6 +1286,18 @@ export default function ShareScreenshot({
                           </span>
                         )
                       })}
+                      {remainingCount > 0 && (
+                        <span
+                          style={{
+                            fontSize: '0.35rem',
+                            color: '#6b7280',
+                            fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                            opacity: 0.7,
+                          }}
+                        >
+                          +{remainingCount} more
+                        </span>
+                      )}
                     </div>
                   </>
                 ),

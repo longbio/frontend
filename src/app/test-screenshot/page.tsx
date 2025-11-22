@@ -42,8 +42,30 @@ const mockUserData: GetUserByIdResponse['data'] = {
   bornPlace: 'Tehran',
   livePlace: 'Dubai, UAE',
   doesExercise: true,
-  favoriteSport: ['Paddle Tennis', 'Running', 'Football'],
-  travelStyle: ['Luxury Travel', 'Cultural Travel', 'Road Trip'],
+  favoriteSport: [
+    'Paddle Tennis',
+    'Running',
+    'Football',
+    'Basketball',
+    'Swimming',
+    'Cycling',
+    'Tennis',
+    'Volleyball',
+    'Golf',
+    'Yoga',
+  ], // 10 items (limit: 8)
+  travelStyle: [
+    'Luxury Travel',
+    'Cultural Travel',
+    'Road Trip',
+    'Adventure Travel',
+    'Beach Vacation',
+    'City Break',
+    'Mountain Hiking',
+    'Solo Travel',
+    'Group Travel',
+    'Business Travel',
+  ], // 10 items (limit: 7)
   details:
     'Product designer who loves technology, travel and taking candid photos. Building delightful experiences every single day.',
   education: {
@@ -59,9 +81,33 @@ const mockUserData: GetUserByIdResponse['data'] = {
     name: 'Milo',
     breed: 'Golden Retriever',
   },
-  skills: ['1', '3', '8'], // Sports, Music, Cooking
-  interests: ['Photography', 'Traveling', 'Reading', 'Coffee tasting'],
-  visitedCountries: ['Iran', 'United Arab Emirates', 'Turkey', 'France', 'Italy'],
+  skills: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'], // 11 items (limit: 10) - Sports, Painting, Music, Singing, Cultural Travel, Dancing, Physics & Math, Cooking, Photography, Road Trip, Eco-Tourism
+  interests: [
+    'Photography',
+    'Traveling',
+    'Reading',
+    'Coffee tasting',
+    'Cooking',
+    'Music',
+    'Art',
+    'Technology',
+    'Gaming',
+    'Fitness',
+  ], // 10 items (limit: 7)
+  visitedCountries: [
+    'Iran',
+    'United Arab Emirates',
+    'Turkey',
+    'France',
+    'Italy',
+    'Spain',
+    'Germany',
+    'United Kingdom',
+    'Netherlands',
+    'Belgium',
+    'Switzerland',
+    'Austria',
+  ], // 12 items (limit: 8)
 }
 
 export default function TestPage() {
