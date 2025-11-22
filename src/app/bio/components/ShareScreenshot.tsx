@@ -644,7 +644,7 @@ export default function ShareScreenshot({
             </div>
           )}
 
-          {(() => {
+          {/* {(() => {
             const cardBlocks: { key: string; content: ReactNode }[] = []
 
             if (birthDateValue) {
@@ -679,7 +679,7 @@ export default function ShareScreenshot({
                   </>
                 ),
               })
-            }
+            } */}
 
             if (educationUniversity) {
               cardBlocks.push({
