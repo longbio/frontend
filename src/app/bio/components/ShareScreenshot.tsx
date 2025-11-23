@@ -1342,16 +1342,24 @@ export default function ShareScreenshot({
               return null
             }
 
-            const gradientThemes = [
-              {
-                background: 'linear-gradient(120deg, #f3e8ff 0%, #fce7f3 100%)',
-                border: '#e9d5ff',
-              },
-              {
-                background: '#ffffff',
-                border: '#e5e7eb',
-              },
-            ]
+            const gradientTheme = {
+              background: 'linear-gradient(120deg, #f3e8ff 0%, #fce7f3 100%)',
+              border: '#e9d5ff',
+            }
+            const whiteTheme = {
+              background: '#ffffff',
+              border: '#e5e7eb',
+            }
+
+            // Helper function to get card theme based on index
+            // Pattern: [gradient, white], [white, gradient], [gradient, white], ...
+            const getCardTheme = (index: number) => {
+              const pairIndex = Math.floor(index / 2)
+              const positionInPair = index % 2
+              // If pair index and position in pair have same parity, use gradient; otherwise white
+              const isGradient = pairIndex % 2 === positionInPair
+              return isGradient ? gradientTheme : whiteTheme
+            }
 
             return (
               <div
@@ -1369,23 +1377,26 @@ export default function ShareScreenshot({
                   width: '100%',
                 }}
               >
-                {cardBlocks.map((card, index) => (
-                  <div
-                    key={`${card.key}-${index}`}
-                    style={{
-                      background: gradientThemes[index % gradientThemes.length].background,
-                      border: `1px solid ${gradientThemes[index % gradientThemes.length].border}`,
-                      borderRadius: '0.5rem',
-                      padding: '0.3rem',
-                      boxSizing: 'border-box',
-                      boxShadow: '0 1px 4px rgba(0, 0, 0, 0.05)',
-                      gridColumn: 'span 1',
-                      minHeight: 0,
-                    }}
-                  >
-                    {card.content}
-                  </div>
-                ))}
+                {cardBlocks.map((card, index) => {
+                  const theme = getCardTheme(index)
+                  return (
+                    <div
+                      key={`${card.key}-${index}`}
+                      style={{
+                        background: theme.background,
+                        border: `1px solid ${theme.border}`,
+                        borderRadius: '0.5rem',
+                        padding: '0.3rem',
+                        boxSizing: 'border-box',
+                        boxShadow: '0 1px 4px rgba(0, 0, 0, 0.05)',
+                        gridColumn: 'span 1',
+                        minHeight: 0,
+                      }}
+                    >
+                      {card.content}
+                    </div>
+                  )
+                })}
               </div>
             )
           })()}
