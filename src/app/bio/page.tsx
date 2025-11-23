@@ -196,9 +196,9 @@ function BioContent() {
   })
 
   return (
-    <div className="flex flex-col justify-center items-center w-full min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
+    <div className="flex flex-col w-full h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
       {/* Main Content */}
-      <div className="flex-1 px-4 pt-8 pb-4 overflow-y-auto">
+      <div className="flex-1 px-4 pt-8 pb-4 overflow-y-auto overflow-x-hidden">
         <div id="bio-content">
           {/* Basic Info Section */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
@@ -456,6 +456,21 @@ function BioContent() {
                 </button>
               </div>
               <div className="space-y-3">
+                {userData.travelStyle && userData.travelStyle.length > 0 && (
+                  <div>
+                    <div className="font-medium text-gray-700 mb-2">Travel Styles:</div>
+                    <div className="flex flex-wrap gap-2">
+                      {userData.travelStyle.map((style, index) => (
+                        <span
+                          key={index}
+                          className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-purple-200"
+                        >
+                          {style}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 {userData.visitedCountries && userData.visitedCountries.length > 0 && (
                   <div>
                     <div className="font-medium text-gray-700 mb-2">Visited Countries:</div>
@@ -465,19 +480,19 @@ function BioContent() {
                         const countryData = countriesData?.find(
                           (c) => c.name.toLowerCase() === country.toLowerCase()
                         )
-                        
+
                         return (
                           <span
-                          key={index}
-                          className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-purple-200"
+                            key={index}
+                            className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-purple-200"
                           >
                             {countryData?.image ? (
                               <Image
-                              src={countryData.image}
-                              alt={country}
-                              width={16}
-                              height={12}
-                              className="object-contain rounded-sm"
+                                src={countryData.image}
+                                alt={country}
+                                width={16}
+                                height={12}
+                                className="object-contain rounded-sm"
                               />
                             ) : (
                               <span className="text-xs">{countryData?.emoji || '🏳️'}</span>
@@ -487,21 +502,6 @@ function BioContent() {
                         )
                       })}
                     </div>
-                    {userData.travelStyle && userData.travelStyle.length > 0 && (
-                      <div>
-                        <div className="font-medium text-gray-700 mb-2">Travel Styles:</div>
-                        <div className="flex flex-wrap gap-2">
-                          {userData.travelStyle.map((style, index) => (
-                            <span
-                              key={index}
-                              className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-purple-200"
-                            >
-                              {style}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
                 )}
               </div>
@@ -523,11 +523,11 @@ function BioContent() {
                   <Edit3 className="w-4 h-4 text-gray-500" />
                 </button>
               </div>
-              <div className="flex gap-2 overflow-x-auto interests-scroll pt-2 pb-3">
+              <div className="flex flex-wrap gap-2 pt-2 pb-3">
                 {displayInterests.map((interest, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-purple-200 whitespace-nowrap flex-shrink-0"
+                    className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-purple-200 whitespace-nowrap"
                   >
                     {interest}
                   </span>
@@ -551,10 +551,11 @@ function BioContent() {
                   <Edit3 className="w-4 h-4 text-gray-500" />
                 </button>
               </div>
-              <div className="space-y-2">
+              <div className="flex flex-wrap gap-x-4 gap-y-2 pt-2 pb-3">
                 {displaySkills.map((skill, index) => (
-                  <div key={index} className="text-gray-700 text-sm">
-                    • {skill}
+                  <div key={index} className="text-gray-700 text-sm flex items-center">
+                    <span className="mr-1">•</span>
+                    <span>{skill}</span>
                   </div>
                 ))}
               </div>
