@@ -1,18 +1,18 @@
 'use client'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import {
-  updateUserServerAction,
   uploadProfileImageServerAction,
   updateEducationServerAction,
   updatePetServerAction,
   updateJobServerAction,
   getCurrentUserServerAction,
 } from '@/lib/server-action/user-actions'
+import { updateUser } from './function'
 import type { UpdateUserParams } from './type'
 
 export function useUpdateUser() {
   return useMutation({
-    mutationFn: (data: UpdateUserParams) => updateUserServerAction(data),
+    mutationFn: (data: UpdateUserParams) => updateUser(data),
   })
 }
 
