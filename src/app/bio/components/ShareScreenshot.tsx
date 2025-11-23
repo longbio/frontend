@@ -1436,7 +1436,28 @@ export default function ShareScreenshot({
                         Pet
                       </h4>
                     </div>
-                    <div style={clampTwoLineTextStyle}>{petName || petBreed}</div>
+                    {petName && (
+                      <div
+                        style={{
+                          ...clampTwoLineTextStyle,
+                          fontWeight: '700',
+                          marginBottom: petBreed ? '0.088rem' : 0,
+                        }}
+                      >
+                        {petName}
+                      </div>
+                    )}
+                    {petBreed && (
+                      <div
+                        style={{
+                          ...clampTwoLineTextStyle,
+                          fontSize: '0.35rem',
+                          color: '#6b7280',
+                        }}
+                      >
+                        {petBreed}
+                      </div>
+                    )}
                   </>
                 ),
               })
