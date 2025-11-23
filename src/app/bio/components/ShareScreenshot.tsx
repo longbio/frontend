@@ -801,12 +801,12 @@ export default function ShareScreenshot({
               })
             }
 
-            if (displayInterests.length > 0) {
-              const maxInterests = 7
-              const displayedInterests = displayInterests.slice(0, maxInterests)
-              const remainingCount = displayInterests.length - maxInterests
+            if (visitedCountries.length > 0) {
+              const maxCountries = 8
+              const displayedCountries = visitedCountries.slice(0, maxCountries)
+              const remainingCount = visitedCountries.length - maxCountries
               cardBlocks.push({
-                key: 'interests',
+                key: 'countries',
                 content: (
                   <>
                     <div
@@ -817,7 +817,7 @@ export default function ShareScreenshot({
                         marginBottom: '0.275rem',
                       }}
                     >
-                      <Star style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
+                      <Globe style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
                       <h4
                         style={{
                           fontWeight: '700',
@@ -829,7 +829,7 @@ export default function ShareScreenshot({
                           padding: 0,
                         }}
                       >
-                        Interests
+                        Countries
                       </h4>
                       <span
                         style={{
@@ -839,44 +839,117 @@ export default function ShareScreenshot({
                           marginLeft: '0.1rem',
                         }}
                       >
-                        ({displayInterests.length})
+                        ({visitedCountries.length})
                       </span>
                     </div>
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        gap: '0.08rem',
-                        lineHeight: '0.75rem',
-                      }}
-                    >
-                      {displayedInterests.map((interest, index) => (
-                        <span
-                          key={index}
-                          style={{
-                            padding: '0.08rem 0.25rem',
-                            border: '1px solid #c084fc',
-                            color: '#7e22ce',
-                            borderRadius: '0.4rem',
-                            fontSize: '0.35rem',
-                            whiteSpace: 'nowrap',
-                            lineHeight: '0.75rem',
-                            fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                          }}
-                        >
-                          {interest}
-                        </span>
-                      ))}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.2rem', alignItems: 'center' }}>
+                      {displayedCountries.map((country, index) => {
+                        const getCountryFlag = (countryName: string) => {
+                          const normalizedName = countryName.trim().toLowerCase()
+                          if (!normalizedName) return '🏳️'
+
+                          const directMatch = flagEmojiMap.get(normalizedName)
+                          if (directMatch) return directMatch
+
+                          const flagMap: { [key: string]: string } = {
+                            ایران: '🇮🇷',
+                            'جمهوری اسلامی ایران': '🇮🇷',
+                            iran: '🇮🇷',
+                            'islamic republic of iran': '🇮🇷',
+                            ترکیه: '🇹🇷',
+                            turkey: '🇹🇷',
+                            دبی: '🇦🇪',
+                            dubai: '🇦🇪',
+                            امارات: '🇦🇪',
+                            'امارات متحده عربی': '🇦🇪',
+                            uae: '🇦🇪',
+                            'united arab emirates': '🇦🇪',
+                            'united arab em': '🇦🇪',
+                            مالزی: '🇲🇾',
+                            malaysia: '🇲🇾',
+                            تایلند: '🇹🇭',
+                            thailand: '🇹🇭',
+                            سنگاپور: '🇸🇬',
+                            singapore: '🇸🇬',
+                            ژاپن: '🇯🇵',
+                            japan: '🇯🇵',
+                            کره: '🇰🇷',
+                            'کره جنوبی': '🇰🇷',
+                            korea: '🇰🇷',
+                            'south korea': '🇰🇷',
+                            چین: '🇨🇳',
+                            china: '🇨🇳',
+                            هند: '🇮🇳',
+                            india: '🇮🇳',
+                            روسیه: '🇷🇺',
+                            russia: '🇷🇺',
+                            آلمان: '🇩🇪',
+                            germany: '🇩🇪',
+                            فرانسه: '🇫🇷',
+                            france: '🇫🇷',
+                            ایتالیا: '🇮🇹',
+                            italy: '🇮🇹',
+                            اسپانیا: '🇪🇸',
+                            spain: '🇪🇸',
+                            انگلستان: '🇬🇧',
+                            بریتانیا: '🇬🇧',
+                            uk: '🇬🇧',
+                            'united kingdom': '🇬🇧',
+                            کانادا: '🇨🇦',
+                            canada: '🇨🇦',
+                            آمریکا: '🇺🇸',
+                            usa: '🇺🇸',
+                            'united states': '🇺🇸',
+                            استرالیا: '🇦🇺',
+                            australia: '🇦🇺',
+                            قطر: '🇶🇦',
+                            qatar: '🇶🇦',
+                            عمان: '🇴🇲',
+                            oman: '🇴🇲',
+                            بحرین: '🇧🇭',
+                            bahrain: '🇧🇭',
+                            کویت: '🇰🇼',
+                            kuwait: '🇰🇼',
+                            عربستان: '🇸🇦',
+                            'عربستان سعودی': '🇸🇦',
+                            'saudi arabia': '🇸🇦',
+                          }
+
+                          if (flagMap[normalizedName]) return flagMap[normalizedName]
+
+                          const simplified = normalizedName
+                            .replace(/[^\p{L}\s]/gu, '')
+                            .replace(/\s+/g, ' ')
+                            .trim()
+                          for (const [name, emoji] of flagEmojiMap) {
+                            const simplifiedMapName = name
+                              .replace(/[^\p{L}\s]/gu, '')
+                              .replace(/\s+/g, ' ')
+                              .trim()
+                            if (simplified && simplified === simplifiedMapName) {
+                              return emoji
+                            }
+                          }
+
+                          return '🏳️'
+                        }
+                        return (
+                          <span
+                            key={index}
+                            style={{
+                              fontSize: '1.1rem',
+                              fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                            }}
+                          >
+                            {getCountryFlag(country)}
+                          </span>
+                        )
+                      })}
                       {remainingCount > 0 && (
                         <span
                           style={{
-                            padding: '0.08rem 0.25rem',
-                            border: '1px solid #c084fc',
-                            color: '#7e22ce',
-                            borderRadius: '0.4rem',
                             fontSize: '0.35rem',
-                            whiteSpace: 'nowrap',
-                            lineHeight: '0.75rem',
+                            color: '#6b7280',
                             fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                             opacity: 0.7,
                           }}
@@ -1061,6 +1134,95 @@ export default function ShareScreenshot({
                 ),
               })
             }
+            
+            if (displayInterests.length > 0) {
+              const maxInterests = 7
+              const displayedInterests = displayInterests.slice(0, maxInterests)
+              const remainingCount = displayInterests.length - maxInterests
+              cardBlocks.push({
+                key: 'interests',
+                content: (
+                  <>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.2rem',
+                        marginBottom: '0.275rem',
+                      }}
+                    >
+                      <Star style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
+                      <h4
+                        style={{
+                          fontWeight: '700',
+                          fontSize: '0.48125rem',
+                          color: '#111827',
+                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                          lineHeight: '1',
+                          margin: 0,
+                          padding: 0,
+                        }}
+                      >
+                        Interests
+                      </h4>
+                      <span
+                        style={{
+                          fontSize: '0.35rem',
+                          color: '#6b7280',
+                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                          marginLeft: '0.1rem',
+                        }}
+                      >
+                        ({displayInterests.length})
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: '0.08rem',
+                        lineHeight: '0.75rem',
+                      }}
+                    >
+                      {displayedInterests.map((interest, index) => (
+                        <span
+                          key={index}
+                          style={{
+                            padding: '0.08rem 0.25rem',
+                            border: '1px solid #c084fc',
+                            color: '#7e22ce',
+                            borderRadius: '0.4rem',
+                            fontSize: '0.35rem',
+                            whiteSpace: 'nowrap',
+                            lineHeight: '0.75rem',
+                            fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                          }}
+                        >
+                          {interest}
+                        </span>
+                      ))}
+                      {remainingCount > 0 && (
+                        <span
+                          style={{
+                            padding: '0.08rem 0.25rem',
+                            border: '1px solid #c084fc',
+                            color: '#7e22ce',
+                            borderRadius: '0.4rem',
+                            fontSize: '0.35rem',
+                            whiteSpace: 'nowrap',
+                            lineHeight: '0.75rem',
+                            fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                            opacity: 0.7,
+                          }}
+                        >
+                          +{remainingCount} more
+                        </span>
+                      )}
+                    </div>
+                  </>
+                ),
+              })
+            }
 
             if (travelStyles.length > 0) {
               const maxTravelStyles = 7
@@ -1129,168 +1291,6 @@ export default function ShareScreenshot({
                             borderRadius: '0.4rem',
                             fontSize: '0.35rem',
                             lineHeight: '0.75rem',
-                            fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                            opacity: 0.7,
-                          }}
-                        >
-                          +{remainingCount} more
-                        </span>
-                      )}
-                    </div>
-                  </>
-                ),
-              })
-            }
-
-            if (visitedCountries.length > 0) {
-              const maxCountries = 8
-              const displayedCountries = visitedCountries.slice(0, maxCountries)
-              const remainingCount = visitedCountries.length - maxCountries
-              cardBlocks.push({
-                key: 'countries',
-                content: (
-                  <>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.2rem',
-                        marginBottom: '0.275rem',
-                      }}
-                    >
-                      <Globe style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
-                      <h4
-                        style={{
-                          fontWeight: '700',
-                          fontSize: '0.48125rem',
-                          color: '#111827',
-                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                          lineHeight: '1',
-                          margin: 0,
-                          padding: 0,
-                        }}
-                      >
-                        Countries
-                      </h4>
-                      <span
-                        style={{
-                          fontSize: '0.35rem',
-                          color: '#6b7280',
-                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                          marginLeft: '0.1rem',
-                        }}
-                      >
-                        ({visitedCountries.length})
-                      </span>
-                    </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.2rem', alignItems: 'center' }}>
-                      {displayedCountries.map((country, index) => {
-                        const getCountryFlag = (countryName: string) => {
-                          const normalizedName = countryName.trim().toLowerCase()
-                          if (!normalizedName) return '🏳️'
-
-                          const directMatch = flagEmojiMap.get(normalizedName)
-                          if (directMatch) return directMatch
-
-                          const flagMap: { [key: string]: string } = {
-                            ایران: '🇮🇷',
-                            'جمهوری اسلامی ایران': '🇮🇷',
-                            iran: '🇮🇷',
-                            'islamic republic of iran': '🇮🇷',
-                            ترکیه: '🇹🇷',
-                            turkey: '🇹🇷',
-                            دبی: '🇦🇪',
-                            dubai: '🇦🇪',
-                            امارات: '🇦🇪',
-                            'امارات متحده عربی': '🇦🇪',
-                            uae: '🇦🇪',
-                            'united arab emirates': '🇦🇪',
-                            'united arab em': '🇦🇪',
-                            مالزی: '🇲🇾',
-                            malaysia: '🇲🇾',
-                            تایلند: '🇹🇭',
-                            thailand: '🇹🇭',
-                            سنگاپور: '🇸🇬',
-                            singapore: '🇸🇬',
-                            ژاپن: '🇯🇵',
-                            japan: '🇯🇵',
-                            کره: '🇰🇷',
-                            'کره جنوبی': '🇰🇷',
-                            korea: '🇰🇷',
-                            'south korea': '🇰🇷',
-                            چین: '🇨🇳',
-                            china: '🇨🇳',
-                            هند: '🇮🇳',
-                            india: '🇮🇳',
-                            روسیه: '🇷🇺',
-                            russia: '🇷🇺',
-                            آلمان: '🇩🇪',
-                            germany: '🇩🇪',
-                            فرانسه: '🇫🇷',
-                            france: '🇫🇷',
-                            ایتالیا: '🇮🇹',
-                            italy: '🇮🇹',
-                            اسپانیا: '🇪🇸',
-                            spain: '🇪🇸',
-                            انگلستان: '🇬🇧',
-                            بریتانیا: '🇬🇧',
-                            uk: '🇬🇧',
-                            'united kingdom': '🇬🇧',
-                            کانادا: '🇨🇦',
-                            canada: '🇨🇦',
-                            آمریکا: '🇺🇸',
-                            usa: '🇺🇸',
-                            'united states': '🇺🇸',
-                            استرالیا: '🇦🇺',
-                            australia: '🇦🇺',
-                            قطر: '🇶🇦',
-                            qatar: '🇶🇦',
-                            عمان: '🇴🇲',
-                            oman: '🇴🇲',
-                            بحرین: '🇧🇭',
-                            bahrain: '🇧🇭',
-                            کویت: '🇰🇼',
-                            kuwait: '🇰🇼',
-                            عربستان: '🇸🇦',
-                            'عربستان سعودی': '🇸🇦',
-                            'saudi arabia': '🇸🇦',
-                          }
-
-                          if (flagMap[normalizedName]) return flagMap[normalizedName]
-
-                          const simplified = normalizedName
-                            .replace(/[^\p{L}\s]/gu, '')
-                            .replace(/\s+/g, ' ')
-                            .trim()
-                          for (const [name, emoji] of flagEmojiMap) {
-                            const simplifiedMapName = name
-                              .replace(/[^\p{L}\s]/gu, '')
-                              .replace(/\s+/g, ' ')
-                              .trim()
-                            if (simplified && simplified === simplifiedMapName) {
-                              return emoji
-                            }
-                          }
-
-                          return '🏳️'
-                        }
-                        return (
-                          <span
-                            key={index}
-                            style={{
-                              fontSize: '1.1rem',
-                              fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                            }}
-                          >
-                            {getCountryFlag(country)}
-                          </span>
-                        )
-                      })}
-                      {remainingCount > 0 && (
-                        <span
-                          style={{
-                            fontSize: '0.35rem',
-                            color: '#6b7280',
                             fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                             opacity: 0.7,
                           }}
