@@ -61,6 +61,9 @@ function BioContent() {
   const [showShareScreenshot, setShowShareScreenshot] = useState(false)
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
+  const [isWaitlistDialogOpen, setIsWaitlistDialogOpen] = useState(false)
+  const [isWaitlistSuccess, setIsWaitlistSuccess] = useState(false)
+  const [waitlistError, setWaitlistError] = useState('')
   const router = useRouter()
 
   // Track page views
@@ -112,15 +115,32 @@ function BioContent() {
 
   const handlePremiumSubmit = () => {
     if (!email && !phone) {
-      alert('Please enter either email or phone number')
+      setWaitlistError('Please enter either email or phone number')
       return
     }
 
+    setWaitlistError('')
     const method = email ? 'email' : 'phone'
     trackPremiumSignup(method)
+    setIsWaitlistSuccess(true)
+  }
+
+  const handleWaitlistDialogClose = () => {
+    setIsWaitlistDialogOpen(false)
+    setIsWaitlistSuccess(false)
     setEmail('')
     setPhone('')
-    alert('Thank you for your interest in Premium! We will contact you soon.')
+    setWaitlistError('')
+  }
+
+  const handleWaitlistDialogOpenChange = (open: boolean) => {
+    setIsWaitlistDialogOpen(open)
+    if (!open) {
+      setIsWaitlistSuccess(false)
+      setEmail('')
+      setPhone('')
+      setWaitlistError('')
+    }
   }
 
   if (loading) {
@@ -824,7 +844,7 @@ function BioContent() {
             <p className="text-gray-600 text-sm mb-4">
             Unlock advanced insights and link your Instagram account!
             </p>
-            <Dialog>
+            <Dialog open={isWaitlistDialogOpen} onOpenChange={handleWaitlistDialogOpenChange}>
               <DialogTrigger asChild>
                 <Button className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-4 rounded-full font-medium hover:from-yellow-600 hover:to-orange-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
                   <Crown className="w-5 h-5" />
@@ -832,56 +852,93 @@ function BioContent() {
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                  <DialogTitle className="flex items-center gap-2">
-                    <Crown className="w-6 h-6 text-yellow-600" />
-                    Premium Version
-                  </DialogTitle>
-                  <DialogDescription>
-                    Unlock advanced features and customization options!
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-6">
-                  {/* Contact Form */}
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                        Email Address
-                      </label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Enter your email"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                        Phone Number
-                      </label>
-                      <Input
-                        id="phone"
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="Enter your phone number"
-                      />
-                    </div>
+                {isWaitlistSuccess ? (
+                  <div className="space-y-6">
+                    <DialogHeader>
+                      <div className="flex items-center justify-center mb-4">
+                        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                          <CheckCircle className="w-10 h-10 text-green-600" />
+                        </div>
+                      </div>
+                      <DialogTitle className="text-center text-xl">
+                        Successfully Joined!
+                      </DialogTitle>
+                      <DialogDescription className="text-center">
+                        Thank you for joining our waitlist. We&apos;ll contact you within 24 hours with premium access details.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <Button
+                      onClick={handleWaitlistDialogClose}
+                      className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white hover:from-yellow-600 hover:to-orange-600"
+                    >
+                      Close
+                    </Button>
                   </div>
+                ) : (
+                  <>
+                    <DialogHeader>
+                      <DialogTitle className="flex items-center gap-2">
+                        <Crown className="w-6 h-6 text-yellow-600" />
+                        Premium Version
+                      </DialogTitle>
+                      <DialogDescription>
+                        Unlock advanced features and customization options!
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-6">
+                      {/* Contact Form */}
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                            Email Address
+                          </label>
+                          <Input
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => {
+                              setEmail(e.target.value)
+                              setWaitlistError('')
+                            }}
+                            placeholder="Enter your email"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                            Phone Number
+                          </label>
+                          <Input
+                            id="phone"
+                            type="tel"
+                            value={phone}
+                            onChange={(e) => {
+                              setPhone(e.target.value)
+                              setWaitlistError('')
+                            }}
+                            placeholder="Enter your phone number"
+                          />
+                        </div>
+                        {waitlistError && (
+                          <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">
+                            {waitlistError}
+                          </div>
+                        )}
+                      </div>
 
-                  {/* Submit Button */}
-                  <Button
-                    onClick={handlePremiumSubmit}
-                    className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white hover:from-yellow-600 hover:to-orange-600"
-                  >
-                    Get Premium Access
-                  </Button>
+                      {/* Submit Button */}
+                      <Button
+                        onClick={handlePremiumSubmit}
+                        className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white hover:from-yellow-600 hover:to-orange-600"
+                      >
+                        Get Premium Access
+                      </Button>
 
-                  <p className="text-xs text-gray-500 text-center">
-                    We&apos;ll contact you within 24 hours with premium access details
-                  </p>
-                </div>
+                      <p className="text-xs text-gray-500 text-center">
+                        We&apos;ll contact you within 24 hours with premium access details
+                      </p>
+                    </div>
+                  </>
+                )}
               </DialogContent>
             </Dialog>
           </div>
