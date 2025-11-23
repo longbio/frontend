@@ -47,7 +47,24 @@ export const trackBioEvent = (
   eventName: string,
   parameters?: Record<string, string | number | boolean>
 ) => {
-  if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+  if (typeof window === 'undefined') return
+
+  // Initialize dataLayer if it doesn't exist (for GTM debug mode)
+  if (!window.dataLayer) {
+    window.dataLayer = []
+  }
+
+  const eventData = {
+    event: eventName,
+    event_category: 'bio',
+    ...parameters,
+  }
+
+  // Push to dataLayer for GTM debug mode compatibility
+  window.dataLayer.push(eventData)
+
+  // Also use gtag if available
+  if (typeof window.gtag === 'function') {
     window.gtag('event', eventName, {
       event_category: 'bio',
       ...parameters,
@@ -89,7 +106,7 @@ export const trackPremiumSignup = (method: 'email' | 'phone') => {
   })
 }
 
-// Declare gtag function for TypeScript
+// Declare gtag function and dataLayer for TypeScript
 declare global {
   interface Window {
     gtag: (
@@ -97,5 +114,6 @@ declare global {
       targetId: string | Date,
       config?: Record<string, string | number | boolean>
     ) => void
+    dataLayer?: Array<Record<string, any>>
   }
 }
