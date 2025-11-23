@@ -369,10 +369,11 @@ export default function BioDisplay({
               <BookOpen className="w-5 h-5 text-purple-600" />
               <h3 className="font-bold text-gray-900">Skills</h3>
             </div>
-            <div className="space-y-2">
+            <div className="flex flex-wrap gap-x-4 gap-y-2 pt-2 pb-3">
               {displaySkills.map((skill, index) => (
-                <div key={index} className="text-gray-700 text-sm">
-                  • {skill}
+                <div key={index} className="text-gray-700 text-sm flex items-center">
+                  <span className="mr-1">•</span>
+                  <span>{skill}</span>
                 </div>
               ))}
             </div>
