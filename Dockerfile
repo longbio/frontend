@@ -1,14 +1,20 @@
 FROM node:22-alpine AS base
 
-FROM base AS deps
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
+# Install dependencies only when needed
+FROM base AS deps
 RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
 
-COPY package.json package-lock.json* .npmrc* ./
+# Copy package files
+COPY package.json pnpm-lock.yaml* .npmrc* ./
 
-RUN npm install -f
+# Install dependencies with cache mount for faster builds
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+    pnpm install --frozen-lockfile --prod=false
 
 FROM base AS builder
 
@@ -16,14 +22,21 @@ ARG NEXT_PUBLIC_API_BASE_URL
 
 WORKDIR /app
 
+# Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 
+# Copy source code (only what's needed for build)
 COPY . .
 
+# Set environment variables early for better caching
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
 #ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 
-RUN npm run build
+# Build with cache mount for Next.js cache and pnpm store
+RUN --mount=type=cache,target=/app/.next/cache \
+    --mount=type=cache,target=/root/.local/share/pnpm/store \
+    pnpm run build
 
 FROM base AS runner
 
@@ -33,8 +46,9 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 #ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# Create user and group in a single layer
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
