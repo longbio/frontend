@@ -7,12 +7,60 @@ import {
   updateJobServerAction,
   getCurrentUserServerAction,
 } from '@/lib/server-action/user-actions'
-import { updateUser } from './function'
+import { getAccessToken } from '@/lib/auth-actions'
 import type { UpdateUserParams } from './type'
 
 export function useUpdateUser() {
   return useMutation({
-    mutationFn: (data: UpdateUserParams) => updateUser(data),
+    mutationFn: async (data: UpdateUserParams) => {
+      // Get token from server action
+      const accessToken = await getAccessToken()
+
+      if (!accessToken) {
+        const error = new Error('Unauthorized') as Error & { status?: number }
+        error.status = 401
+        throw error
+      }
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL
+      if (!apiUrl) {
+        throw new Error('API base URL is not configured')
+      }
+
+      // Make direct request to API from client-side
+      const response = await fetch(`${apiUrl}/v1/users/me`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(data),
+      })
+
+      if (!response.ok) {
+        const statusCode = response.status
+        let errorData: { message?: string; [key: string]: any } = {}
+        try {
+          const text = await response.text()
+          errorData = text
+            ? JSON.parse(text)
+            : { message: `Request failed with status ${statusCode}` }
+        } catch {
+          errorData = { message: `Request failed with status ${statusCode}` }
+        }
+        const error = new Error(errorData?.message || 'Failed to update user') as Error & {
+          status: number
+          message: string
+          data?: { message?: string; [key: string]: any }
+        }
+        error.status = statusCode
+        error.message = errorData?.message || error.message
+        error.data = errorData
+        throw error
+      }
+
+      return await response.json()
+    },
   })
 }
 
