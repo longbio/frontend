@@ -67,7 +67,7 @@ function UsernameForm({ name }: { name: string }) {
       const apiErrorObj = error as Error & { status?: number; data?: { message?: string } }
       const status = apiErrorObj?.status
 
-      if (status === 429) {
+      if (status === 409) {
         setApiError('This username is already taken. Please choose another one.')
       } else if (status === 400) {
         setApiError(
