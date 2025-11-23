@@ -356,7 +356,7 @@ export default function ShareScreenshot({
     if (typeof document === 'undefined') return
 
     const link = document.createElement('a')
-    link.download = `${username}-bio.png`
+    link.download = `${username}-LONGBIO-SCREENSHOT.png`
     link.href = screenshot
     link.click()
   }
@@ -367,7 +367,7 @@ export default function ShareScreenshot({
     try {
       const response = await fetch(screenshot)
       const blob = await response.blob()
-      const file = new File([blob], `${username}-bio.png`, { type: 'image/png' })
+      const file = new File([blob], `${username}-LONGBIO-SCREENSHOT.png`, { type: 'image/png' })
 
       if (
         typeof window !== 'undefined' &&
@@ -1623,7 +1623,7 @@ export default function ShareScreenshot({
                   {isGenerating ? (
                     <>
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      Generating...
+                      Creating your Long bio photo...
                     </>
                   ) : flagLoading ? (
                     <>
