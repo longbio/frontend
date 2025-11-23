@@ -56,18 +56,43 @@ async function request<T>(url: string, options: RequestOptions = {}): Promise<T>
     if (!response.ok) {
       try {
         const errorData = await response.json().catch(() => null)
-        throw new Error(errorData?.message || `HTTP error! status: ${response.status}`)
-      } catch {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        const error = new Error(
+          errorData?.message || `HTTP error! status: ${response.status}`
+        ) as Error & {
+          status?: number
+          data?: { message?: string; [key: string]: any }
+        }
+        error.status = response.status
+        error.data = errorData || { message: error.message }
+        throw error
+      } catch (err) {
+        const error =
+          err instanceof Error ? err : new Error(`HTTP error! status: ${response.status}`)
+        const errorWithStatus = error as Error & {
+          status?: number
+          data?: { message?: string; [key: string]: any }
+        }
+        errorWithStatus.status = response.status
+        errorWithStatus.data = { message: error.message }
+        throw errorWithStatus
       }
     }
 
     return await response.json()
   } catch (error) {
-    const e = error as Error
+    const e = error as Error & {
+      status?: number
+      data?: { message?: string; [key: string]: any }
+    }
     handleError(e)
     if (e instanceof AuthError) redirectToLoginPage()
-    if (options.throwError) throw new ApiError(e.message)
+    if (options.throwError) {
+      // Preserve status and data if they exist
+      if ('status' in e && 'data' in e) {
+        throw e
+      }
+      throw new ApiError(e.message)
+    }
     return {} as T
   }
 }
@@ -79,6 +104,8 @@ export const http = {
     request<T>(url, { ...options, method: 'POST' }),
   put: <T>(url: string, options: RequestOptions = {}) =>
     request<T>(url, { ...options, method: 'PUT' }),
+  patch: <T>(url: string, options: RequestOptions = {}) =>
+    request<T>(url, { ...options, method: 'PATCH' }),
   delete: <T>(url: string, options: RequestOptions = {}) =>
     request<T>(url, { ...options, method: 'DELETE' }),
 }
