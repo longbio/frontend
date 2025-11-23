@@ -822,13 +822,13 @@ function BioContent() {
               <h3 className="text-lg font-bold text-gray-900">Premium Version</h3>
             </div>
             <p className="text-gray-600 text-sm mb-4">
-              Unlock advanced features and customization options!
+            Unlock advanced insights and link your Instagram account!
             </p>
             <Dialog>
               <DialogTrigger asChild>
                 <Button className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-4 rounded-full font-medium hover:from-yellow-600 hover:to-orange-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
                   <Crown className="w-5 h-5" />
-                  Get Premium
+                  Join waitlist now
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
