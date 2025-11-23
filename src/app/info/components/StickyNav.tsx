@@ -43,7 +43,13 @@ export default function StickyNav({
         onClick={onSkip}
         disabled={loading}
       >
-        {skipLabel}
+        {loading ? (
+          <span className="flex items-center justify-center gap-2">
+            <Loader2 className="size-4 animate-spin" />
+          </span>
+        ) : (
+          skipLabel
+        )}
       </button>
     </div>
   )
