@@ -89,7 +89,7 @@ export default function BioDisplay({
       {/* Main Content */}
       <div className="flex-1 px-4 pt-8 pb-4 overflow-y-auto overflow-x-hidden">
         {/* Basic Info Section */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 py-4 px-4 mb-4 w-full -mx-4 max-w-full">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <User className="w-5 h-5 text-purple-600" />
