@@ -217,6 +217,12 @@ function BioContent() {
     'Eco-Tourism': '🌿',
   }
 
+  const stripEmoji = (text: string): string => {
+    // Remove emojis including sequences with zero-width joiners
+    // Pattern matches emoji sequences: base emoji + optional ZWJ + optional modifiers
+    return text.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{24C2}-\u{1F251}]|[\u{1FA00}-\u{1FAFF}]|[\u{200D}]/gu, '').replace(/\s+/g, ' ').trim()
+  }
+
   const getInterestEmoji = (interest: string): string => {
     const lowerInterest = interest.toLowerCase()
     const interestEmojiMap: { [key: string]: string } = {
@@ -678,7 +684,7 @@ function BioContent() {
                     key={index}
                     className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-purple-200 whitespace-nowrap"
                   >
-                    {getInterestEmoji(interest)} {interest}
+                    {getInterestEmoji(interest)} {stripEmoji(interest)}
                   </span>
                 ))}
               </div>
