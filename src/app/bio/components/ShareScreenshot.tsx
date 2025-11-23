@@ -829,7 +829,7 @@ export default function ShareScreenshot({
                           padding: 0,
                         }}
                       >
-                        VisitedCountries
+                        Visited Countries
                       </h4>
                       <span
                         style={{
