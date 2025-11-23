@@ -829,7 +829,7 @@ export default function ShareScreenshot({
                           padding: 0,
                         }}
                       >
-                        Countries
+                        VisitedCountries
                       </h4>
                       <span
                         style={{
@@ -1134,7 +1134,7 @@ export default function ShareScreenshot({
                 ),
               })
             }
-            
+
             if (displayInterests.length > 0) {
               const maxInterests = 7
               const displayedInterests = displayInterests.slice(0, maxInterests)
