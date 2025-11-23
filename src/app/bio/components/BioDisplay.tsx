@@ -84,12 +84,20 @@ export default function BioDisplay({
     }
   }
 
-  return (
-    <div className="flex flex-col w-full h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
-      {/* Main Content */}
-      <div className="flex-1 px-4 pt-8 pb-4 overflow-y-auto overflow-x-hidden">
-        {/* Basic Info Section */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+  // Helper function to get card style based on index
+  const getCardStyle = (index: number) => {
+    const isEven = index % 2 === 0
+    return isEven
+      ? 'bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4'
+      : 'bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4'
+  }
+
+  // Build array of card components
+  const cards: React.ReactElement[] = []
+
+  // Basic Info Section (always first, index 0)
+  cards.push(
+    <div key="basic-info" className={getCardStyle(0)}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <User className="w-5 h-5 text-purple-600" />
@@ -205,35 +213,43 @@ export default function BioDisplay({
             )}
           </div>
         </div>
+  )
 
-        {/* Details  */}
-        {typeof userData.details === 'string' && userData.details.trim() !== '' && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+  // Details Section
+  if (typeof userData.details === 'string' && userData.details.trim() !== '') {
+    cards.push(
+      <div key="details" className={getCardStyle(cards.length)}>
             <div className="flex items-center gap-2 mb-4">
               <User className="w-5 h-5 text-purple-600" />
               <h3 className="font-bold text-gray-900">About Me</h3>
             </div>
             <p className="text-gray-700">{userData.details}</p>
           </div>
-        )}
+    )
+  }
 
-        {/* Birth Date  */}
-        {userData.birthDate && (
-          <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
+  // Birth Date Section
+  if (userData.birthDate) {
+    cards.push(
+      <div key="birth-date" className={getCardStyle(cards.length)}>
             <div className="flex items-center gap-2 mb-4">
               <Calendar className="w-5 h-5 text-purple-600" />
               <h3 className="font-bold text-gray-900">Birth Date</h3>
             </div>
             <p className="text-gray-700">{dayjs(userData.birthDate).format('MMMM DD, YYYY')}</p>
           </div>
-        )}
+    )
+  }
 
-        {/* Education  */}
-        {(userData.education?.university ||
-          userData.education?.topic ||
-          userData.education?.graduationYear ||
-          (userData.educationalStatus && userData.educationalStatus !== 'none')) && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+  // Education Section
+  if (
+    userData.education?.university ||
+    userData.education?.topic ||
+    userData.education?.graduationYear ||
+    (userData.educationalStatus && userData.educationalStatus !== 'none')
+  ) {
+    cards.push(
+      <div key="education" className={getCardStyle(cards.length)}>
             <div className="flex items-center gap-2 mb-4">
               <GraduationCap className="w-5 h-5 text-purple-600" />
               <h3 className="font-bold text-gray-900">Education</h3>
@@ -265,11 +281,13 @@ export default function BioDisplay({
               )}
             </div>
           </div>
-        )}
+    )
+  }
 
-        {/* Job  */}
-        {(userData.job?.position || userData.job?.company) && (
-          <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
+  // Job Section
+  if (userData.job?.position || userData.job?.company) {
+    cards.push(
+      <div key="job" className={getCardStyle(cards.length)}>
             <div className="flex items-center gap-2 mb-4">
               <BookOpen className="w-5 h-5 text-purple-600" />
               <h3 className="font-bold text-gray-900">Job</h3>
@@ -279,12 +297,16 @@ export default function BioDisplay({
               {userData.job.company && <div>Company: {userData.job.company}</div>}
             </div>
           </div>
-        )}
+    )
+  }
 
-        {/* Travel  */}
-        {(userData.travelStyle && userData.travelStyle.length > 0) ||
-        (userData.visitedCountries && userData.visitedCountries.length > 0) ? (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+  // Travel Section
+  if (
+    (userData.travelStyle && userData.travelStyle.length > 0) ||
+    (userData.visitedCountries && userData.visitedCountries.length > 0)
+  ) {
+    cards.push(
+      <div key="travel" className={getCardStyle(cards.length)}>
             <div className="flex items-center gap-2 mb-4">
               <MapPin className="w-5 h-5 text-purple-600" />
               <h3 className="font-bold text-gray-900">Travel</h3>
@@ -340,11 +362,13 @@ export default function BioDisplay({
               )}
             </div>
           </div>
-        ) : null}
+    )
+  }
 
-        {/* Interests  */}
-        {displayInterests && displayInterests.length > 0 && (
-          <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
+  // Interests Section
+  if (displayInterests && displayInterests.length > 0) {
+    cards.push(
+      <div key="interests" className={getCardStyle(cards.length)}>
             <div className="flex items-center gap-2 mb-4">
               <Star className="w-5 h-5 text-purple-600" />
               <h3 className="font-bold text-gray-900">Interests</h3>
@@ -360,11 +384,13 @@ export default function BioDisplay({
               ))}
             </div>
           </div>
-        )}
+    )
+  }
 
-        {/* Skills */}
-        {displaySkills && displaySkills.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+  // Skills Section
+  if (displaySkills && displaySkills.length > 0) {
+    cards.push(
+      <div key="skills" className={getCardStyle(cards.length)}>
             <div className="flex items-center gap-2 mb-4">
               <BookOpen className="w-5 h-5 text-purple-600" />
               <h3 className="font-bold text-gray-900">Skills</h3>
@@ -378,12 +404,16 @@ export default function BioDisplay({
               ))}
             </div>
           </div>
-        )}
+    )
+  }
 
-        {/* Sports  */}
-        {(userData.favoriteSport && userData.favoriteSport.length > 0) ||
-        userData.doesExercise !== undefined ? (
-          <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4">
+  // Sports Section
+  if (
+    (userData.favoriteSport && userData.favoriteSport.length > 0) ||
+    userData.doesExercise !== undefined
+  ) {
+    cards.push(
+      <div key="sports" className={getCardStyle(cards.length)}>
             <div className="flex items-center gap-2 mb-4">
               <Dumbbell className="w-5 h-5 text-purple-600" />
               <h3 className="font-bold text-gray-900">Sports & Exercise</h3>
@@ -409,11 +439,13 @@ export default function BioDisplay({
               )}
             </div>
           </div>
-        ) : null}
+    )
+  }
 
-        {/* Pet Information  */}
-        {(userData.pet.name || userData.pet.breed) && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+  // Pet Information Section
+  if (userData.pet.name || userData.pet.breed) {
+    cards.push(
+      <div key="pet" className={getCardStyle(cards.length)}>
             <div className="flex items-center gap-2 mb-4">
               <PawPrint className="w-5 h-5 text-purple-600" />
               <h3 className="font-bold text-gray-900">Pet Information</h3>
@@ -438,7 +470,14 @@ export default function BioDisplay({
               </div>
             </div>
           </div>
-        )}
+    )
+  }
+
+  return (
+    <div className="flex flex-col w-full h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
+      {/* Main Content */}
+      <div className="flex-1 px-4 pt-8 pb-4 overflow-y-auto overflow-x-hidden">
+        {cards}
 
         {/* Create Your Bio Button */}
         <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-6 mb-4">
