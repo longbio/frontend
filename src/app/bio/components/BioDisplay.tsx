@@ -1,7 +1,10 @@
 'use client'
-import dynamic from 'next/dynamic'
+import dayjs from 'dayjs'
+import Image from 'next/image'
+import { useState, useEffect } from 'react'
+import { useFlagCountries } from '@/service/countries'
+import ImageUploader from './ImageUploader'
 import type { GetUserByIdResponse } from '@/service/user/type'
-import BioDisplay from '../bio/components/BioDisplay'
 import {
   MapPin,
   Calendar,
@@ -20,114 +23,66 @@ import {
   CheckCircle,
 } from 'lucide-react'
 
-
-const mockUserData: GetUserByIdResponse['data'] = {
-  id: 42,
-  username: 'mehdi',
-  birthDate: '1998-04-29',
-  fullName: 'Mehdi Mousakhani',
-  gender: 'Male',
-  maritalStatus: 'Single',
-  educationalStatus: 'Graduated',
-  profileImage: '/assets/images/cover-image.png',
-  isVerified: true,
-  height: 181,
-  weight: 76,
-  bornPlace: 'Tehran',
-  livePlace: 'Dubai, UAE',
-  doesExercise: true,
-  favoriteSport: [
-    'Paddle Tennis',
-    'Running',
-    'Football',
-    'Basketball',
-    'Swimming',
-    'Cycling',
-    'Tennis',
-    'Volleyball',
-    'Golf',
-    'Yoga',
-  ],
-  travelStyle: [
-    'Luxury Travel',
-    'Cultural Travel',
-    'Road Trip',
-    'Adventure Travel',
-    'Beach Vacation',
-    'City Break',
-    'Mountain Hiking',
-    'Solo Travel',
-    'Group Travel',
-    'Business Travel',
-  ],
-  details:
-    'Product designer who loves technology, travel and taking candid photos. Building delightful experiences every single day.',
-  education: {
-    topic: 'Business & Management',
-    university: 'Sharif University of Technology',
-    graduationYear: '2020',
-  },
-  job: {
-    company: 'LongBio Studio',
-    position: 'Lead Product Designer',
-  },
-  pet: {
-    name: 'Milo',
-    breed: 'Golden Retriever',
-  },
-  skills: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'],
-  interests: [
-    'Photography',
-    'Traveling',
-    'Reading',
-    'Coffee tasting',
-    'Cooking',
-    'Music',
-    'Art',
-    'Technology',
-    'Gaming',
-    'Fitness',
-  ],
-  visitedCountries: [
-    'Iran',
-    'United Arab Emirates',
-    'Turkey',
-    'France',
-    'Italy',
-    'Spain',
-    'Germany',
-    'United Kingdom',
-    'Netherlands',
-    'Belgium',
-    'Switzerland',
-    'Austria',
-  ],
+interface BioDisplayProps {
+  userData: GetUserByIdResponse['data'] | null
+  profileImage?: string | null
+  setProfileImage?: (image: string | null) => void
+  username?: string
+  onGetStartedClick?: () => void
 }
 
-const TestBioContent = dynamic(() => Promise.resolve(BioContent), {
-  ssr: false,
-  loading: () => <div>Loading...</div>,
-})
-
-function BioContent() {
+export default function BioDisplay({
+  userData,
+  profileImage: externalProfileImage,
+  setProfileImage: externalSetProfileImage,
+  username,
+  onGetStartedClick,
+}: BioDisplayProps) {
   const [profileImage, setProfileImage] = useState<string | null>(null)
-  const userData = mockUserData
   const { data: countriesData } = useFlagCountries()
+
+  const internalSetProfileImage = externalSetProfileImage || setProfileImage
+  const displayProfileImage = externalProfileImage ?? profileImage
 
   // Set profile image when user data is loaded
   useEffect(() => {
     if (userData?.profileImage) {
-      setProfileImage(userData.profileImage)
+      internalSetProfileImage(userData.profileImage)
     }
-  }, [userData])
+  }, [userData, internalSetProfileImage])
+
+  if (!userData) {
+    return null
+  }
 
   const age = userData.birthDate
     ? new Date().getFullYear() - new Date(userData.birthDate).getFullYear()
     : null
 
+  // Mapping for skills and interests IDs to actual names
+  const skillMapping: { [key: string]: string } = {
+    '1': 'Sports',
+    '2': 'Painting',
+    '3': 'Music',
+    '4': 'Singing',
+    '5': 'Cultural Travel',
+    '6': 'Dancing',
+    '7': 'Physics and Math',
+    '8': 'Cooking',
+    '9': 'Photography',
+    '10': 'Road Trip',
+    '11': 'Eco-Tourism',
+  }
+
   // Convert ID arrays to actual names or use direct values if they're already strings
   const displaySkills = userData.skills?.map((skill) => skillMapping[skill] || skill) || []
   const displayInterests = userData.interests || []
+
+  const handleGetStartedClick = () => {
+    if (onGetStartedClick) {
+      onGetStartedClick()
+    }
+  }
 
   return (
     <div className="flex flex-col w-full h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
@@ -158,8 +113,8 @@ function BioContent() {
                     />
                   ) : (
                     <ImageUploader
-                      image={profileImage}
-                      setImage={setProfileImage}
+                      image={displayProfileImage}
+                      setImage={internalSetProfileImage}
                       className="w-full h-full object-cover cursor-pointer rounded-full"
                       isProfile={true}
                     />
@@ -495,6 +450,7 @@ function BioContent() {
               href="https://longbio.me"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={handleGetStartedClick}
               className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-full font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               <ExternalLink className="size-5" />
@@ -505,9 +461,5 @@ function BioContent() {
       </div>
     </div>
   )
-}
-
-export default function TestBioPage() {
-  return <TestBioContent />
 }
 
