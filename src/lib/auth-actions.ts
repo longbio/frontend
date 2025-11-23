@@ -32,3 +32,8 @@ export async function clearAuthTokens() {
   cookieStore.delete('accessToken')
   cookieStore.delete('refreshToken')
 }
+
+export async function getAccessToken() {
+  const { accessToken } = await getAuthTokens()
+  return accessToken
+}
