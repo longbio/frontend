@@ -67,7 +67,7 @@ function UsernameForm({ name }: { name: string }) {
       const apiErrorObj = error as Error & { status?: number; data?: { message?: string } }
       const status = apiErrorObj?.status
 
-      if (status === 409) {
+      if (status === 429) {
         setApiError('This username is already taken. Please choose another one.')
       } else if (status === 400) {
         setApiError(
@@ -81,8 +81,8 @@ function UsernameForm({ name }: { name: string }) {
         setApiError('Server error. Please try again later.')
       } else {
         setApiError(
-          apiErrorObj?.message ||
-            apiErrorObj?.data?.message ||
+          apiErrorObj?.data?.message ||
+            apiErrorObj?.message ||
             'Failed to update username. Please try again.'
         )
       }

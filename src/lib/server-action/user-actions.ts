@@ -32,7 +32,13 @@ export async function updateUserServerAction(params: UpdateUserParams) {
     })
 
     if (!res.ok) {
-      const data = await res.json().catch(() => null)
+      let data
+      try {
+        data = await res.json()
+      } catch {
+        // If response body is not JSON, create a default error structure
+        data = { message: `Request failed with status ${res.status}` }
+      }
       const error = new Error(data?.message || 'Failed to update user') as Error & {
         status?: number
         data?: { message?: string }
