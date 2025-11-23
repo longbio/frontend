@@ -208,7 +208,7 @@ function BioContent({ username }: { username: string }) {
       {/* Main Content */}
       <div className="flex-1 px-4 pt-8 pb-4 overflow-y-auto">
         {/* Basic Info Section */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 py-4 px-4 mb-4 w-full -mx-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <User className="w-5 h-5 text-purple-600" />
@@ -468,11 +468,11 @@ function BioContent({ username }: { username: string }) {
               <Star className="w-5 h-5 text-purple-600" />
               <h3 className="font-bold text-gray-900">Interests</h3>
             </div>
-            <div className="flex flex-wrap gap-2 pt-2 pb-3">
+            <div className="grid grid-cols-3 gap-2 pt-2 pb-3">
               {displayInterests.map((interest, index) => (
                 <span
                   key={index}
-                  className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-purple-200 whitespace-nowrap"
+                  className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-purple-200 whitespace-nowrap text-center"
                 >
                   {interest}
                 </span>
