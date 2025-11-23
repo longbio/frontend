@@ -32,18 +32,22 @@ export async function updateUserServerAction(params: UpdateUserParams) {
     })
 
     if (!res.ok) {
-      let data
+      const statusCode = res.status
+      let data: { message?: string; [key: string]: any } = {}
       try {
-        data = await res.json()
+        const text = await res.text()
+        data = text ? JSON.parse(text) : { message: `Request failed with status ${statusCode}` }
       } catch {
         // If response body is not JSON, create a default error structure
-        data = { message: `Request failed with status ${res.status}` }
+        data = { message: `Request failed with status ${statusCode}` }
       }
       const error = new Error(data?.message || 'Failed to update user') as Error & {
-        status?: number
-        data?: { message?: string }
+        status: number
+        message: string
+        data?: { message?: string; [key: string]: any }
       }
-      error.status = res.status
+      error.status = statusCode
+      error.message = data?.message || error.message
       error.data = data
       throw error
     }
@@ -52,14 +56,19 @@ export async function updateUserServerAction(params: UpdateUserParams) {
     return json
   } catch (error) {
     // Re-throw if it's already an error with status
-    if (error instanceof Error && 'status' in error) {
+    if (error instanceof Error && 'status' in error && typeof (error as any).status === 'number') {
       throw error
     }
     // Wrap unexpected errors
-    const wrappedError = new Error(
-      error instanceof Error ? error.message : 'An unexpected error occurred'
-    ) as Error & { status?: number }
+    const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred'
+    const wrappedError = new Error(errorMessage) as Error & {
+      status: number
+      message: string
+      data?: { message?: string; [key: string]: any }
+    }
     wrappedError.status = 500
+    wrappedError.message = errorMessage
+    wrappedError.data = { message: errorMessage }
     throw wrappedError
   }
 }
