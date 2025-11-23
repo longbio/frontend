@@ -74,6 +74,112 @@ export default function BioDisplay({
     '11': 'Eco-Tourism',
   }
 
+  const skillEmojiMap: { [key: string]: string } = {
+    'Sports': '⚽',
+    'Painting': '🎨',
+    'Music': '🎵',
+    'Singing': '🎤',
+    'Cultural Travel': '🏛️',
+    'Dancing': '💃',
+    'Physics and Math': '🔬',
+    'Cooking': '👨‍🍳',
+    'Photography': '📸',
+    'Road Trip': '🛣️',
+    'Eco-Tourism': '🌿',
+  }
+
+  const getInterestEmoji = (interest: string): string => {
+    const lowerInterest = interest.toLowerCase()
+    const interestEmojiMap: { [key: string]: string } = {
+      'travelling': '✈️',
+      'traveling': '✈️',
+      'cooking': '👨‍🍳',
+      'books': '📚',
+      'reading': '📖',
+      'coffee': '☕',
+      'movies': '🎬',
+      'series': '📺',
+      'music': '🎵',
+      'volunteering': '🤝',
+      'friends': '👥',
+      'social media': '📱',
+      'flowers': '🌸',
+      'gardening': '🌱',
+      'sports': '⚽',
+      'gym': '💪',
+      'meditation': '🧘',
+      'photography': '📸',
+      'art': '🎨',
+      'technology': '💻',
+      'gaming': '🎮',
+      'fitness': '💪',
+      'dancing': '💃',
+      'yoga': '🧘',
+      'hiking': '🥾',
+      'swimming': '🏊',
+      'cycling': '🚴',
+      'running': '🏃',
+    }
+    
+    for (const [key, emoji] of Object.entries(interestEmojiMap)) {
+      if (lowerInterest.includes(key)) {
+        return emoji
+      }
+    }
+    return '⭐'
+  }
+
+  const getSportEmoji = (sport: string): string => {
+    const lowerSport = sport.toLowerCase()
+    const sportEmojiMap: { [key: string]: string } = {
+      'football': '⚽',
+      'soccer': '⚽',
+      'basketball': '🏀',
+      'tennis': '🎾',
+      'volleyball': '🏐',
+      'baseball': '⚾',
+      'swimming': '🏊',
+      'cycling': '🚴',
+      'running': '🏃',
+      'golf': '⛳',
+      'boxing': '🥊',
+      'martial arts': '🥋',
+      'yoga': '🧘',
+      'gymnastics': '🤸',
+      'skiing': '⛷️',
+      'snowboarding': '🏂',
+      'surfing': '🏄',
+      'diving': '🤿',
+      'archery': '🏹',
+      'fencing': '🤺',
+      'weightlifting': '🏋️',
+      'wrestling': '🤼',
+      'badminton': '🏸',
+      'table tennis': '🏓',
+      'ping pong': '🏓',
+      'cricket': '🏏',
+      'hockey': '🏒',
+      'rugby': '🏉',
+      'handball': '🤾',
+      'water polo': '🤽',
+      'rowing': '🚣',
+      'sailing': '⛵',
+      'climbing': '🧗',
+      'rock climbing': '🧗',
+      'skateboarding': '🛹',
+      'esports': '🎮',
+      'chess': '♟️',
+      'dance': '💃',
+    }
+    
+    for (const [key, emoji] of Object.entries(sportEmojiMap)) {
+      if (lowerSport.includes(key)) {
+        return emoji
+      }
+    }
+    return '🏅'
+  }
+
   // Convert ID arrays to actual names or use direct values if they're already strings
   const displaySkills = userData.skills?.map((skill) => skillMapping[skill] || skill) || []
   const displayInterests = userData.interests || []
@@ -379,7 +485,7 @@ export default function BioDisplay({
                   key={index}
                   className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-purple-200 whitespace-nowrap"
                 >
-                  {interest}
+                  {getInterestEmoji(interest)} {interest}
                 </span>
               ))}
             </div>
@@ -398,7 +504,7 @@ export default function BioDisplay({
             <div className="flex flex-wrap gap-x-4 gap-y-2 pt-2 pb-3">
               {displaySkills.map((skill, index) => (
                 <div key={index} className="text-gray-700 text-sm flex items-center">
-                  <span className="mr-1">•</span>
+                  <span className="mr-1">{skillEmojiMap[skill] || '✨'}</span>
                   <span>{skill}</span>
                 </div>
               ))}
@@ -422,16 +528,16 @@ export default function BioDisplay({
               {userData.favoriteSport && userData.favoriteSport.length > 0 && (
                 <div>
                   <div className="font-medium text-gray-700 mb-2">Favorite Sports:</div>
-                  <div className="flex flex-wrap gap-2">
-                    {userData.favoriteSport.map((sport, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-purple-200"
-                      >
-                        {sport}
-                      </span>
-                    ))}
-                  </div>
+                    <div className="flex flex-wrap gap-2">
+                      {userData.favoriteSport.map((sport, index) => (
+                        <span
+                          key={index}
+                          className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-purple-200"
+                        >
+                          {getSportEmoji(sport)} {sport}
+                        </span>
+                      ))}
+                    </div>
                 </div>
               )}
               {userData.doesExercise !== undefined && (

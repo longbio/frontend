@@ -106,6 +106,112 @@ export default function ShareScreenshot({
     '11': 'Eco-Tourism',
   }
 
+  const skillEmojiMap: { [key: string]: string } = {
+    'Sports': '⚽',
+    'Painting': '🎨',
+    'Music': '🎵',
+    'Singing': '🎤',
+    'Cultural Travel': '🏛️',
+    'Dancing': '💃',
+    'Physics and Math': '🔬',
+    'Cooking': '👨‍🍳',
+    'Photography': '📸',
+    'Road Trip': '🛣️',
+    'Eco-Tourism': '🌿',
+  }
+
+  const getInterestEmoji = (interest: string): string => {
+    const lowerInterest = interest.toLowerCase()
+    const interestEmojiMap: { [key: string]: string } = {
+      'travelling': '✈️',
+      'traveling': '✈️',
+      'cooking': '👨‍🍳',
+      'books': '📚',
+      'reading': '📖',
+      'coffee': '☕',
+      'movies': '🎬',
+      'series': '📺',
+      'music': '🎵',
+      'volunteering': '🤝',
+      'friends': '👥',
+      'social media': '📱',
+      'flowers': '🌸',
+      'gardening': '🌱',
+      'sports': '⚽',
+      'gym': '💪',
+      'meditation': '🧘',
+      'photography': '📸',
+      'art': '🎨',
+      'technology': '💻',
+      'gaming': '🎮',
+      'fitness': '💪',
+      'dancing': '💃',
+      'yoga': '🧘',
+      'hiking': '🥾',
+      'swimming': '🏊',
+      'cycling': '🚴',
+      'running': '🏃',
+    }
+    
+    for (const [key, emoji] of Object.entries(interestEmojiMap)) {
+      if (lowerInterest.includes(key)) {
+        return emoji
+      }
+    }
+    return '⭐'
+  }
+
+  const getSportEmoji = (sport: string): string => {
+    const lowerSport = sport.toLowerCase()
+    const sportEmojiMap: { [key: string]: string } = {
+      'football': '⚽',
+      'soccer': '⚽',
+      'basketball': '🏀',
+      'tennis': '🎾',
+      'volleyball': '🏐',
+      'baseball': '⚾',
+      'swimming': '🏊',
+      'cycling': '🚴',
+      'running': '🏃',
+      'golf': '⛳',
+      'boxing': '🥊',
+      'martial arts': '🥋',
+      'yoga': '🧘',
+      'gymnastics': '🤸',
+      'skiing': '⛷️',
+      'snowboarding': '🏂',
+      'surfing': '🏄',
+      'diving': '🤿',
+      'archery': '🏹',
+      'fencing': '🤺',
+      'weightlifting': '🏋️',
+      'wrestling': '🤼',
+      'badminton': '🏸',
+      'table tennis': '🏓',
+      'ping pong': '🏓',
+      'cricket': '🏏',
+      'hockey': '🏒',
+      'rugby': '🏉',
+      'handball': '🤾',
+      'water polo': '🤽',
+      'rowing': '🚣',
+      'sailing': '⛵',
+      'climbing': '🧗',
+      'rock climbing': '🧗',
+      'skateboarding': '🛹',
+      'esports': '🎮',
+      'chess': '♟️',
+      'dance': '💃',
+    }
+    
+    for (const [key, emoji] of Object.entries(sportEmojiMap)) {
+      if (lowerSport.includes(key)) {
+        return emoji
+      }
+    }
+    return '🏅'
+  }
+
   const fullName = userData?.fullName?.trim() || 'LongBio User'
   const username = userData?.username?.trim() || 'user'
   const profileImage = userData?.profileImage?.trim() || null
@@ -1018,7 +1124,7 @@ export default function ShareScreenshot({
                             fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                           }}
                         >
-                          {sport}
+                          {getSportEmoji(sport)} {sport}
                         </span>
                       ))}
                       {remainingCount > 0 && (
@@ -1110,7 +1216,7 @@ export default function ShareScreenshot({
                             fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                           }}
                         >
-                          {skill}
+                          {skillEmojiMap[skill] || '✨'} {skill}
                         </span>
                       ))}
                       {remainingCount > 0 && (
@@ -1198,7 +1304,7 @@ export default function ShareScreenshot({
                             fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
                           }}
                         >
-                          {interest}
+                          {getInterestEmoji(interest)} {interest}
                         </span>
                       ))}
                       {remainingCount > 0 && (
