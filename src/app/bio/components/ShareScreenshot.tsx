@@ -412,7 +412,7 @@ export default function ShareScreenshot({
         {/* Header - Gradient badge */}
         <div
           style={{
-            background: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 55%, #c4b5fd 100%)',
+            background: 'linear-gradient(135deg, #dd2a7b 0%, #8134af 100%)',
             width: '14.2rem',
             paddingTop: '0.35rem',
             paddingBottom: '0.35rem',
@@ -420,8 +420,6 @@ export default function ShareScreenshot({
             paddingRight: '0.595rem',
             borderBottomLeftRadius: '0.77rem',
             borderBottomRightRadius: '0.77rem',
-            boxShadow: '0 14px 28px -16px rgba(124, 58, 237, 0.55)',
-            border: '1px solid rgba(255, 255, 255, 0.28)',
             marginLeft: 'auto',
             marginRight: 'auto',
             display: 'flex',
@@ -1510,7 +1508,7 @@ export default function ShareScreenshot({
         {/* Footer */}
         <div
           style={{
-            background: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 55%, #c4b5fd 100%)',
+            background: 'linear-gradient(135deg, #dd2a7b 0%, #8134af 100%)',
             width: 'fit-content',
             paddingTop: '0.35rem',
             paddingBottom: '0.35rem',
@@ -1518,8 +1516,6 @@ export default function ShareScreenshot({
             paddingRight: '0.595rem',
             borderTopLeftRadius: '0.77rem',
             borderTopRightRadius: '0.77rem',
-            boxShadow: '0 14px 28px -16px rgba(124, 58, 237, 0.55)',
-            border: '1px solid rgba(255, 255, 255, 0.28)',
             marginLeft: 'auto',
             marginRight: 'auto',
             display: 'flex',
