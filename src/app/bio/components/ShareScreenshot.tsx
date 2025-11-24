@@ -1554,8 +1554,6 @@ export default function ShareScreenshot({
                 width: '0.945rem',
                 height: '0.945rem',
                 borderRadius: '9999px',
-                backgroundColor: 'rgba(255, 255, 255, 0.22)',
-                boxShadow: '0 8px 16px -10px rgba(59, 130, 246, 0.45)',
               }}
             >
               <Sparkles style={{ width: '0.56rem', height: '0.56rem', color: '#f5f3ff' }} />
