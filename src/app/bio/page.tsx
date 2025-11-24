@@ -939,9 +939,6 @@ function BioContent() {
                         Get Premium Access
                       </Button>
 
-                      <p className="text-xs text-gray-500 text-center">
-                        We&apos;ll contact you within 24 hours with premium access details
-                      </p>
                     </div>
                   </>
                 )}
