@@ -1148,18 +1148,6 @@ export default function ShareScreenshot({
                         </span>
                       )}
                     </div>
-                    {doesExercise !== null && (
-                      <div
-                        style={{
-                          fontSize: '0.385rem',
-                          color: '#374151',
-                          marginTop: displayedSports.length ? '0.165rem' : 0,
-                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                        }}
-                      >
-                        Exercise: {doesExercise ? 'Yes' : 'No'}
-                      </div>
-                    )}
                   </>
                 ),
               })
