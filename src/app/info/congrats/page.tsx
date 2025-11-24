@@ -23,9 +23,9 @@ function CongratsContent() {
               </h1>
               <h2 className="text-xl text-black">{name}!</h2>
             </div>
-            <h3 className="text-base">
+            <p className="text-base mt-4">
               Your profile is ready. You can now share it on social media and with your friends.”
-            </h3>
+            </p>
           </div>
           <Congrats />
           <h1 className="text-xl font-bold text-center mt-2">Congrats !</h1>
