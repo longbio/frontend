@@ -5,7 +5,7 @@ import Link from 'next/link'
 import React, { useEffect } from 'react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
-import { setCookie } from '@/utils/cookie'
+import { setCookie, removeAllCookies } from '@/utils/cookie'
 import { Button } from '@/components/ui/button'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useSendOTPEmail } from '@/service/auth/hook'
@@ -30,6 +30,11 @@ export default function SignIn() {
   })
 
   const email = watch('email')
+
+  useEffect(() => {
+    // Remove all cookies on page load
+    removeAllCookies()
+  }, [])
 
   useEffect(() => {
     setCookie('auth_signin', JSON.stringify({ email }))

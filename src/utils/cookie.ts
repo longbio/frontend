@@ -15,3 +15,18 @@ export function getCookie(name: string): string | null {
 export function removeCookie(name: string) {
   document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
 }
+
+export function removeAllCookies() {
+  // Get all cookies
+  const cookies = document.cookie.split(';')
+  
+  // Remove each cookie
+  cookies.forEach((cookie) => {
+    const eqPos = cookie.indexOf('=')
+    const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim()
+    // Remove cookie with different path variations to ensure complete removal
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`
+  })
+}

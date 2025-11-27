@@ -6,7 +6,7 @@ import Link from 'next/link'
 import React, { useEffect } from 'react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
-import { setCookie } from '@/utils/cookie'
+import { setCookie, removeAllCookies } from '@/utils/cookie'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { useSendOTPEmail } from '@/service/auth/hook'
@@ -35,6 +35,11 @@ export default function SignUp() {
 
   const name = watch('name')
   const email = watch('email')
+
+  useEffect(() => {
+    // Remove all cookies on page load
+    removeAllCookies()
+  }, [])
 
   useEffect(() => {
     setCookie('auth_signup', JSON.stringify({ name, email }))
