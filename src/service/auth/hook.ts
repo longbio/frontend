@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { clearAllCookies } from '@/utils/cookie'
 import { verifySignupCode, sendSignupEmail } from './function'
 import type { VerifySignupCodeParams, SignupParams } from './types'
 
@@ -22,8 +21,6 @@ export function useSendOTPEmail(options?: { mode?: 'signup' | 'signin' }) {
 }
 
 export function useVerifySignupCode(mode: 'signup' | 'signin' = 'signup') {
-  const queryClient = useQueryClient()
-  const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [isSuccess, setIsSuccess] = useState(false)
   const [isNewUser, setIsNewUser] = useState<boolean | null>(null)
@@ -43,11 +40,6 @@ export function useVerifySignupCode(mode: 'signup' | 'signin' = 'signup') {
           if (newUser === false) {
             setIsSuccess(true)
             setError(null)
-            // Clear all cookies and React Query cache after successful signin
-            clearAllCookies()
-            queryClient.clear()
-            queryClient.invalidateQueries({ queryKey: ['currentUser'] })
-            router.refresh()
           } else if (newUser === true) {
             setIsSuccess(false)
             setError('Email not registered. Please sign up first.')
@@ -56,11 +48,6 @@ export function useVerifySignupCode(mode: 'signup' | 'signin' = 'signup') {
           if (newUser === true) {
             setIsSuccess(true)
             setError(null)
-            // Clear all cookies and React Query cache after successful signup
-            clearAllCookies()
-            queryClient.clear()
-            queryClient.invalidateQueries({ queryKey: ['currentUser'] })
-            router.refresh()
           } else if (newUser === false) {
             setIsSuccess(false)
             setError('This email is already registered.')
