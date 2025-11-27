@@ -1,5 +1,5 @@
 import { Plus, X } from 'lucide-react'
-import { useTopics } from '@/service/topics'
+import { useTopics, useAllUniversities } from '@/service/topics'
 import { useState, useEffect, useMemo } from 'react'
 
 interface AddMoreBoxProps {
@@ -205,6 +205,7 @@ export function AddUniversityBox({
   const [showDropdown, setShowDropdown] = useState(false)
   const [inputValue, setInputValue] = useState('')
   const { topics: allTopics, isLoading } = useTopics()
+  const { universities: allUniversitiesList } = useAllUniversities()
 
   const handleAdd = (value: string) => {
     if (value.trim() && !universities.includes(value.trim())) {
@@ -229,29 +230,16 @@ export function AddUniversityBox({
     })
   }
 
-  // Get universities related to selected topics
-  const getRelatedUniversities = () => {
-    const relatedUnis = new Set<string>()
-    selectedTopics.forEach((topicName) => {
-      const topic = allTopics.find((t) => t.id === topicName)
-      if (topic) {
-        topic.universities.forEach((uni) => relatedUnis.add(uni.name))
-      }
-    })
-    return Array.from(relatedUnis)
-  }
+  const allUniversities = useMemo(() => 
+    allUniversitiesList.map((uni) => uni.name),
+    [allUniversitiesList]
+  )
 
-  // Get all universities from all topics
-  const getAllUniversities = () => {
-    const allUnis = new Set<string>()
-    allTopics.forEach((topic) => {
-      topic.universities.forEach((uni) => allUnis.add(uni.name))
-    })
-    return Array.from(allUnis)
-  }
-
-  const relatedUniversities = getRelatedUniversities()
-  const allUniversities = getAllUniversities()
+  // All topics have access to all universities (no relations needed)
+  const relatedUniversities = useMemo(() => {
+    // Since there are no relations, all universities are available for all topics
+    return allUniversities
+  }, [allUniversities])
 
   const filteredSuggestions =
     inputValue.length > 0
