@@ -2945,8 +2945,8 @@ export const globalUniversitiesData: University[] = [
 
 // Combine Iranian and Global universities into total universities
 export const totalUniversitiesData: University[] = [
-  ...iranianUniversitiesData,
   ...globalUniversitiesData,
+  ...iranianUniversitiesData,
 ]
 
 // Helper function to create slug-like ID from English title

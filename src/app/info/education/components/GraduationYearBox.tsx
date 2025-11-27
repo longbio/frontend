@@ -13,7 +13,7 @@ const GraduationYearBox: React.FC<GraduationYearBoxProps> = ({
   graduationYear,
   setGraduationYear,
   minYear = 1950,
-  maxYear = new Date().getFullYear(),
+  maxYear = 2030,
   className = '',
 }) => {
   const years = Array.from({ length: maxYear - minYear + 1 }, (_, i) => (maxYear - i).toString())

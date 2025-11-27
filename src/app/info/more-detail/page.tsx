@@ -11,7 +11,7 @@ import { setCookie, getCookie } from '@/utils/cookie'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 const moreDetailSchema = z.object({
-  detail: z.string().min(1, 'Required'),
+  detail: z.string(),
 })
 type MoreDetailFormType = z.infer<typeof moreDetailSchema>
 
@@ -30,7 +30,9 @@ function MoreDetailContent() {
   } = useForm<MoreDetailFormType>({
     resolver: zodResolver(moreDetailSchema),
     mode: 'onChange',
-    defaultValues: {},
+    defaultValues: {
+      detail: '',
+    },
   })
   const detail = watch('detail')
 
