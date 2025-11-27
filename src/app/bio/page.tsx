@@ -779,24 +779,13 @@ function BioContent() {
                   <Edit3 className="w-4 h-4 text-gray-500" />
                 </button>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full overflow-hidden">
-                  <Image
-                    src="/assets/images/pet.png"
-                    alt="pet picture"
-                    width={64}
-                    height={64}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div>
-                  {userData.pet.name && (
-                    <h4 className="font-bold text-gray-900">{userData.pet.name}</h4>
-                  )}
-                  {userData.pet.breed && (
-                    <p className="text-gray-600 text-sm">{userData.pet.breed}</p>
-                  )}
-                </div>
+              <div>
+                {userData.pet.name && (
+                  <h4 className="font-bold text-gray-900">{userData.pet.name}</h4>
+                )}
+                {userData.pet.breed && (
+                  <p className="text-gray-600 text-sm">{userData.pet.breed}</p>
+                )}
               </div>
             </div>
     )
