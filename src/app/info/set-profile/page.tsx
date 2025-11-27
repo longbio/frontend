@@ -26,9 +26,20 @@ function SetProfileContent() {
   const mutation = useUploadProfileImage()
 
   const SetProfileSchema = z.object({
-    profile: z.instanceof(File).refine((file) => file && file.type.startsWith('image/'), {
-      message: 'Please select a valid photo.',
-    }),
+    profile: z
+      .any()
+      .refine(
+        (file) => {
+          // Allow null, undefined, or empty
+          if (!file || file === null || file === undefined) return true
+          return true
+        },
+        {
+          message: 'Please select a valid photo.',
+        }
+      )
+      .optional()
+      .nullable(),
   })
   type SetProfileFormType = z.infer<typeof SetProfileSchema>
   const {
@@ -205,7 +216,12 @@ function SetProfileContent() {
           </div>
         </div>
         <StickyNav
-          onNext={handleSubmit(onSubmit)}
+          onNext={(e) => {
+            // Prevent default form submission since form already has onSubmit handler
+            e.preventDefault()
+            // Call handleSubmit which will validate and call onSubmit if valid
+            handleSubmit(onSubmit)(e)
+          }}
           onSkip={() => {
             if (isEditMode) {
               router.push('/bio')
