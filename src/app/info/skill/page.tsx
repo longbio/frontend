@@ -27,6 +27,28 @@ const defaultSkills = [
   'Eco-Tourism',
 ]
 
+const skillEmojiMap: { [key: string]: string } = {
+  'Sports': '⚽',
+  'Painting': '🎨',
+  'Music': '🎵',
+  'singing': '🎤',
+  'Singing': '🎤',
+  'Cultural Travel': '🏛️',
+  'Dancing': '💃',
+  'Physics and math': '🔬',
+  'Physics and Math': '🔬',
+  'Cooking': '👨‍🍳',
+  'Photography': '📸',
+  'Road Trip': '🛣️',
+  'Eco-Tourism': '🌿',
+}
+
+const getSkillEmoji = (skill: string): string => {
+  // Normalize the skill name for matching
+  const normalizedSkill = skill.trim()
+  return skillEmojiMap[normalizedSkill] || skillEmojiMap[normalizedSkill.charAt(0).toUpperCase() + normalizedSkill.slice(1)] || '✨'
+}
+
 const skillSchema = z.object({
   skills: z.array(z.string()).min(1, 'please choose one skill'),
 })
@@ -128,7 +150,7 @@ function SkillContent() {
                   disabled={selected.length >= 5 && !selected.includes(skill)}
                   className="data-[state=on]:border-purple-blaze data-[state=on]:text-purple-blaze border border-black hover:text-black px-2 xl:px-4 text-xs xl:text-sm font-normal transition rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {skill}
+                  {getSkillEmoji(skill)} {skill}
                 </Toggle>
               ))}
               <AddButton

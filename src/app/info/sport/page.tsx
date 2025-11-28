@@ -28,6 +28,58 @@ const defaultSports = [
   'Golf',
 ]
 
+const getSportEmoji = (sport: string): string => {
+  const lowerSport = sport.toLowerCase()
+  const sportEmojiMap: { [key: string]: string } = {
+    'football': '⚽',
+    'soccer': '⚽',
+    'basketball': '🏀',
+    'tennis': '🎾',
+    'volleyball': '🏐',
+    'baseball': '⚾',
+    'swimming': '🏊',
+    'cycling': '🚴',
+    'running': '🏃',
+    'golf': '⛳',
+    'boxing': '🥊',
+    'martial arts': '🥋',
+    'yoga': '🧘',
+    'gymnastics': '🤸',
+    'skiing': '⛷️',
+    'snowboarding': '🏂',
+    'surfing': '🏄',
+    'diving': '🤿',
+    'archery': '🏹',
+    'fencing': '🤺',
+    'weightlifting': '🏋️',
+    'wrestling': '🤼',
+    'badminton': '🏸',
+    'table tennis': '🏓',
+    'ping pong': '🏓',
+    'cricket': '🏏',
+    'hockey': '🏒',
+    'rugby': '🏉',
+    'handball': '🤾',
+    'water polo': '🤽',
+    'rowing': '🚣',
+    'sailing': '⛵',
+    'climbing': '🧗',
+    'rock climbing': '🧗',
+    'skateboarding': '🛹',
+    'esports': '🎮',
+    'chess': '♟️',
+    'dance': '💃',
+    'gym': '💪',
+  }
+  
+  for (const [key, emoji] of Object.entries(sportEmojiMap)) {
+    if (lowerSport.includes(key)) {
+      return emoji
+    }
+  }
+  return '🏅'
+}
+
 const sportSchema = z.object({
   sports: z.array(z.string()).min(1, '').max(5, ''),
 })
@@ -132,7 +184,7 @@ function SportContent() {
                   disabled={selected.length >= 5 && !selected.includes(sport)}
                   className="data-[state=on]:border-purple-blaze data-[state=on]:text-purple-blaze border border-black hover:text-black px-2 xl:px-4 text-xs xl:text-sm font-normal transition rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {sport}
+                  {getSportEmoji(sport)} {sport}
                 </Toggle>
               ))}
               <SportAddButton

@@ -16,17 +16,63 @@ import { useRouter, useSearchParams } from 'next/navigation'
 const defaultInterests = [
   'Travelling',
   'Cooking',
-  '📚 Books',
-  '☕ Coffee',
+  'Books',
+  'Coffee',
   'Movies and series',
   'Music',
   'Volunteering',
   'friends',
   'Social media',
-  '🌸 Flowers & Gardening',
+  'Flowers & Gardening',
   'Sports and gym',
-  '🧘‍♂️ Meditation',
+  'Meditation',
 ]
+
+const stripEmoji = (text: string): string => {
+  // Remove emojis including sequences with zero-width joiners
+  return text.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{24C2}-\u{1F251}]|[\u{1FA00}-\u{1FAFF}]|[\u{200D}]/gu, '').replace(/\s+/g, ' ').trim()
+}
+
+const getInterestEmoji = (interest: string): string => {
+  const lowerInterest = stripEmoji(interest).toLowerCase()
+  const interestEmojiMap: { [key: string]: string } = {
+    'travelling': '✈️',
+    'traveling': '✈️',
+    'cooking': '👨‍🍳',
+    'books': '📚',
+    'reading': '📖',
+    'coffee': '☕',
+    'movies': '🎬',
+    'series': '📺',
+    'music': '🎵',
+    'volunteering': '🤝',
+    'friends': '👥',
+    'social media': '📱',
+    'flowers': '🌸',
+    'gardening': '🌱',
+    'sports': '⚽',
+    'gym': '💪',
+    'meditation': '🧘',
+    'photography': '📸',
+    'art': '🎨',
+    'technology': '💻',
+    'gaming': '🎮',
+    'fitness': '💪',
+    'dancing': '💃',
+    'yoga': '🧘',
+    'hiking': '🥾',
+    'swimming': '🏊',
+    'cycling': '🚴',
+    'running': '🏃',
+  }
+  
+  for (const [key, emoji] of Object.entries(interestEmojiMap)) {
+    if (lowerInterest.includes(key)) {
+      return emoji
+    }
+  }
+  return '⭐'
+}
 
 const interestSchema = z.object({
   interests: z.array(z.string()).min(1, 'please choose one'),
@@ -132,7 +178,7 @@ function InterestContent() {
                   disabled={selected.length >= 5 && !selected.includes(interest)}
                   className="data-[state=on]:border-purple-blaze data-[state=on]:text-purple-blaze border border-black hover:text-black px-2 xl:px-4 text-xs xl:text-sm font-normal transition rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {interest}
+                  {getInterestEmoji(interest)} {stripEmoji(interest)}
                 </Toggle>
               ))}
               <AddButton
