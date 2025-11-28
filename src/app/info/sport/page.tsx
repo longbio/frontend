@@ -121,6 +121,11 @@ function SportContent() {
     defaultValues: { sports: [] },
   })
 
+  // Sync form value with selected state (especially when cached options load)
+  React.useEffect(() => {
+    setValue('sports', selected, { shouldValidate: true })
+  }, [selected, setValue])
+
   // Sync selected with form
   const handleSelect = (sport: string) => {
     let updated: string[]

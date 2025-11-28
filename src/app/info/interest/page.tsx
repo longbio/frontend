@@ -115,6 +115,11 @@ function InterestContent() {
     defaultValues: { interests: [] },
   })
 
+  // Sync form value with selected state (especially when cached options load)
+  useEffect(() => {
+    setValue('interests', selected, { shouldValidate: true })
+  }, [selected, setValue])
+
   // Sync selected with form
   const handleSelect = (interest: string) => {
     let updated: string[]

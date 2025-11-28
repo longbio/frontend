@@ -90,6 +90,11 @@ function SkillContent() {
     defaultValues: { skills: [] },
   })
 
+  // Sync form value with selected state (especially when cached options load)
+  React.useEffect(() => {
+    setValue('skills', selected, { shouldValidate: true })
+  }, [selected, setValue])
+
   const handleSelect = (skill: string) => {
     let updated: string[]
     if (selected.includes(skill)) {
