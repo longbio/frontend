@@ -190,20 +190,6 @@ function JobContent() {
                     disabled={positions.length === 0}
                     staticOptions={getAllCompaniesForPositions()}
                   />
-                  <AddMoreBox
-                    options={[]}
-                    setOptions={(newOptions) => {
-                      const newCompanies = newOptions.filter(
-                        (option) => !companies.includes(option)
-                      )
-                      if (newCompanies.length > 0) {
-                        setCompanies([...companies, ...newCompanies])
-                      }
-                    }}
-                    placeholder="Add custom company..."
-                    buttonLabel="Add Custom Company"
-                    disabled={false}
-                  />
                 </div>
               )}
               <SelectableOption
