@@ -351,7 +351,7 @@ export function AddUniversityBox({
                       .map((s: string, idx: number) => (
                         <li
                           key={s + '-related-' + idx}
-                          className="px-3 py-1 hover:bg-purple-100 cursor-pointer text-sm bg-purple-50"
+                          className="px-3 py-1 hover:bg-gray-100 cursor-pointer text-sm bg-white"
                           onClick={() => handleAdd(s)}
                         >
                           {s}
@@ -368,7 +368,7 @@ export function AddUniversityBox({
                       .map((s: string, idx: number) => (
                         <li
                           key={s + '-other-' + idx}
-                          className="px-3 py-1 hover:bg-purple-100 cursor-pointer text-sm"
+                          className="px-3 py-1 hover:bg-gray-100 cursor-pointer text-sm bg-white"
                           onClick={() => handleAdd(s)}
                         >
                           {s}
