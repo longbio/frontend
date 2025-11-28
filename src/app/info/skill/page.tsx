@@ -115,7 +115,7 @@ function SkillContent() {
   const onSubmit = async () => {
     try {
       await mutation.mutateAsync({
-        skill: selected,
+        skills: selected,
       })
 
       // If in edit mode, return to bio page, otherwise continue to next step
