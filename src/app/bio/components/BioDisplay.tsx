@@ -200,7 +200,7 @@ export default function BioDisplay({
   const getCardStyle = (index: number) => {
     const isEven = index % 2 === 0
     return isEven
-      ? 'bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4'
+      ? 'bg-white rounded-2xl shadow-sm border border-purple-200 p-4 mb-4'
       : 'bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-purple-200 p-4 mb-4'
   }
 
