@@ -99,9 +99,9 @@ export async function uploadProfileImageServerAction(file: File) {
 }
 
 export async function updateEducationServerAction(data: {
-  university: string
-  topic: string
-  graduationYear: string
+  university: string | null
+  topic: string | null
+  graduationYear: string | null
 }) {
   const { accessToken } = await getAuthTokens()
 

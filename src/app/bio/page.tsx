@@ -400,15 +400,15 @@ function BioContent() {
                     <span>Age {age}</span>
                   </div>
                 )}
-                {(userData.height > 0 || userData.weight > 0) && (
+                {((userData.height != null && userData.height > 0) || (userData.weight != null && userData.weight > 0)) && (
                   <div className="flex items-center gap-1 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
                     <Ruler className="w-4 h-4" />
                     <span>
-                      {userData.height > 0 && userData.weight > 0
+                      {(userData.height != null && userData.height > 0) && (userData.weight != null && userData.weight > 0)
                         ? `${userData.height}cm, ${userData.weight}kg`
-                        : userData.height > 0
+                        : (userData.height != null && userData.height > 0)
                         ? `${userData.height}cm`
-                        : `${userData.weight}kg`}
+                        : (userData.weight != null && userData.weight > 0) ? `${userData.weight}kg` : ''}
                     </span>
                   </div>
                 )}
@@ -516,9 +516,9 @@ function BioContent() {
 
   // Education Section
   if (
-    userData.education?.university ||
-    userData.education?.topic ||
-    userData.education?.graduationYear ||
+    (userData.education?.university != null && userData.education.university !== '') ||
+    (userData.education?.topic != null && userData.education.topic !== '') ||
+    (userData.education?.graduationYear != null && userData.education.graduationYear !== '') ||
     (userData.educationalStatus && userData.educationalStatus !== 'none')
   ) {
     cards.push(
@@ -542,19 +542,19 @@ function BioContent() {
                     <span className="capitalize">{userData.educationalStatus}</span>
                   </div>
                 )}
-                {userData.education?.university && (
+                {userData.education?.university != null && userData.education.university !== '' && (
                   <div className="text-gray-700">
                     <span className="font-medium">University: </span>
                     {userData.education.university}
                   </div>
                 )}
-                {userData.education?.topic && (
+                {userData.education?.topic != null && userData.education.topic !== '' && (
                   <div className="text-gray-700">
                     <span className="font-medium">Topic: </span>
                     {userData.education.topic}
                   </div>
                 )}
-                {userData.education?.graduationYear && (
+                {userData.education?.graduationYear != null && userData.education.graduationYear !== '' && (
                   <div className="text-gray-700">
                     <span className="font-medium">Graduation Year: </span>
                     {userData.education.graduationYear}

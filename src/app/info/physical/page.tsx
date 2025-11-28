@@ -66,10 +66,14 @@ function PhysicalContent() {
         height:
           selected.height && !selected.height.startsWith('Exp:')
             ? Number(selected.height.replace(/\D/g, ''))
+            : isEditMode
+            ? null
             : undefined,
         weight:
           selected.weight && !selected.weight.startsWith('Exp:')
             ? Number(selected.weight.replace(/\D/g, ''))
+            : isEditMode
+            ? null
             : undefined,
       })
 

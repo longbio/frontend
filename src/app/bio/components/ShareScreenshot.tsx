@@ -36,8 +36,8 @@ interface UserData {
   educationalStatus: string
   profileImage: string
   isVerified?: boolean
-  height: number
-  weight: number
+  height?: number | null
+  weight?: number | null
   bornPlace: string
   livePlace: string
   doesExercise: boolean
@@ -45,9 +45,9 @@ interface UserData {
   travelStyle: string[]
   details: string
   education: {
-    topic: string
-    university: string
-    graduationYear: string
+    topic?: string | null
+    university?: string | null
+    graduationYear?: string | null
   }
   job: {
     company: string
@@ -250,10 +250,10 @@ export default function ShareScreenshot({
       )
     : []
 
-  const education = userData?.education ?? { topic: '', university: '', graduationYear: '' }
-  const educationTopic = education?.topic?.trim() || ''
-  const educationUniversity = education?.university?.trim() || ''
-  const educationGraduationYear = education?.graduationYear?.trim() || ''
+  const education = userData?.education ?? { topic: null, university: null, graduationYear: null }
+  const educationTopic = (education?.topic != null && education.topic !== '') ? education.topic.trim() : ''
+  const educationUniversity = (education?.university != null && education.university !== '') ? education.university.trim() : ''
+  const educationGraduationYear = (education?.graduationYear != null && education.graduationYear !== '') ? education.graduationYear.trim() : ''
   const job = userData?.job ?? { company: '', position: '' }
   const jobPosition = job?.position?.trim() || ''
   const jobCompany = job?.company?.trim() || ''
@@ -269,9 +269,9 @@ export default function ShareScreenshot({
   const doesExercise =
     typeof userData?.doesExercise === 'boolean' ? Boolean(userData.doesExercise) : null
   const heightValue =
-    typeof userData?.height === 'number' && userData.height > 0 ? userData.height : null
+    userData?.height != null && typeof userData.height === 'number' && userData.height > 0 ? userData.height : null
   const weightValue =
-    typeof userData?.weight === 'number' && userData.weight > 0 ? userData.weight : null
+    userData?.weight != null && typeof userData.weight === 'number' && userData.weight > 0 ? userData.weight : null
   const birthDateValue =
     userData?.birthDate && dayjs(userData.birthDate).isValid() ? dayjs(userData.birthDate) : null
   const age = birthDateValue ? dayjs().diff(birthDateValue, 'year') : null
@@ -791,7 +791,7 @@ export default function ShareScreenshot({
             //   })
             // }
 
-            if (educationUniversity) {
+            if (educationUniversity || educationTopic || educationGraduationYear || educationalStatus) {
               cardBlocks.push({
                 key: 'education',
                 content: (

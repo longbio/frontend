@@ -121,9 +121,9 @@ function EducationContent() {
         })
 
         const educationData = {
-          university: universities.length > 0 ? universities.join(', ') : '',
-          topic: topicNames.length > 0 ? topicNames.join(', ') : '',
-          graduationYear: graduationYear || '',
+          university: universities.length > 0 ? universities.join(', ') : isEditMode ? null : '',
+          topic: topicNames.length > 0 ? topicNames.join(', ') : isEditMode ? null : '',
+          graduationYear: graduationYear || (isEditMode ? null : ''),
         }
 
         await educationMutation.mutateAsync(educationData)

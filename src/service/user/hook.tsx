@@ -72,7 +72,7 @@ export function useUploadProfileImage() {
 
 export function useUpdateEducation() {
   return useMutation({
-    mutationFn: (data: { university: string; topic: string; graduationYear: string }) =>
+    mutationFn: (data: { university: string | null; topic: string | null; graduationYear: string | null }) =>
       updateEducationServerAction(data),
   })
 }

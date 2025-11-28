@@ -24,9 +24,9 @@ export interface UpdateUserParams {
   maritalStatus?: string
   educationalStatus?: string
   education?: {
-    topic?: string
-    university?: string
-    graduationYear?: string
+    topic?: string | null
+    university?: string | null
+    graduationYear?: string | null
   }
   jobStatus?: string
   job?: {
@@ -37,8 +37,8 @@ export interface UpdateUserParams {
   visitedCountries?: string[]
   favoriteSport?: string[]
   skills?: string[]
-  weight?: number
-  height?: number
+  weight?: number | null
+  height?: number | null
   bornPlace?: string
   livePlace?: string
   pet?: PetInfo
@@ -67,8 +67,8 @@ export interface GetUserByIdResponse {
     educationalStatus: string
     profileImage: string
     isVerified?: boolean
-    height: number
-    weight: number
+    height?: number
+    weight?: number
     bornPlace: string
     livePlace: string
     doesExercise: boolean
@@ -76,9 +76,9 @@ export interface GetUserByIdResponse {
     travelStyle: string[]
     details: string
     education: {
-      topic: string
-      university: string
-      graduationYear: string
+      topic?: string
+      university?: string
+      graduationYear?: string
     }
     job: {
       company: string
