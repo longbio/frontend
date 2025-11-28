@@ -398,18 +398,18 @@ export function AddUniversityBox({
         {(universities as string[]).map((university: string, idx: number) => (
           <div
             key={university + '-' + idx}
-            className="flex items-center border-2 border-purple-blaze rounded-full px-3 py-1 text-nowrap text-xs md:text-sm font-light bg-white text-black"
+            className="flex items-center border-2 border-gray-300 rounded-full px-3 py-1 text-nowrap text-xs md:text-sm font-light bg-white text-black"
           >
             <span title={university} className="truncate w-52">
               {university}
             </span>
             <button
               type="button"
-              className="ml-2 p-0.5 rounded-full hover:bg-purple-100"
+              className="ml-2 p-0.5 rounded-full hover:bg-gray-100"
               onClick={() => setUniversities(universities.filter((u) => u !== university))}
               aria-label={`Remove ${university}`}
             >
-              <X className="size-4 text-purple-300" />
+              <X className="size-4 text-gray-400" />
             </button>
           </div>
         ))}
