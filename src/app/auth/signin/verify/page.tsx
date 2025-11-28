@@ -8,10 +8,13 @@ import { useForm } from 'react-hook-form'
 import { Suspense, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useQueryClient } from '@tanstack/react-query'
 import { useVerifySignupCode } from '@/service/auth/hook'
 import { FormInput } from '@/app/auth/components/FormInput'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { VerificationCodeInput } from '@/app/auth/components/VerificationCodeInput'
+import { getCurrentUserServerAction } from '@/lib/server-action/user-actions'
+import { populateCookiesFromBio } from '@/utils/populateCookiesFromBio'
 
 const schema = z.object({
   verificationCode: z.string().min(5, 'Verification code must be 5 digits'),
@@ -21,6 +24,7 @@ type FormData = z.infer<typeof schema>
 
 function VerifySignInContent() {
   const router = useRouter()
+  const queryClient = useQueryClient()
   const searchParams = useSearchParams()
   const email = searchParams.get('email') || ''
   const { handleVerify, error, isPending, isSuccess, isNewUser } = useVerifySignupCode('signin')
@@ -40,10 +44,32 @@ function VerifySignInContent() {
   }
 
   useEffect(() => {
-    if (isSuccess && isNewUser === false) {
-      router.push('/bio')
+    const fetchAndCacheBioData = async () => {
+      if (isSuccess && isNewUser === false) {
+        try {
+          // Fetch bio data from API
+          const bioData = await getCurrentUserServerAction()
+          
+          // Populate React Query cache
+          queryClient.setQueryData(['currentUser'], bioData)
+          
+          // Populate cookies with bio data for edit forms
+          if (bioData?.data) {
+            populateCookiesFromBio(bioData.data)
+          }
+          
+          // Redirect to bio page
+          router.push('/bio')
+        } catch (error) {
+          console.error('Failed to fetch bio data:', error)
+          // Still redirect even if fetch fails - the bio page will handle the error
+          router.push('/bio')
+        }
+      }
     }
-  }, [isSuccess, isNewUser, router])
+
+    fetchAndCacheBioData()
+  }, [isSuccess, isNewUser, router, queryClient])
 
   return (
     <div className="flex flex-col h-full w-full p-8">
