@@ -1,16 +1,28 @@
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { verifySignupCode, sendSignupEmail } from './function'
+import { verifySignupCode, sendSignupEmail, sendSignupPhone } from './function'
 import type { VerifySignupCodeParams, SignupParams } from './types'
 
 export function useSendOTPEmail(options?: { mode?: 'signup' | 'signin' }) {
   const router = useRouter()
 
   return useMutation<void, Error, SignupParams>({
-    mutationFn: (params) => sendSignupEmail(params),
+    mutationFn: (params) => {
+      if (params.phoneNumber) {
+        return sendSignupPhone(params)
+      }
+      return sendSignupEmail(params)
+    },
     onSuccess: (_data, variables) => {
-      const searchParams = new URLSearchParams({ email: variables.email })
+      const searchParams = new URLSearchParams()
+      if (variables.email) {
+        searchParams.set('email', variables.email)
+      }
+      if (variables.phoneNumber) {
+        searchParams.set('phoneNumber', variables.phoneNumber)
+      }
+      
       if (options?.mode === 'signin') {
         router.push(`/auth/signin/verify?${searchParams.toString()}`)
       } else {
@@ -42,7 +54,7 @@ export function useVerifySignupCode(mode: 'signup' | 'signin' = 'signup') {
             setError(null)
           } else if (newUser === true) {
             setIsSuccess(false)
-            setError('Email not registered. Please sign up first.')
+            setError('Account not registered. Please sign up first.')
           }
         } else {
           if (newUser === true) {
@@ -50,7 +62,7 @@ export function useVerifySignupCode(mode: 'signup' | 'signin' = 'signup') {
             setError(null)
           } else if (newUser === false) {
             setIsSuccess(false)
-            setError('This email is already registered.')
+            setError('This account is already registered.')
           }
         }
       } else {
@@ -65,7 +77,7 @@ export function useVerifySignupCode(mode: 'signup' | 'signin' = 'signup') {
     },
   })
 
-  const handleVerify = async (email: string, code: string) => {
+  const handleVerify = async (email: string | undefined, phoneNumber: string | undefined, code: string) => {
     setError(null)
     setIsSuccess(false)
     setIsNewUser(null)
@@ -75,7 +87,7 @@ export function useVerifySignupCode(mode: 'signup' | 'signin' = 'signup') {
       return null
     }
 
-    return await mutateAsync({ email, code })
+    return await mutateAsync({ email, phoneNumber, code })
   }
 
   return { handleVerify, error, isPending, isSuccess, isNewUser }

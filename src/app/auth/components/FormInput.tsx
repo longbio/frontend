@@ -10,13 +10,13 @@ interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 export function FormInput({ label, error, className, labelClassName, ...props }: FormInputProps) {
   return (
-    <div>
-      <label htmlFor={props.id} className={clsx('text-xl font-bold', labelClassName)}>
+    <div className="w-full">
+      <label htmlFor={props.id} className={clsx('text-lg font-semibold text-black block mb-3', labelClassName)}>
         {label}
       </label>
       <Input
         className={clsx(
-          'w-full mt-6',
+          'w-full',
           error && 'border-red-500 focus-visible:ring-red-500/50',
           className
         )}

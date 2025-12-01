@@ -13,10 +13,12 @@ export interface Post {
 }
 
 export interface SignupParams {
-  email: string
+  email?: string
+  phoneNumber?: string
 }
 
 export interface VerifySignupCodeParams {
-  email: string
+  email?: string
+  phoneNumber?: string
   code: string
 }

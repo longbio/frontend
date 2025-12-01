@@ -3,7 +3,7 @@
 import clsx from 'clsx'
 import { z } from 'zod'
 import Link from 'next/link'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import { setCookie, removeAllCookies } from '@/utils/cookie'
@@ -12,29 +12,42 @@ import { Button } from '@/components/ui/button'
 import { useSendOTPEmail } from '@/service/auth/hook'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FormInput } from '@/app/auth/components/FormInput'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 
-const signUpSchema = z.object({
-  name: z.string().min(1),
-  email: z.string().email(),
+const signUpEmailSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().email('Please enter a valid email address'),
 })
-type FormData = z.infer<typeof signUpSchema>
+
+const signUpPhoneSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  phoneNumber: z
+    .string()
+    .min(10, 'Phone number must be at least 10 digits')
+    .regex(/^\+?[1-9]\d{1,14}$/, 'Please enter a valid WhatsApp phone number with country code'),
+})
+
+type EmailFormData = z.infer<typeof signUpEmailSchema>
+type PhoneFormData = z.infer<typeof signUpPhoneSchema>
 
 export default function SignUp() {
   const router = useRouter()
+  const [activeTab, setActiveTab] = useState<'email' | 'phone'>('email')
   const { mutateAsync, isPending } = useSendOTPEmail({ mode: 'signup' })
 
-  const {
-    watch,
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(signUpSchema),
+  const emailForm = useForm<EmailFormData>({
+    resolver: zodResolver(signUpEmailSchema),
     defaultValues: { name: '', email: '' },
   })
 
-  const name = watch('name')
-  const email = watch('email')
+  const phoneForm = useForm<PhoneFormData>({
+    resolver: zodResolver(signUpPhoneSchema),
+    defaultValues: { name: '', phoneNumber: '' },
+  })
+
+  const name = activeTab === 'email' ? emailForm.watch('name') : phoneForm.watch('name')
+  const email = emailForm.watch('email')
+  const phoneNumber = phoneForm.watch('phoneNumber')
 
   useEffect(() => {
     // Remove all cookies on page load
@@ -42,67 +55,152 @@ export default function SignUp() {
   }, [])
 
   useEffect(() => {
-    setCookie('auth_signup', JSON.stringify({ name, email }))
-  }, [name, email])
+    if (activeTab === 'email') {
+      setCookie('auth_signup', JSON.stringify({ name, email }))
+    } else {
+      setCookie('auth_signup', JSON.stringify({ name, phoneNumber }))
+    }
+  }, [name, email, phoneNumber, activeTab])
 
-  const onSubmit = async (data: FormData) => {
+  const onEmailSubmit = async (data: EmailFormData) => {
     await mutateAsync({ email: data.email })
     const encodedEmail = encodeURIComponent(data.email)
     const encodedName = encodeURIComponent(data.name)
 
     router.push(`/auth/signup/verify?email=${encodedEmail}&name=${encodedName}`)
   }
+
+  const onPhoneSubmit = async (data: PhoneFormData) => {
+    await mutateAsync({ phoneNumber: data.phoneNumber })
+    const encodedPhone = encodeURIComponent(data.phoneNumber)
+    const encodedName = encodeURIComponent(data.name)
+
+    router.push(`/auth/signup/verify?phoneNumber=${encodedPhone}&name=${encodedName}`)
+  }
+
   return (
     <div className="flex flex-col h-full w-full p-8">
       <div className="w-full flex flex-col h-full gap-y-20">
         <div>
           <Header />
-          <div className="flex items-center text-lg font-bold text-gray-500 mt-5">
+          <div className="flex items-center text-xl font-bold text-gray-500 mt-6 mb-2">
             Hi
-            <h1 className={clsx(name && 'text-lg ml-1.5', 'text-black')}>{name}</h1>
+            <h1 className={clsx(name && 'text-xl ml-2', 'text-black')}>{name}</h1>
             <h4 className="px-0.5 text-black">!</h4>
           </div>
-          <h3 className="mt-1.5 text-black text-[10px] font-normal">
-            already have an account?
-            <Link href="/auth/signin" className="text-purple-blaze hover:underline mx-0.5">
+          <h3 className="text-sm text-black font-normal">
+            already have an account?{' '}
+            <Link href="/auth/signin" className="text-purple-blaze hover:underline">
               Login
             </Link>
           </h3>
         </div>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col justify-between h-full"
-          autoComplete="off"
-        >
-          <div className="space-y-6">
-            <FormInput
-              id="name"
-              type="text"
-              label="Full Name"
-              placeholder="Exp: Jessica"
-              error={!!errors.name}
+
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'email' | 'phone')} className="flex flex-col justify-between h-full">
+          <TabsList className="grid w-full grid-cols-2 bg-gray-100 rounded-full p-1">
+            <TabsTrigger
+              value="email"
+              className="rounded-full data-[state=active]:bg-white data-[state=active]:text-purple-blaze data-[state=active]:shadow-sm"
+            >
+              Email
+            </TabsTrigger>
+            <TabsTrigger
+              value="phone"
+              className="rounded-full data-[state=active]:bg-white data-[state=active]:text-purple-blaze data-[state=active]:shadow-sm"
+            >
+              Phone
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="email" className="flex flex-col justify-between h-full mt-8">
+            <form
+              onSubmit={emailForm.handleSubmit(onEmailSubmit)}
+              className="flex flex-col justify-between h-full"
               autoComplete="off"
-              {...register('name')}
-            />
-            <FormInput
-              id="email"
-              type="email"
-              label="Email"
-              placeholder="Exp: Jessica@gmail.com"
-              error={!!errors.email}
+            >
+              <div className="space-y-8">
+                <FormInput
+                  id="name"
+                  type="text"
+                  label="Full Name"
+                  placeholder="Exp: Jessica"
+                  error={!!emailForm.formState.errors.name}
+                  autoComplete="off"
+                  {...emailForm.register('name')}
+                />
+                {emailForm.formState.errors.name && (
+                  <p className="text-red-500 text-sm mt-2 ml-1">{emailForm.formState.errors.name.message}</p>
+                )}
+                <FormInput
+                  id="email"
+                  type="email"
+                  label="Email"
+                  placeholder="Exp: Jessica@gmail.com"
+                  error={!!emailForm.formState.errors.email}
+                  autoComplete="off"
+                  {...emailForm.register('email')}
+                />
+                {emailForm.formState.errors.email && (
+                  <p className="text-red-500 text-sm mt-2 ml-1">{emailForm.formState.errors.email.message}</p>
+                )}
+              </div>
+              <Button
+                type="submit"
+                disabled={isPending}
+                aria-busy={isPending}
+                className="sticky bottom-0 w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {isPending ? 'Sending...' : 'Get Verification code'}
+              </Button>
+            </form>
+          </TabsContent>
+
+          <TabsContent value="phone" className="flex flex-col justify-between h-full mt-8">
+            <form
+              onSubmit={phoneForm.handleSubmit(onPhoneSubmit)}
+              className="flex flex-col justify-between h-full"
               autoComplete="off"
-              {...register('email')}
-            />
-          </div>
-          <Button
-            type="submit"
-            disabled={isPending}
-            aria-busy={isPending}
-            className="sticky bottom-0 w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            {isPending ? 'Sending...' : 'Get Verification code'}
-          </Button>
-        </form>
+            >
+              <div className="space-y-8">
+                <FormInput
+                  id="name"
+                  type="text"
+                  label="Full Name"
+                  placeholder="Exp: Jessica"
+                  error={!!phoneForm.formState.errors.name}
+                  autoComplete="off"
+                  {...phoneForm.register('name')}
+                />
+                {phoneForm.formState.errors.name && (
+                  <p className="text-red-500 text-sm mt-2 ml-1">{phoneForm.formState.errors.name.message}</p>
+                )}
+                <FormInput
+                  id="phoneNumber"
+                  type="tel"
+                  label="Phone Number"
+                  placeholder="Exp: +1234567890"
+                  error={!!phoneForm.formState.errors.phoneNumber}
+                  autoComplete="off"
+                  {...phoneForm.register('phoneNumber')}
+                />
+                {phoneForm.formState.errors.phoneNumber && (
+                  <p className="text-red-500 text-sm mt-2 ml-1">{phoneForm.formState.errors.phoneNumber.message}</p>
+                )}
+                <p className="text-sm text-gray-500 mt-3 ml-1">
+                  Include country code (e.g., +1 for US, +44 for UK)
+                </p>
+              </div>
+              <Button
+                type="submit"
+                disabled={isPending}
+                aria-busy={isPending}
+                className="sticky bottom-0 w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {isPending ? 'Sending...' : 'Get Verification code'}
+              </Button>
+            </form>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   )

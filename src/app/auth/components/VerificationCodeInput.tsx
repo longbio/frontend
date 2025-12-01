@@ -2,11 +2,12 @@
 import clsx from 'clsx'
 import { FormInput } from './FormInput'
 import { useState, useEffect } from 'react'
-import { sendSignupEmail } from '@/service/auth/function'
+import { sendSignupEmail, sendSignupPhone } from '@/service/auth/function'
 import { CheckCircle2, AlarmClock, RotateCcw } from 'lucide-react'
 
 interface VerificationCodeInputProps {
-  email: string
+  email?: string
+  phoneNumber?: string
   value: string
   onChange: (value: string) => void
   isSuccess?: boolean
@@ -15,6 +16,7 @@ interface VerificationCodeInputProps {
 
 export function VerificationCodeInput({
   email,
+  phoneNumber,
   value,
   onChange,
   isSuccess = false,
@@ -26,7 +28,11 @@ export function VerificationCodeInput({
   const resetTimer = async () => {
     setTimeLeft(94)
     setIsTimeUp(false)
-    await sendSignupEmail({ email })
+    if (phoneNumber) {
+      await sendSignupPhone({ phoneNumber })
+    } else if (email) {
+      await sendSignupEmail({ email })
+    }
   }
 
   useEffect(() => {
@@ -55,7 +61,7 @@ export function VerificationCodeInput({
         id="verificationCode"
         type="text"
         label="Verification Code"
-        placeholder="Please check your inbox"
+        placeholder={phoneNumber ? "Please check your WhatsApp" : "Please check your inbox"}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className={clsx({
@@ -89,7 +95,7 @@ export function VerificationCodeInput({
       )}
       {showTimeoutError && (
         <h2 className="absolute text-red-500 text-xs mt-1">
-          Please enter Verification code we sent to your email address
+          Please enter Verification code we sent to {phoneNumber ? 'your WhatsApp' : 'your email address'}
         </h2>
       )}
     </div>

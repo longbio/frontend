@@ -26,7 +26,8 @@ function VerifySignInContent() {
   const router = useRouter()
   const queryClient = useQueryClient()
   const searchParams = useSearchParams()
-  const email = searchParams.get('email') || ''
+  const email = searchParams.get('email') || undefined
+  const phoneNumber = searchParams.get('phoneNumber') || undefined
   const { handleVerify, error, isPending, isSuccess, isNewUser } = useVerifySignupCode('signin')
 
   const {
@@ -40,7 +41,7 @@ function VerifySignInContent() {
   })
 
   const onSubmit = (data: FormData) => {
-    handleVerify(email, data.verificationCode)
+    handleVerify(email, phoneNumber, data.verificationCode)
   }
 
   useEffect(() => {
@@ -87,18 +88,31 @@ function VerifySignInContent() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full">
           <div className="space-y-6">
-            <FormInput
-              id="email"
-              type="email"
-              label="Email"
-              value={email}
-              disabled
-              labelClassName="text-light-gray"
-              className="text-light-gray disabled:border-light-gray"
-            />
+            {email ? (
+              <FormInput
+                id="email"
+                type="email"
+                label="Email"
+                value={email}
+                disabled
+                labelClassName="text-light-gray"
+                className="text-light-gray disabled:border-light-gray"
+              />
+            ) : (
+              <FormInput
+                id="phoneNumber"
+                type="tel"
+                label="WhatsApp Phone Number"
+                value={phoneNumber || ''}
+                disabled
+                labelClassName="text-light-gray"
+                className="text-light-gray disabled:border-light-gray"
+              />
+            )}
             <div className="relative">
               <VerificationCodeInput
                 email={email}
+                phoneNumber={phoneNumber}
                 value={watch('verificationCode')}
                 onChange={(val) => setValue('verificationCode', val)}
                 isSuccess={isSuccess && isNewUser === false}
