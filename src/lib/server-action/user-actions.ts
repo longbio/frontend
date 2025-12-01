@@ -192,3 +192,33 @@ export async function getCurrentUserServerAction(): Promise<GetUserByIdResponse>
   const json = await res.json()
   return json
 }
+
+export async function submitWaitlistServerAction(data: { email: string; phone: string }) {
+  // Use server-side only environment variable (no NEXT_PUBLIC prefix)
+  // This ensures the API key is never exposed to the client
+  const apiToken = process.env.NOCODB_API_TOKEN
+
+  if (!apiToken) {
+    throw new Error('NocoDB API token is not configured')
+  }
+
+  const res = await fetch('https://app.nocodb.com/api/v2/tables/mejy46r55cnn32u/records', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'xc-token': apiToken,
+    },
+    body: JSON.stringify({
+      email: data.email,
+      phone: data.phone,
+    }),
+  })
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => null)
+    throw new Error(errorData?.message || 'Failed to submit waitlist')
+  }
+
+  const json = await res.json()
+  return json
+}

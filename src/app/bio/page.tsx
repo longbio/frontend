@@ -12,6 +12,7 @@ import ImageUploader from './components/ImageUploader'
 import { useFlagCountries } from '@/service/countries'
 import { useGetCurrentUser } from '@/service/user/hook'
 import { usePageTracking } from '@/hooks/usePageTracking'
+import { submitWaitlistServerAction } from '@/lib/server-action/user-actions'
 
 const ShareModal = dynamic(() => import('./components/ShareModal'), {
   ssr: false,
@@ -64,6 +65,7 @@ function BioContent() {
   const [isWaitlistDialogOpen, setIsWaitlistDialogOpen] = useState(false)
   const [isWaitlistSuccess, setIsWaitlistSuccess] = useState(false)
   const [waitlistError, setWaitlistError] = useState('')
+  const [isSubmittingWaitlist, setIsSubmittingWaitlist] = useState(false)
   const router = useRouter()
 
   // Track page views
@@ -113,16 +115,26 @@ function BioContent() {
     setShowShareScreenshot(true)
   }
 
-  const handlePremiumSubmit = () => {
+  const handlePremiumSubmit = async () => {
     if (!email && !phone) {
       setWaitlistError('Please enter either email or phone number')
       return
     }
 
     setWaitlistError('')
-    const method = email ? 'email' : 'phone'
-    trackPremiumSignup(method)
-    setIsWaitlistSuccess(true)
+    setIsSubmittingWaitlist(true)
+
+    try {
+      await submitWaitlistServerAction({ email, phone })
+      const method = email ? 'email' : 'phone'
+      trackPremiumSignup(method)
+      setIsWaitlistSuccess(true)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to submit waitlist. Please try again.'
+      setWaitlistError(errorMessage)
+    } finally {
+      setIsSubmittingWaitlist(false)
+    }
   }
 
   const handleWaitlistDialogClose = () => {
@@ -923,9 +935,10 @@ function BioContent() {
                       {/* Submit Button */}
                       <Button
                         onClick={handlePremiumSubmit}
-                        className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white hover:from-yellow-600 hover:to-orange-600"
+                        disabled={isSubmittingWaitlist}
+                        className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white hover:from-yellow-600 hover:to-orange-600 disabled:opacity-60 disabled:cursor-not-allowed"
                       >
-                        Get Premium Access
+                        {isSubmittingWaitlist ? 'Submitting...' : 'Get Premium Access'}
                       </Button>
 
                     </div>
