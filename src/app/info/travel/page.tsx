@@ -141,7 +141,7 @@ function TravelContent() {
           </div>
 
           <div className="my-16">
-            <h2 className="text-xl font-bold">Which countries are on your bucket list?</h2>
+            <h2 className="text-xl font-bold">Visited countries ✈️</h2>
             <div className="relative">
               <Input
                 value={countryInput}
