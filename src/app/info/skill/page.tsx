@@ -25,6 +25,16 @@ const defaultSkills = [
   'Photography',
   'Road Trip',
   'Eco-Tourism',
+  'Writing',
+  'Programming',
+  'Design',
+  'Languages',
+  'Leadership',
+  'Problem Solving',
+  'Communication',
+  'Creativity',
+  'Time Management',
+  'Public Speaking',
 ]
 
 const skillEmojiMap: { [key: string]: string } = {
@@ -41,6 +51,21 @@ const skillEmojiMap: { [key: string]: string } = {
   'Photography': '📸',
   'Road Trip': '🛣️',
   'Eco-Tourism': '🌿',
+  'Writing': '✍️',
+  'Programming': '💻',
+  'Design': '🎨',
+  'Languages': '🗣️',
+  'Leadership': '👑',
+  'Problem Solving': '🧩',
+  'problem solving': '🧩',
+  'Communication': '📢',
+  'communication': '📢',
+  'Creativity': '✨',
+  'creativity': '✨',
+  'Time Management': '⏰',
+  'time management': '⏰',
+  'Public Speaking': '🎤',
+  'public speaking': '🎤',
 }
 
 const getSkillEmoji = (skill: string): string => {

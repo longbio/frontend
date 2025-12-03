@@ -26,6 +26,16 @@ const defaultSports = [
   'Badminton',
   'Table Tennis',
   'Golf',
+  'Baseball',
+  'Boxing',
+  'Martial Arts',
+  'Skiing',
+  'Snowboarding',
+  'Surfing',
+  'Diving',
+  'Archery',
+  'Fencing',
+  'Weightlifting',
 ]
 
 const getSportEmoji = (sport: string): string => {

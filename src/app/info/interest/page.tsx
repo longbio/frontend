@@ -26,6 +26,16 @@ const defaultInterests = [
   'Flowers & Gardening',
   'Sports and gym',
   'Meditation',
+  'Photography',
+  'Art',
+  'Technology',
+  'Gaming',
+  'Fitness',
+  'Dancing',
+  'Hiking',
+  'Writing',
+  'Fashion',
+  'Pets',
 ]
 
 const stripEmoji = (text: string): string => {
@@ -64,6 +74,9 @@ const getInterestEmoji = (interest: string): string => {
     'swimming': '🏊',
     'cycling': '🚴',
     'running': '🏃',
+    'writing': '✍️',
+    'fashion': '👠',
+    'pets': '🐕',
   }
   
   for (const [key, emoji] of Object.entries(interestEmojiMap)) {
