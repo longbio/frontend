@@ -87,7 +87,9 @@ export function useVerifySignupCode(mode: 'signup' | 'signin' = 'signup') {
       return null
     }
 
-    return await mutateAsync({ email, phoneNumber, code })
+    // Remove "+" sign from phoneNumber before sending
+    const phoneNumberWithoutPlus = phoneNumber?.replace(/^\+/, '')
+    return await mutateAsync({ email, phoneNumber: phoneNumberWithoutPlus, code })
   }
 
   return { handleVerify, error, isPending, isSuccess, isNewUser }

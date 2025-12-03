@@ -29,7 +29,9 @@ export function VerificationCodeInput({
     setTimeLeft(94)
     setIsTimeUp(false)
     if (phoneNumber) {
-      await sendSignupPhone({ phoneNumber })
+      // Remove "+" sign from phoneNumber before sending
+      const phoneNumberWithoutPlus = phoneNumber.replace(/^\+/, '')
+      await sendSignupPhone({ phoneNumber: phoneNumberWithoutPlus })
     } else if (email) {
       await sendSignupEmail({ email })
     }

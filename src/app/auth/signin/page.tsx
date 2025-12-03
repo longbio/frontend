@@ -10,7 +10,9 @@ import { Button } from '@/components/ui/button'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useSendOTPEmail } from '@/service/auth/hook'
 import { FormInput } from '@/app/auth/components/FormInput'
+import { PhoneInput } from '@/app/auth/components/PhoneInput'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { defaultCountry } from '@/utils/countryDialCodes'
 
 const signInEmailSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -29,6 +31,8 @@ type PhoneFormData = z.infer<typeof signInPhoneSchema>
 export default function SignIn() {
   const [activeTab, setActiveTab] = useState<'email' | 'phone'>('email')
   const { mutateAsync, isPending } = useSendOTPEmail({ mode: 'signin' })
+  const [countryCode, setCountryCode] = useState(defaultCountry.dialCode)
+  const [phoneNumberValue, setPhoneNumberValue] = useState('')
 
   const emailForm = useForm<EmailFormData>({
     resolver: zodResolver(signInEmailSchema),
@@ -41,7 +45,7 @@ export default function SignIn() {
   })
 
   const email = emailForm.watch('email')
-  const phoneNumber = phoneForm.watch('phoneNumber')
+  const phoneNumber = countryCode + phoneNumberValue
 
   useEffect(() => {
     // Remove all cookies on page load
@@ -56,12 +60,21 @@ export default function SignIn() {
     }
   }, [email, phoneNumber, activeTab])
 
+  // Update form value when phone number changes
+  useEffect(() => {
+    if (phoneNumber) {
+      phoneForm.setValue('phoneNumber', phoneNumber)
+    }
+  }, [phoneNumber, phoneForm])
+
   const onEmailSubmit = async (data: EmailFormData) => {
     await mutateAsync({ email: data.email })
   }
 
   const onPhoneSubmit = async (data: PhoneFormData) => {
-    await mutateAsync({ phoneNumber: data.phoneNumber })
+    // Remove "+" sign before sending
+    const phoneNumberWithoutPlus = data.phoneNumber.replace(/^\+/, '')
+    await mutateAsync({ phoneNumber: phoneNumberWithoutPlus })
   }
 
   return (
@@ -132,21 +145,25 @@ export default function SignIn() {
               autoComplete="off"
             >
               <div className="space-y-8">
-                <FormInput
+                <PhoneInput
                   id="phoneNumber"
-                  type="tel"
                   label="Phone Number"
-                  placeholder="Exp: +1234567890"
+                  value={phoneNumberValue}
+                  onChange={(value) => {
+                    setPhoneNumberValue(value)
+                    phoneForm.setValue('phoneNumber', countryCode + value, { shouldValidate: true })
+                  }}
+                  countryCode={countryCode}
+                  onCountryCodeChange={(dialCode) => {
+                    setCountryCode(dialCode)
+                    phoneForm.setValue('phoneNumber', dialCode + phoneNumberValue, { shouldValidate: true })
+                  }}
                   error={!!phoneForm.formState.errors.phoneNumber}
                   autoComplete="off"
-                  {...phoneForm.register('phoneNumber')}
                 />
                 {phoneForm.formState.errors.phoneNumber && (
                   <p className="text-red-500 text-sm mt-2 ml-1">{phoneForm.formState.errors.phoneNumber.message}</p>
                 )}
-                <p className="text-sm text-gray-500 mt-3 ml-1">
-                  Include country code (e.g., +1 for US, +44 for UK)
-                </p>
               </div>
               <Button
                 type="submit"
