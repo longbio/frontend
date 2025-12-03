@@ -1467,7 +1467,7 @@ export default function ShareScreenshot({
             }
             const whiteTheme = {
               background: '#ffffff',
-              border: '#e5e7eb',
+              border: '#9333ea',
             }
 
             // Helper function to get card theme based on index
