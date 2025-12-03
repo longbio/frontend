@@ -411,7 +411,7 @@ export default function ShareScreenshot({
           backgroundColor: '#ffffff',
           display: 'flex',
           flexDirection: 'column',
-          border: '1px solid #9333ea',
+          border: '1px solid #e5e7eb',
           borderRadius: '0.625rem',
         }}
       >
@@ -1463,7 +1463,7 @@ export default function ShareScreenshot({
 
             const gradientTheme = {
               background: 'linear-gradient(120deg, #f3e8ff 0%, #fce7f3 100%)',
-              border: '#e9d5ff',
+              border: '#e5e7eb',
             }
             const whiteTheme = {
               background: '#ffffff',

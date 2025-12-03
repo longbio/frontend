@@ -343,8 +343,8 @@ function BioContent() {
   const getCardStyle = (index: number) => {
     const isEven = index % 2 === 0
     return isEven
-      ? 'bg-white rounded-2xl shadow-sm border border-[purple] p-4 mb-4'
-      : 'bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-[purple] p-4 mb-4'
+      ? 'bg-white rounded-2xl shadow-sm p-4 mb-4'
+      : 'bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm p-4 mb-4'
   }
 
   // Build array of card components
@@ -370,7 +370,7 @@ function BioContent() {
               {/* Profile Picture - Above Name */}
               <div className="flex justify-center mb-4">
                 <div className="relative group">
-                  <div className="w-24 h-24 border-4 border-[purple] rounded-full overflow-hidden shadow-lg">
+                  <div className="w-24 h-24 border-4 border-purple-200 rounded-full overflow-hidden shadow-lg">
                     {userData.profileImage ? (
                       <Image
                         src={userData.profileImage}
@@ -813,7 +813,7 @@ function BioContent() {
         {/* End of Screenshot Content */}
 
         {/* Share with Friend Button  */}
-        <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm border border-[purple] p-6 mb-4">
+        <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm p-6 mb-4">
           <div className="text-center">
             <h3 className="text-lg font-bold text-gray-900 mb-2">Share Your Bio</h3>
             <p className="text-gray-600 text-sm mb-4">
