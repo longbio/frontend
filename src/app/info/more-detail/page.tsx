@@ -91,9 +91,10 @@ function MoreDetailContent() {
             </h2>
             <textarea
               {...register('detail')}
+              placeholder="Share any additional details about yourself, your interests, achievements, or anything else you'd like others to know..."
               className={`w-full h-28 border ${
                 errors.detail ? 'border-red-500' : 'border-black'
-              } rounded-2xl p-4 text-sm mt-2 resize-none focus:outline-none focus:border-purple-blaze`}
+              } rounded-2xl p-4 text-sm mt-2 resize-none focus:outline-none focus:border-purple-blaze placeholder:text-gray-400 placeholder:text-sm`}
             />
           </div>
         </div>
