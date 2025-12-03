@@ -41,23 +41,37 @@ export default function DatePicker({
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  const PickerContent = (picker: PickerType) => (
-    <Picker
-      value={{ [picker]: selected[picker] }}
-      onChange={(val) => setSelected({ ...selected, [picker]: val[picker] })}
-      height={180}
-      itemHeight={40}
-      className="text-lg font-medium"
-    >
-      <Picker.Column name={picker}>
-        {pickers[picker].map((val) => (
-          <Picker.Item key={val} value={val}>
-            {val}
-          </Picker.Item>
-        ))}
-      </Picker.Column>
-    </Picker>
-  )
+  const PickerContent = (picker: PickerType) => {
+    // Default scroll values for physical page
+    const getDefaultScrollValue = () => {
+      const selectedValue = selected[picker]
+      if (pickers[picker].includes(selectedValue)) {
+        return selectedValue
+      }
+      // Default scroll positions: height 160 cm, weight 50 kg
+      if (picker === 'height') return '160 cm'
+      if (picker === 'weight') return '50 kg'
+      return pickers[picker][Math.floor(pickers[picker].length / 2)]
+    }
+
+    return (
+      <Picker
+        value={{ [picker]: getDefaultScrollValue() }}
+        onChange={(val) => setSelected({ ...selected, [picker]: val[picker] })}
+        height={180}
+        itemHeight={40}
+        className="text-lg font-medium"
+      >
+        <Picker.Column name={picker}>
+          {pickers[picker].map((val) => (
+            <Picker.Item key={val} value={val}>
+              {val}
+            </Picker.Item>
+          ))}
+        </Picker.Column>
+      </Picker>
+    )
+  }
 
   const DesktopPickerContent: React.FC<{
     picker: PickerType
@@ -69,10 +83,22 @@ export default function DatePicker({
     const scrollRef = React.useRef<HTMLDivElement>(null)
     const selectedItemRef = React.useRef<HTMLDivElement>(null)
 
+    // Default scroll values for physical page
+    const getDefaultScrollValue = () => {
+      const selectedValue = selected[picker]
+      if (options.includes(selectedValue)) {
+        return selectedValue
+      }
+      // Default scroll positions: height 160 cm, weight 50 kg
+      if (picker === 'height') return '160 cm'
+      if (picker === 'weight') return '50 kg'
+      return options[Math.floor(options.length / 2)]
+    }
+
     const schema = z.object({ value: z.string() })
     const { handleSubmit, setValue, watch } = useForm<{ value: string }>({
       resolver: zodResolver(schema),
-      defaultValues: { value: selected[picker] },
+      defaultValues: { value: getDefaultScrollValue() },
     })
     const tempSelected = watch('value')
 
