@@ -174,5 +174,5 @@ export function getCountryByCode(code: string): CountryDialCode | undefined {
 }
 
 // Default country (US)
-export const defaultCountry: CountryDialCode = countryDialCodes.find((c) => c.code === 'US') || countryDialCodes[0]
+export const defaultCountry: CountryDialCode = countryDialCodes[145]
 
