@@ -37,7 +37,7 @@ function CongratsContent() {
           router.push('/bio')
         }}
       >
-        View My Profile!
+        Share Your Story with the World!
       </Button>
     </div>
   )
