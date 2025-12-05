@@ -6,7 +6,7 @@ import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import { Suspense, useState } from 'react'
 import StickyNav from '../components/StickyNav'
-import AddMoreBox, { AddCompanyBox } from './components/AddMoreBox'
+import AddMoreBox from './components/AddMoreBox'
 import { Progress } from '@/components/ui/progress'
 import { Toggle } from '@/components/ui/toggle'
 import { useUpdateJob } from '@/service/user/hook'
@@ -109,6 +109,20 @@ function JobContent() {
     }
   }, [positions, isInitialLoad])
 
+  const getAllCompaniesForPositions = () => {
+    if (positions.length === 0) return []
+
+    const allCompanies = new Set<string>()
+    positions.forEach((positionName) => {
+      const position = jobPositions.find((p) => p.name === positionName)
+      if (position) {
+        position.companies.forEach((company) => allCompanies.add(company))
+      }
+    })
+
+    return Array.from(allCompanies)
+  }
+
   const onSubmit = async (data: JobFormData) => {
     if (!data.job) {
       if (isEditMode) {
@@ -144,7 +158,7 @@ function JobContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={32.1} />
-      <Header className="mt-4" showBackButton />
+      <Header className="mt-4" showBackButton isEditMode={isEditMode} />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">
@@ -175,12 +189,13 @@ function JobContent() {
                     buttonLabel="Add Position"
                     staticOptions={jobPositions.map((p) => p.name)}
                   />
-                  <AddCompanyBox
-                    companies={companies}
-                    setCompanies={setCompanies}
+                  <AddMoreBox
+                    options={companies}
+                    setOptions={setCompanies}
                     placeholder="Add company..."
+                    buttonLabel="Add Company"
                     disabled={positions.length === 0}
-                    selectedPositions={positions}
+                    staticOptions={getAllCompaniesForPositions()}
                   />
                   {(positions.length > 0 || companies.length > 0) && (
                     <div className="flex flex-wrap gap-2 mt-4">
