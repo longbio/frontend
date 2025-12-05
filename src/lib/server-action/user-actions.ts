@@ -148,7 +148,11 @@ export async function updatePetServerAction(data: { name: string; breed: string 
   return json
 }
 
-export async function updateJobServerAction(data: { position: string | null; company: string | null }) {
+export async function updateJobServerAction(data: { 
+  position: string | null
+  company: string | null
+  tags?: string[] | null
+}) {
   const { accessToken } = await getAuthTokens()
 
   if (!accessToken) throw new Error('Unauthorized')

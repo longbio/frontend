@@ -8,6 +8,7 @@ import { Suspense, useState } from 'react'
 import StickyNav from '../components/StickyNav'
 import AddMoreBox from './components/AddMoreBox'
 import { Progress } from '@/components/ui/progress'
+import { Toggle } from '@/components/ui/toggle'
 import { useUpdateJob } from '@/service/user/hook'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { setCookie, getCookie } from '@/utils/cookie'
@@ -15,12 +16,15 @@ import { useJobPositions } from '@/service/jobs/hook'
 import { useRouter, useSearchParams } from 'next/navigation'
 import SelectableOption from '@/app/info/components/SelectableOption'
 
+const jobTags = ['Freelance', 'Remote', 'Part-time', 'Full-time', 'Contract', 'Internship']
+
 const jobSchema = z.object({
   job: z.string({
     required_error: 'Please select your job status',
   }),
   positions: z.array(z.string()).optional(),
   companies: z.array(z.string()).optional(),
+  tags: z.array(z.string()).optional(),
 })
 type JobFormData = z.infer<typeof jobSchema>
 
@@ -62,6 +66,7 @@ function JobContent() {
 
   const [positions, setPositions] = useState<string[]>([])
   const [companies, setCompanies] = useState<string[]>([])
+  const [tags, setTags] = useState<string[]>([])
   const jobMutation = useUpdateJob()
 
   const { data: jobPositions } = useJobPositions()
@@ -73,6 +78,10 @@ function JobContent() {
   useEffect(() => {
     setValue('companies', companies)
   }, [companies, setValue])
+
+  useEffect(() => {
+    setValue('tags', tags)
+  }, [tags, setValue])
 
   useEffect(() => {
     setCompanies([])
@@ -106,6 +115,7 @@ function JobContent() {
         const jobData = {
           position: data.positions && data.positions.length > 0 ? data.positions.join(', ') : null,
           company: data.companies && data.companies.length > 0 ? data.companies.join(', ') : null,
+          tags: data.tags && data.tags.length > 0 ? data.tags : null,
         }
 
         await jobMutation.mutateAsync(jobData)
@@ -165,6 +175,26 @@ function JobContent() {
                     disabled={positions.length === 0}
                     staticOptions={getAllCompaniesForPositions()}
                   />
+                  {(positions.length > 0 || companies.length > 0) && (
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {jobTags.map((tag) => (
+                        <Toggle
+                          key={tag}
+                          pressed={tags.includes(tag)}
+                          onPressedChange={() => {
+                            if (tags.includes(tag)) {
+                              setTags(tags.filter((t) => t !== tag))
+                            } else {
+                              setTags([...tags, tag])
+                            }
+                          }}
+                          className="data-[state=on]:border-purple-blaze data-[state=on]:text-purple-blaze border border-black hover:text-black px-2 xl:px-4 text-xs xl:text-sm font-normal transition rounded-full"
+                        >
+                          {tag}
+                        </Toggle>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
               <SelectableOption
