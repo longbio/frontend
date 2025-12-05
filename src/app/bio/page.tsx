@@ -331,14 +331,6 @@ function BioContent() {
   const displaySkills = userData.skills?.map((skill) => skillMapping[skill] || skill) || []
   const displayInterests = userData.interests || []
 
-  // Debug location data
-  console.log('Location Debug:', {
-    bornPlace: userData.bornPlace,
-    livePlace: userData.livePlace,
-    bornPlaceType: typeof userData.bornPlace,
-    livePlaceType: typeof userData.livePlace,
-  })
-
   // Helper function to get card style based on index
   const getCardStyle = (index: number) => {
     const isEven = index % 2 === 0
