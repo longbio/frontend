@@ -40,8 +40,8 @@ function PetContent() {
   const mutation = useUpdateUser()
   const petMutation = useUpdatePet()
   const searchParams = useSearchParams()
-  const name = searchParams.get('name') || ''
-  const isEditMode = searchParams.get('edit') === 'true'
+  const name = searchParams?.get('name') || ''
+  const isEditMode = searchParams?.get('edit') === 'true'
   const {
     register,
     setValue,

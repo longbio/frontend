@@ -96,8 +96,8 @@ function InterestContent() {
   const router = useRouter()
   const mutation = useUpdateUser()
   const searchParams = useSearchParams()
-  const name = searchParams.get('name') || ''
-  const isEditMode = searchParams.get('edit') === 'true'
+  const name = searchParams?.get('name') || ''
+  const isEditMode = searchParams?.get('edit') === 'true'
   const [customInterests, setCustomInterests] = useState<string[]>([])
   const [selected, setSelected] = useState<string[]>([])
 

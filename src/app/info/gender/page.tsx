@@ -23,8 +23,8 @@ type GenderFormData = z.infer<typeof genderSchema>
 function GenderContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const name = searchParams.get('name') || ''
-  const isEditMode = searchParams.get('edit') === 'true'
+  const name = searchParams?.get('name') || ''
+  const isEditMode = searchParams?.get('edit') === 'true'
   const { handleSubmit, setValue, watch } = useForm<GenderFormData>({
     resolver: zodResolver(genderSchema),
     mode: 'onChange',

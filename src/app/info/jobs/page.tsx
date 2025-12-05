@@ -31,8 +31,8 @@ type JobFormData = z.infer<typeof jobSchema>
 function JobContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const name = searchParams.get('name') || ''
-  const isEditMode = searchParams.get('edit') === 'true'
+  const name = searchParams?.get('name') || ''
+  const isEditMode = searchParams?.get('edit') === 'true'
   const {
     handleSubmit,
     setValue,

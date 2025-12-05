@@ -19,8 +19,8 @@ import getCroppedImg, { dataURLtoFile } from '@/app/info/components/cropImage'
 function SetProfileContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const name = searchParams.get('name') || ''
-  const isEditMode = searchParams.get('edit') === 'true'
+  const name = searchParams?.get('name') || ''
+  const isEditMode = searchParams?.get('edit') === 'true'
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [showDelete, setShowDelete] = useState(false)
   const mutation = useUploadProfileImage()

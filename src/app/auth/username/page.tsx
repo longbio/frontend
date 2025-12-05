@@ -132,7 +132,7 @@ function UsernameForm({ name }: { name: string }) {
 
 function UsernamePageContent() {
   const searchParams = useSearchParams()
-  const name = searchParams.get('name') || ''
+  const name = searchParams?.get('name') || ''
 
   return <UsernameForm name={name} />
 }

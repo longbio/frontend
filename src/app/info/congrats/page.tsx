@@ -9,7 +9,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 function CongratsContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const name = searchParams.get('name') || ''
+  const name = searchParams?.get('name') || ''
 
   return (
     <div className="flex flex-col items-center justify-between h-full p-8 bg-white">

@@ -46,8 +46,8 @@ const travelSchema = z
 function TravelContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const name = searchParams.get('name') || ''
-  const isEditMode = searchParams.get('edit') === 'true'
+  const name = searchParams?.get('name') || ''
+  const isEditMode = searchParams?.get('edit') === 'true'
 
   const { control, handleSubmit, setValue, watch } = useForm({
     resolver: zodResolver(travelSchema),

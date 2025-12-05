@@ -29,8 +29,8 @@ function BirthdayContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const mutation = useUpdateUser()
-  const [name, setName] = useState(searchParams.get('name') || '')
-  const isEditMode = searchParams.get('edit') === 'true'
+  const [name, setName] = useState(searchParams?.get('name') || '')
+  const isEditMode = searchParams?.get('edit') === 'true'
 
   useEffect(() => {
     if (!name) {

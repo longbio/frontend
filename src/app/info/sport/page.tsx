@@ -99,8 +99,8 @@ function SportContent() {
   const router = useRouter()
   const mutation = useUpdateUser()
   const searchParams = useSearchParams()
-  const name = searchParams.get('name') || ''
-  const isEditMode = searchParams.get('edit') === 'true'
+  const name = searchParams?.get('name') || ''
+  const isEditMode = searchParams?.get('edit') === 'true'
   const [customSports, setCustomSports] = useState<string[]>([])
   const [selected, setSelected] = useState<string[]>([])
 

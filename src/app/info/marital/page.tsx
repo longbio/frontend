@@ -23,8 +23,8 @@ type MaritalFormData = z.infer<typeof maritalSchema>
 function MaritalContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const name = searchParams.get('name') || ''
-  const isEditMode = searchParams.get('edit') === 'true'
+  const name = searchParams?.get('name') || ''
+  const isEditMode = searchParams?.get('edit') === 'true'
   const { handleSubmit, setValue, watch } = useForm<MaritalFormData>({
     resolver: zodResolver(maritalSchema),
     mode: 'onChange',

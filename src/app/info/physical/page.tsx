@@ -22,8 +22,8 @@ function PhysicalContent() {
   const router = useRouter()
   const mutation = useUpdateUser()
   const searchParams = useSearchParams()
-  const name = searchParams.get('name') || ''
-  const isEditMode = searchParams.get('edit') === 'true'
+  const name = searchParams?.get('name') || ''
+  const isEditMode = searchParams?.get('edit') === 'true'
   const {} = useForm<PhysicalFormData>({
     resolver: zodResolver(physicalSchema),
     mode: 'onChange',

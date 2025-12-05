@@ -83,8 +83,8 @@ function SkillContent() {
   const router = useRouter()
   const mutation = useUpdateUser()
   const searchParams = useSearchParams()
-  const name = searchParams.get('name') || ''
-  const isEditMode = searchParams.get('edit') === 'true'
+  const name = searchParams?.get('name') || ''
+  const isEditMode = searchParams?.get('edit') === 'true'
   const [customSkills, setCustomSkills] = useState<string[]>([])
   const [selected, setSelected] = useState<string[]>([])
 

@@ -27,8 +27,8 @@ type EducationFormData = z.infer<typeof educationSchema>
 function EducationContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const name = searchParams.get('name') || ''
-  const isEditMode = searchParams.get('edit') === 'true'
+  const name = searchParams?.get('name') || ''
+  const isEditMode = searchParams?.get('edit') === 'true'
   const { handleSubmit, setValue, watch } = useForm<EducationFormData>({
     resolver: zodResolver(educationSchema),
     mode: 'onChange',
