@@ -130,7 +130,7 @@ function BirthdayContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={7.14} />
-      <Header className="mt-4" showBackButton />
+      <Header className="mt-4" showBackButton isEditMode={isEditMode} />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">
