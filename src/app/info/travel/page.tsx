@@ -159,13 +159,14 @@ function TravelContent() {
                       className="flex items-center w-full gap-2 px-3 py-2 text-sm hover:bg-gray-100 border-b last:border-b-0"
                       onClick={() => handleAddCountry(c)}
                     >
-                      <Image
-                        src={c.image}
-                        alt={c.name}
-                        width={24}
-                        height={16}
-                        className="object-contain rounded-sm"
-                      />
+                        <Image
+                          src={c.image}
+                          alt={c.name}
+                          width={24}
+                          height={16}
+                          className="object-contain rounded-sm"
+                          unoptimized
+                        />
                       <span>{c.name}</span>
                     </button>
                   ))}
@@ -182,13 +183,14 @@ function TravelContent() {
                   variant="outline"
                   className="flex items-center justify-center size-10 p-1 rounded-full border"
                 >
-                  <Image
-                    src={c.image}
-                    alt={c.name}
-                    width={24}
-                    height={16}
-                    className="object-contain rounded-sm"
-                  />
+                    <Image
+                      src={c.image}
+                      alt={c.name}
+                      width={24}
+                      height={16}
+                      className="object-contain rounded-sm"
+                      unoptimized
+                    />
                 </Toggle>
               ))}
             </div>

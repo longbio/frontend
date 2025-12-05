@@ -461,6 +461,7 @@ export default function BioDisplay({
                               width={16}
                               height={12}
                               className="object-contain rounded-sm"
+                              unoptimized
                             />
                           ) : (
                             <span className="text-xs">{countryData?.emoji || '🏳️'}</span>
