@@ -92,16 +92,16 @@ export default function SignIn() {
         </div>
 
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'email' | 'phone')} className="flex flex-col">
-          <TabsList className="grid w-full grid-cols-2 bg-gray-100 rounded-full p-1 [&>*]:w-full">
+          <TabsList className="grid w-full grid-cols-2 bg-gray-100 rounded-full p-1">
             <TabsTrigger
               value="email"
-              className="w-full rounded-full data-[state=active]:bg-white data-[state=active]:text-purple-blaze data-[state=active]:shadow-sm"
+              className="rounded-full data-[state=active]:bg-white data-[state=active]:text-purple-blaze data-[state=active]:shadow-sm"
             >
               Email
             </TabsTrigger>
             <TabsTrigger
               value="phone"
-              className="w-full rounded-full data-[state=active]:bg-white data-[state=active]:text-purple-blaze data-[state=active]:shadow-sm"
+              className="rounded-full data-[state=active]:bg-white data-[state=active]:text-purple-blaze data-[state=active]:shadow-sm"
             >
               Phone
             </TabsTrigger>
