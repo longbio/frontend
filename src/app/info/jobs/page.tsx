@@ -48,6 +48,12 @@ function JobContent() {
   })
   const selectedJob = watch('job')
 
+  const [positions, setPositions] = useState<string[]>([])
+  const [companies, setCompanies] = useState<string[]>([])
+  const [tags, setTags] = useState<string[]>([])
+  const [isInitialLoad, setIsInitialLoad] = useState(true)
+  const jobMutation = useUpdateJob()
+
   useEffect(() => {
     const cookie = getCookie('info_job')
     if (cookie) {
@@ -56,18 +62,30 @@ function JobContent() {
         if (data.job) {
           setValue('job', data.job)
         }
+        if (data.positions && Array.isArray(data.positions)) {
+          setPositions(data.positions)
+        }
+        if (data.companies && Array.isArray(data.companies)) {
+          setCompanies(data.companies)
+        }
+        if (data.tags && Array.isArray(data.tags)) {
+          setTags(data.tags)
+        }
       } catch {}
     }
+    setIsInitialLoad(false)
   }, [setValue])
 
   useEffect(() => {
-    if (selectedJob) setCookie('info_job', JSON.stringify({ job: selectedJob }))
-  }, [selectedJob])
-
-  const [positions, setPositions] = useState<string[]>([])
-  const [companies, setCompanies] = useState<string[]>([])
-  const [tags, setTags] = useState<string[]>([])
-  const jobMutation = useUpdateJob()
+    if (selectedJob) {
+      setCookie('info_job', JSON.stringify({ 
+        job: selectedJob,
+        positions,
+        companies,
+        tags,
+      }))
+    }
+  }, [selectedJob, positions, companies, tags])
 
   const { data: jobPositions } = useJobPositions()
 
@@ -84,8 +102,12 @@ function JobContent() {
   }, [tags, setValue])
 
   useEffect(() => {
-    setCompanies([])
-  }, [positions])
+    // Only reset companies when positions change after initial load
+    // This prevents clearing companies when loading from cookies
+    if (!isInitialLoad) {
+      setCompanies([])
+    }
+  }, [positions, isInitialLoad])
 
   const getAllCompaniesForPositions = () => {
     if (positions.length === 0) return []

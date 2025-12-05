@@ -63,7 +63,27 @@ export function populateCookiesFromBio(bioData: GetUserByIdResponse['data']) {
 
   // Set education
   if (data.educationalStatus) {
-    setCookie('info_education', JSON.stringify({ education: data.educationalStatus }))
+    const educationData: {
+      education: string
+      universities?: string[]
+      topics?: string[]
+      graduationYear?: string | null
+    } = { education: data.educationalStatus }
+
+    if (data.education) {
+      if (data.education.university) {
+        // Split comma-separated universities into array
+        educationData.universities = data.education.university.split(',').map((u) => u.trim()).filter(Boolean)
+      }
+      if (data.education.topic) {
+        // Split comma-separated topics into array
+        educationData.topics = data.education.topic.split(',').map((t) => t.trim()).filter(Boolean)
+      }
+      if (data.education.graduationYear) {
+        educationData.graduationYear = data.education.graduationYear
+      }
+    }
+    setCookie('info_education', JSON.stringify(educationData))
   }
 
   // Set pet info
@@ -117,11 +137,25 @@ export function populateCookiesFromBio(bioData: GetUserByIdResponse['data']) {
 
   // Set job
   if (data.job) {
-    setCookie('info_job', JSON.stringify({ 
-      job: data.job.position || data.job.company ? 'employed' : 'not employed',
-      positions: data.job.position ? [data.job.position] : [],
-      companies: data.job.company ? [data.job.company] : [],
-    }))
+    const jobData: {
+      job: string
+      positions?: string[]
+      companies?: string[]
+      tags?: string[]
+    } = {
+      job: data.job.position || data.job.company ? 'employed' : 'unemployed',
+    }
+
+    if (data.job.position) {
+      // Split comma-separated positions into array
+      jobData.positions = data.job.position.split(',').map((p) => p.trim()).filter(Boolean)
+    }
+    if (data.job.company) {
+      // Split comma-separated companies into array
+      jobData.companies = data.job.company.split(',').map((c) => c.trim()).filter(Boolean)
+    }
+
+    setCookie('info_job', JSON.stringify(jobData))
   }
 }
 

@@ -45,6 +45,15 @@ function EducationContent() {
         if (data.education) {
           setValue('education', data.education)
         }
+        if (data.universities && Array.isArray(data.universities)) {
+          setUniversities(data.universities)
+        }
+        if (data.topics && Array.isArray(data.topics)) {
+          setTopics(data.topics)
+        }
+        if (data.graduationYear) {
+          setGraduationYear(data.graduationYear)
+        }
       } catch {}
     }
   }, [setValue])
@@ -58,9 +67,15 @@ function EducationContent() {
   const { topics: allTopics } = useTopics()
 
   useEffect(() => {
-    if (selectedEducation)
-      setCookie('info_education', JSON.stringify({ education: selectedEducation }))
-  }, [selectedEducation])
+    if (selectedEducation) {
+      setCookie('info_education', JSON.stringify({ 
+        education: selectedEducation,
+        universities,
+        topics,
+        graduationYear,
+      }))
+    }
+  }, [selectedEducation, universities, topics, graduationYear])
 
   // Clear validation error when all required fields are filled
   useEffect(() => {
