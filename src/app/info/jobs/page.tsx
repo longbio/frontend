@@ -6,7 +6,7 @@ import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import { Suspense, useState } from 'react'
 import StickyNav from '../components/StickyNav'
-import AddMoreBox from './components/AddMoreBox'
+import AddMoreBox, { AddCompanyBox } from './components/AddMoreBox'
 import { Progress } from '@/components/ui/progress'
 import { Toggle } from '@/components/ui/toggle'
 import { useUpdateJob } from '@/service/user/hook'
@@ -109,20 +109,6 @@ function JobContent() {
     }
   }, [positions, isInitialLoad])
 
-  const getAllCompaniesForPositions = () => {
-    if (positions.length === 0) return []
-
-    const allCompanies = new Set<string>()
-    positions.forEach((positionName) => {
-      const position = jobPositions.find((p) => p.name === positionName)
-      if (position) {
-        position.companies.forEach((company) => allCompanies.add(company))
-      }
-    })
-
-    return Array.from(allCompanies)
-  }
-
   const onSubmit = async (data: JobFormData) => {
     if (!data.job) {
       if (isEditMode) {
@@ -189,13 +175,12 @@ function JobContent() {
                     buttonLabel="Add Position"
                     staticOptions={jobPositions.map((p) => p.name)}
                   />
-                  <AddMoreBox
-                    options={companies}
-                    setOptions={setCompanies}
+                  <AddCompanyBox
+                    companies={companies}
+                    setCompanies={setCompanies}
                     placeholder="Add company..."
-                    buttonLabel="Add Company"
                     disabled={positions.length === 0}
-                    staticOptions={getAllCompaniesForPositions()}
+                    selectedPositions={positions}
                   />
                   {(positions.length > 0 || companies.length > 0) && (
                     <div className="flex flex-wrap gap-2 mt-4">
