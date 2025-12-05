@@ -74,19 +74,19 @@ function VerifySignInContent() {
 
   return (
     <div className="flex flex-col h-full w-full p-8">
-      <div className="w-full flex flex-col justify-center h-full gap-y-8">
+      <div className="w-full flex flex-col justify-between h-full gap-y-20">
         <div>
           <Header />
           <h2 className="text-base font-bold text-black mt-5">Welcome Back!</h2>
           <h3 className="mt-1.5 text-black text-[10px] font-normal">
-            don't have an account?
+            don’t have an account?
             <Link href="/auth/signup" className="text-purple-blaze hover:underline mx-0.5">
               Sign Up
             </Link>
           </h3>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full">
           <div className="space-y-6">
             {email ? (
               <FormInput
@@ -130,7 +130,7 @@ function VerifySignInContent() {
             </div>
           </div>
 
-          <div className="text-center">
+          <div className="sticky bottom-0 text-center mt-2">
             <Button
               className={clsx(
                 'w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl',

@@ -79,7 +79,7 @@ export default function SignIn() {
 
   return (
     <div className="flex flex-col h-full w-full p-8">
-      <div className="w-full flex flex-col h-full justify-center gap-y-8">
+      <div className="w-full flex flex-col h-full gap-y-20">
         <div>
           <Header />
           <h2 className="text-2xl font-bold text-black mt-6 mb-2">Welcome Back!</h2>
@@ -91,7 +91,7 @@ export default function SignIn() {
           </h3>
         </div>
 
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'email' | 'phone')} className="flex flex-col">
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'email' | 'phone')} className="flex flex-col justify-between h-full">
           <TabsList className="grid w-full grid-cols-2 bg-gray-100 rounded-full p-1">
             <TabsTrigger
               value="email"
@@ -107,10 +107,10 @@ export default function SignIn() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="email" className="flex flex-col mt-8">
+          <TabsContent value="email" className="flex flex-col justify-between h-full mt-8">
             <form
               onSubmit={emailForm.handleSubmit(onEmailSubmit)}
-              className="flex flex-col gap-8"
+              className="flex flex-col justify-between h-full"
               autoComplete="off"
             >
               <div className="space-y-8">
@@ -131,17 +131,17 @@ export default function SignIn() {
                 type="submit"
                 disabled={isPending}
                 aria-busy={isPending}
-                className="w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl disabled:opacity-60 disabled:cursor-not-allowed"
+                className="sticky bottom-0 w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {isPending ? 'Sending...' : 'Get Verification code'}
               </Button>
             </form>
           </TabsContent>
 
-          <TabsContent value="phone" className="flex flex-col mt-8">
+          <TabsContent value="phone" className="flex flex-col justify-between h-full mt-8">
             <form
               onSubmit={phoneForm.handleSubmit(onPhoneSubmit)}
-              className="flex flex-col gap-8"
+              className="flex flex-col justify-between h-full"
               autoComplete="off"
             >
               <div className="space-y-8">
@@ -169,7 +169,7 @@ export default function SignIn() {
                 type="submit"
                 disabled={isPending}
                 aria-busy={isPending}
-                className="w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl disabled:opacity-60 disabled:cursor-not-allowed"
+                className="sticky bottom-0 w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {isPending ? 'Sending...' : 'Get Verification code'}
               </Button>

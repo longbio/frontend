@@ -48,10 +48,10 @@ function VerifySignUpContent() {
 
   return (
     <div className="flex flex-col h-full w-full p-8">
-      <div className="w-full flex flex-col justify-center h-full gap-y-8">
+      <div className="w-full flex flex-col justify-between h-full gap-y-20">
         <div className="text-left text-purple-blaze">
           <Header />
-          <h2 className="text-base font-bold text-black mt-5">Let's Start!</h2>
+          <h2 className="text-base font-bold text-black mt-5">Let’s Start!</h2>
           <h3 className="mt-1.5 text-black text-[10px] font-normal">
             Already have an account?
             <Link href="/auth/signin" className="text-purple-blaze hover:underline mx-0.5">
@@ -60,7 +60,7 @@ function VerifySignUpContent() {
           </h3>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full">
           <div className="space-y-6">
             {email ? (
               <FormInput
@@ -100,7 +100,7 @@ function VerifySignUpContent() {
             </div>
           </div>
 
-          <div className="text-center">
+          <div className="sticky bottom-0 text-center mt-2">
             <Button
               className={clsx('w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl', {
                 'disabled:bg-silver-mist disabled:cursor-not-allowed': true,
