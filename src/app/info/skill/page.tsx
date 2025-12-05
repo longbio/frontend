@@ -158,7 +158,7 @@ function SkillContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={78.6} className="shrink-0" />
-      <Header className="mt-4" showBackButton isEditMode={isEditMode} />
+      <Header className="mt-4" showBackButton />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">

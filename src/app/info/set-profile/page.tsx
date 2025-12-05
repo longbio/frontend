@@ -133,7 +133,7 @@ function SetProfileContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={35.7} />
-      <Header className="mt-4" showBackButton isEditMode={isEditMode} />
+      <Header className="mt-4" showBackButton />
       <CropperDialog
         open={showCropper}
         onOpenChange={setShowCropper}

@@ -92,7 +92,7 @@ function PhysicalContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={50.04} />
-      <Header className="mt-4" showBackButton isEditMode={isEditMode} />
+      <Header className="mt-4" showBackButton />
       <form onSubmit={onSubmit} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">
