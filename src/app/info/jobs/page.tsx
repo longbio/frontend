@@ -15,28 +15,13 @@ import { useJobPositions } from '@/service/jobs/hook'
 import { useRouter, useSearchParams } from 'next/navigation'
 import SelectableOption from '@/app/info/components/SelectableOption'
 
-const jobSchema = z
-  .object({
-    job: z.string({
-      required_error: 'Please select your job status',
-    }),
-    positions: z.array(z.string()).optional(),
-    companies: z.array(z.string()).optional(),
-  })
-  .refine(
-    (data) => {
-      if (data.job === 'employed') {
-        return (
-          data.positions && data.positions.length > 0 && data.companies && data.companies.length > 0
-        )
-      }
-      return true
-    },
-    {
-      message: 'Please add at least one position and one company when employed',
-      path: ['job'],
-    }
-  )
+const jobSchema = z.object({
+  job: z.string({
+    required_error: 'Please select your job status',
+  }),
+  positions: z.array(z.string()).optional(),
+  companies: z.array(z.string()).optional(),
+})
 type JobFormData = z.infer<typeof jobSchema>
 
 function JobContent() {
@@ -118,19 +103,9 @@ function JobContent() {
 
     try {
       if (data.job === 'employed') {
-        if (
-          !data.positions ||
-          data.positions.length === 0 ||
-          !data.companies ||
-          data.companies.length === 0
-        ) {
-          console.error('Validation failed: missing position or company data')
-          return
-        }
-
         const jobData = {
-          position: data.positions.join(', '),
-          company: data.companies.join(', '),
+          position: data.positions && data.positions.length > 0 ? data.positions.join(', ') : null,
+          company: data.companies && data.companies.length > 0 ? data.companies.join(', ') : null,
         }
 
         await jobMutation.mutateAsync(jobData)

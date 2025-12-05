@@ -85,7 +85,7 @@ export function useUpdatePet() {
 
 export function useUpdateJob() {
   return useMutation({
-    mutationFn: (data: { position: string; company: string }) => updateJobServerAction(data),
+    mutationFn: (data: { position: string | null; company: string | null }) => updateJobServerAction(data),
   })
 }
 
