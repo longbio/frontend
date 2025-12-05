@@ -21,9 +21,9 @@ type FormData = z.infer<typeof schema>
 
 function VerifySignUpContent() {
   const searchParams = useSearchParams()
-  const email = searchParams.get('email') || undefined
-  const phoneNumber = searchParams.get('phoneNumber') || undefined
-  const name = searchParams.get('name') || ''
+  const email = searchParams?.get('email') || undefined
+  const phoneNumber = searchParams?.get('phoneNumber') || undefined
+  const name = searchParams?.get('name') || ''
   const { handleVerify, error, isPending, isSuccess, isNewUser } = useVerifySignupCode()
   const router = useRouter()
 

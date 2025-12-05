@@ -26,8 +26,8 @@ function VerifySignInContent() {
   const router = useRouter()
   const queryClient = useQueryClient()
   const searchParams = useSearchParams()
-  const email = searchParams.get('email') || undefined
-  const phoneNumber = searchParams.get('phoneNumber') || undefined
+  const email = searchParams?.get('email') || undefined
+  const phoneNumber = searchParams?.get('phoneNumber') || undefined
   const { handleVerify, error, isPending, isSuccess, isNewUser } = useVerifySignupCode('signin')
 
   const {
