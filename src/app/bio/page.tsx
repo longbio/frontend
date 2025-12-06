@@ -588,6 +588,20 @@ function BioContent() {
               <div className="space-y-1">
                 {userData.job.position && <div>Position: {userData.job.position}</div>}
                 {userData.job.company && <div>Company: {userData.job.company}</div>}
+                {userData.job.tags && Array.isArray(userData.job.tags) && userData.job.tags.length > 0 && (
+                <div>
+                  <div className="flex flex-wrap gap-2">
+                    {userData.job.tags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-[purple]"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
               </div>
             </div>
     )
