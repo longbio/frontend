@@ -154,6 +154,9 @@ export function populateCookiesFromBio(bioData: GetUserByIdResponse['data']) {
       // Split comma-separated companies into array
       jobData.companies = data.job.company.split(',').map((c) => c.trim()).filter(Boolean)
     }
+    if (data.job.tags && Array.isArray(data.job.tags) && data.job.tags.length > 0) {
+      jobData.tags = data.job.tags
+    }
 
     setCookie('info_job', JSON.stringify(jobData))
   }

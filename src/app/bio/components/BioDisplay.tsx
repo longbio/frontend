@@ -397,16 +397,31 @@ export default function BioDisplay({
   }
 
   // Job Section
-  if (userData.job?.position || userData.job?.company) {
+  const jobTags = userData.job?.tags && Array.isArray(userData.job.tags) ? userData.job.tags.filter(Boolean) : []
+  if (userData.job?.position || userData.job?.company || jobTags.length > 0) {
     cards.push(
       <div key="job" className={getCardStyle(cards.length)}>
             <div className="flex items-center gap-2 mb-4">
               <BookOpen className="w-5 h-5 text-purple-600" />
               <h3 className="font-bold text-gray-900">Job</h3>
             </div>
-            <div className="space-y-1">
-              {userData.job.position && <div>Position: {userData.job.position}</div>}
-              {userData.job.company && <div>Company: {userData.job.company}</div>}
+            <div className="space-y-3">
+              {userData.job.position && <div className="text-gray-700">Position: {userData.job.position}</div>}
+              {userData.job.company && <div className="text-gray-700">Company: {userData.job.company}</div>}
+              {jobTags.length > 0 && (
+                <div>
+                  <div className="flex flex-wrap gap-2">
+                    {jobTags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-[purple]"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
     )

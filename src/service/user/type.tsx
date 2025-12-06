@@ -83,6 +83,7 @@ export interface GetUserByIdResponse {
     job: {
       company: string
       position: string
+      tags?: string[]
     }
     pet: {
       name: string

@@ -71,6 +71,7 @@ const mockUserData: GetUserByIdResponse['data'] = {
   job: {
     company: 'LongBio Studio',
     position: 'Lead Product Designer',
+    tags: ['Freelance', 'Remote', 'Part-time', 'Full-time', 'Contract', 'Internship'],
   },
   pet: {
     name: 'Milo',

@@ -52,6 +52,7 @@ interface UserData {
   job: {
     company: string
     position: string
+    tags?: string[]
   }
   pet: {
     name: string
@@ -254,9 +255,10 @@ export default function ShareScreenshot({
   const educationTopic = (education?.topic != null && education.topic !== '') ? education.topic.trim() : ''
   const educationUniversity = (education?.university != null && education.university !== '') ? education.university.trim() : ''
   const educationGraduationYear = (education?.graduationYear != null && education.graduationYear !== '') ? education.graduationYear.trim() : ''
-  const job = userData?.job ?? { company: '', position: '' }
+  const job = userData?.job ?? { company: '', position: '', tags: [] }
   const jobPosition = job?.position?.trim() || ''
   const jobCompany = job?.company?.trim() || ''
+  const jobTags = job?.tags && Array.isArray(job.tags) ? job.tags.filter(Boolean) : []
   const pet = userData?.pet ?? { name: '', breed: '' }
   const petName = pet?.name?.trim() || ''
   const petBreed = pet?.breed?.trim() || ''
@@ -904,6 +906,37 @@ export default function ShareScreenshot({
                         }}
                       >
                         Company: {jobCompany}
+                      </div>
+                    )}
+                    {jobTags.length > 0 && (
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          gap: '0.175rem',
+                          marginTop: '0.175rem',
+                        }}
+                      >
+                        {jobTags.map((tag, index) => (
+                          <span
+                            key={index}
+                            style={{
+                              paddingLeft: '0.35rem',
+                              paddingRight: '0.35rem',
+                              paddingTop: '0.175rem',
+                              paddingBottom: '0.175rem',
+                              backgroundColor: '#f3e8ff',
+                              color: '#7c3aed',
+                              borderRadius: '9999px',
+                              fontSize: '0.385rem',
+                              fontWeight: '500',
+                              fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                              border: '1px solid #9333ea',
+                            }}
+                          >
+                            {tag}
+                          </span>
+                        ))}
                       </div>
                     )}
                   </>
