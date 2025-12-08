@@ -989,7 +989,7 @@ export default function ShareScreenshot({
               const remainingCount = visitedCountries.length - maxCountries
               cardBlocks.push({
                 key: 'countries',
-                content: (
+                content: (cardIndex: number) => (
                   <>
                     <div
                       style={{
