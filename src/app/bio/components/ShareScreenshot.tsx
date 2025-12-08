@@ -826,7 +826,7 @@ export default function ShareScreenshot({
             //   })
             // }
 
-            if (educationUniversity || educationTopic || educationGraduationYear || educationalStatus) {
+            if (educationUniversity || educationTopic || educationGraduationYear || (educationalStatus && educationalStatus !== 'none')) {
               cardBlocks.push({
                 key: 'education',
                 content: (cardIndex: number) => (
@@ -856,7 +856,7 @@ export default function ShareScreenshot({
                         Education
                       </h4>
                     </div>
-                    {educationalStatus && (
+                    {educationalStatus && educationalStatus !== 'none' && (
                       <div
                         style={{
                           ...clampTwoLineTextStyle,

@@ -82,18 +82,12 @@ function EducationContent() {
     }
   }, [selectedEducation, universities, topics, graduationYear])
 
-  // Clear validation error when all required fields are filled
+  // Clear validation error when education status is selected
   useEffect(() => {
-    if (
-      validationError &&
-      (selectedEducation === 'student' || selectedEducation === 'graduated') &&
-      universities.length > 0 &&
-      topics.length > 0 &&
-      graduationYear
-    ) {
+    if (validationError && selectedEducation) {
       setValidationError('')
     }
-  }, [universities, topics, graduationYear, validationError, selectedEducation])
+  }, [selectedEducation, validationError])
 
   const onSubmit = async () => {
     if (!selectedEducation) {
@@ -105,19 +99,6 @@ function EducationContent() {
     }
 
     setValidationError('')
-
-    if (selectedEducation === 'student' || selectedEducation === 'graduated') {
-      // Check if any field is missing
-      const missingFields = []
-      if (topics.length === 0) missingFields.push('topic')
-      if (universities.length === 0) missingFields.push('university')
-      if (!graduationYear) missingFields.push('graduation year')
-
-      if (missingFields.length > 0) {
-        setValidationError(`Please fill all fields: ${missingFields.join(', ')}`)
-        return
-      }
-    }
 
     const educationalStatus =
       selectedEducation === 'not-interested'
@@ -141,9 +122,9 @@ function EducationContent() {
         })
 
         const educationData = {
-          university: universities.length > 0 ? universities.join(', ') : isEditMode ? null : '',
-          topic: topicNames.length > 0 ? topicNames.join(', ') : isEditMode ? null : '',
-          graduationYear: graduationYear || (isEditMode ? null : ''),
+          university: universities.length > 0 ? universities.join(', ') : null,
+          topic: topicNames.length > 0 ? topicNames.join(', ') : null,
+          graduationYear: graduationYear || null,
         }
 
         await educationMutation.mutateAsync(educationData)
