@@ -935,7 +935,9 @@ export default function ShareScreenshot({
                           Career
                         </h4>
                       </div>
-                      <div style={clampTwoLineTextStyle}>{jobPosition}</div>
+                      <div style={clampTwoLineTextStyle}>
+                        <span style={{ fontWeight: '700' }}>Position:</span> {jobPosition}
+                      </div>
                       {jobCompany && (
                         <div
                           style={{
@@ -943,7 +945,7 @@ export default function ShareScreenshot({
                             marginTop: '0.11rem',
                           }}
                         >
-                          Company: {jobCompany}
+                          <span style={{ fontWeight: '700' }}>Company:</span> {jobCompany}
                         </div>
                       )}
                       {jobTags.length > 0 && (

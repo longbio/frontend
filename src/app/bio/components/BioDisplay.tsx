@@ -416,8 +416,8 @@ export default function BioDisplay({
               <h3 className="font-bold text-gray-900">Job</h3>
             </div>
             <div className="space-y-3">
-              {userData.job.position && <div className="text-gray-700">Position: {userData.job.position}</div>}
-              {userData.job.company && <div className="text-gray-700">Company: {userData.job.company}</div>}
+              {userData.job.position && <div className="text-gray-700"><span className="font-bold">Position:</span> {userData.job.position}</div>}
+              {userData.job.company && <div className="text-gray-700"><span className="font-bold">Company:</span> {userData.job.company}</div>}
               {jobTags.length > 0 && (
                 <div>
                   <div className="flex flex-wrap gap-2">

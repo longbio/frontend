@@ -596,8 +596,8 @@ function BioContent() {
                 </button>
               </div>
               <div className="space-y-1">
-                {userData.job.position && <div>Position: {userData.job.position}</div>}
-                {userData.job.company && <div>Company: {userData.job.company}</div>}
+                {userData.job.position && <div><span className="font-bold">Position:</span> {userData.job.position}</div>}
+                {userData.job.company && <div><span className="font-bold">Company:</span> {userData.job.company}</div>}
                 {userData.job.tags && Array.isArray(userData.job.tags) && userData.job.tags.length > 0 && (
                 <div>
                   <div className="flex flex-wrap gap-2">
