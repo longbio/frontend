@@ -339,6 +339,16 @@ function BioContent() {
       : 'bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl shadow-sm p-4 mb-4'
   }
 
+  // Helper function to get badge style based on card index (zebra system)
+  // White cards (even index) → purple badges
+  // Purple cards (odd index) → white badges
+  const getBadgeStyle = (cardIndex: number) => {
+    const isEven = cardIndex % 2 === 0
+    return isEven
+      ? 'px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-[purple]'
+      : 'px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-[purple]'
+  }
+
   // Build array of card components
   const cards: React.ReactElement[] = []
 
@@ -594,7 +604,7 @@ function BioContent() {
                     {userData.job.tags.map((tag, index) => (
                       <span
                         key={index}
-                        className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-[purple]"
+                        className={getBadgeStyle(cards.length)}
                       >
                         {tag}
                       </span>
@@ -634,7 +644,7 @@ function BioContent() {
                       {userData.travelStyle.map((style, index) => (
                         <span
                           key={index}
-                          className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-[purple]"
+                          className={getBadgeStyle(cards.length)}
                         >
                           {style}
                         </span>
@@ -655,7 +665,7 @@ function BioContent() {
                         return (
                           <span
                             key={index}
-                            className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm border border-[purple]"
+                            className={`flex items-center gap-2 ${getBadgeStyle(cards.length)}`}
                           >
                             {countryData?.image ? (
                               <Image
@@ -701,7 +711,7 @@ function BioContent() {
                 {displayInterests.map((interest, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-[purple] whitespace-nowrap"
+                    className={`${getBadgeStyle(cards.length)} whitespace-nowrap`}
                   >
                     {getInterestEmoji(interest)} {stripEmoji(interest)}
                   </span>
@@ -731,7 +741,7 @@ function BioContent() {
                 {displaySkills.map((skill, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-[purple] whitespace-nowrap"
+                    className={`${getBadgeStyle(cards.length)} whitespace-nowrap`}
                   >
                     {skillEmojiMap[skill] || '✨'} {skill}
                   </span>
@@ -764,7 +774,7 @@ function BioContent() {
                     {userData.favoriteSport.map((sport, index) => (
                       <span
                         key={index}
-                        className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-[purple]"
+                        className={getBadgeStyle(cards.length)}
                       >
                         {getSportEmoji(sport)} {sport}
                       </span>
