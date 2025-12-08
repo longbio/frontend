@@ -548,19 +548,19 @@ function BioContent() {
                 )}
                 {userData.education?.university != null && userData.education.university !== '' && (
                   <div className="text-gray-700">
-                    <span className="font-medium">University: </span>
+                    <span className="font-bold">University: </span>
                     {userData.education.university}
                   </div>
                 )}
                 {userData.education?.topic != null && userData.education.topic !== '' && (
                   <div className="text-gray-700">
-                    <span className="font-medium">Topic: </span>
+                    <span className="font-bold">Topic: </span>
                     {userData.education.topic}
                   </div>
                 )}
                 {userData.education?.graduationYear != null && userData.education.graduationYear !== '' && (
                   <div className="text-gray-700">
-                    <span className="font-medium">Graduation Year: </span>
+                    <span className="font-bold">Graduation Year: </span>
                     {userData.education.graduationYear}
                   </div>
                 )}

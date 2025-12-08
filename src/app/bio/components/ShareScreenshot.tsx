@@ -844,7 +844,8 @@ export default function ShareScreenshot({
                           marginBottom: educationTopic ? '0.088rem' : 0,
                         }}
                       >
-                        University: {educationUniversity}
+                        <span style={{ fontWeight: '700' }}>University: </span>
+                        <span>{educationUniversity}</span>
                       </div>
                     )}
                     {educationTopic && (
@@ -854,12 +855,14 @@ export default function ShareScreenshot({
                           marginBottom: educationGraduationYear ? '0.088rem' : 0,
                         }}
                       >
-                        Topic: {educationTopic}
+                        <span style={{ fontWeight: '700' }}>Topic: </span>
+                        <span>{educationTopic}</span>
                       </div>
                     )}
                     {educationGraduationYear && (
                       <div style={clampTwoLineTextStyle}>
-                        Graduation Year: {educationGraduationYear}
+                        <span style={{ fontWeight: '700' }}>Graduation Year: </span>
+                        <span>{educationGraduationYear}</span>
                       </div>
                     )}
                   </>
