@@ -536,10 +536,7 @@ export default function BioDisplay({
   }
 
   // Sports Section
-  if (
-    (userData.favoriteSport && userData.favoriteSport.length > 0) ||
-    userData.doesExercise !== undefined
-  ) {
+  if (userData.favoriteSport && userData.favoriteSport.length > 0) {
     cards.push(
       <div key="sports" className={getCardStyle(cards.length)}>
             <div className="flex items-center gap-2 mb-4">
@@ -547,24 +544,19 @@ export default function BioDisplay({
               <h3 className="font-bold text-gray-900">Sports & Exercise</h3>
             </div>
             <div className="space-y-3">
-              {userData.favoriteSport && userData.favoriteSport.length > 0 && (
-                <div>
-                  <div className="font-medium text-gray-700 mb-2">Favorite Sports:</div>
-                    <div className="flex flex-wrap gap-2">
-                      {userData.favoriteSport.map((sport, index) => (
-                        <span
-                          key={index}
-                          className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-[purple]"
-                        >
-                          {getSportEmoji(sport)} {sport}
-                        </span>
-                      ))}
-                    </div>
-                </div>
-              )}
-              {userData.doesExercise !== undefined && (
-                <p className="text-gray-700">Exercise: {userData.doesExercise ? 'Yes' : 'No'}</p>
-              )}
+              <div>
+                <div className="font-medium text-gray-700 mb-2">Favorite Sports:</div>
+                  <div className="flex flex-wrap gap-2">
+                    {userData.favoriteSport.map((sport, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-[purple]"
+                      >
+                        {getSportEmoji(sport)} {sport}
+                      </span>
+                    ))}
+                  </div>
+              </div>
             </div>
           </div>
     )

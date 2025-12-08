@@ -740,10 +740,7 @@ function BioContent() {
   }
 
   // Sports Section
-  if (
-    (userData.favoriteSport && userData.favoriteSport.length > 0) ||
-    userData.doesExercise !== undefined
-  ) {
+  if (userData.favoriteSport && userData.favoriteSport.length > 0) {
     cards.push(
       <div key="sports" className={getCardStyle(cards.length)}>
               <div className="flex items-center justify-between mb-4">
@@ -759,24 +756,19 @@ function BioContent() {
                 </button>
               </div>
               <div className="space-y-3">
-                {userData.favoriteSport && userData.favoriteSport.length > 0 && (
-                  <div>
-                    <div className="font-medium text-gray-700 mb-2">Favorite Sports:</div>
-                    <div className="flex flex-wrap gap-2">
-                      {userData.favoriteSport.map((sport, index) => (
-                        <span
-                          key={index}
-                          className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-[purple]"
-                        >
-                          {getSportEmoji(sport)} {sport}
-                        </span>
-                      ))}
-                    </div>
+                <div>
+                  <div className="font-medium text-gray-700 mb-2">Favorite Sports:</div>
+                  <div className="flex flex-wrap gap-2">
+                    {userData.favoriteSport.map((sport, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-[purple]"
+                      >
+                        {getSportEmoji(sport)} {sport}
+                      </span>
+                    ))}
                   </div>
-                )}
-                {userData.doesExercise !== undefined && (
-                  <p className="text-gray-700">Exercise: {userData.doesExercise ? 'Yes' : 'No'}</p>
-                )}
+                </div>
               </div>
             </div>
     )
