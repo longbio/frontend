@@ -12,6 +12,7 @@ import { useVerifySignupCode } from '@/service/auth/hook'
 import { FormInput } from '@/app/auth/components/FormInput'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { VerificationCodeInput } from '@/app/auth/components/VerificationCodeInput'
+import { setCookie } from '@/utils/cookie'
 
 const schema = z.object({
   verificationCode: z.string().min(5, 'Verification code must be 5 digits'),
@@ -42,6 +43,7 @@ function VerifySignUpContent() {
   }
   useEffect(() => {
     if (isSuccess && isNewUser === true) {
+      setCookie('signup', 'true')
       router.push(`/auth/username?name=${encodeURIComponent(name)}`)
     }
   }, [isSuccess, isNewUser, router, name])

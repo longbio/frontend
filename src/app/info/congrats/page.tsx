@@ -1,15 +1,21 @@
 'use client'
 
-import React, { Suspense } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import Header from '@/components/Header'
 import Congrats from './components/congrats'
 import { Button } from '@/components/ui/button'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { removeCookie } from '@/utils/cookie'
 
 function CongratsContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const name = searchParams?.get('name') || ''
+
+  useEffect(() => {
+    // Remove signup cookie on congrats page
+    removeCookie('signup')
+  }, [])
 
   return (
     <div className="flex flex-col items-center justify-between h-full p-8 bg-white">
