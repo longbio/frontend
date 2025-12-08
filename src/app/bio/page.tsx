@@ -727,12 +727,14 @@ function BioContent() {
                   <Edit3 className="w-4 h-4 text-gray-500" />
                 </button>
               </div>
-              <div className="flex flex-wrap gap-x-4 gap-y-2 pt-2 pb-3">
+              <div className="flex flex-wrap gap-2 pt-2 pb-3">
                 {displaySkills.map((skill, index) => (
-                  <div key={index} className="text-gray-700 text-sm flex items-center">
-                    <span className="mr-1">{skillEmojiMap[skill] || '✨'}</span>
-                    <span>{skill}</span>
-                  </div>
+                  <span
+                    key={index}
+                    className="px-3 py-1 bg-white text-purple-700 rounded-full text-sm border border-[purple] whitespace-nowrap"
+                  >
+                    {skillEmojiMap[skill] || '✨'} {skill}
+                  </span>
                 ))}
               </div>
             </div>

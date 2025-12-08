@@ -1236,8 +1236,8 @@ export default function ShareScreenshot({
                           key={index}
                           style={{
                             padding: '0.08rem 0.25rem',
-                            border: '1px solid #93c5fd',
-                            color: '#1e40af',
+                            border: '1px solid #c084fc',
+                            color: '#7e22ce',
                             borderRadius: '0.4rem',
                             fontSize: '0.385rem',
                             lineHeight: '0.75rem',
@@ -1251,8 +1251,8 @@ export default function ShareScreenshot({
                         <span
                           style={{
                             padding: '0.08rem 0.25rem',
-                            border: '1px solid #93c5fd',
-                            color: '#1e40af',
+                            border: '1px solid #c084fc',
+                            color: '#7e22ce',
                             borderRadius: '0.4rem',
                             fontSize: '0.385rem',
                             lineHeight: '0.75rem',
