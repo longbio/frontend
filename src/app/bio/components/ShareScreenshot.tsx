@@ -757,7 +757,40 @@ export default function ShareScreenshot({
           )}
 
          {(() => {
-            const cardBlocks: { key: string; content: ReactNode }[] = []
+            // Define themes and helper functions first
+            const gradientTheme = {
+              background: 'linear-gradient(120deg, #f3e8ff 0%, #fce7f3 100%)',
+              border: '#e5e7eb',
+            }
+            const whiteTheme = {
+              background: '#ffffff',
+              border: '#9333ea',
+            }
+
+            // Helper function to get card theme based on index
+            // Pattern: [gradient, white], [white, gradient], [gradient, white], ...
+            const getCardTheme = (index: number) => {
+              const pairIndex = Math.floor(index / 2)
+              const positionInPair = index % 2
+              // If pair index and position in pair have same parity, use gradient; otherwise white
+              const isGradient = pairIndex % 2 === positionInPair
+              return isGradient ? gradientTheme : whiteTheme
+            }
+
+            // Helper function to get badge style based on card theme (zebra system)
+            // White cards → purple badges
+            // Purple/gradient cards → white badges
+            const getBadgeStyle = (cardIndex: number) => {
+              const theme = getCardTheme(cardIndex)
+              const isWhiteCard = theme.background === '#ffffff'
+              return {
+                backgroundColor: isWhiteCard ? '#f3e8ff' : '#ffffff',
+                color: '#7c3aed',
+                border: '1px solid #c084fc',
+              }
+            }
+
+            const cardBlocks: { key: string; content: (cardIndex: number) => ReactNode }[] = []
 
             // if (birthDateValue) {
             //   cardBlocks.push({
@@ -796,7 +829,7 @@ export default function ShareScreenshot({
             if (educationUniversity || educationTopic || educationGraduationYear || educationalStatus) {
               cardBlocks.push({
                 key: 'education',
-                content: (
+                content: (cardIndex: number) => (
                   <>
                     <div
                       style={{
@@ -873,77 +906,80 @@ export default function ShareScreenshot({
             if (jobPosition) {
               cardBlocks.push({
                 key: 'career',
-                content: (
-                  <>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.2rem',
-                        marginBottom: '0.3025rem',
-                      }}
-                    >
-                      <Briefcase
-                        style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }}
-                      />
-                      <h4
-                        style={{
-                          fontWeight: '700',
-                          fontSize: '0.53rem',
-                          color: '#111827',
-                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                          lineHeight: '1',
-                          margin: 0,
-                          padding: 0,
-                        }}
-                      >
-                        Career
-                      </h4>
-                    </div>
-                    <div style={clampTwoLineTextStyle}>{jobPosition}</div>
-                    {jobCompany && (
-                      <div
-                        style={{
-                          ...clampTwoLineTextStyle,
-                          marginTop: '0.11rem',
-                        }}
-                      >
-                        Company: {jobCompany}
-                      </div>
-                    )}
-                    {jobTags.length > 0 && (
+                content: (cardIndex: number) => {
+                  const badgeStyle = getBadgeStyle(cardIndex)
+                  return (
+                    <>
                       <div
                         style={{
                           display: 'flex',
-                          flexWrap: 'wrap',
-                          gap: '0.175rem',
-                          marginTop: '0.175rem',
+                          alignItems: 'center',
+                          gap: '0.2rem',
+                          marginBottom: '0.3025rem',
                         }}
                       >
-                        {jobTags.map((tag, index) => (
-                          <span
-                            key={index}
-                            style={{
-                              paddingLeft: '0.35rem',
-                              paddingRight: '0.35rem',
-                              paddingTop: '0.175rem',
-                              paddingBottom: '0.175rem',
-                              backgroundColor: '#f3e8ff',
-                              color: '#7c3aed',
-                              borderRadius: '9999px',
-                              fontSize: '0.385rem',
-                              fontWeight: '500',
-                              fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                              border: '1px solid #9333ea',
-                            }}
-                          >
-                            {tag}
-                          </span>
-                        ))}
+                        <Briefcase
+                          style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }}
+                        />
+                        <h4
+                          style={{
+                            fontWeight: '700',
+                            fontSize: '0.53rem',
+                            color: '#111827',
+                            fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                            lineHeight: '1',
+                            margin: 0,
+                            padding: 0,
+                          }}
+                        >
+                          Career
+                        </h4>
                       </div>
-                    )}
-                  </>
-                ),
+                      <div style={clampTwoLineTextStyle}>{jobPosition}</div>
+                      {jobCompany && (
+                        <div
+                          style={{
+                            ...clampTwoLineTextStyle,
+                            marginTop: '0.11rem',
+                          }}
+                        >
+                          Company: {jobCompany}
+                        </div>
+                      )}
+                      {jobTags.length > 0 && (
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: '0.175rem',
+                            marginTop: '0.175rem',
+                          }}
+                        >
+                          {jobTags.map((tag, index) => (
+                            <span
+                              key={index}
+                              style={{
+                                paddingLeft: '0.35rem',
+                                paddingRight: '0.35rem',
+                                paddingTop: '0.175rem',
+                                paddingBottom: '0.175rem',
+                                backgroundColor: badgeStyle.backgroundColor,
+                                color: badgeStyle.color,
+                                borderRadius: '9999px',
+                                fontSize: '0.385rem',
+                                fontWeight: '500',
+                                fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                                border: badgeStyle.border,
+                              }}
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  )
+                },
               })
             }
 
@@ -1115,77 +1151,82 @@ export default function ShareScreenshot({
               const remainingCount = favoriteSports.length - maxSports
               cardBlocks.push({
                 key: 'sports',
-                content: (
-                  <>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.2rem',
-                        marginBottom: '0.3025rem',
-                      }}
-                    >
-                      <Dumbbell style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
-                      <h4
+                content: (cardIndex: number) => {
+                  const badgeStyle = getBadgeStyle(cardIndex)
+                  return (
+                    <>
+                      <div
                         style={{
-                          fontWeight: '700',
-                          fontSize: '0.53rem',
-                          color: '#111827',
-                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                          lineHeight: '1',
-                          margin: 0,
-                          padding: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.2rem',
+                          marginBottom: '0.3025rem',
                         }}
                       >
-                        Sports
-                      </h4>
-                      <span
-                        style={{
-                          fontSize: '0.385rem',
-                          color: '#6b7280',
-                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                          marginLeft: '0.1rem',
-                        }}
-                      >
-                        ({favoriteSports.length})
-                      </span>
-                    </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.08rem' }}>
-                      {displayedSports.map((sport, index) => (
-                        <span
-                          key={index}
+                        <Dumbbell style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
+                        <h4
                           style={{
-                            padding: '0.08rem 0.25rem',
-                            border: '1px solid #c084fc',
-                            color: '#7e22ce',
-                            borderRadius: '0.4rem',
-                            fontSize: '0.385rem',
-                            lineHeight: '0.75rem',
+                            fontWeight: '700',
+                            fontSize: '0.53rem',
+                            color: '#111827',
                             fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                            lineHeight: '1',
+                            margin: 0,
+                            padding: 0,
                           }}
                         >
-                          {getSportEmoji(sport)} {sport}
-                        </span>
-                      ))}
-                      {remainingCount > 0 && (
+                          Sports
+                        </h4>
                         <span
                           style={{
-                            padding: '0.08rem 0.25rem',
-                            border: '1px solid #c084fc',
-                            color: '#7e22ce',
-                            borderRadius: '0.4rem',
                             fontSize: '0.385rem',
-                            lineHeight: '0.75rem',
+                            color: '#6b7280',
                             fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                            opacity: 0.7,
+                            marginLeft: '0.1rem',
                           }}
                         >
-                          +{remainingCount} more
+                          ({favoriteSports.length})
                         </span>
-                      )}
-                    </div>
-                  </>
-                ),
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.08rem' }}>
+                        {displayedSports.map((sport, index) => (
+                          <span
+                            key={index}
+                            style={{
+                              padding: '0.08rem 0.25rem',
+                              backgroundColor: badgeStyle.backgroundColor,
+                              border: badgeStyle.border,
+                              color: badgeStyle.color,
+                              borderRadius: '0.4rem',
+                              fontSize: '0.385rem',
+                              lineHeight: '0.75rem',
+                              fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                            }}
+                          >
+                            {getSportEmoji(sport)} {sport}
+                          </span>
+                        ))}
+                        {remainingCount > 0 && (
+                          <span
+                            style={{
+                              padding: '0.08rem 0.25rem',
+                              backgroundColor: badgeStyle.backgroundColor,
+                              border: badgeStyle.border,
+                              color: badgeStyle.color,
+                              borderRadius: '0.4rem',
+                              fontSize: '0.385rem',
+                              lineHeight: '0.75rem',
+                              fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                              opacity: 0.7,
+                            }}
+                          >
+                            +{remainingCount} more
+                          </span>
+                        )}
+                      </div>
+                    </>
+                  )
+                },
               })
             }
 
@@ -1195,77 +1236,82 @@ export default function ShareScreenshot({
               const remainingCount = displaySkills.length - maxSkills
               cardBlocks.push({
                 key: 'skills',
-                content: (
-                  <>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.2rem',
-                        marginBottom: '0.3025rem',
-                      }}
-                    >
-                      <Sparkles style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
-                      <h4
+                content: (cardIndex: number) => {
+                  const badgeStyle = getBadgeStyle(cardIndex)
+                  return (
+                    <>
+                      <div
                         style={{
-                          fontWeight: '700',
-                          fontSize: '0.53rem',
-                          color: '#111827',
-                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                          lineHeight: '1',
-                          margin: 0,
-                          padding: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.2rem',
+                          marginBottom: '0.3025rem',
                         }}
                       >
-                        Skills
-                      </h4>
-                      <span
-                        style={{
-                          fontSize: '0.385rem',
-                          color: '#6b7280',
-                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                          marginLeft: '0.1rem',
-                        }}
-                      >
-                        ({displaySkills.length})
-                      </span>
-                    </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.08rem' }}>
-                      {displayedSkills.map((skill, index) => (
-                        <span
-                          key={index}
+                        <Sparkles style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
+                        <h4
                           style={{
-                            padding: '0.08rem 0.25rem',
-                            border: '1px solid #c084fc',
-                            color: '#7e22ce',
-                            borderRadius: '0.4rem',
-                            fontSize: '0.385rem',
-                            lineHeight: '0.75rem',
+                            fontWeight: '700',
+                            fontSize: '0.53rem',
+                            color: '#111827',
                             fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                            lineHeight: '1',
+                            margin: 0,
+                            padding: 0,
                           }}
                         >
-                          {skillEmojiMap[skill] || '✨'} {skill}
-                        </span>
-                      ))}
-                      {remainingCount > 0 && (
+                          Skills
+                        </h4>
                         <span
                           style={{
-                            padding: '0.08rem 0.25rem',
-                            border: '1px solid #c084fc',
-                            color: '#7e22ce',
-                            borderRadius: '0.4rem',
                             fontSize: '0.385rem',
-                            lineHeight: '0.75rem',
+                            color: '#6b7280',
                             fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                            opacity: 0.7,
+                            marginLeft: '0.1rem',
                           }}
                         >
-                          +{remainingCount} more
+                          ({displaySkills.length})
                         </span>
-                      )}
-                    </div>
-                  </>
-                ),
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.08rem' }}>
+                        {displayedSkills.map((skill, index) => (
+                          <span
+                            key={index}
+                            style={{
+                              padding: '0.08rem 0.25rem',
+                              backgroundColor: badgeStyle.backgroundColor,
+                              border: badgeStyle.border,
+                              color: badgeStyle.color,
+                              borderRadius: '0.4rem',
+                              fontSize: '0.385rem',
+                              lineHeight: '0.75rem',
+                              fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                            }}
+                          >
+                            {skillEmojiMap[skill] || '✨'} {skill}
+                          </span>
+                        ))}
+                        {remainingCount > 0 && (
+                          <span
+                            style={{
+                              padding: '0.08rem 0.25rem',
+                              backgroundColor: badgeStyle.backgroundColor,
+                              border: badgeStyle.border,
+                              color: badgeStyle.color,
+                              borderRadius: '0.4rem',
+                              fontSize: '0.385rem',
+                              lineHeight: '0.75rem',
+                              fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                              opacity: 0.7,
+                            }}
+                          >
+                            +{remainingCount} more
+                          </span>
+                        )}
+                      </div>
+                    </>
+                  )
+                },
               })
             }
 
@@ -1275,86 +1321,91 @@ export default function ShareScreenshot({
               const remainingCount = displayInterests.length - maxInterests
               cardBlocks.push({
                 key: 'interests',
-                content: (
-                  <>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.2rem',
-                        marginBottom: '0.3025rem',
-                      }}
-                    >
-                      <Star style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
-                      <h4
+                content: (cardIndex: number) => {
+                  const badgeStyle = getBadgeStyle(cardIndex)
+                  return (
+                    <>
+                      <div
                         style={{
-                          fontWeight: '700',
-                          fontSize: '0.53rem',
-                          color: '#111827',
-                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                          lineHeight: '1',
-                          margin: 0,
-                          padding: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.2rem',
+                          marginBottom: '0.3025rem',
                         }}
                       >
-                        Interests
-                      </h4>
-                      <span
+                        <Star style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
+                        <h4
+                          style={{
+                            fontWeight: '700',
+                            fontSize: '0.53rem',
+                            color: '#111827',
+                            fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                            lineHeight: '1',
+                            margin: 0,
+                            padding: 0,
+                          }}
+                        >
+                          Interests
+                        </h4>
+                        <span
+                          style={{
+                            fontSize: '0.385rem',
+                            color: '#6b7280',
+                            fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                            marginLeft: '0.1rem',
+                          }}
+                        >
+                          ({displayInterests.length})
+                        </span>
+                      </div>
+                      <div
                         style={{
-                          fontSize: '0.385rem',
-                          color: '#6b7280',
-                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                          marginLeft: '0.1rem',
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          gap: '0.08rem',
+                          lineHeight: '0.75rem',
                         }}
                       >
-                        ({displayInterests.length})
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        gap: '0.08rem',
-                        lineHeight: '0.75rem',
-                      }}
-                    >
-                      {displayedInterests.map((interest, index) => (
-                        <span
-                          key={index}
-                          style={{
-                            padding: '0.08rem 0.25rem',
-                            border: '1px solid #c084fc',
-                            color: '#7e22ce',
-                            borderRadius: '0.4rem',
-                            fontSize: '0.385rem',
-                            whiteSpace: 'nowrap',
-                            lineHeight: '0.75rem',
-                            fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                          }}
-                        >
-                          {getInterestEmoji(interest)} {stripEmoji(interest)}
-                        </span>
-                      ))}
-                      {remainingCount > 0 && (
-                        <span
-                          style={{
-                            padding: '0.08rem 0.25rem',
-                            border: '1px solid #c084fc',
-                            color: '#7e22ce',
-                            borderRadius: '0.4rem',
-                            fontSize: '0.385rem',
-                            whiteSpace: 'nowrap',
-                            lineHeight: '0.75rem',
-                            fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                            opacity: 0.7,
-                          }}
-                        >
-                          +{remainingCount} more
-                        </span>
-                      )}
-                    </div>
-                  </>
-                ),
+                        {displayedInterests.map((interest, index) => (
+                          <span
+                            key={index}
+                            style={{
+                              padding: '0.08rem 0.25rem',
+                              backgroundColor: badgeStyle.backgroundColor,
+                              border: badgeStyle.border,
+                              color: badgeStyle.color,
+                              borderRadius: '0.4rem',
+                              fontSize: '0.385rem',
+                              whiteSpace: 'nowrap',
+                              lineHeight: '0.75rem',
+                              fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                            }}
+                          >
+                            {getInterestEmoji(interest)} {stripEmoji(interest)}
+                          </span>
+                        ))}
+                        {remainingCount > 0 && (
+                          <span
+                            style={{
+                              padding: '0.08rem 0.25rem',
+                              backgroundColor: badgeStyle.backgroundColor,
+                              border: badgeStyle.border,
+                              color: badgeStyle.color,
+                              borderRadius: '0.4rem',
+                              fontSize: '0.385rem',
+                              whiteSpace: 'nowrap',
+                              lineHeight: '0.75rem',
+                              fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                              opacity: 0.7,
+                            }}
+                          >
+                            +{remainingCount} more
+                          </span>
+                        )}
+                      </div>
+                    </>
+                  )
+                },
               })
             }
 
@@ -1364,84 +1415,89 @@ export default function ShareScreenshot({
               const remainingCount = travelStyles.length - maxTravelStyles
               cardBlocks.push({
                 key: 'travel',
-                content: (
-                  <>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.2rem',
-                        marginBottom: '0.3025rem',
-                      }}
-                    >
-                      <MapPin style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
-                      <h4
+                content: (cardIndex: number) => {
+                  const badgeStyle = getBadgeStyle(cardIndex)
+                  return (
+                    <>
+                      <div
                         style={{
-                          fontWeight: '700',
-                          fontSize: '0.53rem',
-                          color: '#111827',
-                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                          lineHeight: '1',
-                          margin: 0,
-                          padding: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.2rem',
+                          marginBottom: '0.3025rem',
                         }}
                       >
-                        Travel Style
-                      </h4>
-                      <span
-                        style={{
-                          fontSize: '0.385rem',
-                          color: '#6b7280',
-                          fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                          marginLeft: '0.1rem',
-                        }}
-                      >
-                        ({travelStyles.length})
-                      </span>
-                    </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.08rem' }}>
-                      {displayedTravelStyles.map((style, index) => (
-                        <span
-                          key={index}
+                        <MapPin style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
+                        <h4
                           style={{
-                            padding: '0.08rem 0.25rem',
-                            border: '1px solid #c084fc',
-                            color: '#7e22ce',
-                            borderRadius: '0.4rem',
-                            fontSize: '0.385rem',
-                            lineHeight: '0.75rem',
+                            fontWeight: '700',
+                            fontSize: '0.53rem',
+                            color: '#111827',
                             fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                            lineHeight: '1',
+                            margin: 0,
+                            padding: 0,
                           }}
                         >
-                          {style}
-                        </span>
-                      ))}
-                      {remainingCount > 0 && (
+                          Travel Style
+                        </h4>
                         <span
                           style={{
-                            padding: '0.08rem 0.25rem',
-                            border: '1px solid #c084fc',
-                            color: '#7e22ce',
-                            borderRadius: '0.4rem',
                             fontSize: '0.385rem',
-                            lineHeight: '0.75rem',
+                            color: '#6b7280',
                             fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
-                            opacity: 0.7,
+                            marginLeft: '0.1rem',
                           }}
                         >
-                          +{remainingCount} more
+                          ({travelStyles.length})
                         </span>
-                      )}
-                    </div>
-                  </>
-                ),
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.08rem' }}>
+                        {displayedTravelStyles.map((style, index) => (
+                          <span
+                            key={index}
+                            style={{
+                              padding: '0.08rem 0.25rem',
+                              backgroundColor: badgeStyle.backgroundColor,
+                              border: badgeStyle.border,
+                              color: badgeStyle.color,
+                              borderRadius: '0.4rem',
+                              fontSize: '0.385rem',
+                              lineHeight: '0.75rem',
+                              fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                            }}
+                          >
+                            {style}
+                          </span>
+                        ))}
+                        {remainingCount > 0 && (
+                          <span
+                            style={{
+                              padding: '0.08rem 0.25rem',
+                              backgroundColor: badgeStyle.backgroundColor,
+                              border: badgeStyle.border,
+                              color: badgeStyle.color,
+                              borderRadius: '0.4rem',
+                              fontSize: '0.385rem',
+                              lineHeight: '0.75rem',
+                              fontFamily: 'Gilroy, system-ui, -apple-system, sans-serif',
+                              opacity: 0.7,
+                            }}
+                          >
+                            +{remainingCount} more
+                          </span>
+                        )}
+                      </div>
+                    </>
+                  )
+                },
               })
             }
 
             if (petName || petBreed) {
               cardBlocks.push({
                 key: 'pet',
-                content: (
+                content: (cardIndex: number) => (
                   <>
                     <div
                       style={{
@@ -1497,25 +1553,6 @@ export default function ShareScreenshot({
               return null
             }
 
-            const gradientTheme = {
-              background: 'linear-gradient(120deg, #f3e8ff 0%, #fce7f3 100%)',
-              border: '#e5e7eb',
-            }
-            const whiteTheme = {
-              background: '#ffffff',
-              border: '#9333ea',
-            }
-
-            // Helper function to get card theme based on index
-            // Pattern: [gradient, white], [white, gradient], [gradient, white], ...
-            const getCardTheme = (index: number) => {
-              const pairIndex = Math.floor(index / 2)
-              const positionInPair = index % 2
-              // If pair index and position in pair have same parity, use gradient; otherwise white
-              const isGradient = pairIndex % 2 === positionInPair
-              return isGradient ? gradientTheme : whiteTheme
-            }
-
             return (
               <div
                 style={{
@@ -1548,7 +1585,7 @@ export default function ShareScreenshot({
                         minHeight: 0,
                       }}
                     >
-                      {card.content}
+                      {card.content(index)}
                     </div>
                   )
                 })}
