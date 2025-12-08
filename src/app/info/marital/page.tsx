@@ -25,6 +25,7 @@ function MaritalContent() {
   const searchParams = useSearchParams()
   const name = searchParams?.get('name') || ''
   const isEditMode = searchParams?.get('edit') === 'true'
+  const [isSignupFlow, setIsSignupFlow] = React.useState(false)
   const { handleSubmit, setValue, watch } = useForm<MaritalFormData>({
     resolver: zodResolver(maritalSchema),
     mode: 'onChange',
@@ -44,6 +45,9 @@ function MaritalContent() {
         }
       } catch {}
     }
+    // Check if signup cookie exists
+    const signupCookie = getCookie('signup')
+    setIsSignupFlow(signupCookie === 'true')
   }, [setValue])
 
   React.useEffect(() => {
@@ -71,7 +75,7 @@ function MaritalContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={21.42} />
-      <Header className="mt-4" showTickButton />
+      <Header className="mt-4" showTickButton={!isSignupFlow} showBackButton={isSignupFlow} />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">

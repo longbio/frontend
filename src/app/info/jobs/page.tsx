@@ -54,6 +54,8 @@ function JobContent() {
   const [isInitialLoad, setIsInitialLoad] = useState(true)
   const jobMutation = useUpdateJob()
 
+  const [isSignupFlow, setIsSignupFlow] = useState(false)
+  
   useEffect(() => {
     const cookie = getCookie('info_job')
     if (cookie) {
@@ -74,6 +76,9 @@ function JobContent() {
       } catch {}
     }
     setIsInitialLoad(false)
+    // Check if signup cookie exists
+    const signupCookie = getCookie('signup')
+    setIsSignupFlow(signupCookie === 'true')
   }, [setValue])
 
   useEffect(() => {
@@ -158,7 +163,7 @@ function JobContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={32.1} />
-      <Header className="mt-4" showTickButton />
+      <Header className="mt-4" showTickButton={!isSignupFlow} showBackButton={isSignupFlow} />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">

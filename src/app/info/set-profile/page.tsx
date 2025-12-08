@@ -95,6 +95,8 @@ function SetProfileContent() {
   // For preview
   const [preview, setPreview] = useState<string | null>(null)
 
+  const [isSignupFlow, setIsSignupFlow] = useState(false)
+  
   // Load cookie values on client side only
   useEffect(() => {
     const cookie = getCookie('info_set_profile')
@@ -106,6 +108,9 @@ function SetProfileContent() {
         }
       } catch {}
     }
+    // Check if signup cookie exists
+    const signupCookie = getCookie('signup')
+    setIsSignupFlow(signupCookie === 'true')
   }, [])
 
   useEffect(() => {
@@ -133,7 +138,7 @@ function SetProfileContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={35.7} />
-      <Header className="mt-4" showTickButton />
+      <Header className="mt-4" showTickButton={!isSignupFlow} showBackButton={isSignupFlow} />
       <CropperDialog
         open={showCropper}
         onOpenChange={setShowCropper}

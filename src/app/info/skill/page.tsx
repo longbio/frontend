@@ -87,6 +87,7 @@ function SkillContent() {
   const isEditMode = searchParams?.get('edit') === 'true'
   const [customSkills, setCustomSkills] = useState<string[]>([])
   const [selected, setSelected] = useState<string[]>([])
+  const [isSignupFlow, setIsSignupFlow] = useState(false)
 
   // Load cookie values on client side only
   React.useEffect(() => {
@@ -99,6 +100,9 @@ function SkillContent() {
         }
       } catch {}
     }
+    // Check if signup cookie exists
+    const signupCookie = getCookie('signup')
+    setIsSignupFlow(signupCookie === 'true')
   }, [])
 
   React.useEffect(() => {
@@ -158,7 +162,7 @@ function SkillContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={78.6} className="shrink-0" />
-      <Header className="mt-4" showTickButton />
+      <Header className="mt-4" showTickButton={!isSignupFlow} showBackButton={isSignupFlow} />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">

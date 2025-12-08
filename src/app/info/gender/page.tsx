@@ -1,6 +1,6 @@
 'use client'
 import { z } from 'zod'
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { Info } from 'lucide-react'
 import Header from '@/components/Header'
 import React, { useEffect } from 'react'
@@ -25,6 +25,7 @@ function GenderContent() {
   const searchParams = useSearchParams()
   const name = searchParams?.get('name') || ''
   const isEditMode = searchParams?.get('edit') === 'true'
+  const [isSignupFlow, setIsSignupFlow] = useState(false)
   const { handleSubmit, setValue, watch } = useForm<GenderFormData>({
     resolver: zodResolver(genderSchema),
     mode: 'onChange',
@@ -44,6 +45,9 @@ function GenderContent() {
         }
       } catch {}
     }
+    // Check if signup cookie exists
+    const signupCookie = getCookie('signup')
+    setIsSignupFlow(signupCookie === 'true')
   }, [setValue])
 
   useEffect(() => {
@@ -71,7 +75,7 @@ function GenderContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={14.28} />
-      <Header className="mt-4" showTickButton />
+      <Header className="mt-4" showTickButton={!isSignupFlow} showBackButton={isSignupFlow} />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">

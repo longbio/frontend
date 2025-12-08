@@ -3,7 +3,7 @@ import { z } from 'zod'
 import Header from '@/components/Header'
 import { useForm } from 'react-hook-form'
 import StickyNav from '../components/StickyNav'
-import React, { Suspense, useEffect } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 import { useUpdateUser } from '@/service/user/hook'
 import { Progress } from '@/components/ui/progress'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -21,6 +21,7 @@ function MoreDetailContent() {
   const searchParams = useSearchParams()
   const name = searchParams?.get('name') || ''
   const isEditMode = searchParams?.get('edit') === 'true'
+  const [isSignupFlow, setIsSignupFlow] = useState(false)
   const {
     register,
     handleSubmit,
@@ -47,6 +48,9 @@ function MoreDetailContent() {
         }
       } catch {}
     }
+    // Check if signup cookie exists
+    const signupCookie = getCookie('signup')
+    setIsSignupFlow(signupCookie === 'true')
   }, [setValue])
 
   useEffect(() => {
@@ -74,7 +78,7 @@ function MoreDetailContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={100} className="shrink-0" />
-      <Header className="mt-4" showTickButton />
+      <Header className="mt-4" showTickButton={!isSignupFlow} showBackButton={isSignupFlow} />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">

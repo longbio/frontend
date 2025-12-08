@@ -31,6 +31,7 @@ function BirthdayContent() {
   const mutation = useUpdateUser()
   const [name, setName] = useState(searchParams?.get('name') || '')
   const isEditMode = searchParams?.get('edit') === 'true'
+  const [isSignupFlow, setIsSignupFlow] = useState(false)
 
   useEffect(() => {
     if (!name) {
@@ -42,6 +43,9 @@ function BirthdayContent() {
         } catch { }
       }
     }
+    // Check if signup cookie exists
+    const signupCookie = getCookie('signup')
+    setIsSignupFlow(signupCookie === 'true')
   }, [name])
   const years = useMemo(() => range(1950, new Date().getFullYear(), true), [])
   const months = useMemo(() => range(1, 12, true), [])
@@ -130,7 +134,7 @@ function BirthdayContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={7.14} />
-      <Header className="mt-4" showTickButton />
+      <Header className="mt-4" showTickButton={!isSignupFlow} showBackButton={isSignupFlow} />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">

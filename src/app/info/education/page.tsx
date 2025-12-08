@@ -36,6 +36,8 @@ function EducationContent() {
   })
   const selectedEducation = watch('education')
 
+  const [isSignupFlow, setIsSignupFlow] = useState(false)
+  
   // Load cookie values on client side only
   useEffect(() => {
     const cookie = getCookie('info_education')
@@ -56,6 +58,9 @@ function EducationContent() {
         }
       } catch {}
     }
+    // Check if signup cookie exists
+    const signupCookie = getCookie('signup')
+    setIsSignupFlow(signupCookie === 'true')
   }, [setValue])
 
   const [universities, setUniversities] = useState<string[]>([])
@@ -159,7 +164,7 @@ function EducationContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={28.56} />
-      <Header className="mt-4" showTickButton />
+      <Header className="mt-4" showTickButton={!isSignupFlow} showBackButton={isSignupFlow} />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">

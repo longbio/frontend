@@ -40,6 +40,8 @@ function PhysicalContent() {
     weight: 'Exp: 56 kg',
   })
 
+  const [isSignupFlow, setIsSignupFlow] = useState(false)
+  
   // Load cookie values on client side only
   useEffect(() => {
     const cookie = getCookie('info_physical')
@@ -49,6 +51,9 @@ function PhysicalContent() {
         setSelected(data)
       } catch {}
     }
+    // Check if signup cookie exists
+    const signupCookie = getCookie('signup')
+    setIsSignupFlow(signupCookie === 'true')
   }, [])
   const handleSetSelected = (val: Record<string, string>) => {
     setSelected(val)
@@ -92,7 +97,7 @@ function PhysicalContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={50.04} />
-      <Header className="mt-4" showTickButton />
+      <Header className="mt-4" showTickButton={!isSignupFlow} showBackButton={isSignupFlow} />
       <form onSubmit={onSubmit} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">
