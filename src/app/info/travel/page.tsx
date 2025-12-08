@@ -130,7 +130,7 @@ function TravelContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress className="shrink-0" value={42.9} />
-      <Header className="mt-4" showBackButton />
+      <Header className="mt-4" showTickButton />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">

@@ -39,7 +39,7 @@ function BirthdayContent() {
         try {
           const cookieName = JSON.parse(decodeURIComponent(cookie))
           setName(cookieName)
-        } catch {}
+        } catch { }
       }
     }
   }, [name])
@@ -67,7 +67,7 @@ function BirthdayContent() {
       if (cookie) {
         try {
           setSelected(JSON.parse(decodeURIComponent(cookie)))
-        } catch {}
+        } catch { }
       }
     }
   }, [])
@@ -81,7 +81,7 @@ function BirthdayContent() {
     handleSubmit,
     setValue,
     register,
-    formState: {},
+    formState: { },
     trigger,
   } = useForm<BirthdayFormData>({
     resolver: zodResolver(birthdaySchema),
@@ -130,7 +130,7 @@ function BirthdayContent() {
   return (
     <div className="flex flex-col h-full w-full p-8">
       <Progress value={7.14} />
-      <Header className="mt-4" showBackButton />
+      <Header className="mt-4" showTickButton />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-between h-full mt-2">
         <div>
           <div className="flex flex-col gap-y-4">

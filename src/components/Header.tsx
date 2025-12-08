@@ -5,16 +5,16 @@ import Link from 'next/link'
 
 type HeaderProps = {
   className?: string
-  showBackButton?: boolean
+  showTickButton?: boolean
 }
 
-export default function Header({ className, showBackButton = false }: HeaderProps) {
+export default function Header({ className, showTickButton = false }: HeaderProps) {
   return (
     <header className={clsx('flex items-center justify-between', className)}>
       <Link href="/">
         <Logo />
       </Link>
-      {showBackButton && <BackButton />}
+      {showTickButton && <BackButton />}
     </header>
   )
 }
