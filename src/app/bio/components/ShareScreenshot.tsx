@@ -321,7 +321,7 @@ export default function ShareScreenshot({
       // Add timeout wrapper for html2canvas to catch hanging operations
       const html2canvasPromise = html2canvas(element, {
         backgroundColor: '#ffffff',
-        scale: 8,
+        scale: 3,
         useCORS: true,
         allowTaint: true,
         logging: false,
