@@ -318,7 +318,8 @@ export default function ShareScreenshot({
       // Wait for images to load
       await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      const canvas = await html2canvas(element, {
+      // Add timeout wrapper for html2canvas to catch hanging operations
+      const html2canvasPromise = html2canvas(element, {
         backgroundColor: '#ffffff',
         scale: 8,
         useCORS: true,
@@ -331,9 +332,28 @@ export default function ShareScreenshot({
         windowHeight: 600,
       })
 
+      // Add a timeout to catch cases where html2canvas hangs (especially on mobile)
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => {
+          reject(new Error('Screenshot generation timed out. Please try again or check your internet connection.'))
+        }, 30000) // 30 second timeout
+      })
+
+      const canvas = await Promise.race([html2canvasPromise, timeoutPromise])
+
+      if (!canvas) {
+        throw new Error('Failed to generate canvas')
+      }
+
       const dataURL = canvas.toDataURL('image/png', 1.0)
+      
+      if (!dataURL || dataURL === 'data:,') {
+        throw new Error('Failed to convert canvas to image. Please try again.')
+      }
+
       setScreenshot(dataURL)
       setIsPreviewLoading(true)
+      setIsGenerating(false) // Reset generating state immediately after successful generation
 
       if (onSuccess) {
         onSuccess()
@@ -342,15 +362,29 @@ export default function ShareScreenshot({
         onScreenshotReady(dataURL)
       }
     } catch (error) {
-      const errorMessage = `Failed to generate screenshot: ${
-        error instanceof Error ? error.message : 'Unknown error'
-      }`
+      let errorMessage = 'Failed to generate screenshot'
+      
+      if (error instanceof Error) {
+        errorMessage = error.message
+        // Provide more user-friendly error messages
+        if (error.message.includes('timeout') || error.message.includes('timed out')) {
+          errorMessage = 'Screenshot generation timed out. This may happen on slower connections. Please try again.'
+        } else if (error.message.includes('CORS') || error.message.includes('cross-origin')) {
+          errorMessage = 'Unable to load some images due to security restrictions. Please try again.'
+        } else if (error.message.includes('canvas')) {
+          errorMessage = 'Unable to create screenshot. Please refresh the page and try again.'
+        } else {
+          errorMessage = `Failed to generate screenshot: ${error.message}`
+        }
+      }
+      
       setError(errorMessage)
+      setIsGenerating(false)
+      setIsPreviewLoading(false)
 
       if (onError) {
         onError(errorMessage)
       }
-      setIsGenerating(false)
     }
   }
 
@@ -1674,14 +1708,45 @@ export default function ShareScreenshot({
           {/* Content */}
           <div className="p-4 max-h-[calc(170vh)] overflow-y-auto">
             {error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-600 text-sm">{error}</p>
-                <button
-                  onClick={() => setError(null)}
-                  className="mt-2 text-red-500 text-xs underline"
-                >
-                  Dismiss
-                </button>
+              <div className="mb-4 p-4 bg-red-50 border-2 border-red-300 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 mt-0.5">
+                    <svg
+                      className="w-5 h-5 text-red-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-red-800 text-sm font-medium mb-2">{error}</p>
+                    <div className="flex gap-2 mt-3">
+                      <button
+                        onClick={generateScreenshot}
+                        disabled={isGenerating || flagLoading}
+                        className="px-3 py-1.5 bg-red-600 text-white text-xs font-medium rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isGenerating ? 'Retrying...' : 'Try Again'}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setError(null)
+                          setScreenshot(null)
+                        }}
+                        className="px-3 py-1.5 bg-red-100 text-red-700 text-xs font-medium rounded-lg hover:bg-red-200 transition-colors"
+                      >
+                        Dismiss
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
