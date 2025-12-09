@@ -33,6 +33,12 @@ export function PhoneInput({
   onCountryCodeChange,
   ...props
 }: PhoneInputProps) {
+  // Helper function to create unique value from country
+  const getCountryValue = (country: CountryDialCode) => `${country.dialCode}-${country.code}`
+  
+  // Helper function to parse value back to dialCode
+  const parseDialCodeFromValue = (value: string) => value.split('-')[0]
+
   const [selectedCountry, setSelectedCountry] = React.useState<CountryDialCode>(() => {
     if (countryCode) {
       const country = countryDialCodes.find((c) => c.dialCode === countryCode)
@@ -56,11 +62,13 @@ export function PhoneInput({
     }
   }, [countryCode])
 
-  const handleCountryChange = (dialCode: string) => {
-    const country = countryDialCodes.find((c) => c.dialCode === dialCode)
+  const handleCountryChange = (value: string) => {
+    const dialCode = parseDialCodeFromValue(value)
+    const country = countryDialCodes.find((c) => getCountryValue(c) === value) || 
+                    countryDialCodes.find((c) => c.dialCode === dialCode)
     if (country) {
       setSelectedCountry(country)
-      onCountryCodeChange?.(dialCode)
+      onCountryCodeChange?.(country.dialCode)
     }
   }
 
@@ -79,7 +87,7 @@ export function PhoneInput({
       </label>
       <div className="flex items-center gap-2">
         {/* Country Code Selector */}
-        <Select value={selectedCountry.dialCode} onValueChange={handleCountryChange}>
+        <Select value={getCountryValue(selectedCountry)} onValueChange={handleCountryChange}>
           <SelectTrigger
             className={clsx(
               'w-fit min-w-[110px] h-9 rounded-[100px] border-black bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px]',
@@ -97,7 +105,7 @@ export function PhoneInput({
           </SelectTrigger>
           <SelectContent className="max-h-[300px]">
             {countryDialCodes.map((country) => (
-              <SelectItem key={country.code} value={country.dialCode}>
+              <SelectItem key={country.code} value={getCountryValue(country)}>
                 <div className="flex items-center gap-2 w-full">
                   <span className="text-base leading-none">{country.emoji}</span>
                   <span className="text-sm flex-1">{country.name}</span>
