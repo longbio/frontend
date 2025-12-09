@@ -9,7 +9,7 @@ import StickyNav from '../components/StickyNav'
 import AddMoreBox from './components/AddMoreBox'
 import { Progress } from '@/components/ui/progress'
 import { Toggle } from '@/components/ui/toggle'
-import { useUpdateJob } from '@/service/user/hook'
+import { useUpdateJob, useUpdateUser } from '@/service/user/hook'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { setCookie, getCookie } from '@/utils/cookie'
 import { useJobPositions } from '@/service/jobs/hook'
@@ -53,6 +53,7 @@ function JobContent() {
   const [tags, setTags] = useState<string[]>([])
   const [isInitialLoad, setIsInitialLoad] = useState(true)
   const jobMutation = useUpdateJob()
+  const userMutation = useUpdateUser()
 
   const [isSignupFlow, setIsSignupFlow] = useState(false)
   
@@ -139,6 +140,11 @@ function JobContent() {
 
     try {
       if (data.job === 'employed') {
+        // Update job status
+        await userMutation.mutateAsync({
+          jobStatus: 'employed',
+        })
+
         const jobData = {
           position: data.positions && data.positions.length > 0 ? data.positions.join(', ') : null,
           company: data.companies && data.companies.length > 0 ? data.companies.join(', ') : null,
@@ -146,6 +152,17 @@ function JobContent() {
         }
 
         await jobMutation.mutateAsync(jobData)
+      } else if (data.job === 'unemployed') {
+        // Update job status and clear job details
+        await userMutation.mutateAsync({
+          jobStatus: 'unemployed',
+        })
+
+        await jobMutation.mutateAsync({
+          position: null,
+          company: null,
+          tags: null,
+        })
       }
 
       // If in edit mode, return to bio page, otherwise continue to next step
@@ -252,7 +269,7 @@ function JobContent() {
             }
           }}
           className="mt-8"
-          loading={jobMutation.isPending}
+          loading={jobMutation.isPending || userMutation.isPending}
         />
       </form>
     </div>

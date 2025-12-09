@@ -128,6 +128,13 @@ function EducationContent() {
         }
 
         await educationMutation.mutateAsync(educationData)
+      } else if (selectedEducation === 'not-interested') {
+        // Clear education details when user selects "not interested"
+        await educationMutation.mutateAsync({
+          university: null,
+          topic: null,
+          graduationYear: null,
+        })
       }
 
       // If in edit mode, return to bio page, otherwise continue to next step
