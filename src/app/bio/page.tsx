@@ -980,6 +980,21 @@ function BioContent() {
             </div>
           </div>
         </div> */}
+
+        {/* Contact Team Link */}
+        <div className="text-center py-4">
+          <span className="text-sm text-gray-600">
+            Get in touch with our team{' '}
+            <a
+              href="https://wa.me/971555345004"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-600 hover:text-gray-800 underline"
+            >
+              here
+            </a>
+          </span>
+        </div>
       </div>
 
       {/* Share Modal */}

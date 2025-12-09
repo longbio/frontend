@@ -25,6 +25,19 @@ export default function Welcome() {
           Or Sign In
         </Link>
       </div>
+      <div className="mt-8 text-center">
+        <span className="text-sm text-gray-600">
+          Get in touch with our team{' '}
+          <a
+            href="https://wa.me/971555345004"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-600 hover:text-gray-800 underline"
+          >
+            here
+          </a>
+        </span>
+      </div>
     </div>
   )
 }
