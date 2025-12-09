@@ -29,7 +29,7 @@ function EducationContent() {
   const searchParams = useSearchParams()
   const name = searchParams?.get('name') || ''
   const isEditMode = searchParams?.get('edit') === 'true'
-  const { handleSubmit, setValue, watch } = useForm<EducationFormData>({
+  const { handleSubmit, setValue, watch, getValues } = useForm<EducationFormData>({
     resolver: zodResolver(educationSchema),
     mode: 'onChange',
     defaultValues: {},
@@ -44,7 +44,9 @@ function EducationContent() {
     if (cookie) {
       try {
         const data = JSON.parse(decodeURIComponent(cookie))
-        if (data.education) {
+        // Only set education if it's a valid value
+        const validEducationValues = ['not-interested', 'student', 'graduated']
+        if (data.education && validEducationValues.includes(data.education)) {
           setValue('education', data.education)
         }
         if (data.universities && Array.isArray(data.universities)) {
@@ -89,8 +91,11 @@ function EducationContent() {
     }
   }, [selectedEducation, validationError])
 
-  const onSubmit = async () => {
-    if (!selectedEducation) {
+  const onSubmit = async (data?: EducationFormData) => {
+    // Get the current form value, prefer passed data, then watch value, then getValues
+    const formEducation = data?.education || selectedEducation || getValues('education')
+    
+    if (!formEducation || formEducation.trim() === '') {
       if (isEditMode) {
         return router.push('/bio')
       } else {
@@ -100,12 +105,24 @@ function EducationContent() {
 
     setValidationError('')
 
+    // Ensure we have a valid education value
+    const validEducationValues = ['not-interested', 'student', 'graduated']
+    if (!validEducationValues.includes(formEducation)) {
+      console.error('Invalid education value:', formEducation)
+      setValidationError('Please select a valid education status')
+      return
+    }
+
     const educationalStatus =
-      selectedEducation === 'not-interested'
+      formEducation === 'not-interested'
         ? 'not interested'
-        : selectedEducation === 'student'
+        : formEducation === 'student'
         ? 'student'
-        : 'graduated'
+        : formEducation === 'graduated'
+        ? 'graduated'
+        : 'student' // fallback
+
+    console.log('Submitting education status:', { formEducation, educationalStatus })
 
     try {
       await mutation.mutateAsync({
@@ -113,7 +130,7 @@ function EducationContent() {
       })
 
       // Send education details to the new API if user is student or graduated
-      if (selectedEducation === 'student' || selectedEducation === 'graduated') {
+      if (formEducation === 'student' || formEducation === 'graduated') {
         // Convert topic IDs to names
         const topicNames = topics.map((topicId) => {
           const topic = allTopics.find((t) => t.id === topicId)
@@ -128,7 +145,7 @@ function EducationContent() {
         }
 
         await educationMutation.mutateAsync(educationData)
-      } else if (selectedEducation === 'not-interested') {
+      } else if (formEducation === 'not-interested') {
         // Clear education details when user selects "not interested"
         await educationMutation.mutateAsync({
           university: null,
