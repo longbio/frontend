@@ -90,15 +90,13 @@ export async function verifyAuthCodeServerAction(
     }
 
     if (!response.ok) {
-      const error = new Error(
-        data?.message || `HTTP error! status: ${response.status}`
-      ) as Error & {
-        status?: number
-        data?: { message?: string; [key: string]: any }
+      // Return error result instead of throwing to preserve status code
+      // Next.js server actions convert thrown errors to 500, so we return the error as a result
+      return {
+        status: response.status,
+        message: data?.message || `HTTP error! status: ${response.status}`,
+        data: undefined,
       }
-      error.status = response.status
-      error.data = data || { message: error.message }
-      throw error
     }
 
     return {
