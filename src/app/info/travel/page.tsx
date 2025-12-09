@@ -30,18 +30,10 @@ const travelStyles = [
   'Volunteer Travel',
 ]
 
-const travelSchema = z
-  .object({
-    styles: z.array(z.string()).optional(),
-    country: z.array(z.any()).optional(),
-  })
-  .refine(
-    (data) => (data.styles && data.styles.length > 0) || (data.country && data.country.length > 0),
-    {
-      message: 'choose one',
-      path: ['form'],
-    }
-  )
+const travelSchema = z.object({
+  styles: z.array(z.string()).optional(),
+  country: z.array(z.any()).optional(),
+})
 
 function TravelContent() {
   const router = useRouter()
@@ -115,7 +107,7 @@ function TravelContent() {
   const onSubmit = async () => {
     try {
       await mutation.mutateAsync({
-        travelStyle: styles && styles.length > 0 ? styles : [],
+        travelStyle: styles || [],
         visitedCountries: selectedCountries.map((country: CountryItem) => country.name),
       })
 

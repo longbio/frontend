@@ -75,7 +75,7 @@ const getSkillEmoji = (skill: string): string => {
 }
 
 const skillSchema = z.object({
-  skills: z.array(z.string()).min(1, 'please choose one skill'),
+  skills: z.array(z.string()),
 })
 type SkillFormType = z.infer<typeof skillSchema>
 
@@ -144,7 +144,7 @@ function SkillContent() {
   const onSubmit = async () => {
     try {
       await mutation.mutateAsync({
-        skills: selected,
+        skills: selected || [],
       })
 
       // If in edit mode, return to bio page, otherwise continue to next step

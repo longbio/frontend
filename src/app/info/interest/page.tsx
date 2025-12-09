@@ -88,7 +88,7 @@ const getInterestEmoji = (interest: string): string => {
 }
 
 const interestSchema = z.object({
-  interests: z.array(z.string()).min(1, 'please choose one'),
+  interests: z.array(z.string()),
 })
 type InterestFormType = z.infer<typeof interestSchema>
 
@@ -158,7 +158,7 @@ function InterestContent() {
   const onSubmit = async () => {
     try {
       await mutation.mutateAsync({
-        interests: selected,
+        interests: selected || [],
       })
 
       // If in edit mode, return to bio page, otherwise continue to next step

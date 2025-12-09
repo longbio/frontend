@@ -91,7 +91,7 @@ const getSportEmoji = (sport: string): string => {
 }
 
 const sportSchema = z.object({
-  sports: z.array(z.string()).min(1, '').max(5, ''),
+  sports: z.array(z.string()).max(5, ''),
 })
 type SportFormType = z.infer<typeof sportSchema>
 
@@ -160,11 +160,9 @@ function SportContent() {
 
   const onSubmit = async () => {
     try {
-      if (selected.length > 0) {
-        await mutation.mutateAsync({
-          favoriteSport: selected,
-        })
-      }
+      await mutation.mutateAsync({
+        favoriteSport: selected || [],
+      })
 
       // If in edit mode, return to bio page, otherwise continue to next step
       if (isEditMode) {
