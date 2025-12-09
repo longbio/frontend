@@ -192,15 +192,15 @@ export default function TestPage() {
             <h2 className="text-lg font-semibold text-gray-900">Lists &amp; Tags</h2>
             <div className="space-y-3 text-sm text-gray-700">
               <div>
-                <span className="font-medium text-purple-700">Visited Countries:</span>{' '}
+                <span className="font-bold text-purple-700">Visited Countries:</span>{' '}
                 {mockUserData.visitedCountries?.join(' • ')}
               </div>
               <div>
-                <span className="font-medium text-purple-700">Travel Styles:</span>{' '}
+                <span className="font-bold text-purple-700">Travel Styles:</span>{' '}
                 {mockUserData.travelStyle.join(' • ')}
               </div>
               <div>
-                <span className="font-medium text-purple-700">Favorite Sports:</span>{' '}
+                <span className="font-bold text-purple-700">Favorite Sports:</span>{' '}
                 {mockUserData.favoriteSport.join(' • ')}
               </div>
             </div>

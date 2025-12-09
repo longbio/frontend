@@ -451,7 +451,7 @@ export default function BioDisplay({
             <div className="space-y-3">
               {userData.visitedCountries && userData.visitedCountries.length > 0 && (
                 <div>
-                  <div className="font-medium text-gray-700 mb-2">Visited Countries:</div>
+                  <div className="font-bold text-gray-700 mb-2">Visited Countries:</div>
                   <div className="flex flex-wrap gap-2">
                     {userData.visitedCountries.map((country, index) => {
                       // Find the country data to get the flag
@@ -485,7 +485,7 @@ export default function BioDisplay({
               )}
               {userData.travelStyle && userData.travelStyle.length > 0 && (
                 <div>
-                  <div className="font-medium text-gray-700 mb-2">Travel Styles:</div>
+                  <div className="font-bold text-gray-700 mb-2">Travel Styles:</div>
                   <div className="flex flex-wrap gap-2">
                     {userData.travelStyle.map((style, index) => (
                       <span
@@ -557,7 +557,7 @@ export default function BioDisplay({
             </div>
             <div className="space-y-3">
               <div>
-                <div className="font-medium text-gray-700 mb-2">Favorite Sports:</div>
+                <div className="font-bold text-gray-700 mb-2">Favorite Sports:</div>
                   <div className="flex flex-wrap gap-2">
                     {userData.favoriteSport.map((sport, index) => (
                       <span
