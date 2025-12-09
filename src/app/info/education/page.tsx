@@ -265,7 +265,29 @@ function EducationContent() {
         </div>
         <StickyNav
           onNext={handleSubmit(onSubmit)}
-          onSkip={() => {
+          onSkip={async () => {
+            // If there's a selected education value, send it to backend even when skipping
+            const currentEducation = selectedEducation || getValues('education')
+            if (currentEducation) {
+              const validEducationValues = ['not-interested', 'student', 'graduated']
+              if (validEducationValues.includes(currentEducation)) {
+                const educationalStatus =
+                  currentEducation === 'not-interested'
+                    ? 'not interested'
+                    : currentEducation === 'student'
+                    ? 'student'
+                    : 'graduated'
+                
+                try {
+                  await mutation.mutateAsync({
+                    educationalStatus,
+                  })
+                } catch (err) {
+                  console.error('Failed to update education status on skip', err)
+                }
+              }
+            }
+            
             if (isEditMode) {
               router.push('/bio')
             } else {
