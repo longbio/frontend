@@ -637,21 +637,6 @@ function BioContent() {
                 </button>
               </div>
               <div className="space-y-3">
-                {userData.travelStyle && userData.travelStyle.length > 0 && (
-                  <div>
-                    <div className="font-medium text-gray-700 mb-2">Travel Styles:</div>
-                    <div className="flex flex-wrap gap-2">
-                      {userData.travelStyle.map((style, index) => (
-                        <span
-                          key={index}
-                          className={getBadgeStyle(cards.length)}
-                        >
-                          {style}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
                 {userData.visitedCountries && userData.visitedCountries.length > 0 && (
                   <div>
                     <div className="font-medium text-gray-700 mb-2">Visited Countries:</div>
@@ -683,6 +668,21 @@ function BioContent() {
                           </span>
                         )
                       })}
+                    </div>
+                  </div>
+                )}
+                {userData.travelStyle && userData.travelStyle.length > 0 && (
+                  <div>
+                    <div className="font-medium text-gray-700 mb-2">Travel Styles:</div>
+                    <div className="flex flex-wrap gap-2">
+                      {userData.travelStyle.map((style, index) => (
+                        <span
+                          key={index}
+                          className={getBadgeStyle(cards.length)}
+                        >
+                          {style}
+                        </span>
+                      ))}
                     </div>
                   </div>
                 )}
