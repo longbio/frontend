@@ -164,7 +164,13 @@ export const countryDialCodes: CountryDialCode[] = [
 ]
 
 // Helper function to get country by dial code
+// Prefers US when multiple countries share the same dial code (e.g., +1)
 export function getCountryByDialCode(dialCode: string): CountryDialCode | undefined {
+  if (dialCode === '+1') {
+    // Prefer US for +1 dial code
+    return countryDialCodes.find((country) => country.code === 'US') || 
+           countryDialCodes.find((country) => country.dialCode === dialCode)
+  }
   return countryDialCodes.find((country) => country.dialCode === dialCode)
 }
 
@@ -174,5 +180,5 @@ export function getCountryByCode(code: string): CountryDialCode | undefined {
 }
 
 // Default country (US)
-export const defaultCountry: CountryDialCode = countryDialCodes[145]
+export const defaultCountry: CountryDialCode = countryDialCodes.find((c) => c.code === 'US') || countryDialCodes[0]
 

@@ -41,7 +41,10 @@ export function PhoneInput({
 
   const [selectedCountry, setSelectedCountry] = React.useState<CountryDialCode>(() => {
     if (countryCode) {
-      const country = countryDialCodes.find((c) => c.dialCode === countryCode)
+      // Prefer US when dialCode is +1
+      const country = countryCode === '+1' 
+        ? countryDialCodes.find((c) => c.code === 'US') || countryDialCodes.find((c) => c.dialCode === countryCode)
+        : countryDialCodes.find((c) => c.dialCode === countryCode)
       return country || defaultCountry
     }
     return defaultCountry
@@ -55,7 +58,10 @@ export function PhoneInput({
 
   React.useEffect(() => {
     if (countryCode) {
-      const country = countryDialCodes.find((c) => c.dialCode === countryCode)
+      // Prefer US when dialCode is +1
+      const country = countryCode === '+1'
+        ? countryDialCodes.find((c) => c.code === 'US') || countryDialCodes.find((c) => c.dialCode === countryCode)
+        : countryDialCodes.find((c) => c.dialCode === countryCode)
       if (country) {
         setSelectedCountry(country)
       }
@@ -64,8 +70,19 @@ export function PhoneInput({
 
   const handleCountryChange = (value: string) => {
     const dialCode = parseDialCodeFromValue(value)
-    const country = countryDialCodes.find((c) => getCountryValue(c) === value) || 
-                    countryDialCodes.find((c) => c.dialCode === dialCode)
+    // First try to find by the unique value (dialCode-code combination)
+    let country = countryDialCodes.find((c) => getCountryValue(c) === value)
+    
+    // If not found and dialCode is +1, prefer US
+    if (!country && dialCode === '+1') {
+      country = countryDialCodes.find((c) => c.code === 'US')
+    }
+    
+    // Fallback to any country with matching dialCode
+    if (!country) {
+      country = countryDialCodes.find((c) => c.dialCode === dialCode)
+    }
+    
     if (country) {
       setSelectedCountry(country)
       onCountryCodeChange?.(country.dialCode)
