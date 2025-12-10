@@ -356,8 +356,8 @@ export default function ShareScreenshot({
           element.style.zIndex = '-9999'
           element.style.pointerEvents = 'none'
           element.style.visibility = 'visible'
-          element.style.opacity = '1'
-          element.style.transform = 'translateX(-9999px)' // Move off-screen but keep in DOM flow
+          element.style.opacity = '0.01'
+          element.style.transform = 'none'
         } else {
           // For other devices: keep original approach
           element.style.position = 'fixed'
@@ -403,7 +403,7 @@ export default function ShareScreenshot({
       }
 
       // iOS-specific optimizations
-      const scale = isIOS ? 3 : 8 // Lower scale for iOS to prevent memory issues
+      const scale = isIOS ? 1.5 : 8
       const timeout = isIOS ? 45000 : 30000 // Longer timeout for iOS
 
       // Add timeout wrapper for html2canvas to catch hanging operations
@@ -458,6 +458,11 @@ export default function ShareScreenshot({
         ])
       }
 
+      if (isIOS && 'fonts' in document) {
+        await document.fonts.ready
+      }
+
+      await new Promise((r) => setTimeout(r, isIOS ? 600 : 0))
       const html2canvasPromise = html2canvas(element, html2canvasOptions)
 
       // Add a timeout to catch cases where html2canvas hangs (especially on mobile)
