@@ -64,14 +64,10 @@ export function populateCookiesFromBio(bioData: GetUserByIdResponse['data']) {
   // Set education
   if (data.educationalStatus && data.educationalStatus.toLowerCase() !== 'none') {
     // Map API values to form values
-    // API: "not interested", "student", "graduated"
+    // API: "not-interested" (or "not interested" for backward compatibility), "student", "graduated"
     // Form: "not-interested", "student", "graduated"
-    const educationMap: Record<string, string> = {
-      'not interested': 'not-interested',
-      'student': 'student',
-      'graduated': 'graduated',
-    }
-    const educationFormValue = educationMap[data.educationalStatus.toLowerCase()] || data.educationalStatus.toLowerCase()
+
+    const educationFormValue = data.educationalStatus.toLowerCase()
     
     const educationData: {
       education: string

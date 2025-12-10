@@ -552,7 +552,7 @@ function BioContent() {
               <div className="space-y-2">
                 {userData.educationalStatus && userData.educationalStatus !== 'none' && (
                   <div className="text-gray-700">
-                    <span className="font-medium">Status: </span>
+                    <span className="font-bold">Status: </span>
                     <span className="capitalize">{userData.educationalStatus}</span>
                   </div>
                 )}
