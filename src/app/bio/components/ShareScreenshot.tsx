@@ -320,6 +320,8 @@ export default function ShareScreenshot({
     setScreenshot(null)
     setError(null)
 
+    let originalStyle: string | undefined
+
     try {
       if (flagLoading) {
         setError('Please wait until country flags finish loading.')
@@ -339,21 +341,57 @@ export default function ShareScreenshot({
         return
       }
 
-      // Wait for images to load
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // Force element to be visible and ensure it's rendered (important for iOS)
+      try {
+        originalStyle = element.style.cssText
+        element.style.position = 'fixed'
+        element.style.left = '-9999px'
+        element.style.top = '0'
+        element.style.visibility = 'visible'
+        element.style.opacity = '1'
+      } catch (styleError) {
+        console.warn('Could not set element styles:', styleError)
+      }
+
+      // Wait for images to load - longer wait for iOS
+      await new Promise((resolve) => setTimeout(resolve, isIOS ? 2000 : 1000))
+
+      // Additional wait for iOS to ensure everything is ready
+      if (isIOS) {
+        await new Promise((resolve) => setTimeout(resolve, 500))
+      }
+
+      // iOS-specific optimizations
+      const scale = isIOS ? 3 : 8 // Lower scale for iOS to prevent memory issues
+      const timeout = isIOS ? 45000 : 30000 // Longer timeout for iOS
 
       // Add timeout wrapper for html2canvas to catch hanging operations
       const html2canvasPromise = html2canvas(element, {
         backgroundColor: '#ffffff',
-        scale: 8,
+        scale: scale,
         useCORS: true,
         allowTaint: true,
-        logging: false,
-        imageTimeout: 15000,
+        logging: process.env.NODE_ENV === 'development', // Enable logging in dev for debugging
+        imageTimeout: isIOS ? 20000 : 15000, // Longer timeout for images on iOS
         width: 355,
         height: 600,
         windowWidth: 355,
         windowHeight: 600,
+        // iOS-specific optimizations
+        removeContainer: false,
+        foreignObjectRendering: false, // Disable for better iOS compatibility
+        onclone: (clonedDoc) => {
+          // Ensure all images are loaded in cloned document
+          const images = clonedDoc.querySelectorAll('img')
+          images.forEach((img) => {
+            if (img.complete) return
+            // Force image to load
+            const newImg = clonedDoc.createElement('img')
+            newImg.src = img.src
+            newImg.style.cssText = img.style.cssText
+            img.parentNode?.replaceChild(newImg, img)
+          })
+        },
       })
 
       // Add a timeout to catch cases where html2canvas hangs (especially on mobile)
@@ -364,10 +402,15 @@ export default function ShareScreenshot({
               'Screenshot generation timed out. Please try again or check your internet connection.'
             )
           )
-        }, 30000) // 30 second timeout
+        }, timeout)
       })
 
       const canvas = await Promise.race([html2canvasPromise, timeoutPromise])
+
+      // Restore original style
+      if (element && originalStyle !== undefined) {
+        element.style.cssText = originalStyle
+      }
 
       if (!canvas) {
         throw new Error('Failed to generate canvas')
@@ -390,14 +433,32 @@ export default function ShareScreenshot({
         onScreenshotReady(dataURL)
       }
     } catch (error) {
+      // Restore original style in case of error
+      const element = screenshotRef.current
+      if (element && typeof originalStyle !== 'undefined') {
+        element.style.cssText = originalStyle
+      }
+
       let errorMessage = 'Failed to generate screenshot'
+
+      // Log error for debugging
+      console.error('Screenshot generation error:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error details:', {
+          error,
+          isIOS,
+          element: screenshotRef.current ? 'exists' : 'missing',
+          flagLoading,
+        })
+      }
 
       if (error instanceof Error) {
         errorMessage = error.message
         // Provide more user-friendly error messages
         if (error.message.includes('timeout') || error.message.includes('timed out')) {
-          errorMessage =
-            'Screenshot generation timed out. This may happen on slower connections. Please try again.'
+          errorMessage = isIOS
+            ? 'Screenshot generation timed out on iOS. This may take longer. Please try again.'
+            : 'Screenshot generation timed out. This may happen on slower connections. Please try again.'
         } else if (error.message.includes('CORS') || error.message.includes('cross-origin')) {
           errorMessage =
             'Unable to load some images due to security restrictions. Please try again.'
