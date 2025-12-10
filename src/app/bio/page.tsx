@@ -1008,7 +1008,14 @@ function BioContent() {
 
       {/* Share Screenshot Modal */}
       {showShareScreenshot && userData && (
-        <ShareScreenshot userData={userData} onClose={() => setShowShareScreenshot(false)} />
+        <ShareScreenshot userData={userData} 
+        onClose={() => setShowShareScreenshot(false)} 
+        onScreenshotReady={(screenshot) => {
+          setShowShareScreenshot(false)
+        }}
+        onError={(error: string) => {
+          console.error('Screenshot error:', error)
+        }} />
       )}
     </div>
   )
