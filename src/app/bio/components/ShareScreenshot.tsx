@@ -93,6 +93,15 @@ export default function ShareScreenshot({
     return map
   }, [flagCountries])
 
+  // Detect iOS for UI purposes
+  const isIOS = useMemo(() => {
+    if (typeof window === 'undefined' || typeof navigator === 'undefined') return false
+    return (
+      /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+    )
+  }, [])
+
   const skillMapping: { [key: string]: string } = {
     '1': 'Sports',
     '2': 'Painting',
@@ -108,15 +117,15 @@ export default function ShareScreenshot({
   }
 
   const skillEmojiMap: { [key: string]: string } = {
-    'Sports': '⚽',
-    'Painting': '🎨',
-    'Music': '🎵',
-    'Singing': '🎤',
+    Sports: '⚽',
+    Painting: '🎨',
+    Music: '🎵',
+    Singing: '🎤',
     'Cultural Travel': '🏛️',
-    'Dancing': '💃',
+    Dancing: '💃',
     'Physics and Math': '🔬',
-    'Cooking': '👨‍🍳',
-    'Photography': '📸',
+    Cooking: '👨‍🍳',
+    Photography: '📸',
     'Road Trip': '🛣️',
     'Eco-Tourism': '🌿',
   }
@@ -124,42 +133,48 @@ export default function ShareScreenshot({
   const stripEmoji = (text: string): string => {
     // Remove emojis including sequences with zero-width joiners
     // Pattern matches emoji sequences: base emoji + optional ZWJ + optional modifiers
-    return text.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{24C2}-\u{1F251}]|[\u{1FA00}-\u{1FAFF}]|[\u{200D}]/gu, '').replace(/\s+/g, ' ').trim()
+    return text
+      .replace(
+        /[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{24C2}-\u{1F251}]|[\u{1FA00}-\u{1FAFF}]|[\u{200D}]/gu,
+        ''
+      )
+      .replace(/\s+/g, ' ')
+      .trim()
   }
 
   const getInterestEmoji = (interest: string): string => {
     const lowerInterest = interest.toLowerCase()
     const interestEmojiMap: { [key: string]: string } = {
-      'travelling': '✈️',
-      'traveling': '✈️',
-      'cooking': '👨‍🍳',
-      'books': '📚',
-      'reading': '📖',
-      'coffee': '☕',
-      'movies': '🎬',
-      'series': '📺',
-      'music': '🎵',
-      'volunteering': '🤝',
-      'friends': '👥',
+      travelling: '✈️',
+      traveling: '✈️',
+      cooking: '👨‍🍳',
+      books: '📚',
+      reading: '📖',
+      coffee: '☕',
+      movies: '🎬',
+      series: '📺',
+      music: '🎵',
+      volunteering: '🤝',
+      friends: '👥',
       'social media': '📱',
-      'flowers': '🌸',
-      'gardening': '🌱',
-      'sports': '⚽',
-      'gym': '💪',
-      'meditation': '🧘',
-      'photography': '📸',
-      'art': '🎨',
-      'technology': '💻',
-      'gaming': '🎮',
-      'fitness': '💪',
-      'dancing': '💃',
-      'yoga': '🧘',
-      'hiking': '🥾',
-      'swimming': '🏊',
-      'cycling': '🚴',
-      'running': '🏃',
+      flowers: '🌸',
+      gardening: '🌱',
+      sports: '⚽',
+      gym: '💪',
+      meditation: '🧘',
+      photography: '📸',
+      art: '🎨',
+      technology: '💻',
+      gaming: '🎮',
+      fitness: '💪',
+      dancing: '💃',
+      yoga: '🧘',
+      hiking: '🥾',
+      swimming: '🏊',
+      cycling: '🚴',
+      running: '🏃',
     }
-    
+
     for (const [key, emoji] of Object.entries(interestEmojiMap)) {
       if (lowerInterest.includes(key)) {
         return emoji
@@ -171,46 +186,46 @@ export default function ShareScreenshot({
   const getSportEmoji = (sport: string): string => {
     const lowerSport = sport.toLowerCase()
     const sportEmojiMap: { [key: string]: string } = {
-      'football': '⚽',
-      'soccer': '⚽',
-      'basketball': '🏀',
-      'tennis': '🎾',
-      'volleyball': '🏐',
-      'baseball': '⚾',
-      'swimming': '🏊',
-      'cycling': '🚴',
-      'running': '🏃',
-      'golf': '⛳',
-      'boxing': '🥊',
+      football: '⚽',
+      soccer: '⚽',
+      basketball: '🏀',
+      tennis: '🎾',
+      volleyball: '🏐',
+      baseball: '⚾',
+      swimming: '🏊',
+      cycling: '🚴',
+      running: '🏃',
+      golf: '⛳',
+      boxing: '🥊',
       'martial arts': '🥋',
-      'yoga': '🧘',
-      'gymnastics': '🤸',
-      'skiing': '⛷️',
-      'snowboarding': '🏂',
-      'surfing': '🏄',
-      'diving': '🤿',
-      'archery': '🏹',
-      'fencing': '🤺',
-      'weightlifting': '🏋️',
-      'wrestling': '🤼',
-      'badminton': '🏸',
+      yoga: '🧘',
+      gymnastics: '🤸',
+      skiing: '⛷️',
+      snowboarding: '🏂',
+      surfing: '🏄',
+      diving: '🤿',
+      archery: '🏹',
+      fencing: '🤺',
+      weightlifting: '🏋️',
+      wrestling: '🤼',
+      badminton: '🏸',
       'table tennis': '🏓',
       'ping pong': '🏓',
-      'cricket': '🏏',
-      'hockey': '🏒',
-      'rugby': '🏉',
-      'handball': '🤾',
+      cricket: '🏏',
+      hockey: '🏒',
+      rugby: '🏉',
+      handball: '🤾',
       'water polo': '🤽',
-      'rowing': '🚣',
-      'sailing': '⛵',
-      'climbing': '🧗',
+      rowing: '🚣',
+      sailing: '⛵',
+      climbing: '🧗',
       'rock climbing': '🧗',
-      'skateboarding': '🛹',
-      'esports': '🎮',
-      'chess': '♟️',
-      'dance': '💃',
+      skateboarding: '🛹',
+      esports: '🎮',
+      chess: '♟️',
+      dance: '💃',
     }
-    
+
     for (const [key, emoji] of Object.entries(sportEmojiMap)) {
       if (lowerSport.includes(key)) {
         return emoji
@@ -252,9 +267,14 @@ export default function ShareScreenshot({
     : []
 
   const education = userData?.education ?? { topic: null, university: null, graduationYear: null }
-  const educationTopic = (education?.topic != null && education.topic !== '') ? education.topic.trim() : ''
-  const educationUniversity = (education?.university != null && education.university !== '') ? education.university.trim() : ''
-  const educationGraduationYear = (education?.graduationYear != null && education.graduationYear !== '') ? education.graduationYear.trim() : ''
+  const educationTopic =
+    education?.topic != null && education.topic !== '' ? education.topic.trim() : ''
+  const educationUniversity =
+    education?.university != null && education.university !== '' ? education.university.trim() : ''
+  const educationGraduationYear =
+    education?.graduationYear != null && education.graduationYear !== ''
+      ? education.graduationYear.trim()
+      : ''
   const job = userData?.job ?? { company: '', position: '', tags: [] }
   const jobPosition = job?.position?.trim() || ''
   const jobCompany = job?.company?.trim() || ''
@@ -271,9 +291,13 @@ export default function ShareScreenshot({
   const doesExercise =
     typeof userData?.doesExercise === 'boolean' ? Boolean(userData.doesExercise) : null
   const heightValue =
-    userData?.height != null && typeof userData.height === 'number' && userData.height > 0 ? userData.height : null
+    userData?.height != null && typeof userData.height === 'number' && userData.height > 0
+      ? userData.height
+      : null
   const weightValue =
-    userData?.weight != null && typeof userData.weight === 'number' && userData.weight > 0 ? userData.weight : null
+    userData?.weight != null && typeof userData.weight === 'number' && userData.weight > 0
+      ? userData.weight
+      : null
   const birthDateValue =
     userData?.birthDate && dayjs(userData.birthDate).isValid() ? dayjs(userData.birthDate) : null
   const age = birthDateValue ? dayjs().diff(birthDateValue, 'year') : null
@@ -335,7 +359,11 @@ export default function ShareScreenshot({
       // Add a timeout to catch cases where html2canvas hangs (especially on mobile)
       const timeoutPromise = new Promise<never>((_, reject) => {
         setTimeout(() => {
-          reject(new Error('Screenshot generation timed out. Please try again or check your internet connection.'))
+          reject(
+            new Error(
+              'Screenshot generation timed out. Please try again or check your internet connection.'
+            )
+          )
         }, 30000) // 30 second timeout
       })
 
@@ -346,7 +374,7 @@ export default function ShareScreenshot({
       }
 
       const dataURL = canvas.toDataURL('image/png', 1.0)
-      
+
       if (!dataURL || dataURL === 'data:,') {
         throw new Error('Failed to convert canvas to image. Please try again.')
       }
@@ -363,21 +391,23 @@ export default function ShareScreenshot({
       }
     } catch (error) {
       let errorMessage = 'Failed to generate screenshot'
-      
+
       if (error instanceof Error) {
         errorMessage = error.message
         // Provide more user-friendly error messages
         if (error.message.includes('timeout') || error.message.includes('timed out')) {
-          errorMessage = 'Screenshot generation timed out. This may happen on slower connections. Please try again.'
+          errorMessage =
+            'Screenshot generation timed out. This may happen on slower connections. Please try again.'
         } else if (error.message.includes('CORS') || error.message.includes('cross-origin')) {
-          errorMessage = 'Unable to load some images due to security restrictions. Please try again.'
+          errorMessage =
+            'Unable to load some images due to security restrictions. Please try again.'
         } else if (error.message.includes('canvas')) {
           errorMessage = 'Unable to create screenshot. Please refresh the page and try again.'
         } else {
           errorMessage = `Failed to generate screenshot: ${error.message}`
         }
       }
-      
+
       setError(errorMessage)
       setIsGenerating(false)
       setIsPreviewLoading(false)
@@ -393,41 +423,96 @@ export default function ShareScreenshot({
     setIsGenerating(false)
   }
 
-  const downloadScreenshot = () => {
+  const downloadScreenshot = async () => {
     if (!screenshot) return
     if (typeof document === 'undefined') return
 
-    const link = document.createElement('a')
-    link.download = `${username}-LONGBIO-SCREENSHOT.png`
-    link.href = screenshot
-    link.click()
+    try {
+      // Convert data URL to blob for better iOS compatibility
+      const response = await fetch(screenshot)
+      const blob = await response.blob()
+      const blobUrl = URL.createObjectURL(blob)
+
+      const link = document.createElement('a')
+      link.download = `${username}-LONGBIO-SCREENSHOT.png`
+      link.href = blobUrl
+      link.style.display = 'none'
+      document.body.appendChild(link)
+      link.click()
+
+      // Cleanup
+      setTimeout(() => {
+        document.body.removeChild(link)
+        URL.revokeObjectURL(blobUrl)
+      }, 100)
+    } catch (error) {
+      console.error('Error downloading screenshot:', error)
+      // Fallback to direct data URL
+      const link = document.createElement('a')
+      link.download = `${username}-LONGBIO-SCREENSHOT.png`
+      link.href = screenshot
+      link.click()
+    }
   }
 
   const shareScreenshot = async () => {
     if (!screenshot) return
 
     try {
-      const response = await fetch(screenshot)
-      const blob = await response.blob()
-      const file = new File([blob], `${username}-LONGBIO-SCREENSHOT.png`, { type: 'image/png' })
-
-      if (
-        typeof window !== 'undefined' &&
-        typeof navigator !== 'undefined' &&
-        navigator.share &&
-        navigator.canShare({ files: [file] })
-      ) {
-        await navigator.share({
-          title: `${fullName}'s Bio`,
-          text: `Check out ${fullName}'s bio on LongBio!`,
-          files: [file],
+      // Debug log for testing (can be removed in production)
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔍 Device Detection:', {
+          userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'N/A',
+          platform: typeof navigator !== 'undefined' ? navigator.platform : 'N/A',
+          maxTouchPoints: typeof navigator !== 'undefined' ? navigator.maxTouchPoints : 0,
+          isIOS,
+          hasShareAPI: typeof navigator !== 'undefined' ? !!navigator.share : false,
         })
-      } else {
-        downloadScreenshot()
       }
+
+      // iOS Safari doesn't support sharing files via Web Share API
+      // So in iOS, share button should be hidden, but if called, just download
+      if (isIOS) {
+        await downloadScreenshot()
+        return
+      }
+
+      if (typeof window !== 'undefined' && typeof navigator !== 'undefined' && navigator.share) {
+        // For non-iOS devices, try sharing with files
+        const response = await fetch(screenshot)
+        const blob = await response.blob()
+        const file = new File([blob], `${username}-LONGBIO-SCREENSHOT.png`, { type: 'image/png' })
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: `${fullName}'s Bio`,
+            text: `Check out ${fullName}'s bio on LongBio!`,
+            files: [file],
+          })
+          return
+        } else {
+          // Fallback: try sharing without files
+          try {
+            await navigator.share({
+              title: `${fullName}'s Bio`,
+              text: `Check out ${fullName}'s bio on LongBio!`,
+            })
+            // Also download the image
+            setTimeout(async () => {
+              await downloadScreenshot()
+            }, 500)
+            return
+          } catch {
+            // Continue to download fallback
+          }
+        }
+      }
+
+      // Fallback: download directly if Web Share API is not available
+      await downloadScreenshot()
     } catch (error) {
       console.error('Error sharing screenshot:', error)
-      downloadScreenshot()
+      await downloadScreenshot()
     }
   }
 
@@ -661,7 +746,9 @@ export default function ShareScreenshot({
                         border: '1px solid #fbcfe8',
                       }}
                     >
-                      <Calendar style={{ width: '0.525rem', height: '0.525rem', color: '#be185d' }} />
+                      <Calendar
+                        style={{ width: '0.525rem', height: '0.525rem', color: '#be185d' }}
+                      />
                       <span>{age}</span>
                     </div>
                   )}
@@ -710,7 +797,9 @@ export default function ShareScreenshot({
                       {genderLower === 'male' || genderLower === 'مرد' ? (
                         <Mars style={{ width: '0.525rem', height: '0.525rem', color: '#6b7280' }} />
                       ) : (
-                        <Venus style={{ width: '0.525rem', height: '0.525rem', color: '#6b7280' }} />
+                        <Venus
+                          style={{ width: '0.525rem', height: '0.525rem', color: '#6b7280' }}
+                        />
                       )}
                       {gender}
                     </span>
@@ -790,7 +879,7 @@ export default function ShareScreenshot({
             </div>
           )}
 
-         {(() => {
+          {(() => {
             // Define themes and helper functions first
             const gradientTheme = {
               background: 'linear-gradient(120deg, #f3e8ff 0%, #fce7f3 100%)',
@@ -860,7 +949,12 @@ export default function ShareScreenshot({
             //   })
             // }
 
-            if (educationUniversity || educationTopic || educationGraduationYear || (educationalStatus && educationalStatus !== 'none')) {
+            if (
+              educationUniversity ||
+              educationTopic ||
+              educationGraduationYear ||
+              (educationalStatus && educationalStatus !== 'none')
+            ) {
               cardBlocks.push({
                 key: 'education',
                 content: (cardIndex: number) => (
@@ -1060,7 +1154,14 @@ export default function ShareScreenshot({
                         ({visitedCountries.length})
                       </span>
                     </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.2rem', alignItems: 'center' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: '0.2rem',
+                        alignItems: 'center',
+                      }}
+                    >
                       {displayedCountries.map((country, index) => {
                         const getCountryFlag = (countryName: string) => {
                           const normalizedName = countryName.trim().toLowerCase()
@@ -1199,7 +1300,9 @@ export default function ShareScreenshot({
                           marginBottom: '0.3025rem',
                         }}
                       >
-                        <Dumbbell style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
+                        <Dumbbell
+                          style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }}
+                        />
                         <h4
                           style={{
                             fontWeight: '700',
@@ -1284,7 +1387,9 @@ export default function ShareScreenshot({
                           marginBottom: '0.3025rem',
                         }}
                       >
-                        <Sparkles style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }} />
+                        <Sparkles
+                          style={{ width: '0.75rem', height: '0.75rem', color: '#9333ea' }}
+                        />
                         <h4
                           style={{
                             fontWeight: '700',
@@ -1816,16 +1921,21 @@ export default function ShareScreenshot({
                 <div className="flex gap-3">
                   <button
                     onClick={downloadScreenshot}
-                    className="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-cyan-700 transition-all duration-200"
+                    className={`${
+                      isIOS ? 'w-full' : 'flex-1'
+                    } inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-cyan-700 transition-all duration-200`}
                   >
                     <Download className="size-4" />
+                    {isIOS && <span>Download</span>}
                   </button>
-                  <button
-                    onClick={shareScreenshot}
-                    className="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200"
-                  >
-                    <Share2 className="size-4" />
-                  </button>
+                  {!isIOS && (
+                    <button
+                      onClick={shareScreenshot}
+                      className="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200"
+                    >
+                      <Share2 className="size-4" />
+                    </button>
+                  )}
                 </div>
               </div>
             )}
