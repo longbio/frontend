@@ -113,14 +113,8 @@ function EducationContent() {
       return
     }
 
-    const educationalStatus =
-      formEducation === 'not-interested'
-        ? 'not interested'
-        : formEducation === 'student'
-        ? 'student'
-        : formEducation === 'graduated'
-        ? 'graduated'
-        : 'student' // fallback
+    // Send the form value directly (always "not-interested" with hyphen)
+    const educationalStatus = formEducation
 
     console.log('Submitting education status:', { formEducation, educationalStatus })
 
@@ -271,12 +265,8 @@ function EducationContent() {
             if (currentEducation) {
               const validEducationValues = ['not-interested', 'student', 'graduated']
               if (validEducationValues.includes(currentEducation)) {
-                const educationalStatus =
-                  currentEducation === 'not-interested'
-                    ? 'not interested'
-                    : currentEducation === 'student'
-                    ? 'student'
-                    : 'graduated'
+                // Send the form value directly (always "not-interested" with hyphen)
+                const educationalStatus = currentEducation
                 
                 try {
                   await mutation.mutateAsync({
