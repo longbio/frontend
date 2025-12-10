@@ -342,23 +342,64 @@ export default function ShareScreenshot({
       }
 
       // Force element to be visible and ensure it's rendered (important for iOS)
+      // In iOS, element must be in viewport for html2canvas to work
       try {
         originalStyle = element.style.cssText
-        element.style.position = 'fixed'
-        element.style.left = '-9999px'
-        element.style.top = '0'
-        element.style.visibility = 'visible'
-        element.style.opacity = '1'
+
+        if (isIOS) {
+          // For iOS: temporarily move element to viewport but keep it hidden visually
+          element.style.position = 'fixed'
+          element.style.left = '0'
+          element.style.top = '0'
+          element.style.width = '355px'
+          element.style.height = '600px'
+          element.style.zIndex = '-9999'
+          element.style.pointerEvents = 'none'
+          element.style.visibility = 'visible'
+          element.style.opacity = '1'
+          element.style.transform = 'translateX(-9999px)' // Move off-screen but keep in DOM flow
+        } else {
+          // For other devices: keep original approach
+          element.style.position = 'fixed'
+          element.style.left = '-9999px'
+          element.style.top = '0'
+          element.style.visibility = 'visible'
+          element.style.opacity = '1'
+        }
       } catch (styleError) {
         console.warn('Could not set element styles:', styleError)
       }
 
       // Wait for images to load - longer wait for iOS
-      await new Promise((resolve) => setTimeout(resolve, isIOS ? 2000 : 1000))
+      await new Promise((resolve) => setTimeout(resolve, isIOS ? 2500 : 1000))
 
       // Additional wait for iOS to ensure everything is ready
       if (isIOS) {
+        if (process.env.NODE_ENV === 'development') {
+          console.log('📱 iOS: Waiting for element to be ready...', {
+            elementExists: !!element,
+            elementVisible: element.offsetWidth > 0 && element.offsetHeight > 0,
+            elementStyle: element.style.cssText.substring(0, 100),
+          })
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+
+        // Force a reflow to ensure iOS renders the element
+        void element.offsetHeight
+
+        // Wait a bit more for iOS Safari to process
         await new Promise((resolve) => setTimeout(resolve, 500))
+
+        if (process.env.NODE_ENV === 'development') {
+          console.log('📱 iOS: Starting html2canvas...', {
+            elementDimensions: {
+              width: element.offsetWidth,
+              height: element.offsetHeight,
+            },
+            images: element.querySelectorAll('img').length,
+          })
+        }
       }
 
       // iOS-specific optimizations
@@ -366,7 +407,7 @@ export default function ShareScreenshot({
       const timeout = isIOS ? 45000 : 30000 // Longer timeout for iOS
 
       // Add timeout wrapper for html2canvas to catch hanging operations
-      const html2canvasPromise = html2canvas(element, {
+      const html2canvasOptions: any = {
         backgroundColor: '#ffffff',
         scale: scale,
         useCORS: true,
@@ -377,22 +418,47 @@ export default function ShareScreenshot({
         height: 600,
         windowWidth: 355,
         windowHeight: 600,
-        // iOS-specific optimizations
         removeContainer: false,
         foreignObjectRendering: false, // Disable for better iOS compatibility
-        onclone: (clonedDoc) => {
-          // Ensure all images are loaded in cloned document
-          const images = clonedDoc.querySelectorAll('img')
-          images.forEach((img) => {
-            if (img.complete) return
-            // Force image to load
+      }
+
+      // iOS-specific options
+      if (isIOS) {
+        html2canvasOptions.scrollX = 0
+        html2canvasOptions.scrollY = 0
+        html2canvasOptions.x = 0
+        html2canvasOptions.y = 0
+      }
+
+      // Add onclone callback to ensure images load
+      html2canvasOptions.onclone = (clonedDoc: Document) => {
+        // Ensure all images are loaded in cloned document
+        const images = clonedDoc.querySelectorAll('img')
+        const imagePromises: Promise<void>[] = []
+
+        images.forEach((img) => {
+          if (img.complete) return
+
+          const promise = new Promise<void>((resolve) => {
             const newImg = clonedDoc.createElement('img')
+            newImg.onload = () => resolve()
+            newImg.onerror = () => resolve() // Resolve even on error to not block
             newImg.src = img.src
             newImg.style.cssText = img.style.cssText
             img.parentNode?.replaceChild(newImg, img)
           })
-        },
-      })
+
+          imagePromises.push(promise)
+        })
+
+        // Wait for all images to load (with timeout)
+        return Promise.race([
+          Promise.all(imagePromises),
+          new Promise<void>((resolve) => setTimeout(resolve, 5000)),
+        ])
+      }
+
+      const html2canvasPromise = html2canvas(element, html2canvasOptions)
 
       // Add a timeout to catch cases where html2canvas hangs (especially on mobile)
       const timeoutPromise = new Promise<never>((_, reject) => {
@@ -531,14 +597,29 @@ export default function ShareScreenshot({
         })
       }
 
-      // iOS Safari doesn't support sharing files via Web Share API
-      // So in iOS, share button should be hidden, but if called, just download
-      if (isIOS) {
-        await downloadScreenshot()
-        return
-      }
-
       if (typeof window !== 'undefined' && typeof navigator !== 'undefined' && navigator.share) {
+        if (isIOS) {
+          // iOS Safari: Share dialog without files (iOS doesn't support file sharing)
+          // Then download the image automatically
+          try {
+            await navigator.share({
+              title: `${fullName}'s Bio`,
+              text: `Check out ${fullName}'s bio on LongBio!`,
+            })
+            // After sharing, download the image so user can attach it manually
+            setTimeout(async () => {
+              await downloadScreenshot()
+            }, 500)
+            return
+          } catch (error) {
+            // If user cancels share dialog, still download
+            if (error instanceof Error && error.name !== 'AbortError') {
+              console.error('Error sharing on iOS:', error)
+            }
+            await downloadScreenshot()
+            return
+          }
+        }
         // For non-iOS devices, try sharing with files
         const response = await fetch(screenshot)
         const blob = await response.blob()
@@ -1982,21 +2063,16 @@ export default function ShareScreenshot({
                 <div className="flex gap-3">
                   <button
                     onClick={downloadScreenshot}
-                    className={`${
-                      isIOS ? 'w-full' : 'flex-1'
-                    } inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-cyan-700 transition-all duration-200`}
+                    className="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-cyan-700 transition-all duration-200"
                   >
                     <Download className="size-4" />
-                    {isIOS && <span>Download</span>}
                   </button>
-                  {!isIOS && (
-                    <button
-                      onClick={shareScreenshot}
-                      className="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200"
-                    >
-                      <Share2 className="size-4" />
-                    </button>
-                  )}
+                  <button
+                    onClick={shareScreenshot}
+                    className="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200"
+                  >
+                    <Share2 className="size-4" />
+                  </button>
                 </div>
               </div>
             )}
