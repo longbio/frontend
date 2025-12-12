@@ -2056,11 +2056,22 @@ export default function ShareScreenshot({
                   >
                     <div className="relative">
                       <Image
+                        key={screenshot}
                         src={screenshot || ''}
                         alt="Bio Screenshot"
                         width={350}
                         height={600}
-                        onLoadingComplete={handlePreviewLoaded}
+                        onLoad={() => {
+                          setIsPreviewLoading(false)
+                          setIsGenerating(false)
+                        }}
+                        onError={() => {
+                          console.log('❌ iOS failed to load screenshot, forcing reload...')
+                          setTimeout(() => {
+                            setIsPreviewLoading(false)
+                            setIsGenerating(false)
+                          }, 300)
+                        }}
                       />
                       {(isGenerating || isPreviewLoading) && (
                         <div className="absolute inset-0 flex items-center justify-center bg-black/40">
