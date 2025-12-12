@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { createPortal } from 'react-dom'
 import html2canvas from '@html2canvas/html2canvas'
 import { useFlagCountries } from '@/service/countries'
-import { useState, useRef, useMemo, ReactNode, CSSProperties, useEffect } from 'react'
+import { useState, useRef, useMemo, ReactNode, CSSProperties, useEffect, useCallback } from 'react'
 import {
   Download,
   Share2,
@@ -79,12 +79,14 @@ export default function ShareScreenshot({
   onSuccess,
   onScreenshotReady,
 }: ShareScreenshotProps) {
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [isPreviewLoading, setIsPreviewLoading] = useState(false)
-  const [screenshot, setScreenshot] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
   const [isMounted, setIsMounted] = useState(false)
   const screenshotRef = useRef<HTMLDivElement>(null)
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false)
+  const [screenshot, setScreenshot] = useState<string | null>(null)
+  const [frozenUser, setFrozenUser] = useState<UserData | null>(null)
+  const [frozenProfileImage, setFrozenProfileImage] = useState<string | null>(null)
   const { data: flagCountries, loading: flagLoading } = useFlagCountries()
 
   // Mount portal to body for iOS compatibility
@@ -101,6 +103,13 @@ export default function ShareScreenshot({
     return map
   }, [flagCountries])
 
+  const prepareFreeze = useCallback(() => {
+    // Deep freeze userData
+    setFrozenUser(JSON.parse(JSON.stringify(userData)))
+    // Freeze image sources
+    setFrozenProfileImage(userData?.profileImage?.trim() || null)
+  }, [userData])
+
   // Detect iOS for UI purposes
   const isIOS = useMemo(() => {
     if (typeof window === 'undefined' || typeof navigator === 'undefined') return false
@@ -109,6 +118,9 @@ export default function ShareScreenshot({
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
     )
   }, [])
+
+  const displayData = frozenUser || userData
+  const displayProfileImage = frozenProfileImage || userData?.profileImage?.trim() || null
 
   const skillMapping: { [key: string]: string } = {
     '1': 'Sports',
@@ -323,12 +335,13 @@ export default function ShareScreenshot({
   }
 
   const generateScreenshot = async () => {
+    prepareFreeze()
     setIsGenerating(true)
     setIsPreviewLoading(false)
     setScreenshot(null)
     setError(null)
-
     let originalStyle: string | undefined
+    let frozenNode: HTMLElement | null = null
 
     try {
       if (flagLoading) {
@@ -348,6 +361,16 @@ export default function ShareScreenshot({
         setIsGenerating(false)
         return
       }
+
+      frozenNode = element.cloneNode(true) as HTMLElement
+
+      frozenNode.style.cssText = element.style.cssText
+
+      const imgs = frozenNode.querySelectorAll('img')
+      imgs.forEach((img) => {
+        img.crossOrigin = 'anonymous'
+        img.referrerPolicy = 'no-referrer'
+      })
 
       // Force element to be visible and ensure it's rendered (important for iOS)
       // In iOS, element must be in viewport for html2canvas to work
@@ -2055,22 +2078,15 @@ export default function ShareScreenshot({
                     style={{ width: '350px', maxWidth: '350px' }}
                   >
                     <div className="relative">
-                      <Image
-                        key={screenshot}
-                        src={screenshot || ''}
-                        alt="Bio Screenshot"
-                        width={350}
-                        height={600}
-                        onLoad={() => {
-                          setIsPreviewLoading(false)
-                          setIsGenerating(false)
-                        }}
-                        onError={() => {
-                          console.log('❌ iOS failed to load screenshot, forcing reload...')
-                          setTimeout(() => {
-                            setIsPreviewLoading(false)
-                            setIsGenerating(false)
-                          }, 300)
+                      <img
+                        src={screenshot}
+                        alt="Generated Screenshot Preview"
+                        onLoad={handlePreviewLoaded}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          display: 'block',
                         }}
                       />
                       {(isGenerating || isPreviewLoading) && (
