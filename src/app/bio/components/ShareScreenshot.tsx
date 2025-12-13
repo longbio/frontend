@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { createPortal } from 'react-dom'
 import html2canvas from '@html2canvas/html2canvas'
 import { useFlagCountries } from '@/service/countries'
-import { useState, useRef, useMemo, ReactNode, CSSProperties, useEffect, useCallback } from 'react'
+import { useState, useRef, useMemo, ReactNode, CSSProperties, useEffect } from 'react'
 import {
   Download,
   Share2,
@@ -85,8 +85,6 @@ export default function ShareScreenshot({
   const [error, setError] = useState<string | null>(null)
   const [isPreviewLoading, setIsPreviewLoading] = useState(false)
   const [screenshot, setScreenshot] = useState<string | null>(null)
-  const [frozenUser, setFrozenUser] = useState<UserData | null>(null)
-  const [frozenProfileImage, setFrozenProfileImage] = useState<string | null>(null)
   const { data: flagCountries, loading: flagLoading } = useFlagCountries()
 
   // Mount portal to body for iOS compatibility
@@ -103,13 +101,6 @@ export default function ShareScreenshot({
     return map
   }, [flagCountries])
 
-  const prepareFreeze = useCallback(() => {
-    // Deep freeze userData
-    setFrozenUser(JSON.parse(JSON.stringify(userData)))
-    // Freeze image sources
-    setFrozenProfileImage(userData?.profileImage?.trim() || null)
-  }, [userData])
-
   // Detect iOS for UI purposes
   const isIOS = useMemo(() => {
     if (typeof window === 'undefined' || typeof navigator === 'undefined') return false
@@ -118,9 +109,6 @@ export default function ShareScreenshot({
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
     )
   }, [])
-
-  const displayData = frozenUser || userData
-  const displayProfileImage = frozenProfileImage || userData?.profileImage?.trim() || null
 
   const skillMapping: { [key: string]: string } = {
     '1': 'Sports',
@@ -335,13 +323,11 @@ export default function ShareScreenshot({
   }
 
   const generateScreenshot = async () => {
-    prepareFreeze()
     setIsGenerating(true)
     setIsPreviewLoading(false)
     setScreenshot(null)
     setError(null)
     let originalStyle: string | undefined
-    let frozenNode: HTMLElement | null = null
 
     try {
       if (flagLoading) {
@@ -362,11 +348,15 @@ export default function ShareScreenshot({
         return
       }
 
-      frozenNode = element.cloneNode(true) as HTMLElement
+      // For iOS: ensure element is in DOM
+      if (isIOS && !element.parentElement) {
+        setError('Element is not in DOM. Please try again.')
+        setIsGenerating(false)
+        return
+      }
 
-      frozenNode.style.cssText = element.style.cssText
-
-      const imgs = frozenNode.querySelectorAll('img')
+      // Set CORS attributes on images before moving element
+      const imgs = element.querySelectorAll('img')
       imgs.forEach((img) => {
         img.crossOrigin = 'anonymous'
         img.referrerPolicy = 'no-referrer'
@@ -378,7 +368,8 @@ export default function ShareScreenshot({
         originalStyle = element.style.cssText
 
         if (isIOS) {
-          // For iOS: temporarily move element to viewport but keep it hidden visually
+          // For iOS: move element to viewport but keep it hidden visually
+          // iOS requires element to be in viewport, not off-screen
           element.style.position = 'fixed'
           element.style.left = '0'
           element.style.top = '0'
@@ -389,6 +380,7 @@ export default function ShareScreenshot({
           element.style.visibility = 'visible'
           element.style.opacity = '0.01'
           element.style.transform = 'none'
+          element.style.overflow = 'hidden'
         } else {
           // For other devices: keep original approach
           element.style.position = 'fixed'
@@ -401,34 +393,50 @@ export default function ShareScreenshot({
         console.warn('Could not set element styles:', styleError)
       }
 
+      // Force a reflow to ensure styles are applied
+      void element.offsetHeight
+
       // Wait for images to load - longer wait for iOS
-      await new Promise((resolve) => setTimeout(resolve, isIOS ? 2500 : 1000))
+      await new Promise((resolve) => setTimeout(resolve, isIOS ? 2000 : 1000))
 
       // Additional wait for iOS to ensure everything is ready
       if (isIOS) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('📱 iOS: Waiting for element to be ready...', {
-            elementExists: !!element,
-            elementVisible: element.offsetWidth > 0 && element.offsetHeight > 0,
-            elementStyle: element.style.cssText.substring(0, 100),
-          })
-        }
+        // Wait for element to be fully rendered
+        await new Promise((resolve) => setTimeout(resolve, 800))
 
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-
-        // Force a reflow to ensure iOS renders the element
+        // Force multiple reflows to ensure iOS renders the element
         void element.offsetHeight
+        void element.offsetWidth
+        void element.scrollHeight
 
-        // Wait a bit more for iOS Safari to process
+        // Wait for images to be loaded
+        const imageElements = element.querySelectorAll('img')
+        const imageLoadPromises = Array.from(imageElements).map((img) => {
+          if (img.complete) return Promise.resolve()
+          return new Promise<void>((resolve) => {
+            img.onload = () => resolve()
+            img.onerror = () => resolve() // Don't block on error
+            // Timeout after 3 seconds
+            setTimeout(() => resolve(), 3000)
+          })
+        })
+
+        await Promise.all(imageLoadPromises)
+
+        // Final wait for iOS Safari to process
         await new Promise((resolve) => setTimeout(resolve, 500))
 
+        // Final reflow check
+        void element.offsetHeight
+
         if (process.env.NODE_ENV === 'development') {
-          console.log('📱 iOS: Starting html2canvas...', {
-            elementDimensions: {
+          console.log('📱 iOS: Element ready for screenshot', {
+            dimensions: {
               width: element.offsetWidth,
               height: element.offsetHeight,
             },
-            images: element.querySelectorAll('img').length,
+            images: imageElements.length,
+            loadedImages: Array.from(imageElements).filter((img) => img.complete).length,
           })
         }
       }
@@ -493,7 +501,17 @@ export default function ShareScreenshot({
         await document.fonts.ready
       }
 
-      await new Promise((r) => setTimeout(r, isIOS ? 600 : 0))
+      // Final check for iOS - ensure element is ready
+      if (isIOS) {
+        // Verify element is in DOM and has dimensions
+        if (!element.parentElement || element.offsetWidth === 0 || element.offsetHeight === 0) {
+          throw new Error('Element is not properly rendered. Please try again.')
+        }
+        await new Promise((r) => setTimeout(r, 300))
+      } else {
+        await new Promise((r) => setTimeout(r, 0))
+      }
+
       const html2canvasPromise = html2canvas(element, html2canvasOptions)
 
       // Add a timeout to catch cases where html2canvas hangs (especially on mobile)
@@ -695,12 +713,13 @@ export default function ShareScreenshot({
   }
 
   // Render screenshot content - use portal for iOS compatibility
+  // For iOS, element must be in viewport (even if hidden) for html2canvas to work
   const screenshotContent = (
     <div
       ref={screenshotRef}
       style={{
         position: 'fixed',
-        left: '-9999px',
+        left: isIOS ? '0' : '-9999px',
         top: 0,
         width: '355px',
         height: '600px',
@@ -711,6 +730,10 @@ export default function ShareScreenshot({
         flexDirection: 'column',
         border: '1px solid #e5e7eb',
         borderRadius: '0.625rem',
+        zIndex: isIOS ? -9999 : 'auto',
+        opacity: isIOS ? 0.01 : 1,
+        pointerEvents: isIOS ? 'none' : 'auto',
+        visibility: 'visible',
       }}
     >
       {/* Header - Gradient badge */}
