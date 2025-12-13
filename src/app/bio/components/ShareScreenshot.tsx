@@ -378,7 +378,7 @@ export default function ShareScreenshot({
           element.style.zIndex = '-9999'
           element.style.pointerEvents = 'none'
           element.style.visibility = 'visible'
-          element.style.opacity = '0.01'
+          element.style.opacity = '1' // Full opacity for html2canvas to capture
           element.style.transform = 'none'
           element.style.overflow = 'hidden'
         } else {
@@ -442,7 +442,8 @@ export default function ShareScreenshot({
       }
 
       // iOS-specific optimizations
-      const scale = isIOS ? 1.5 : 8
+      // Higher scale for better quality on iOS
+      const scale = isIOS ? 2 : 8
       const timeout = isIOS ? 45000 : 30000 // Longer timeout for iOS
 
       // Add timeout wrapper for html2canvas to catch hanging operations
@@ -484,7 +485,11 @@ export default function ShareScreenshot({
             newImg.onerror = () => resolve() // Resolve even on error to not block
             newImg.src = img.src
             newImg.style.cssText = img.style.cssText
-            img.parentNode?.replaceChild(newImg, img)
+            newImg.crossOrigin = 'anonymous'
+            newImg.referrerPolicy = 'no-referrer'
+            if (img.parentNode) {
+              img.parentNode.replaceChild(newImg, img)
+            }
           })
 
           imagePromises.push(promise)
@@ -493,7 +498,7 @@ export default function ShareScreenshot({
         // Wait for all images to load (with timeout)
         return Promise.race([
           Promise.all(imagePromises),
-          new Promise<void>((resolve) => setTimeout(resolve, 5000)),
+          new Promise<void>((resolve) => setTimeout(resolve, isIOS ? 8000 : 5000)),
         ])
       }
 
