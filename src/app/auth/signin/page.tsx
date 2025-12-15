@@ -29,7 +29,7 @@ type EmailFormData = z.infer<typeof signInEmailSchema>
 type PhoneFormData = z.infer<typeof signInPhoneSchema>
 
 export default function SignIn() {
-  const [activeTab, setActiveTab] = useState<'email' | 'phone'>('email')
+  const [activeTab, setActiveTab] = useState<'email' | 'phone'>('phone')
   const { mutateAsync, isPending } = useSendOTPEmail({ mode: 'signin' })
   const [countryCode, setCountryCode] = useState(defaultCountry.dialCode)
   const [phoneNumberValue, setPhoneNumberValue] = useState('')
@@ -94,52 +94,18 @@ export default function SignIn() {
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'email' | 'phone')} className="flex flex-col justify-between h-full">
           <TabsList className="grid w-full grid-cols-2 bg-gray-100 rounded-full p-1">
             <TabsTrigger
-              value="email"
-              className="rounded-full data-[state=active]:bg-white data-[state=active]:text-purple-blaze data-[state=active]:shadow-sm"
-            >
-              Email
-            </TabsTrigger>
-            <TabsTrigger
               value="phone"
               className="rounded-full data-[state=active]:bg-white data-[state=active]:text-purple-blaze data-[state=active]:shadow-sm"
             >
               Phone
             </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="email" className="flex flex-col justify-between h-full mt-8">
-            <form
-              onSubmit={emailForm.handleSubmit(onEmailSubmit)}
-              className="flex flex-col justify-between h-full"
-              autoComplete="off"
+            <TabsTrigger
+              value="email"
+              className="rounded-full data-[state=active]:bg-white data-[state=active]:text-purple-blaze data-[state=active]:shadow-sm"
             >
-              <div className="space-y-8">
-                <FormInput
-                  id="email"
-                  type="email"
-                  label="Email"
-                  placeholder="Exp: Jessica@gmail.com"
-                  error={!!emailForm.formState.errors.email}
-                  autoComplete="off"
-                  {...emailForm.register('email')}
-                />
-                <p className="text-sm text-gray-600 mt-1 ml-1">
-                  The verification code will be sent to your <span className="font-bold">Email</span>
-                </p>
-                {emailForm.formState.errors.email && (
-                  <p className="text-red-500 text-sm mt-2 ml-1">{emailForm.formState.errors.email.message}</p>
-                )}
-              </div>
-              <Button
-                type="submit"
-                disabled={isPending}
-                aria-busy={isPending}
-                className="sticky bottom-0 w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                {isPending ? 'Sending...' : 'Get Verification code'}
-              </Button>
-            </form>
-          </TabsContent>
+              Email
+            </TabsTrigger>
+          </TabsList>
 
           <TabsContent value="phone" className="flex flex-col justify-between h-full mt-8">
             <form
@@ -169,6 +135,40 @@ export default function SignIn() {
                 </p>
                 {phoneForm.formState.errors.phoneNumber && (
                   <p className="text-red-500 text-sm mt-2 ml-1">{phoneForm.formState.errors.phoneNumber.message}</p>
+                )}
+              </div>
+              <Button
+                type="submit"
+                disabled={isPending}
+                aria-busy={isPending}
+                className="sticky bottom-0 w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {isPending ? 'Sending...' : 'Get Verification code'}
+              </Button>
+            </form>
+          </TabsContent>
+
+          <TabsContent value="email" className="flex flex-col justify-between h-full mt-8">
+            <form
+              onSubmit={emailForm.handleSubmit(onEmailSubmit)}
+              className="flex flex-col justify-between h-full"
+              autoComplete="off"
+            >
+              <div className="space-y-8">
+                <FormInput
+                  id="email"
+                  type="email"
+                  label="Email"
+                  placeholder="Exp: Jessica@gmail.com"
+                  error={!!emailForm.formState.errors.email}
+                  autoComplete="off"
+                  {...emailForm.register('email')}
+                />
+                <p className="text-sm text-gray-600 mt-1 ml-1">
+                  The verification code will be sent to your <span className="font-bold">Email</span>
+                </p>
+                {emailForm.formState.errors.email && (
+                  <p className="text-red-500 text-sm mt-2 ml-1">{emailForm.formState.errors.email.message}</p>
                 )}
               </div>
               <Button
