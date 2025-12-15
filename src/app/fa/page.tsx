@@ -13,7 +13,7 @@ export default function Welcome() {
         <WelcomeAnimation className="mt-14" />
         <h1 className="text-2xl font-bold mt-5">خوش آمدید</h1>
         <p className="text-sm font-normal text-center mt-4">
-          حساب کاربری لانگ‌بیو خود را در چند دقیقه بسازید. آن را به اشتراک بگذارید تا دوستان و جامعه‌تان شما را بهتر بشناسند.
+        لانگ‌بیو خود را در چند دقیقه بسازید. آن را به اشتراک بگذارید تا دوستانتان شما را بهتر بشناسند.
         </p>
       </div>
       <div className="flex flex-col items-center justify-center w-full">
