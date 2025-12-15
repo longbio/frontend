@@ -1,8 +1,14 @@
+'use client'
+
+import { useEffect } from 'react'
 import Link from 'next/link'
 import Header from '@/components/Header'
 import WelcomeAnimation from '@/app/components/WelcomeAnimation'
 
 export default function Welcome() {
+  useEffect(() => {
+    console.log('NEXT_PUBLIC_API_BASE_URL:', process.env.NEXT_PUBLIC_API_BASE_URL)
+  }, [])
   return (
     <div dir="rtl" className="flex flex-col items-center justify-between bg-white p-8 h-full w-full">
       <div className="flex flex-col items-center">
