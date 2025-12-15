@@ -10,6 +10,6 @@ export default function FaLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  return <div className={`${vazir.className}`}>{children}</div>
+  return <div className={`${vazir.className} h-full`}>{children}</div>
 }
 
