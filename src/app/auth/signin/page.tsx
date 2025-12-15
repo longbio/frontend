@@ -123,6 +123,9 @@ export default function SignIn() {
                   autoComplete="off"
                   {...emailForm.register('email')}
                 />
+                <p className="text-sm text-gray-600 mt-1 ml-1">
+                  The verification code will be sent to your <span className="font-bold">Email</span>
+                </p>
                 {emailForm.formState.errors.email && (
                   <p className="text-red-500 text-sm mt-2 ml-1">{emailForm.formState.errors.email.message}</p>
                 )}
@@ -161,6 +164,9 @@ export default function SignIn() {
                   error={!!phoneForm.formState.errors.phoneNumber}
                   autoComplete="off"
                 />
+                <p className="text-sm text-gray-600 mt-1 ml-1">
+                  The verification code will be sent to your <span className="font-bold">WhatsApp</span>
+                </p>
                 {phoneForm.formState.errors.phoneNumber && (
                   <p className="text-red-500 text-sm mt-2 ml-1">{phoneForm.formState.errors.phoneNumber.message}</p>
                 )}
