@@ -11,6 +11,7 @@ import {
   TelegramIcon,
   WhatsappIcon,
   LinkedinIcon,
+  InstagramIcon,
 } from 'next-share'
 import {
   Dialog,
@@ -46,25 +47,9 @@ export default function ShareModal({ isOpen, onClose, userData }: ShareModalProp
 
   const handleCopyLink = async () => {
     try {
-      if (
-        typeof window !== 'undefined' &&
-        typeof navigator !== 'undefined' &&
-        navigator.clipboard
-      ) {
-        await navigator.clipboard.writeText(shareUrl)
-        setCopied(true)
-        setTimeout(() => setCopied(false), 2000)
-      } else if (typeof document !== 'undefined') {
-        // Fallback for older browsers
-        const textArea = document.createElement('textarea')
-        textArea.value = shareUrl
-        document.body.appendChild(textArea)
-        textArea.select()
-        document.execCommand('copy')
-        document.body.removeChild(textArea)
-        setCopied(true)
-        setTimeout(() => setCopied(false), 2000)
-      }
+      await navigator.clipboard.writeText(shareUrl)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
     } catch (error) {
       console.error('Failed to copy:', error)
     }
@@ -132,6 +117,23 @@ export default function ShareModal({ isOpen, onClose, userData }: ShareModalProp
             >
               <LinkedinIcon size={24} round />
             </LinkedinShareButton>
+
+            <button
+              onClick={async () => {
+                // Copy link to clipboard first
+                try {
+                  await navigator.clipboard.writeText(shareUrl)
+                } catch (error) {
+                  console.error('Failed to copy:', error)
+                }
+                // Open Instagram
+                window.open('https://www.instagram.com/', '_blank')
+              }}
+              className="flex flex-col items-center gap-2 p-3 rounded-lg transition-colors hover:opacity-80"
+              title="Open Instagram (link copied to clipboard)"
+            >
+              <InstagramIcon size={24} round />
+            </button>
           </div>
 
           {/* Copy Link */}
