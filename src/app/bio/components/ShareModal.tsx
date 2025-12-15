@@ -98,7 +98,7 @@ export default function ShareModal({ isOpen, onClose, userData }: ShareModalProp
               title={shareTitle}
               className="flex flex-col items-center gap-2 p-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
             >
-              <TelegramIcon size={24} round />
+              <TelegramIcon size={32} round />
             </TelegramShareButton>
 
             <WhatsappShareButton
@@ -107,7 +107,7 @@ export default function ShareModal({ isOpen, onClose, userData }: ShareModalProp
               separator=":: "
               className="flex flex-col items-center gap-2 p-3 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
             >
-              <WhatsappIcon size={24} round />
+              <WhatsappIcon size={32} round />
             </WhatsappShareButton>
 
             <LinkedinShareButton
@@ -115,7 +115,7 @@ export default function ShareModal({ isOpen, onClose, userData }: ShareModalProp
               title={shareTitle}
               className="flex flex-col items-center gap-2 p-3 bg-blue-700 hover:bg-blue-800 text-white rounded-lg transition-colors"
             >
-              <LinkedinIcon size={24} round />
+              <LinkedinIcon size={32} round />
             </LinkedinShareButton>
 
             <button
@@ -129,10 +129,10 @@ export default function ShareModal({ isOpen, onClose, userData }: ShareModalProp
                 // Open Instagram
                 window.open('https://www.instagram.com/', '_blank')
               }}
-              className="flex flex-col items-center gap-2 p-3 rounded-lg transition-colors hover:opacity-80"
+              className="flex items-center transition-colors hover:opacity-80"
               title="Open Instagram (link copied to clipboard)"
             >
-              <InstagramIcon size={24} round />
+              <InstagramIcon size={32} round />
             </button>
           </div>
 
