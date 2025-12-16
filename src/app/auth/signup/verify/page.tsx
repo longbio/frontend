@@ -44,7 +44,7 @@ function VerifySignUpContent() {
   useEffect(() => {
     if (isSuccess && isNewUser === true) {
       setCookie('signup', 'true')
-      router.push(`/auth/username?name=${encodeURIComponent(name)}`)
+      router.push(`/auth/preview?name=${encodeURIComponent(name)}`)
     }
   }, [isSuccess, isNewUser, router, name])
 
