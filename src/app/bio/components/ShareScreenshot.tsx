@@ -443,7 +443,7 @@ export default function ShareScreenshot({
 
       // iOS-specific optimizations
       // Higher scale for better quality on iOS
-      const scale = isIOS ? 2 : 8
+      const scale = isIOS ? 4 : 8
       const timeout = isIOS ? 45000 : 30000 // Longer timeout for iOS
 
       // Add timeout wrapper for html2canvas to catch hanging operations
@@ -2078,9 +2078,11 @@ export default function ShareScreenshot({
                   </button> */}
                   <button
                     onClick={shareScreenshot}
-                    className="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200"
+                    className="flex-1 gap-x-2 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200"
                   >
-                    <Share2 className="size-4" />
+                    <Download className="size-4" />
+                    <span>Save & Share</span>
+                    <div className='size-4'></div>
                   </button>
                 </div>
               </div>
