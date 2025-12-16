@@ -32,26 +32,15 @@ function PreviewContent() {
       {/* Image Container - Scrollable */}
       <div className="flex-1 overflow-y-auto px-4 py-6">
         <div className="relative mx-auto max-w-sm">
-          {/* Phone mockup frame effect */}
-          <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-gray-900 bg-gray-900">
-            {/* Notch */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-gray-900 rounded-b-2xl z-10" />
-            
-            {/* Bio Preview Image */}
-            <div className="relative w-full aspect-[9/19.5] bg-white">
-              <Image
-                src="/assets/images/preview.PNG"
-                alt="Example Bio Profile"
-                fill
-                className="object-cover object-top"
-                priority
-              />
-            </div>
+          <div className="relative w-full aspect-[9/19.5] bg-white">
+            <Image
+              src="/assets/images/preview.PNG"
+              alt="Example Bio Profile"
+              fill
+              className="object-cover object-top"
+              priority
+            />
           </div>
-
-          {/* Decorative elements */}
-          <div className="absolute -z-10 top-10 -left-4 w-24 h-24 bg-purple-200 rounded-full blur-2xl opacity-60" />
-          <div className="absolute -z-10 bottom-20 -right-4 w-32 h-32 bg-pink-200 rounded-full blur-2xl opacity-60" />
         </div>
       </div>
 
