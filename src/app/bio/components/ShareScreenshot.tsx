@@ -2070,12 +2070,12 @@ export default function ShareScreenshot({
 
                 {/* Actions */}
                 <div className="flex gap-3">
-                  <button
+                  {/* <button
                     onClick={downloadScreenshot}
                     className="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-cyan-700 transition-all duration-200"
                   >
                     <Download className="size-4" />
-                  </button>
+                  </button> */}
                   <button
                     onClick={shareScreenshot}
                     className="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-200"
