@@ -645,72 +645,14 @@ export default function ShareScreenshot({
     if (!screenshot) return
 
     try {
-      // Debug log for testing (can be removed in production)
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🔍 Device Detection:', {
-          userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'N/A',
-          platform: typeof navigator !== 'undefined' ? navigator.platform : 'N/A',
-          maxTouchPoints: typeof navigator !== 'undefined' ? navigator.maxTouchPoints : 0,
-          isIOS,
-          hasShareAPI: typeof navigator !== 'undefined' ? !!navigator.share : false,
-        })
-      }
+      const response = await fetch(screenshot)
+      const blob = await response.blob()
 
-      if (typeof window !== 'undefined' && typeof navigator !== 'undefined' && navigator.share) {
-        if (isIOS) {
-          // iOS Safari: Share dialog without files (iOS doesn't support file sharing)
-          // Then download the image automatically
-          try {
-            await navigator.share({
-              title: `${fullName}'s Bio`,
-              text: `Check out ${fullName}'s bio on LongBio!`,
-            })
-            // After sharing, download the image so user can attach it manually
-            setTimeout(async () => {
-              await downloadScreenshot()
-            }, 500)
-            return
-          } catch (error) {
-            // If user cancels share dialog, still download
-            if (error instanceof Error && error.name !== 'AbortError') {
-              console.error('Error sharing on iOS:', error)
-            }
-            await downloadScreenshot()
-            return
-          }
-        }
-        // For non-iOS devices, try sharing with files
-        const response = await fetch(screenshot)
-        const blob = await response.blob()
-        const file = new File([blob], `${username}-LONGBIO-SCREENSHOT.png`, { type: 'image/png' })
-
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            title: `${fullName}'s Bio`,
-            text: `Check out ${fullName}'s bio on LongBio!`,
-            files: [file],
-          })
-          return
-        } else {
-          // Fallback: try sharing without files
-          try {
-            await navigator.share({
-              title: `${fullName}'s Bio`,
-              text: `Check out ${fullName}'s bio on LongBio!`,
-            })
-            // Also download the image
-            setTimeout(async () => {
-              await downloadScreenshot()
-            }, 500)
-            return
-          } catch {
-            // Continue to download fallback
-          }
-        }
-      }
-
-      // Fallback: download directly if Web Share API is not available
-      await downloadScreenshot()
+      await navigator.share({
+        title: `${fullName}'s Bio`,
+        text: `Check out ${fullName}'s bio on LongBio!`,
+        files: [new File([blob], `${username}-LONGBIO-SCREENSHOT.png`, { type: blob.type })],
+      })
     } catch (error) {
       console.error('Error sharing screenshot:', error)
       await downloadScreenshot()
