@@ -617,13 +617,6 @@ export default function BioDisplay({
               Join LongBio and create your personalized bio page to share with friends!
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <button
-                onClick={() => setShowShareScreenshot(true)}
-                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-3 rounded-xl font-medium hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-              >
-                <Camera className="w-5 h-5" />
-                <span className="whitespace-nowrap">Take Screenshot</span>
-              </button>
               <a
                 href="https://longbio.me"
                 target="_blank"
