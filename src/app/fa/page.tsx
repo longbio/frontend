@@ -9,7 +9,7 @@ export default function Welcome() {
     <div dir="rtl" className="flex flex-col items-center justify-between bg-white p-8 h-full w-full">
       <div className="flex flex-col items-center w-full">
         <Header />
-        <WelcomeSlider className="mt-14" />
+        <WelcomeSlider className="mt-14" direction="rtl" />
         <h1 className="text-2xl font-bold mt-5">خوش آمدید</h1>
         <p className="text-sm font-normal text-center mt-4">
         لانگ‌بیو خود را در چند دقیقه بسازید. آن را به اشتراک بگذارید تا دوستانتان شما را بهتر بشناسند.

@@ -9,10 +9,11 @@ import mainSceneAnimation from '../../../public/assets/lottie/half-preview.json'
 
 interface WelcomeSliderProps {
   className?: string
+  direction?: 'ltr' | 'rtl'
 }
 
-export default function WelcomeSlider({ className = '' }: WelcomeSliderProps) {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
+export default function WelcomeSlider({ className = '', direction = 'ltr' }: WelcomeSliderProps) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, direction })
   const [selectedIndex, setSelectedIndex] = useState(0)
   const autoplayRef = useRef<NodeJS.Timeout | null>(null)
 
