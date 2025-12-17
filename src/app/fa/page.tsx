@@ -1,16 +1,15 @@
 'use client'
 
-import { useEffect } from 'react'
 import Link from 'next/link'
 import Header from '@/components/Header'
-import WelcomeAnimation from '@/app/components/WelcomeAnimation'
+import WelcomeSlider from '@/app/components/WelcomeSlider'
 
 export default function Welcome() {
   return (
     <div dir="rtl" className="flex flex-col items-center justify-between bg-white p-8 h-full w-full">
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center w-full">
         <Header />
-        <WelcomeAnimation className="mt-14" />
+        <WelcomeSlider className="mt-14" />
         <h1 className="text-2xl font-bold mt-5">خوش آمدید</h1>
         <p className="text-sm font-normal text-center mt-4">
         لانگ‌بیو خود را در چند دقیقه بسازید. آن را به اشتراک بگذارید تا دوستانتان شما را بهتر بشناسند.
