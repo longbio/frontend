@@ -15,6 +15,7 @@ import { FormInput } from '@/app/auth/components/FormInput'
 import { PhoneInput } from '@/app/auth/components/PhoneInput'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { defaultCountry } from '@/utils/countryDialCodes'
+import { useIranPhoneNormalizer } from '@/hooks/useIranPhoneNormalizer'
 
 const signUpEmailSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -38,6 +39,7 @@ export default function SignUp() {
   const { mutateAsync, isPending } = useSendOTPEmail({ mode: 'signup' })
   const [countryCode, setCountryCode] = useState(defaultCountry.dialCode)
   const [phoneNumberValue, setPhoneNumberValue] = useState('')
+  const { normalizeIranPhone } = useIranPhoneNormalizer()
 
   const emailForm = useForm<EmailFormData>({
     resolver: zodResolver(signUpEmailSchema),
@@ -149,13 +151,16 @@ export default function SignUp() {
                   label="Phone Number"
                   value={phoneNumberValue}
                   onChange={(value) => {
-                    setPhoneNumberValue(value)
-                    phoneForm.setValue('phoneNumber', countryCode + value, { shouldValidate: true })
+                    const normalizedValue = normalizeIranPhone(countryCode, value)
+                    setPhoneNumberValue(normalizedValue)
+                    phoneForm.setValue('phoneNumber', countryCode + normalizedValue, { shouldValidate: true })
                   }}
                   countryCode={countryCode}
                   onCountryCodeChange={(dialCode) => {
+                    const normalizedValue = normalizeIranPhone(dialCode, phoneNumberValue)
                     setCountryCode(dialCode)
-                    phoneForm.setValue('phoneNumber', dialCode + phoneNumberValue, { shouldValidate: true })
+                    setPhoneNumberValue(normalizedValue)
+                    phoneForm.setValue('phoneNumber', dialCode + normalizedValue, { shouldValidate: true })
                   }}
                   error={!!phoneForm.formState.errors.phoneNumber}
                   autoComplete="off"
