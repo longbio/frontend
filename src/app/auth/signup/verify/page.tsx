@@ -78,7 +78,7 @@ function VerifySignUpContent() {
               <FormInput
                 id="phoneNumber"
                 type="tel"
-                label="WhatsApp Phone Number"
+                label="Phone Number"
                 value={phoneNumber || ''}
                 disabled
                 labelClassName="text-light-gray"

@@ -67,7 +67,7 @@ export function VerificationCodeInput({
           <input
             id="verificationCode"
             type="text"
-            placeholder={phoneNumber ? "Please check your WhatsApp" : "Please check your inbox"}
+            placeholder={phoneNumber ? "Please check your SMS" : "Please check your inbox"}
             value={value}
             onChange={(e) => onChange(e.target.value)}
             className={clsx(
@@ -109,7 +109,7 @@ export function VerificationCodeInput({
       </div>
       {showTimeoutError && (
         <h2 className="absolute text-red-500 text-xs mt-1 top-full">
-          Please enter Verification code we sent to {phoneNumber ? 'your WhatsApp' : 'your email address'}
+          Please enter Verification code we sent to {phoneNumber ? 'your phone via SMS' : 'your email address'}
         </h2>
       )}
     </div>
