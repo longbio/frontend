@@ -23,7 +23,7 @@ const signInPhoneSchema = z.object({
   phoneNumber: z
     .string()
     .min(10, 'Phone number must be at least 10 digits')
-    .regex(/^\+?[1-9]\d{1,14}$/, 'Please enter a valid WhatsApp phone number with country code'),
+    .regex(/^\+?[1-9]\d{1,14}$/, 'Please enter a valid phone number with country code'),
 })
 
 type EmailFormData = z.infer<typeof signInEmailSchema>
@@ -136,7 +136,7 @@ export default function SignIn() {
                   autoComplete="off"
                 />
                 <p className="text-sm text-gray-600 mt-1 ml-1">
-                  The verification code will be sent to your <span className="font-bold">WhatsApp</span>
+                  The verification code will be sent via <span className="font-bold">SMS</span>
                 </p>
                 {phoneForm.formState.errors.phoneNumber && (
                   <p className="text-red-500 text-sm mt-2 ml-1">{phoneForm.formState.errors.phoneNumber.message}</p>
