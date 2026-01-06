@@ -35,11 +35,22 @@ type PhoneFormData = z.infer<typeof signUpPhoneSchema>
 
 export default function SignUp() {
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState<'email' | 'phone'>('phone')
+  const [isIranTimezone, setIsIranTimezone] = useState<boolean | null>(null)
+  const [activeTab, setActiveTab] = useState<'email' | 'phone'>('email')
   const { mutateAsync, isPending } = useSendOTPEmail({ mode: 'signup' })
   const [countryCode, setCountryCode] = useState(defaultCountry.dialCode)
   const [phoneNumberValue, setPhoneNumberValue] = useState('')
   const { normalizeIranPhone } = useIranPhoneNormalizer()
+
+  // Check client timezone on mount
+  useEffect(() => {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+    const isIran = timezone === 'Asia/Tehran'
+    setIsIranTimezone(isIran)
+    if (isIran) {
+      setActiveTab('phone')
+    }
+  }, [])
 
   const emailForm = useForm<EmailFormData>({
     resolver: zodResolver(signUpEmailSchema),
@@ -111,79 +122,132 @@ export default function SignUp() {
           </h3>
         </div>
 
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'email' | 'phone')} className="flex flex-col justify-between h-full">
-          <TabsList className="grid w-full grid-cols-2 bg-gray-100 rounded-full p-1">
-            <TabsTrigger
-              value="phone"
-              className="rounded-full data-[state=active]:bg-white data-[state=active]:text-purple-blaze data-[state=active]:shadow-sm"
-            >
-              Phone
-            </TabsTrigger>
-            <TabsTrigger
-              value="email"
-              className="rounded-full data-[state=active]:bg-white data-[state=active]:text-purple-blaze data-[state=active]:shadow-sm"
-            >
-              Email
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="phone" className="flex flex-col justify-between h-full mt-8">
-            <form
-              onSubmit={phoneForm.handleSubmit(onPhoneSubmit)}
-              className="flex flex-col justify-between h-full"
-              autoComplete="off"
-            >
-              <div className="space-y-8">
-                <FormInput
-                  id="name"
-                  type="text"
-                  label="Full Name"
-                  placeholder="Exp: Jessica"
-                  error={!!phoneForm.formState.errors.name}
-                  autoComplete="off"
-                  {...phoneForm.register('name')}
-                />
-                {phoneForm.formState.errors.name && (
-                  <p className="text-red-500 text-sm mt-2 ml-1">{phoneForm.formState.errors.name.message}</p>
-                )}
-                <PhoneInput
-                  id="phoneNumber"
-                  label="Phone Number"
-                  value={phoneNumberValue}
-                  onChange={(value) => {
-                    const normalizedValue = normalizeIranPhone(countryCode, value)
-                    setPhoneNumberValue(normalizedValue)
-                    phoneForm.setValue('phoneNumber', countryCode + normalizedValue, { shouldValidate: true })
-                  }}
-                  countryCode={countryCode}
-                  onCountryCodeChange={(dialCode) => {
-                    const normalizedValue = normalizeIranPhone(dialCode, phoneNumberValue)
-                    setCountryCode(dialCode)
-                    setPhoneNumberValue(normalizedValue)
-                    phoneForm.setValue('phoneNumber', dialCode + normalizedValue, { shouldValidate: true })
-                  }}
-                  error={!!phoneForm.formState.errors.phoneNumber}
-                  autoComplete="off"
-                />
-                <p className="text-sm text-gray-600 mt-1 ml-1">
-                  The verification code will be sent via <span className="font-bold">SMS</span>
-                </p>
-                {phoneForm.formState.errors.phoneNumber && (
-                  <p className="text-red-500 text-sm mt-2 ml-1">{phoneForm.formState.errors.phoneNumber.message}</p>
-                )}
-              </div>
-              <Button
-                type="submit"
-                disabled={isPending}
-                aria-busy={isPending}
-                className="sticky bottom-0 w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl disabled:opacity-60 disabled:cursor-not-allowed"
+        {/* Show loading state while checking timezone */}
+        {isIranTimezone === null ? (
+          <div className="flex flex-col justify-between h-full" />
+        ) : isIranTimezone ? (
+          /* Iran timezone: show both tabs */
+          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'email' | 'phone')} className="flex flex-col justify-between h-full">
+            <TabsList className="grid w-full grid-cols-2 bg-gray-100 rounded-full p-1">
+              <TabsTrigger
+                value="phone"
+                className="rounded-full data-[state=active]:bg-white data-[state=active]:text-purple-blaze data-[state=active]:shadow-sm"
               >
-                {isPending ? 'Sending...' : 'Get Verification code'}
-              </Button>
-            </form>
-          </TabsContent>
+                Phone
+              </TabsTrigger>
+              <TabsTrigger
+                value="email"
+                className="rounded-full data-[state=active]:bg-white data-[state=active]:text-purple-blaze data-[state=active]:shadow-sm"
+              >
+                Email
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="email" className="flex flex-col justify-between h-full mt-8">
+            <TabsContent value="phone" className="flex flex-col justify-between h-full mt-8">
+              <form
+                onSubmit={phoneForm.handleSubmit(onPhoneSubmit)}
+                className="flex flex-col justify-between h-full"
+                autoComplete="off"
+              >
+                <div className="space-y-8">
+                  <FormInput
+                    id="name"
+                    type="text"
+                    label="Full Name"
+                    placeholder="Exp: Jessica"
+                    error={!!phoneForm.formState.errors.name}
+                    autoComplete="off"
+                    {...phoneForm.register('name')}
+                  />
+                  {phoneForm.formState.errors.name && (
+                    <p className="text-red-500 text-sm mt-2 ml-1">{phoneForm.formState.errors.name.message}</p>
+                  )}
+                  <PhoneInput
+                    id="phoneNumber"
+                    label="Phone Number"
+                    value={phoneNumberValue}
+                    onChange={(value) => {
+                      const normalizedValue = normalizeIranPhone(countryCode, value)
+                      setPhoneNumberValue(normalizedValue)
+                      phoneForm.setValue('phoneNumber', countryCode + normalizedValue, { shouldValidate: true })
+                    }}
+                    countryCode={countryCode}
+                    onCountryCodeChange={(dialCode) => {
+                      const normalizedValue = normalizeIranPhone(dialCode, phoneNumberValue)
+                      setCountryCode(dialCode)
+                      setPhoneNumberValue(normalizedValue)
+                      phoneForm.setValue('phoneNumber', dialCode + normalizedValue, { shouldValidate: true })
+                    }}
+                    error={!!phoneForm.formState.errors.phoneNumber}
+                    autoComplete="off"
+                  />
+                  <p className="text-sm text-gray-600 mt-1 ml-1">
+                    The verification code will be sent via <span className="font-bold">SMS</span>
+                  </p>
+                  {phoneForm.formState.errors.phoneNumber && (
+                    <p className="text-red-500 text-sm mt-2 ml-1">{phoneForm.formState.errors.phoneNumber.message}</p>
+                  )}
+                </div>
+                <Button
+                  type="submit"
+                  disabled={isPending}
+                  aria-busy={isPending}
+                  className="sticky bottom-0 w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {isPending ? 'Sending...' : 'Get Verification code'}
+                </Button>
+              </form>
+            </TabsContent>
+
+            <TabsContent value="email" className="flex flex-col justify-between h-full mt-8">
+              <form
+                onSubmit={emailForm.handleSubmit(onEmailSubmit)}
+                className="flex flex-col justify-between h-full"
+                autoComplete="off"
+              >
+                <div className="space-y-8">
+                  <FormInput
+                    id="name"
+                    type="text"
+                    label="Full Name"
+                    placeholder="Exp: Jessica"
+                    error={!!emailForm.formState.errors.name}
+                    autoComplete="off"
+                    {...emailForm.register('name')}
+                  />
+                  {emailForm.formState.errors.name && (
+                    <p className="text-red-500 text-sm mt-2 ml-1">{emailForm.formState.errors.name.message}</p>
+                  )}
+                  <FormInput
+                    id="email"
+                    type="email"
+                    label="Email"
+                    placeholder="Exp: Jessica@gmail.com"
+                    error={!!emailForm.formState.errors.email}
+                    autoComplete="off"
+                    {...emailForm.register('email')}
+                  />
+                  <p className="text-sm text-gray-600 mt-1 ml-1">
+                    The verification code will be sent to your <span className="font-bold">Email</span>
+                  </p>
+                  {emailForm.formState.errors.email && (
+                    <p className="text-red-500 text-sm mt-2 ml-1">{emailForm.formState.errors.email.message}</p>
+                  )}
+                </div>
+                <Button
+                  type="submit"
+                  disabled={isPending}
+                  aria-busy={isPending}
+                  className="sticky bottom-0 w-full h-fit bg-purple-blaze text-sm font-bold rounded-4xl disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {isPending ? 'Sending...' : 'Get Verification code'}
+                </Button>
+              </form>
+            </TabsContent>
+          </Tabs>
+        ) : (
+          /* Non-Iran timezone: show only email form without tabs */
+          <div className="flex flex-col justify-between h-full">
             <form
               onSubmit={emailForm.handleSubmit(onEmailSubmit)}
               className="flex flex-col justify-between h-full"
@@ -227,8 +291,8 @@ export default function SignUp() {
                 {isPending ? 'Sending...' : 'Get Verification code'}
               </Button>
             </form>
-          </TabsContent>
-        </Tabs>
+          </div>
+        )}
       </div>
     </div>
   )
